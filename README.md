@@ -25,6 +25,7 @@ ReCo es una plataforma que conecta refugios de animales con personas interesadas
 ## 🛠️ Tecnologías
 
 ### Backend
+
 - **Framework**: Django 4.2+ con Django REST Framework
 - **Base de Datos**: PostgreSQL
 - **Autenticación**: JWT Token Authentication
@@ -32,6 +33,7 @@ ReCo es una plataforma que conecta refugios de animales con personas interesadas
 - **Contenedorización**: Docker
 
 ### Frontend
+
 - **Framework**: React 18+ con Vite
 - **Enrutamiento**: React Router
 - **Estado Global**: Context API / Redux Toolkit
@@ -39,6 +41,7 @@ ReCo es una plataforma que conecta refugios de animales con personas interesadas
 - **Mapas**: Leaflet / Google Maps API
 
 ### Infraestructura
+
 - **Contenedores**: Docker & Docker Compose
 - **Proxy Reverso**: Nginx
 - **CI/CD**: GitHub Actions
@@ -47,7 +50,7 @@ ReCo es una plataforma que conecta refugios de animales con personas interesadas
 ## 📁 Estructura del Proyecto
 
 ```
-reco-platform/
+ReCo/
 │
 ├── backend/                    # Django + Django REST Framework
 │   ├── reco/                   # Proyecto principal
@@ -101,18 +104,21 @@ reco-platform/
 ### 🔧 Configuración con Docker (Recomendado)
 
 1. **Clonar el repositorio**
+
    ```bash
    git clone https://github.com/Donsackboy/ReCo.git
    cd reco-platform
    ```
 
 2. **Configurar variables de entorno**
+
    ```bash
    cp .env.example .env
    # Editar .env con tus configuraciones
    ```
 
 3. **Construir y ejecutar con Docker Compose**
+
    ```bash
    docker-compose up --build
    ```
@@ -128,22 +134,26 @@ reco-platform/
 #### Backend (Django)
 
 1. **Navegar al directorio backend**
+
    ```bash
    cd backend
    ```
 
 2. **Crear entorno virtual**
+
    ```bash
    python -m venv venv
    source venv/bin/activate  # En Windows: venv\Scripts\activate
    ```
 
 3. **Instalar dependencias**
+
    ```bash
    pip install -r requirements.txt
    ```
 
 4. **Configurar base de datos**
+
    ```bash
    python manage.py migrate
    python manage.py createsuperuser
@@ -157,11 +167,13 @@ reco-platform/
 #### Frontend (React)
 
 1. **Navegar al directorio frontend**
+
    ```bash
    cd frontend
    ```
 
 2. **Instalar dependencias**
+
    ```bash
    npm install
    ```
@@ -174,33 +186,39 @@ reco-platform/
 ## 📚 APIs y Endpoints
 
 ### Autenticación
+
 - `POST /api/auth/login/` - Iniciar sesión
 - `POST /api/auth/register/` - Registrar usuario
 - `POST /api/auth/logout/` - Cerrar sesión
 
 ### Refugios
+
 - `GET /api/refugios/` - Listar refugios
 - `POST /api/refugios/` - Crear refugio
 - `GET /api/refugios/{id}/` - Detalle de refugio
 
 ### Animales
+
 - `GET /api/animales/` - Listar animales
 - `POST /api/animales/` - Crear animal
 - `GET /api/animales/{id}/` - Detalle de animal
 
 ### Donaciones
+
 - `POST /api/donaciones/` - Realizar donación
 - `GET /api/donaciones/suscripciones/` - Gestionar suscripciones
 
 ## 🧪 Testing
 
 ### Backend
+
 ```bash
 cd backend
 python manage.py test
 ```
 
 ### Frontend
+
 ```bash
 cd frontend
 npm run test
