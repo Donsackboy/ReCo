@@ -189,6 +189,7 @@ cd frontend
 npm run test
 ```
 
+
 ## 📦 Despliegue
 
 ### Producción con Docker
