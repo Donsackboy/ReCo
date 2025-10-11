@@ -92,96 +92,61 @@ ReCo/
 └── README.md
 ```
 
-## 🚀 Instalación y Configuración
+## 🚀 Inicio Rápido
 
 ### Prerrequisitos
-
 - Docker y Docker Compose
 - Node.js 18+ (para desarrollo local)
 - Python 3.9+ (para desarrollo local)
 - Git
 
-### 🔧 Configuración con Docker (Recomendado)
+### 🔧 Instalación y Ejecución
 
-1. **Clonar el repositorio**
-
+1. **Clonar y configurar**
    ```bash
    git clone https://github.com/Donsackboy/ReCo.git
-   cd reco-platform
-   ```
-
-2. **Configurar variables de entorno**
-
-   ```bash
+   cd ReCo/ReCo
    cp .env.example .env
-   # Editar .env con tus configuraciones
    ```
 
-3. **Construir y ejecutar con Docker Compose**
-
+2. **Ejecutar con Docker**
    ```bash
-   docker-compose up --build
+   docker compose up --build
    ```
 
-4. **Aplicar migraciones (primera vez)**
+3. **Configurar base de datos (primera vez)**
    ```bash
-   docker-compose exec backend python manage.py migrate
-   docker-compose exec backend python manage.py createsuperuser
+   docker compose exec backend python manage.py migrate
+   docker compose exec backend python manage.py createsuperuser
    ```
 
-### 🛠️ Desarrollo Local
+### 🌐 Acceso Local
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:8000
+- **Admin Django**: http://localhost:8000/admin
 
-#### Backend (Django)
+### 🛠️ Desarrollo Local (Opcional)
 
-1. **Navegar al directorio backend**
+<details>
+<summary>Configuración para desarrollo sin Docker</summary>
 
-   ```bash
-   cd backend
-   ```
+#### Backend
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+```
 
-2. **Crear entorno virtual**
-
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # En Windows: venv\Scripts\activate
-   ```
-
-3. **Instalar dependencias**
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Configurar base de datos**
-
-   ```bash
-   python manage.py migrate
-   python manage.py createsuperuser
-   ```
-
-5. **Ejecutar servidor de desarrollo**
-   ```bash
-   python manage.py runserver
-   ```
-
-#### Frontend (React)
-
-1. **Navegar al directorio frontend**
-
-   ```bash
-   cd frontend
-   ```
-
-2. **Instalar dependencias**
-
-   ```bash
-   npm install
-   ```
-
-3. **Ejecutar servidor de desarrollo**
-   ```bash
-   npm run dev
-   ```
+#### Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
+</details>
 
 ## 📚 APIs y Endpoints
 
