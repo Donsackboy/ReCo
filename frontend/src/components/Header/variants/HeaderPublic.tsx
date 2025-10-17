@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
-import './Header.css';
+import Logo from '../shared/Logo';
+import '../Header.css';
 
-function Header() {
+interface HeaderPublicProps {
+  onNavigateHome?: () => void;
+}
+
+const HeaderPublic: React.FC<HeaderPublicProps> = ({ onNavigateHome }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -16,28 +21,10 @@ function Header() {
     <header className="header">
       <nav className="navbar">
         <div className="nav-container">
-          {/* Logo y nombre - extremo izquierdo */}
-          <div className="nav-logo">
-            <a href="#inicio" className="logo-link">
-              <div className="logo-container">
-                <img 
-                  src="/Images/reco-logo.png" 
-                  alt="ReCo Logo" 
-                  className="logo-image"
-                />
-                <div className="logo-text-container">
-                  <div className="logo-text-styled">
-                    ReCo
-                  </div>
-                  <div className="logo-subtitle">
-                    REFUGIO CONECTADO
-                  </div>
-                </div>
-              </div>
-            </a>
-          </div>
+          {/* Logo */}
+          <Logo onClick={onNavigateHome} />
           
-          {/* Bloque central: Menú de navegación */}
+          {/* Navegación central - Usuario NO logueado */}
           <nav className="center-nav">
             <ul className="nav-menu">
               <li className="nav-item">
@@ -48,7 +35,7 @@ function Header() {
               </li>
               <li className="nav-item">
                 <a href="#animales" className="nav-link">
-                  <span className="nav-icon">🐕</span>
+                  <span className="nav-icon">🐾</span>
                   <span className="nav-text">Animales</span>
                 </a>
               </li>
@@ -66,7 +53,7 @@ function Header() {
               </li>
               <li className="nav-item">
                 <a href="#eventos" className="nav-link">
-                  <span className="nav-icon">�</span>
+                  <span className="nav-icon">🎪</span>
                   <span className="nav-text">Eventos</span>
                 </a>
               </li>
@@ -79,7 +66,7 @@ function Header() {
             </ul>
           </nav>
           
-          {/* Menú hamburguesa - extremo derecho (siempre visible) */}
+          {/* Botones de autenticación */}
           <div className="hamburger-container">
             <div className="auth-buttons desktop-auth">
               <a href="#login" className="btn-login">
@@ -122,7 +109,7 @@ function Header() {
             </li>
             <li className="side-menu-item">
               <a href="#animales" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">�</span>
+                <span className="side-menu-icon">🐾</span>
                 Animales
               </a>
             </li>
@@ -140,7 +127,7 @@ function Header() {
             </li>
             <li className="side-menu-item">
               <a href="#eventos" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">�</span>
+                <span className="side-menu-icon">🎪</span>
                 Eventos
               </a>
             </li>
@@ -172,6 +159,6 @@ function Header() {
       </nav>
     </header>
   );
-}
+};
 
-export default Header;
+export default HeaderPublic;

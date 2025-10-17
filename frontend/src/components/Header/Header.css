@@ -8,10 +8,10 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  background: linear-gradient(135deg, #87CEEB 0%, #B0E0E6 30%, #E0F6FF 70%, #FFFFFF 100%);
-  box-shadow: 0 8px 32px rgba(135, 206, 235, 0.3);
+  background: linear-gradient(135deg, #008cff 0%, #47a4c9 25%, #7ac0c9 60%, #6cafc9 100%);
+  box-shadow: 0 8px 32px rgba(65, 103, 134, 0.781);
   backdrop-filter: blur(20px);
-  border-bottom: 3px solid #87CEEB;
+  border-bottom: 3px solid #4682B4;
 }
 
 /* REGLA UNIVERSAL: Logo siempre pegado a la izquierda */
@@ -230,15 +230,28 @@
 
 .btn-register {
   background: linear-gradient(135deg, #4682B4 0%, #1E90FF 100%);
-  color: #FFFFFF;
+  color: #FFFFFF !important; /* Forzar color blanco siempre */
   border-color: #4682B4;
   box-shadow: 0 6px 20px rgba(70, 130, 180, 0.3);
 }
 
 .btn-register:hover {
   background: linear-gradient(135deg, #1E90FF 0%, #00BFFF 100%);
+  color: #FFFFFF !important; /* Forzar color blanco en hover */
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 8px 35px rgba(30, 144, 255, 0.4);
+}
+
+.btn-register:visited {
+  color: #FFFFFF !important; /* Forzar color blanco en visited */
+}
+
+.btn-register:active {
+  color: #FFFFFF !important; /* Forzar color blanco en active */
+}
+
+.btn-register:focus {
+  color: #FFFFFF !important; /* Forzar color blanco en focus */
 }
 
 /* Ocultar iconos de auth */
@@ -248,6 +261,28 @@
 
 .auth-text {
   transition: opacity 0.3s ease;
+  color: inherit; /* Heredar color del contenedor padre */
+}
+
+/* Asegurar que el texto del botón registrarse siempre sea blanco */
+.btn-register .auth-text {
+  color: #FFFFFF !important;
+}
+
+.btn-register:hover .auth-text {
+  color: #FFFFFF !important;
+}
+
+.btn-register:visited .auth-text {
+  color: #FFFFFF !important;
+}
+
+.btn-register:active .auth-text {
+  color: #FFFFFF !important;
+}
+
+.btn-register:focus .auth-text {
+  color: #FFFFFF !important;
 }
 
 .hamburger-btn {
@@ -921,4 +956,167 @@ body {
 .btn-register:active::after {
   width: 200px;
   height: 200px;
+}
+
+/* ================================= */
+/*      ESTILOS USUARIOS LOGUEADOS   */
+/* ================================= */
+
+/* Perfil de usuario en header */
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  border: 2px solid rgba(70, 130, 180, 0.3);
+  box-shadow: 0 4px 15px rgba(70, 130, 180, 0.1);
+  transition: all 0.3s ease;
+}
+
+.user-profile:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: #4682B4;
+  box-shadow: 0 6px 20px rgba(70, 130, 180, 0.2);
+  transform: translateY(-1px);
+}
+
+.user-icon {
+  font-size: 1.2rem;
+}
+
+.user-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2C3E50;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Badge de admin */
+.admin-profile {
+  border-color: #FF6B35;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 107, 53, 0.1));
+}
+
+.admin-badge {
+  background: #FF6B35;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Botón logout */
+.btn-logout {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #E74C3C, #C0392B);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+.btn-logout:hover {
+  background: linear-gradient(135deg, #C0392B, #A93226);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+}
+
+/* Info de usuario en menú lateral */
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-role {
+  font-size: 0.7rem;
+  color: #7F8C8D;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-role {
+  color: #FF6B35;
+  font-weight: 700;
+}
+
+/* Header de admin en menú lateral */
+.admin-header {
+  background: linear-gradient(135deg, #FF6B35 0%, #E74C3C 100%);
+}
+
+/* Categorías en menú lateral */
+.side-menu-category {
+  padding: 12px 20px 8px 20px;
+  margin-top: 15px;
+  border-bottom: 1px solid rgba(127, 140, 141, 0.2);
+}
+
+.category-title {
+  font-size: 0.75rem;
+  color: #7F8C8D;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Botón logout en menú lateral */
+.logout-btn {
+  all: unset;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 15px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #E74C3C;
+  font-weight: 600;
+}
+
+.logout-btn:hover {
+  background: rgba(231, 76, 60, 0.1);
+  color: #C0392B;
+}
+
+/* ================================= */
+/*         RESPONSIVE ADICIONAL      */
+/* ================================= */
+
+@media (max-width: 1100px) {
+  .user-name {
+    display: none;
+  }
+  
+  .admin-badge {
+    font-size: 0.6rem;
+    padding: 1px 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-profile {
+    padding: 6px 8px;
+    gap: 4px;
+  }
+  
+  .btn-logout {
+    padding: 6px 8px;
+    font-size: 0.75rem;
+  }
 }
