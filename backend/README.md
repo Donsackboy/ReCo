@@ -20,3 +20,6 @@ sudo docker compose exec backend python manage.py createsuperuser
 - **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:8000
 - **Admin Django**: http://localhost:8000/admin
+
+
+# DANJO

@@ -1,0 +1,1 @@
+docker exec -it postgres_db psql -U myuser -d mydb -c '\dt'
