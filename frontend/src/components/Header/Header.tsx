@@ -16,7 +16,7 @@ function Header() {
     <header className="header">
       <nav className="navbar">
         <div className="nav-container">
-          {/* Bloque izquierdo: Logo + Nombre */}
+          {/* Logo y nombre - extremo izquierdo */}
           <div className="nav-logo">
             <a href="#inicio" className="logo-link">
               <div className="logo-container">
@@ -39,34 +39,52 @@ function Header() {
           
           {/* Bloque central: Menú de navegación */}
           <nav className="center-nav">
-            <ul className="nav-menu desktop-menu">
+            <ul className="nav-menu">
               <li className="nav-item">
-                <a href="#animales" className="nav-link">Adoptar</a>
+                <a href="#refugios" className="nav-link">
+                  <span className="nav-icon">🏠</span>
+                  <span className="nav-text">Refugios</span>
+                </a>
               </li>
               <li className="nav-item">
-                <a href="#refugios" className="nav-link">Refugios</a>
+                <a href="#animales" className="nav-link">
+                  <span className="nav-icon">🐕</span>
+                  <span className="nav-text">Animales</span>
+                </a>
               </li>
               <li className="nav-item">
-                <a href="#donaciones" className="nav-link">Donar</a>
+                <a href="#hogares-temporales" className="nav-link">
+                  <span className="nav-icon">🏡</span>
+                  <span className="nav-text">Hogares Temporales</span>
+                </a>
               </li>
               <li className="nav-item">
-                <a href="#eventos" className="nav-link">Voluntariado</a>
+                <a href="#donaciones" className="nav-link">
+                  <span className="nav-icon">💝</span>
+                  <span className="nav-text">Donaciones</span>
+                </a>
               </li>
               <li className="nav-item">
-                <a href="#hogares-temporales" className="nav-link">Hogar Temporal</a>
+                <a href="#eventos" className="nav-link">
+                  <span className="nav-icon">🎗️</span>
+                  <span className="nav-text">Voluntariado</span>
+                </a>
               </li>
             </ul>
           </nav>
           
-          {/* Bloque derecho: Auth + Hamburger */}
-          <div className="right-container">
-            {/* Botones de autenticación */}
+          {/* Menú hamburguesa - extremo derecho (siempre visible) */}
+          <div className="hamburger-container">
             <div className="auth-buttons desktop-auth">
-              <a href="#login" className="btn-login">Iniciar Sesión</a>
-              <a href="#register" className="btn-register">Registrarse</a>
+              <a href="#login" className="btn-login">
+                <span className="auth-icon">👤</span>
+                <span className="auth-text">Iniciar Sesión</span>
+              </a>
+              <a href="#register" className="btn-register">
+                <span className="auth-icon">✨</span>
+                <span className="auth-text">Registrarse</span>
+              </a>
             </div>
-
-            {/* Botón hamburguesa */}
             <button className="hamburger-btn" onClick={toggleMenu}>
               <span className="hamburger-line"></span>
               <span className="hamburger-line"></span>
@@ -81,34 +99,43 @@ function Header() {
         {/* Menú lateral */}
         <div className={`side-menu ${isMenuOpen ? 'side-menu-open' : ''}`}>
           <div className="side-menu-header">
+            <div className="side-menu-logo">
+              <img src="/Images/reco-logo.png" alt="ReCo" className="side-logo" />
+              <span className="side-logo-text">ReCo</span>
+            </div>
             <button className="close-btn" onClick={closeMenu}>
               <span className="close-icon">×</span>
             </button>
           </div>
           <ul className="side-menu-items">
             <li className="side-menu-item">
-              <a href="#animales" className="side-menu-link" onClick={closeMenu}>
-                🐕 Adoptar
-              </a>
-            </li>
-            <li className="side-menu-item">
               <a href="#refugios" className="side-menu-link" onClick={closeMenu}>
-                🏢 Refugios
+                <span className="side-menu-icon">🏠</span>
+                Refugios
               </a>
             </li>
             <li className="side-menu-item">
-              <a href="#donaciones" className="side-menu-link" onClick={closeMenu}>
-                💝 Donar
-              </a>
-            </li>
-            <li className="side-menu-item">
-              <a href="#eventos" className="side-menu-link" onClick={closeMenu}>
-                � Voluntariado
+              <a href="#animales" className="side-menu-link" onClick={closeMenu}>
+                <span className="side-menu-icon">�</span>
+                Animales
               </a>
             </li>
             <li className="side-menu-item">
               <a href="#hogares-temporales" className="side-menu-link" onClick={closeMenu}>
-                🏠 Hogar Temporal
+                <span className="side-menu-icon">🏡</span>
+                Hogares Temporales
+              </a>
+            </li>
+            <li className="side-menu-item">
+              <a href="#donaciones" className="side-menu-link" onClick={closeMenu}>
+                <span className="side-menu-icon">💝</span>
+                Donaciones
+              </a>
+            </li>
+            <li className="side-menu-item">
+              <a href="#eventos" className="side-menu-link" onClick={closeMenu}>
+                <span className="side-menu-icon">🎗️</span>
+                Voluntariado
               </a>
             </li>
             
@@ -118,12 +145,14 @@ function Header() {
             {/* Autenticación en menú móvil */}
             <li className="side-menu-item">
               <a href="#login" className="side-menu-link" onClick={closeMenu}>
-                � Iniciar Sesión
+                <span className="side-menu-icon">👤</span>
+                Iniciar Sesión
               </a>
             </li>
             <li className="side-menu-item">
               <a href="#register" className="side-menu-link" onClick={closeMenu}>
-                ✨ Registrarse
+                <span className="side-menu-icon">✨</span>
+                Registrarse
               </a>
             </li>
           </ul>

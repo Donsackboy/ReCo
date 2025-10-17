@@ -1,169 +1,143 @@
-/**
- * ============================================================================
- * HEADER.CSS - ReCo (Refugio Conectado)
- * ============================================================================
- * 
- * Estilos del componente Header principal de ReCo
- * Incluye: Logo, navegación, autenticación, menú hamburguesa
- * 
- * Estructura:
- * 1. Variables y Base Styles
- * 2. Layout Principal
- * 3. Logo y Branding
- * 4. Navegación Desktop
- * 5. Botones de Autenticación
- * 6. Menú Hamburguesa Mobile
- * 7. Menú Lateral
- * 8. Responsive Design
- * ============================================================================
- */
-
-/* ============================================================================
-   1. VARIABLES Y BASE STYLES
-   ============================================================================ */
-
-:root {
-  --reco-primary-blue: #3b82f6;       /* Azul ReCo principal */
-  --reco-secondary-blue: #1d4ed8;     /* Azul hover */
-  --reco-light-blue: #dbeafe;         /* Azul claro */
-  --reco-extra-light-blue: #f0f9ff;   /* Azul muy claro */
-  --reco-green: #1d4ed8;              /* Verde adopción */
-  --reco-dark-green: #1d4ed8;         /* Verde hover */
-  --reco-text: #1f2937;               /* Texto principal */
-  --reco-text-light: #6b7280;         /* Texto secundario */
-  --reco-bg: #ffffff;                 /* Fondo blanco */
-  --reco-border: #e5e7eb;             /* Bordes */
-  --reco-hover: #f3f4f6;              /* Hover background */
-  --shadow-header: 0 2px 10px rgba(59, 130, 246, 0.15);
-  --shadow-button: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-/* ============================================================================
-   2. LAYOUT PRINCIPAL
-   ============================================================================ */
+/* ================================= */
+/*           HEADER PRINCIPAL        */
+/* ================================= */
 
 .header {
-  background: linear-gradient(135deg, var(--reco-bg) 0%, var(--reco-extra-light-blue) 100%);
-  box-shadow: var(--shadow-header);
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
-  border-bottom: 3px solid var(--reco-primary-blue);
+  background: linear-gradient(135deg, #87CEEB 0%, #B0E0E6 30%, #E0F6FF 70%, #FFFFFF 100%);
+  box-shadow: 0 8px 32px rgba(135, 206, 235, 0.3);
+  backdrop-filter: blur(20px);
+  border-bottom: 3px solid #87CEEB;
+}
+
+/* REGLA UNIVERSAL: Logo siempre pegado a la izquierda */
+.nav-logo {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  position: relative;
+  left: 0 !important;
+}
+
+.logo-container {
+  margin-left: 0 !important;
 }
 
 .navbar {
-  padding: 1rem 0;
+  width: 100%;
+  padding: 0;
 }
 
 .nav-container {
-  max-width: 100%;
-  width: 100%;
+  max-width: 1400px;
   margin: 0 auto;
   display: flex;
-  justify-content: space-around;
   align-items: center;
-  padding: 0 clamp(1rem, 3vw, 4rem);
-  gap: clamp(1rem, 2vw, 3rem);
+  justify-content: space-between;
+  padding: 1rem 1rem 1rem 0; /* Sin padding izquierdo */
+  gap: 2rem;
 }
 
-/* ============================================================================
-   3. LOGO Y BRANDING
-   ============================================================================ */
+/* ================================= */
+/*          LOGO Y NOMBRE            */
+/* ================================= */
 
 .nav-logo {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  text-decoration: none;
-  color: var(--reco-text);
   flex-shrink: 0;
-  flex-basis: clamp(200px, 15vw, 320px);
+  margin-left: 0; 
+  margin-right: 1.5rem; 
+  padding-left: 0; /* Sin padding - pegado al borde */
+  position: relative;
+  left: 0; /* Forzar posición izquierda */
 }
 
 .logo-link {
   text-decoration: none;
-  color: inherit;
-  cursor: pointer;
-  transition: opacity 0.3s ease;
+  display: block;
+  transition: transform 0.4s ease;
 }
 
 .logo-link:hover {
-  opacity: 0.9;
+  transform: scale(1.05) translateY(-2px);
 }
 
-/* Logo principal con imagen */
-.logo-image {
-  height: clamp(50px, 8vw, 90px);
-  width: auto;
-  object-fit: contain;
-  /* Filtro para convertir logo a azul ReCo */
-  filter: brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(214deg) brightness(97%) contrast(97%);
-  transition: filter 0.2s ease, transform 0.2s ease;
-}
-
-.logo-link:hover .logo-image {
-  filter: brightness(0) saturate(100%) invert(16%) sepia(87%) saturate(1247%) hue-rotate(214deg) brightness(95%) contrast(106%);
-  transform: scale(1.05);
-}
-
-/* Contenedor simplificado del logo */
 .logo-container {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 15px;
+  padding: 8px 15px 8px 8px; /* Menos padding izquierdo en el contenedor */
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 25px;
+  border: 2px solid #87CEEB;
+  box-shadow: 0 8px 25px rgba(135, 206, 235, 0.2);
+  backdrop-filter: blur(10px);
+  margin-left: 0; /* Sin margen izquierdo */
+}
+
+.logo-image {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: 3px solid #4682B4;
+  transition: all 0.4s ease;
+  box-shadow: 0 4px 15px rgba(70, 130, 180, 0.3);
+  object-fit: cover;
+}
+
+.logo-image:hover {
+  border-color: #1E90FF;
+  box-shadow: 0 6px 25px rgba(30, 144, 255, 0.5);
+  transform: rotate(5deg) scale(1.1);
 }
 
 .logo-text-container {
   display: flex;
   flex-direction: column;
+  line-height: 1.1;
 }
 
-/* Textos del logo */
 .logo-text-styled {
-  font-family: 'Arial Black', 'Helvetica', sans-serif;
-  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-size: 1.8rem;
   font-weight: 900;
-  color: #2563eb;
-  letter-spacing: clamp(1px, 0.5vw, 3px);
-  text-transform: uppercase;
-  margin: 0;
-  padding: 0;
-  line-height: 1;
-  text-shadow: 2px 2px 4px rgba(37, 99, 235, 0.2);
+  background: linear-gradient(135deg, #4682B4 0%, #1E90FF 50%, #87CEEB 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 10px rgba(70, 130, 180, 0.3);
+  letter-spacing: 1px;
 }
 
 .logo-subtitle {
-  font-family: 'Arial', 'Helvetica', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--reco-dark-green);
-  letter-spacing: 1.5px;
+  font-size: 0.65rem;
+  color: #4682B4;
+  font-weight: 700;
+  margin-top: -2px;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  margin-top: -3px;
-  padding: 0;
-  line-height: 1;
+  text-shadow: 0 1px 3px rgba(70, 130, 180, 0.2);
 }
 
-/* ============================================================================
-   4. NAVEGACIÓN DESKTOP
-   ============================================================================ */
+/* ================================= */
+/*       NAVEGACIÓN CENTRAL          */
+/* ================================= */
 
-/* Contenedor central de navegación */
 .center-nav {
+  flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
-  flex: 1;
-  flex-grow: 2;
+  /* Navegación siempre centrada */
 }
 
 .nav-menu {
   display: flex;
   list-style: none;
-  gap: clamp(1.5rem, 2.5vw, 4rem);
   margin: 0;
   padding: 0;
-  justify-content: center;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 .nav-item {
@@ -171,458 +145,543 @@
 }
 
 .nav-link {
-  color: var(--reco-text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
   text-decoration: none;
-  font-weight: 600;
-  font-size: clamp(0.9rem, 1.2vw, 1.15rem);
-  padding: clamp(0.5rem, 0.8vw, 0.75rem) clamp(0.8rem, 1.5vw, 1.8rem);
-  border-radius: 8px;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  color: #4682B4;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-radius: 25px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(135, 206, 235, 0.3);
+  box-shadow: 0 4px 15px rgba(135, 206, 235, 0.1);
   white-space: nowrap;
 }
 
 .nav-link:hover {
-  background: var(--reco-primary-blue);
-  color: white;
+  background: linear-gradient(135deg, #87CEEB 0%, #B0E0E6 100%);
+  color: #FFFFFF;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(135, 206, 235, 0.3);
+  border-color: #87CEEB;
 }
 
-/* ============================================================================
-   5. BOTONES DE AUTENTICACIÓN
-   ============================================================================ */
+/* Ocultar iconos de navegación */
+.nav-icon {
+  display: none;
+}
 
-.right-container {
+.nav-text {
+  transition: opacity 0.3s ease;
+}
+
+/* ================================= */
+/*      HAMBURGUESA Y AUTH           */
+/* ================================= */
+
+.hamburger-container {
   display: flex;
   align-items: center;
-  gap: clamp(1rem, 1.5vw, 2rem);
+  gap: 1rem;
   flex-shrink: 0;
-  flex-basis: clamp(280px, 20vw, 420px);
-  justify-content: flex-end;
 }
 
-/* Botones de autenticación */
 .auth-buttons {
   display: flex;
-  align-items: center;
-  gap: clamp(0.8rem, 1.2vw, 1.5rem);
-  flex-shrink: 1; /* Pueden comprimirse */
+  gap: 0.8rem;
 }
 
 .btn-login,
 .btn-register {
-  flex-shrink: 0.5; /* Pueden comprimirse */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 20px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .btn-login {
-  color: var(--reco-primary-blue);
-  text-decoration: none;
-  font-weight: 600;
-  font-size: clamp(0.85rem, 1vw, 0.95rem);
-  padding: clamp(0.5rem, 0.7vw, 0.65rem) clamp(1.2rem, 1.8vw, 2rem);
-  border: 2px solid var(--reco-primary-blue);
-  border-radius: 8px;
-  transition: background-color 0.2s ease, color 0.2s ease;
-  white-space: nowrap;
+  color: #4682B4;
+  background: rgba(255, 255, 255, 0.9);
+  border-color: #87CEEB;
+  box-shadow: 0 4px 15px rgba(135, 206, 235, 0.2);
 }
 
 .btn-login:hover {
-  background: var(--reco-primary-blue);
-  color: white;
+  background: #87CEEB;
+  color: #FFFFFF;
+  border-color: #4682B4;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 30px rgba(135, 206, 235, 0.4);
 }
 
 .btn-register {
-  background: var(--reco-secondary-blue);
-  color: white;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: clamp(0.85rem, 1vw, 0.95rem);
-  padding: clamp(0.5rem, 0.7vw, 0.65rem) clamp(1.2rem, 1.8vw, 2rem);
-  border: 2px solid var(--reco-secondary-blue);
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
-  white-space: nowrap;
+  background: linear-gradient(135deg, #4682B4 0%, #1E90FF 100%);
+  color: #FFFFFF;
+  border-color: #4682B4;
+  box-shadow: 0 6px 20px rgba(70, 130, 180, 0.3);
 }
 
 .btn-register:hover {
-  background: #1e40af;
+  background: linear-gradient(135deg, #1E90FF 0%, #00BFFF 100%);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 35px rgba(30, 144, 255, 0.4);
 }
 
-/* ============================================================================
-   6. MENÚ HAMBURGUESA MOBILE
-   ============================================================================ */
+/* Ocultar iconos de auth */
+.auth-icon {
+  display: none;
+}
+
+.auth-text {
+  transition: opacity 0.3s ease;
+}
 
 .hamburger-btn {
-  display: flex !important; /* Siempre visible en móvil */
+  display: flex; /* Cambio: siempre visible */
   flex-direction: column;
-  justify-content: space-around;
-  width: 40px;
-  height: 40px;
-  background: none;
-  border: 2px solid var(--reco-primary-blue);
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #87CEEB;
   cursor: pointer;
   padding: 8px;
-  z-index: 1001;
-  transition: background-color 0.2s ease;
-  flex-shrink: 0; /* No se comprime nunca */
+  border-radius: 10px;
+  transition: all 0.4s ease;
+  box-shadow: 0 4px 15px rgba(135, 206, 235, 0.2);
 }
 
 .hamburger-btn:hover {
-  background: var(--reco-primary-blue);
+  background: #87CEEB;
+  transform: scale(1.05) rotate(5deg);
+  box-shadow: 0 6px 25px rgba(135, 206, 235, 0.4);
+}
+
+.hamburger-line {
+  width: 24px;
+  height: 3px;
+  background: linear-gradient(90deg, #4682B4, #87CEEB);
+  margin: 2px 0;
+  border-radius: 2px;
+  transition: all 0.4s ease;
 }
 
 .hamburger-btn:hover .hamburger-line {
-  background-color: white;
+  background: #FFFFFF;
+  transform: scaleX(1.1);
 }
 
-/* Líneas del ícono hamburguesa */
-.hamburger-line {
-  width: 100%;
-  height: 3px;
-  background-color: var(--reco-primary-blue);
-  border-radius: 3px;
-  transition: background-color 0.2s ease;
-  margin: 2px 0;
+/* ================================= */
+/*      BOTONES DE AUTENTICACIÓN     */
+/* ================================= */
+
+.right-container {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  flex-shrink: 0;
 }
 
-/* ============================================================================
-   7. MENÚ LATERAL
-   ============================================================================ */
+/* Esta sección fue movida arriba al hamburger-container */
 
-/* Overlay del menú móvil */
+/* ================================= */
+/*          MENÚ LATERAL             */
+/* ================================= */
+
 .menu-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(59, 130, 246, 0.3);
-  backdrop-filter: blur(5px);
+  width: 100vw;
+  height: 100vh;
+  background: rgba(135, 206, 235, 0.3);
   z-index: 1001;
+  backdrop-filter: blur(8px);
 }
 
-/* Menú lateral para móvil */
 .side-menu {
   position: fixed;
   top: 0;
-  right: -350px;
-  width: 350px;
-  height: 100%;
-  background: linear-gradient(180deg, var(--reco-bg) 0%, var(--reco-extra-light-blue) 100%);
-  box-shadow: -5px 0 25px rgba(59, 130, 246, 0.2);
-  transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  right: -380px; /* Cambio: desde la derecha */
+  width: 380px;
+  height: 100vh;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F0F8FF 50%, #E0F6FF 100%);
   z-index: 1002;
+  transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1); /* Cambio: right en lugar de left */
+  box-shadow: -8px 0 40px rgba(135, 206, 235, 0.4); /* Cambio: sombra hacia la izquierda */
   overflow-y: auto;
-  border-left: 3px solid var(--reco-primary-blue);
+  border-left: 3px solid #87CEEB; /* Cambio: borde izquierdo */
 }
 
 .side-menu-open {
-  right: 0;
+  right: 0; /* Cambio: right en lugar de left */
 }
 
-/* Header del menú lateral */
 .side-menu-header {
   display: flex;
-  justify-content: flex-start;
-  padding: 1.5rem;
-  border-bottom: 2px solid #e0e7ff;
-  background: linear-gradient(135deg, var(--reco-primary-blue), var(--reco-secondary-blue));
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem;
+  border-bottom: 2px solid rgba(135, 206, 235, 0.3);
+  background: linear-gradient(135deg, #87CEEB 0%, #B0E0E6 100%);
+  position: relative;
 }
 
-/* Botón cerrar del menú lateral */
+.side-menu-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #4682B4, transparent);
+}
+
+.side-menu-logo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 15px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  border: 2px solid #4682B4;
+}
+
+.side-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid #1E90FF;
+  box-shadow: 0 4px 15px rgba(30, 144, 255, 0.3);
+}
+
+.side-logo-text {
+  font-size: 1.8rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #4682B4, #1E90FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .close-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px solid white;
-  font-size: 2rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #4682B4;
   cursor: pointer;
-  color: white;
-  padding: 0;
-  width: 45px;
-  height: 45px;
+  padding: 8px 12px;
+  border-radius: 8px; /* Cambio: bordes cuadrados redondeados */
+  transition: all 0.3s ease; /* Cambio: transición más simple */
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  box-shadow: 0 4px 15px rgba(70, 130, 180, 0.2);
 }
 
 .close-btn:hover {
-  background: white;
-  color: var(--reco-primary-blue);
+  background: #4682B4;
+  transform: none; /* Cambio: sin rotación */
+  box-shadow: 0 6px 20px rgba(70, 130, 180, 0.3); /* Cambio: sombra más suave */
 }
 
-/* Items del menú lateral */
+.close-icon {
+  color: #4682B4;
+  font-size: 1.6rem; /* Cambio: tamaño más pequeño */
+  line-height: 1;
+  font-weight: 400; /* Cambio: menos grosor */
+  transition: color 0.3s ease;
+}
+
+.close-btn:hover .close-icon {
+  color: #FFFFFF;
+}
+
 .side-menu-items {
   list-style: none;
-  padding: 1rem 0;
   margin: 0;
+  padding: 2rem 0;
 }
 
 .side-menu-item {
-  margin: 0.5rem 0;
+  margin: 0;
 }
 
-/* Enlaces del menú lateral */
 .side-menu-link {
-  display: block;
-  padding: 1.2rem 2rem;
-  color: var(--reco-text);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 2rem;
   text-decoration: none;
-  font-weight: 600;
+  color: #4682B4;
+  font-weight: 700;
   font-size: 1.1rem;
-  transition: background-color 0.2s ease, color 0.2s ease, border-left 0.2s ease;
-  border-left: 4px solid transparent;
+  transition: all 0.4s ease;
+  border-right: 4px solid transparent; /* Cambio: borde derecho */
+  position: relative;
+}
+
+.side-menu-link::before {
+  content: '';
+  position: absolute;
+  right: 0; /* Cambio: desde la derecha */
+  top: 0;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(135deg, #87CEEB, #B0E0E6);
+  transition: width 0.4s ease;
+  z-index: -1;
 }
 
 .side-menu-link:hover {
-  background: var(--reco-light-blue);
-  color: var(--reco-secondary-blue);
-  border-left: 4px solid var(--reco-primary-blue);
+  border-right-color: #1E90FF; /* Cambio: borde derecho */
+  color: #1E90FF;
+  padding-right: 2.5rem; /* Cambio: padding derecho */
+  background: rgba(135, 206, 235, 0.1);
+  transform: translateX(-5px); /* Cambio: mover hacia la izquierda */
 }
 
-/* Separador en menú móvil */
+.side-menu-link:hover::before {
+  width: 100%;
+}
+
+.side-menu-link:hover {
+  color: #FFFFFF;
+}
+
+.side-menu-icon {
+  font-size: 1.5rem;
+  width: 30px;
+  text-align: center;
+  transition: transform 0.3s ease;
+  display: none; /* Ocultar todos los iconos por defecto */
+}
+
+/* Mostrar solo el icono de patita en Animales */
+.side-menu-link[href="#animales"] .side-menu-icon {
+  display: inline;
+  filter: drop-shadow(1px 1px 2px rgba(70, 130, 180, 0.3));
+}
+
+.side-menu-link:hover .side-menu-icon {
+  transform: scale(1.3) rotate(10deg);
+}
+
 .side-menu-separator {
   border: none;
-  height: 1px;
-  background: var(--reco-light-blue);
-  margin: 1rem 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(135, 206, 235, 0.5), transparent);
+  margin: 1.5rem 2rem;
+  border-radius: 2px;
 }
 
-/* Estilos especiales para autenticación en menú móvil */
-.side-menu-link[href="#login"] {
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--reco-primary-blue);
-  font-weight: 700;
-}
+/* ================================= */
+/*        RESPONSIVE DESIGN          */
+/* ================================= */
 
-.side-menu-link[href="#register"] {
-  background: rgba(29, 78, 216, 0.1);
-  color: var(--reco-secondary-blue);
-  font-weight: 700;
-}
-
-.side-menu-link[href="#login"]:hover,
-.side-menu-link[href="#register"]:hover {
-  background: var(--reco-primary-blue);
-  color: white;
-  border-left: 4px solid var(--reco-secondary-blue);
-}
-
-/* ============================================================================
-   8. DISEÑO RESPONSIVO
-   ============================================================================ 
-   
-   🚨 REGLA CRÍTICA: El hamburger menu NUNCA debe desaparecer en móvil/tablet
-   - Usa display: flex !important en todos los breakpoints < 1180px
-   - El hamburger es el único acceso a navegación cuando otros elementos se ocultan
-   - NUNCA modificar sin verificar que sigue visible en todas las resoluciones
-   
-   ============================================================================ */
-
-/* Pantallas extra grandes (1400px y mayor) - Espaciado óptimo */
-@media (min-width: 1400px) {
+/* Desktop muy grande - Todo visible */
+@media (max-width: 1400px) {
   .nav-container {
-    gap: 3rem;
-    padding: 0 3rem;
-  }
-  
-  .nav-menu {
-    gap: 2.5rem;
-  }
-  
-  .nav-link {
-    padding: 0.8rem 1.5rem;
-    font-size: 1.15rem;
-  }
-  
-  .auth-buttons {
-    gap: 1.2rem;
-  }
-  
-  .btn-login,
-  .btn-register {
-    padding: 0.7rem 1.6rem;
-    font-size: 1rem;
-  }
-}
-
-/* Tablets landscape (1200px y menor) - Reducir tamaños */
-@media (max-width: 1200px) {
-  .nav-container {
-    gap: 1.5rem;
-    padding: 0 1.5rem;
-  }
-  
-  .nav-menu {
-    gap: 1.5rem;
-  }
-  
-  .nav-link {
-    padding: 0.6rem 1rem;
-    font-size: 1rem;
-  }
-  
-  .auth-buttons {
-    gap: 0.8rem;
-  }
-  
-  .btn-login,
-  .btn-register {
-    padding: 0.5rem 1.2rem;
-    font-size: 0.9rem;
-  }
-  
-  .logo-image {
-    height: clamp(45px, 6vw, 70px);
-  }
-  
-  .logo-text-styled {
-    font-size: clamp(1.8rem, 4vw, 2.4rem);
-  }
-}
-
-/* BREAKPOINT DE EMERGENCIA: Ocultar auth si no hay espacio (1180px) */
-@media (max-width: 1180px) {
-  .desktop-auth {
-    display: none;
-  }
-  
-  .hamburger-btn {
-    display: flex !important; /* SIEMPRE visible desde aquí */
-  }
-}
-
-/* Paso 1: Ocultar botón "Registrarse" (1150px y menor) */
-@media (max-width: 1150px) {
-  .btn-register {
-    display: none;
-  }
-  
-  .nav-menu {
-    gap: 1.3rem;
-  }
-  
-  .nav-link {
-    padding: 0.6rem 0.95rem;
-    font-size: 1rem;
-  }
-}
-
-/* Paso 2: Ocultar "Hogar Temporal" (1100px y menor) */
-@media (max-width: 1100px) {
-  .nav-link[href="#hogares-temporales"] {
-    display: none;
-  }
-  
-  .nav-menu {
-    gap: 1.4rem;
-  }
-}
-
-/* Paso 3: Ocultar botón "Iniciar Sesión" (1050px y menor) */
-@media (max-width: 1050px) {
-  .btn-login {
-    display: none;
-  }
-  
-  .hamburger-btn {
-    display: flex !important; /* FORZAR visibilidad */
-  }
-  
-  .right-container {
-    justify-self: end;
-  }
-  
-  .nav-menu {
-    gap: 1.5rem;
-  }
-  
-  .nav-link {
-    padding: 0.65rem 1rem;
-    font-size: 1.05rem;
-  }
-}
-
-/* Paso 4: Ocultar "Voluntariado" (1000px y menor) */
-@media (max-width: 1000px) {
-  .nav-link[href="#eventos"] {
-    display: none;
-  }
-  
-  .nav-menu {
-    gap: 1.6rem;
-  }
-}
-
-/* Paso 5: Ocultar "Donar" (950px y menor) */
-@media (max-width: 950px) {
-  .nav-link[href="#donaciones"] {
-    display: none;
-  }
-  
-  .nav-menu {
-    gap: 1.8rem;
-  }
-}
-
-/* Paso 6: Ocultar "Refugios" (900px y menor) */
-@media (max-width: 900px) {
-  .nav-link[href="#refugios"] {
-    display: none;
-  }
-  
-  .nav-menu {
+    padding: 1rem 1.5rem 1rem 0;
     gap: 2rem;
   }
 }
 
-/* Paso 7: Ocultar todo el menú central (850px y menor) */
-@media (max-width: 850px) {
-  .center-nav {
-    display: none;
+/* Desktop grande - Todo visible */
+@media (max-width: 1200px) {
+  .nav-container {
+    padding: 0.8rem 1rem 0.8rem 0;
+    gap: 1.5rem;
+  }
+  
+  .nav-link {
+    padding: 10px 16px;
+    font-size: 0.85rem;
   }
 }
 
-/* Móviles (768px y menor) */
-@media (max-width: 768px) {
+/* Desktop mediano grande - Ocultar botones auth PRIMERO */
+@media (max-width: 1100px) {
+  .auth-buttons {
+    display: none; /* CAMBIO: Ocultar auth buttons antes que navegación */
+  }
+  
+  .hamburger-container {
+    gap: 0;
+  }
+  
   .nav-container {
-    display: flex;
-    justify-content: space-between;
-    padding: 0 1rem;
+    padding: 0.8rem 1rem 0.8rem 0;
+    gap: 1rem;
   }
   
-  /* Asegurar que hamburguesa esté visible */
-  .hamburger-btn {
-    display: flex !important; /* FORZAR visibilidad en móvil */
-  }
-  
-  /* Ajustar tamaños */
-  .logo-image {
-    height: clamp(30px, 5vw, 40px);
+  .nav-link {
+    padding: 10px 14px;
+    font-size: 0.8rem;
   }
   
   .logo-text-styled {
-    font-size: clamp(1.5rem, 3.5vw, 1.8rem);
+    font-size: 1.6rem;
   }
   
   .logo-subtitle {
-    font-size: clamp(0.55rem, 1.2vw, 0.65rem);
+    font-size: 0.6rem;
+    letter-spacing: 1.5px;
   }
 }
 
-/* Móviles pequeños (480px y menor) */
-@media (max-width: 480px) {
+/* Desktop mediano - Compactar navegación */
+@media (max-width: 1000px) {
   .nav-container {
-    padding: 0 0.75rem;
+    gap: 0.8rem;
+  }
+  
+  .nav-link {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+  
+  .nav-menu {
+    gap: 0.3rem;
+  }
+}
+
+/* Tablet grande - Ocultar último botón de navegación */
+@media (max-width: 900px) {
+  .nav-item:last-of-type {
+    display: none; /* Oculta "Voluntariado" */
+  }
+  
+  .nav-menu {
+    gap: 0.4rem;
+  }
+  
+  .nav-link {
+    padding: 8px 10px;
+    font-size: 0.7rem;
+  }
+}
+
+/* Tablet mediano - Ocultar más botones de navegación */
+@media (max-width: 850px) {
+  .nav-item:nth-last-child(-n+2) {
+    display: none; /* Oculta "Donaciones" y "Voluntariado" */
+  }
+  
+  .nav-container {
+    gap: 0.6rem;
+  }
+}
+
+/* Tablet - Reducir más el espaciado */
+@media (max-width: 800px) {
+  .nav-container {
+    padding: 0.7rem 0.8rem 0.7rem 0;
+  }
+  
+  .logo-image {
+    width: 40px;
+    height: 40px;
   }
   
   .logo-text-styled {
-    font-size: clamp(1.5rem, 3.5vw, 1.8rem);
+    font-size: 1.4rem;
+  }
+  
+  .logo-subtitle {
+    font-size: 0.55rem;
+  }
+  
+  .logo-container {
+    padding: 6px 12px 6px 6px;
+    gap: 10px;
+  }
+}
+
+/* Tablet pequeño - Solo 3 botones */
+@media (max-width: 750px) {
+  .nav-item:nth-last-child(-n+2) {
+    display: none; /* Mantiene solo "Refugios", "Animales", "Hogares Temporales" */
+  }
+}
+
+/* Móvil horizontal - Solo 2 botones de navegación */
+@media (max-width: 700px) {
+  .nav-item:nth-last-child(-n+3) {
+    display: none; /* Solo muestra "Refugios" y "Animales" */
+  }
+  
+  .nav-menu {
+    gap: 0.2rem;
+  }
+  
+  .nav-link {
+    padding: 6px 8px;
+    font-size: 0.65rem;
+  }
+}
+
+/* Móvil grande horizontal */
+@media (max-width: 650px) {
+  .nav-link {
+    padding: 6px;
+    font-size: 0.6rem;
+  }
+  
+  .hamburger-btn {
+    padding: 6px;
+  }
+  
+  .hamburger-line {
+    width: 20px;
+    height: 2px;
+  }
+}
+
+/* Móvil grande - Solo 1 botón de navegación */
+@media (max-width: 600px) {
+  .nav-item:nth-last-child(-n+4) {
+    display: none; /* Solo muestra "Refugios" */
+  }
+}
+
+/* Móvil mediano - Solo hamburguesa */
+@media (max-width: 550px) {
+  .center-nav {
+    display: none; /* Oculta toda la navegación central */
+  }
+  
+  .nav-container {
+    padding: 0.6rem 0.6rem 0.6rem 0;
+    justify-content: space-between;
+  }
+  
+  .logo-image {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .logo-text-styled {
+    font-size: 1.2rem;
+  }
+  
+  .logo-subtitle {
+    font-size: 0.5rem;
     letter-spacing: 1px;
   }
   
-  .logo-subtitle {
-    font-size: clamp(0.6rem, 1.5vw, 0.75rem);
-    letter-spacing: 0.5px;
+  .logo-container {
+    padding: 5px 10px 5px 5px;
+    gap: 8px;
   }
   
   .side-menu {
@@ -631,57 +690,235 @@
   }
 }
 
-/* Estados de focus para accesibilidad */
-@media (prefers-reduced-motion: no-preference) {
-  .hamburger-btn:focus,
-  .btn-login:focus,
-  .btn-register:focus {
-    outline: 2px solid var(--reco-primary-blue);
-    outline-offset: 2px;
+/* Móvil pequeño - Logo más compacto */
+@media (max-width: 480px) {
+  .nav-container {
+    padding: 0.5rem 0.5rem 0.5rem 0;
+  }
+  
+  .logo-container {
+    padding: 4px 8px 4px 4px;
+    gap: 6px;
+  }
+  
+  .side-menu {
+    width: 260px;
+    right: -260px;
   }
 }
 
-/* ============================================================================
-   DOCUMENTACIÓN DE BREAKPOINTS PROGRESIVOS:
-   
-   🖥️  > 1200px: Header completo (Logo + 5 nav + 2 auth + hamburger oculto)
-   �  1180px: BREAKPOINT DE EMERGENCIA - Ocultar auth, mostrar hamburger SIEMPRE
-   �📱  1200px: Reducir tamaños de elementos
-   📱  1150px: Ocultar "Registrarse" (Logo + 5 nav + 1 auth + hamburger)
-   📱  1100px: Ocultar "Hogar Temporal" (Logo + 4 nav + 1 auth + hamburger)
-   📱  1050px: Ocultar "Iniciar Sesión" + Mostrar hamburger (Logo + 4 nav + hamburger)
-   📱  1000px: Ocultar "Voluntariado" (Logo + 3 nav + hamburger)
-   📱  950px:  Ocultar "Donar" (Logo + 2 nav + hamburger)
-   📱  900px:  Ocultar "Refugios" (Logo + 1 nav + hamburger)
-   📱  850px:  Ocultar toda navegación (Logo + hamburger solamente)
-   📱  768px:  Layout móvil (flexbox en lugar de grid)
-   📱  480px:  Móvil pequeño (textos y logos más pequeños)
-   
-   🔒 PROTECCIONES CRÍTICAS:
-   ✅ Hamburger SIEMPRE visible con display: flex !important
-   ✅ right-container tiene flex-shrink: 0 (nunca se comprime)
-   ✅ Logo limitado a max-width: 50% (no acapara espacio)
-   ✅ Breakpoint de emergencia en 1180px oculta auth inmediatamente
-   ✅ Auth buttons pueden comprimirse (flex-shrink: 1)
-   
-   ORDEN DE DESAPARICIÓN (smooth degradation):
-   1. Auth completa (1180px) - EMERGENCIA
-   2. "Registrarse" (1150px)
-   3. "Hogar Temporal" (1100px)
-   4. "Iniciar Sesión" (1050px)
-   5. "Voluntariado" (1000px)
-   6. "Donar" (950px)
-   7. "Refugios" (900px)
-   8. Navegación completa (850px)
-   
-   ✅ "Adoptar" es el último en desaparecer (más importante)
-   ✅ Hamburger NUNCA desaparece (acceso garantizado)
-   ✅ Auth siempre disponible en menú lateral
-   ✅ white-space: nowrap evita que los botones se rompan en líneas
-   
-   NOTAS DE MANTENIMIENTO:
-   - Hamburger es CRÍTICO - nunca debe desaparecer
-   - Testear especialmente en pantallas 1100-1200px
-   - Verificar que auth siempre esté en menú lateral
-   - Mantener flex-shrink en elementos correctos
-   ============================================================================ */
+/* Móvil muy pequeño - Solo logo */
+@media (max-width: 400px) {
+  .nav-container {
+    padding: 0.4rem 0.4rem 0.4rem 0;
+  }
+  
+  .logo-image {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .logo-text-styled {
+    font-size: 1rem;
+  }
+  
+  .logo-subtitle {
+    font-size: 0.45rem;
+  }
+}
+
+/* Móvil extremo - Logo mínimo */
+@media (max-width: 360px) {
+  .nav-container {
+    padding: 0.3rem 0.3rem 0.3rem 0;
+  }
+  
+  .logo-text-container {
+    display: none;
+  }
+  
+  .logo-container {
+    padding: 3px;
+    gap: 0;
+  }
+  
+  .logo-image {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .side-menu {
+    width: 240px;
+    right: -240px;
+  }
+}
+
+/* ================================= */
+/*          ANIMACIONES              */
+/* ================================= */
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.header {
+  animation: fadeInDown 0.8s ease-out;
+}
+
+.logo-image {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.side-menu-open {
+  animation: slideInRight 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-5px);
+  }
+  60% {
+    transform: translateY(-3px);
+  }
+}
+
+/* ================================= */
+/*        EFECTOS ESPECIALES         */
+/* ================================= */
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(135, 206, 235, 0.2), rgba(176, 224, 230, 0.3));
+  border-radius: 30px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+}
+
+.nav-link:hover::before {
+  opacity: 1;
+}
+
+.btn-register::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+  border-radius: 25px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.btn-register:hover::before {
+  opacity: 1;
+}
+
+/* Efecto de ondas */
+.header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(135, 206, 235, 0.1) 2px, transparent 2px),
+    radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+  background-size: 60px 60px, 40px 40px;
+  pointer-events: none;
+  opacity: 0.6;
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Espaciado del body para el header fijo */
+body {
+  padding-top: 90px;
+}
+
+/* Estados activos para navegación */
+.nav-link.active,
+.side-menu-link.active {
+  background: linear-gradient(135deg, #87CEEB 0%, #B0E0E6 100%);
+  color: #FFFFFF;
+  box-shadow: 0 8px 25px rgba(135, 206, 235, 0.4);
+}
+
+.side-menu-link.active {
+  border-right-color: #1E90FF; /* Cambio: borde derecho */
+  background: linear-gradient(135deg, #87CEEB, #B0E0E6);
+  color: #FFFFFF;
+}
+
+/* Efectos de cristal mejorados */
+.nav-link,
+.btn-login,
+.btn-register,
+.logo-container {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Efecto ripple en botones */
+.btn-login,
+.btn-register {
+  overflow: hidden;
+  position: relative;
+}
+
+.btn-login::after,
+.btn-register::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+}
+
+.btn-login:active::after,
+.btn-register:active::after {
+  width: 200px;
+  height: 200px;
+}
