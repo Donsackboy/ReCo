@@ -5,7 +5,7 @@ import HeaderUsuario from './variants/HeaderUsuario';
 import HeaderAdmin from './variants/HeaderAdmin';
 
 // Tipos de usuario según tu enum de la base de datos
-export type UserType = 'public' | 'usuario' | 'refugio' | 'admin' | 'veterinario' | null;
+export type UserType = 'public' | 'usuario' | 'refugio' | 'admin' | null;
 
 interface User {
   id?: number;
@@ -60,16 +60,7 @@ const HeaderWrapper: React.FC<HeaderWrapperProps> = ({
         />
       );
       
-    case 'veterinario':
-      // Por ahora usar el header de usuario, más adelante se puede crear uno específico
-      return (
-        <HeaderUsuario
-          onNavigateHome={onNavigateHome}
-          userName={`Dr. ${user.nombre}`}
-          onLogout={onLogout}
-        />
-      );
-      
+
     default:
       // Fallback al header público si el tipo no es reconocido
       return <HeaderPublic onNavigateHome={onNavigateHome} />;

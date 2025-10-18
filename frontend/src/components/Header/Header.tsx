@@ -122,14 +122,16 @@ function Header() {
             </li>
             <li className="side-menu-item">
               <a href="#animales" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">�</span>
+                
                 Animales
+                <span className="side-menu-icon">🐾</span>
               </a>
             </li>
             <li className="side-menu-item">
               <a href="#hogares-temporales" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">🏡</span>
+                
                 Hogares Temporales
+                <span className="side-menu-icon">🏡</span>
               </a>
             </li>
             <li className="side-menu-item">

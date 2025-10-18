@@ -1,0 +1,12 @@
+<!-- Placeholder SVG para animales -->
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#f0fff0"/>
+  <circle cx="200" cy="120" r="40" fill="#32CD32"/>
+  <circle cx="180" cy="110" r="5" fill="#228B22"/>
+  <circle cx="220" cy="110" r="5" fill="#228B22"/>
+  <ellipse cx="200" cy="125" rx="8" ry="5" fill="#228B22"/>
+  <path d="M 200 130 Q 190 140 180 135" stroke="#228B22" stroke-width="2" fill="none"/>
+  <path d="M 200 130 Q 210 140 220 135" stroke="#228B22" stroke-width="2" fill="none"/>
+  <text x="200" y="200" text-anchor="middle" font-family="Arial" font-size="18" fill="#228B22">🐾 Imagen no disponible</text>
+  <text x="200" y="230" text-anchor="middle" font-family="Arial" font-size="14" fill="#666">Pronto tendremos la foto de este animalito</text>
+</svg>
