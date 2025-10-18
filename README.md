@@ -19,8 +19,29 @@ ReCo es una plataforma que conecta refugios de animales con personas interesadas
 - 🏡 **Hogares Temporales**: Conexión con familias dispuestas a cuidar temporalmente (por ver)
 - 📅 **Eventos y Voluntariado**: Organización de eventos y actividades de voluntariado
 - 🗺️ **Mapa Interactivo**: Localización de refugios (por ver)
-- 📱 **Notificaciones**: Sistema de alertas y comunicaciones por ver)
+- 📱 **Notificaciones**: Sistema de alertas y comunicaciones (por ver)
 - 👤 **Dashboard Personalizado**: Paneles específicos para usuarios y refugios
+
+## 📊 Estado Actual del Proyecto
+
+### ✅ Completado
+- **🎨 Interfaz Frontend**: Sistema de headers responsive con tema verde
+- **📱 Navegación**: Menú hamburguesa y navegación adaptativa
+- **👥 Tipos de Usuario**: Headers específicos para admin, refugio, usuario y postulante
+- **🔧 Desarrollo**: Scripts .bat para inicio rápido en Windows
+- **📁 Estructura**: Organización modular de componentes
+
+### 🚧 En Desarrollo
+- **🔐 Autenticación**: Sistema de login y registro
+- **🏠 Dashboard**: Paneles personalizados por tipo de usuario
+- **🐕 Gestión de Animales**: CRUD completo de mascotas
+- **🔌 Backend API**: Integración Django REST Framework
+
+### 📋 Pendiente
+- **💝 Sistema de Donaciones**: Pagos y suscripciones
+- **🗺️ Mapa Interactivo**: Localización de refugios
+- **📱 Notificaciones**: Sistema de alertas
+- **🏡 Hogares Temporales**: Gestión de cuidado temporal
 
 ## 🛠️ Tecnologías
 
@@ -34,10 +55,12 @@ ReCo es una plataforma que conecta refugios de animales con personas interesadas
 
 ### Frontend
 
-- **Framework**: React 18+ con Vite
-- **Enrutamiento**: React Router
-- **Estado Global**: Context API / Redux Toolkit
-- **Estilos**: CSS Modules / Styled Components
+- **Framework**: React 18+ con TypeScript + Vite
+- **Enrutamiento**: React Router DOM
+- **Estilos**: CSS Modules personalizado con tema verde
+- **Componentes**: Sistema modular de headers responsive
+- **Estado**: Context API (implementado para autenticación)
+- **Build Tool**: Vite para desarrollo rápido
 - **Mapas**: Leaflet / Google Maps API
 
 ### Infraestructura
@@ -74,22 +97,46 @@ ReCo/
 │   ├── Dockerfile
 │   └── manage.py
 │
-├── frontend/                   # React + Vite
-│   ├── src/
-│   │   ├── components/         # Componentes reutilizables
-│   │   ├── pages/              # Páginas principales
-│   │   ├── services/           # API calls
-│   │   ├── hooks/              # Custom hooks
-│   │   ├── context/            # Context providers
-│   │   └── utils/              # Utilidades
+├── frontend/                   # React + Vite + TypeScript
+│   ├── public/
+│   │   └── Images/            # Imágenes y assets públicos
+│   │       └── reco-logo.png  # Logo del proyecto
 │   │
-│   ├── package.json
-│   ├── Dockerfile
-│   └── vite.config.js
+│   ├── src/
+│   │   ├── components/        # Componentes reutilizables
+│   │   │   └── Header/        # Sistema de headers
+│   │   │       ├── Header.css # Estilos del header (tema verde)
+│   │   │       ├── Header.tsx # Componente principal del header
+│   │   │       ├── HeaderWrapper.tsx # Wrapper dinámico
+│   │   │       ├── shared/    # Componentes compartidos
+│   │   │       │   └── Logo.tsx
+│   │   │       └── variants/  # Headers específicos por tipo de usuario
+│   │   │           ├── HeaderPublic.tsx
+│   │   │           ├── HeaderAdmin.tsx
+│   │   │           ├── HeaderRefugio.tsx
+│   │   │           └── HeaderUsuario.tsx
+│   │   │
+│   │   ├── pages/             # Páginas principales
+│   │   │   └── Home/          # Página de inicio
+│   │   │       ├── Home.tsx
+│   │   │       └── Home.css
+│   │   │
+│   │   ├── App.tsx            # Componente principal
+│   │   ├── App.css            # Estilos globales (tema verde)
+│   │   ├── index.css          # Estilos base
+│   │   └── main.tsx           # Punto de entrada
+│   │
+│   ├── package.json           # Dependencias y scripts npm
+│   ├── package-lock.json      # Lock file de dependencias
+│   ├── vite.config.ts         # Configuración de Vite
+│   ├── tsconfig.json          # Configuración TypeScript
+│   └── Dockerfile             # Contenedor Docker
 │
-├── docker-compose.yml
-├── .env.example
-└── README.md
+├── iniciar-reco.bat           # 🚀 Script para iniciar desarrollo rápido
+├── detener-reco.bat           # 🛑 Script para detener servicios
+├── docker-compose.yml         # Configuración Docker Compose
+├── .env.example               # Variables de entorno de ejemplo
+└── README.md                  # Documentación del proyecto
 ```
 
 ## 🚀 Inicio Rápido
@@ -101,6 +148,25 @@ ReCo/
 - Git
 
 ### 🔧 Instalación y Ejecución
+
+#### 🚀 Opción 1: Inicio Rápido con archivos .bat (Windows)
+
+1. **Clonar el repositorio**
+   ```bash
+   git clone https://github.com/Donsackboy/ReCo.git
+   cd ReCo/ReCo
+   ```
+
+2. **Ejecutar directamente**
+   ```bash
+   # Para levantar solo el frontend (desarrollo)
+   iniciar-reco.bat
+   
+   # Para detener los servicios
+   detener-reco.bat
+   ```
+
+#### 🐳 Opción 2: Con Docker (Completo - Frontend + Backend)
 
 1. **Clonar y configurar**
    ```bash
@@ -120,12 +186,70 @@ ReCo/
    docker compose exec backend python manage.py createsuperuser
    ```
 
-### 🌐 Acceso Local
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:8000
-- **Admin Django**: http://localhost:8000/admin
+#### 💻 Opción 3: Desarrollo Local Manual
 
-### 🛠️ Desarrollo Local (Opcional)
+**Frontend únicamente:**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+**Nota:** El puerto puede variar si otros servicios están en uso. Vite automáticamente buscará un puerto disponible (5173, 5174, 5175, etc.)
+
+### 🌐 Acceso Local
+
+#### 🎨 Frontend (Interfaz de Usuario)
+- **URL principal**: http://localhost:5173
+- **URLs alternativas** (si el puerto está ocupado): 
+  - http://localhost:5174
+  - http://localhost:5175
+  - http://localhost:5176
+  - etc.
+
+**💡 Tip**: Revisa la terminal donde ejecutaste `npm run dev` para ver el puerto exacto asignado.
+
+#### 🔧 Backend (Solo con Docker)
+- **API Backend**: http://localhost:8000
+- **Panel Admin Django**: http://localhost:8000/admin
+
+### ✨ Características Actuales
+
+- **🎨 Tema Verde**: Interfaz completamente rediseñada con paleta de colores verde
+- **📱 Header Responsivo**: Navegación adaptativa con menú hamburguesa
+- **🔗 Routing**: Sistema de navegación entre páginas
+- **👤 Tipos de Usuario**: Headers específicos para admin, refugio, usuario y postulante
+- **🚀 Desarrollo Rápido**: Archivos .bat para Windows que facilitan el inicio
+
+### � Solución de Problemas Comunes
+
+#### "Puerto en uso" o "Port 5173 is in use"
+```bash
+# Vite automáticamente buscará el siguiente puerto disponible
+# Revisa la terminal para ver el puerto asignado (ej: 5174, 5175, etc.)
+```
+
+#### "No se ve la página diseñada"
+1. Verifica que estés en la URL correcta mostrada en la terminal
+2. Refresca la página (F5 o Ctrl+R)
+3. Limpia caché del navegador (Ctrl+Shift+R)
+4. Abre en ventana privada/incógnito
+
+#### "npm error ENOENT package.json"
+```bash
+# Asegúrate de estar en el directorio correcto
+cd C:\ruta\completa\al\proyecto\ReCo\ReCo\frontend
+npm run dev
+```
+
+#### Reiniciar servidor completamente
+```bash
+# Presiona Ctrl+C en la terminal donde corre el servidor
+# Luego ejecuta nuevamente:
+npm run dev
+```
+
+### �🛠️ Desarrollo Local (Opcional)
 
 <details>
 <summary>Configuración para desarrollo sin Docker</summary>
