@@ -15,11 +15,11 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #228B22;
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: #228B22;
 }
 
 body {
@@ -47,11 +47,12 @@ button {
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: #32CD32;
 }
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: 2px solid #32CD32;
+  outline-offset: 2px;
 }
 
 @media (prefers-color-scheme: light) {
@@ -60,7 +61,7 @@ button:focus-visible {
     background-color: #ffffff;
   }
   a:hover {
-    color: #747bff;
+    color: #32CD32;
   }
   button {
     background-color: #f9f9f9;
@@ -75,7 +76,7 @@ button:focus-visible {
 }
 
 .app h1 {
-  color: #2563eb;
+  color: #228B22;
   font-size: 2.5rem;
   margin-bottom: 1rem;
 }
@@ -87,7 +88,7 @@ button:focus-visible {
 }
 
 .btn-primary {
-  background: #2563eb;
+  background: #228B22;
   color: white;
   border: none;
   padding: 1rem 2rem;
@@ -99,7 +100,7 @@ button:focus-visible {
 }
 
 .btn-primary:hover {
-  background: #1d4ed8;
+  background: #1e6b1e;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 12px rgba(34, 139, 34, 0.3);
 }
