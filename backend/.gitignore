@@ -1,0 +1,3 @@
+# Ignorar venv y core del backend (patrones relativos a este directorio)
+venv/
+core/
