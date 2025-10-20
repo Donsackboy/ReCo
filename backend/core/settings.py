@@ -48,11 +48,23 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'registry',
+    'rest_framework',
+    'rest_framework.authtoken',  # Para API tokens
+    'corsheaders',  # Para React
 ]
 
-# Registrar la app registry
-INSTALLED_APPS += [
-    "registry",
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Frontend React
 ]
 
 MIDDLEWARE = [

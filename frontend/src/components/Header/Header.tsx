@@ -1,8 +1,38 @@
-import React, { useState } from 'react';
-import './Header.css';
+import React, { useState } from "react";
+import "./Header.css";
+
+import LoginModal from "../LoginModal";
+import RegisterModal from "../RegisterModal";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
+
+  const openLogin = () => {
+    setShowLogin(true);
+    closeMenu();
+  };
+
+  const openRegister = () => {
+    setShowRegister(true);
+    closeMenu();
+  };
+
+  const closeModals = () => {
+    setShowLogin(false);
+    setShowRegister(false);
+  };
+
+  const switchToRegister = () => {
+    setShowLogin(false);
+    setShowRegister(true);
+  };
+
+  const switchToLogin = () => {
+    setShowRegister(false);
+    setShowLogin(true);
+  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -20,23 +50,19 @@ function Header() {
           <div className="nav-logo">
             <a href="#inicio" className="logo-link">
               <div className="logo-container">
-                <img 
-                  src="/Images/reco-logo.png" 
-                  alt="ReCo Logo" 
+                <img
+                  src="/Images/reco-logo.png"
+                  alt="ReCo Logo"
                   className="logo-image"
                 />
                 <div className="logo-text-container">
-                  <div className="logo-text-styled">
-                    ReCo
-                  </div>
-                  <div className="logo-subtitle">
-                    REFUGIO CONECTADO
-                  </div>
+                  <div className="logo-text-styled">ReCo</div>
+                  <div className="logo-subtitle">REFUGIO CONECTADO</div>
                 </div>
               </div>
             </a>
           </div>
-          
+
           {/* Bloque central: Menú de navegación */}
           <nav className="center-nav">
             <ul className="nav-menu">
@@ -78,18 +104,18 @@ function Header() {
               </li>
             </ul>
           </nav>
-          
+
           {/* Menú hamburguesa - extremo derecho (siempre visible) */}
           <div className="hamburger-container">
             <div className="auth-buttons desktop-auth">
-              <a href="#login" className="btn-login">
+              <button onClick={openLogin} className="btn-login">
                 <span className="auth-icon">👤</span>
                 <span className="auth-text">Iniciar Sesión</span>
-              </a>
-              <a href="#register" className="btn-register">
+              </button>
+              <button onClick={openRegister} className="btn-register">
                 <span className="auth-icon">✨</span>
                 <span className="auth-text">Registrarse</span>
-              </a>
+              </button>
             </div>
             <button className="hamburger-btn" onClick={toggleMenu}>
               <span className="hamburger-line"></span>
@@ -103,10 +129,14 @@ function Header() {
         {isMenuOpen && <div className="menu-overlay" onClick={closeMenu}></div>}
 
         {/* Menú lateral */}
-        <div className={`side-menu ${isMenuOpen ? 'side-menu-open' : ''}`}>
+        <div className={`side-menu ${isMenuOpen ? "side-menu-open" : ""}`}>
           <div className="side-menu-header">
             <div className="side-menu-logo">
-              <img src="/Images/reco-logo.png" alt="ReCo" className="side-logo" />
+              <img
+                src="/Images/reco-logo.png"
+                alt="ReCo"
+                className="side-logo"
+              />
               <span className="side-logo-text">ReCo</span>
             </div>
             <button className="close-btn" onClick={closeMenu}>
@@ -115,25 +145,41 @@ function Header() {
           </div>
           <ul className="side-menu-items">
             <li className="side-menu-item">
-              <a href="#refugios" className="side-menu-link" onClick={closeMenu}>
+              <a
+                href="#refugios"
+                className="side-menu-link"
+                onClick={closeMenu}
+              >
                 <span className="side-menu-icon">🏠</span>
                 Refugios
               </a>
             </li>
             <li className="side-menu-item">
-              <a href="#animales" className="side-menu-link" onClick={closeMenu}>
+              <a
+                href="#animales"
+                className="side-menu-link"
+                onClick={closeMenu}
+              >
                 <span className="side-menu-icon">�</span>
                 Animales
               </a>
             </li>
             <li className="side-menu-item">
-              <a href="#hogares-temporales" className="side-menu-link" onClick={closeMenu}>
+              <a
+                href="#hogares-temporales"
+                className="side-menu-link"
+                onClick={closeMenu}
+              >
                 <span className="side-menu-icon">🏡</span>
                 Hogares Temporales
               </a>
             </li>
             <li className="side-menu-item">
-              <a href="#donaciones" className="side-menu-link" onClick={closeMenu}>
+              <a
+                href="#donaciones"
+                className="side-menu-link"
+                onClick={closeMenu}
+              >
                 <span className="side-menu-icon">💝</span>
                 Donaciones
               </a>
@@ -145,30 +191,43 @@ function Header() {
               </a>
             </li>
             <li className="side-menu-item">
-              <a href="#voluntariado" className="side-menu-link" onClick={closeMenu}>
+              <a
+                href="#voluntariado"
+                className="side-menu-link"
+                onClick={closeMenu}
+              >
                 <span className="side-menu-icon">🤝</span>
                 Voluntariado
               </a>
             </li>
-            
+
             {/* Separador */}
             <hr className="side-menu-separator" />
-            
+
             {/* Autenticación en menú móvil */}
             <li className="side-menu-item">
-              <a href="#login" className="side-menu-link" onClick={closeMenu}>
+              <button onClick={openLogin} className="side-menu-link">
                 <span className="side-menu-icon">👤</span>
                 Iniciar Sesión
-              </a>
-            </li>
-            <li className="side-menu-item">
-              <a href="#register" className="side-menu-link" onClick={closeMenu}>
+              </button>
+              <button onClick={openRegister} className="side-menu-link">
                 <span className="side-menu-icon">✨</span>
                 Registrarse
-              </a>
+              </button>
             </li>
           </ul>
         </div>
+
+        <LoginModal
+          isOpen={showLogin}
+          onClose={closeModals}
+          onSwitchToRegister={switchToRegister}
+        />
+        <RegisterModal
+          isOpen={showRegister}
+          onClose={closeModals}
+          onSwitchToLogin={switchToLogin}
+        />
       </nav>
     </header>
   );
