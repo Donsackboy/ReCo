@@ -41,15 +41,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  transition: all 0.3s ease;
   z-index: 100000; /* Asegurar que esté por encima del modal */
 }
 
 .close-button:hover {
-  background: #f8f8f8;
   color: #ff4444;
-  transform: rotate(90deg);
 }
 
 .modal-content h2 {
