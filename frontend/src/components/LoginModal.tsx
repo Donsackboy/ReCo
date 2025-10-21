@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import "./AuthModals.css";
 
 interface LoginModalProps {
@@ -60,7 +61,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div className="modal-overlay">
       <div className="modal-content">
         <button className="close-button" onClick={onClose}>
@@ -103,7 +104,8 @@ const LoginModal: React.FC<LoginModalProps> = ({
           </button>
         </p>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

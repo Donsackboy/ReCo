@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import "./AuthModals.css";
 
 interface RegisterModalProps {
@@ -77,7 +78,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div className="modal-overlay">
       <div className="modal-content">
         <button className="close-button" onClick={onClose}>
@@ -151,7 +152,8 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
           </button>
         </p>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

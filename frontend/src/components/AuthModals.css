@@ -8,7 +8,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999; /* Mayor que el header */
+  z-index: 99999; /* Aumentado para asegurar que esté por encima de todo */
   padding: 20px;
   overflow-y: auto; /* Permitir scroll si es necesario */
 }
@@ -43,7 +43,7 @@
   justify-content: center;
   border-radius: 50%;
   transition: all 0.3s ease;
-  z-index: 10000;
+  z-index: 100000; /* Asegurar que esté por encima del modal */
 }
 
 .close-button:hover {
