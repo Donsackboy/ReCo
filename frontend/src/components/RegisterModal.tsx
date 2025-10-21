@@ -13,7 +13,6 @@ interface FormData {
   email: string;
   password: string;
   confirmPassword: string;
-  tipo_usuario: "default" | "refugio";
 }
 
 const RegisterModal: React.FC<RegisterModalProps> = ({
@@ -26,7 +25,6 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
     email: "",
     password: "",
     confirmPassword: "",
-    tipo_usuario: "default",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,6 +36,8 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
     }
 
     try {
+      // Todos los usuarios se registran como "default" por seguridad
+      // Los refugios deben ser aprobados por un administrador mediante un proceso específico
       const response = await fetch("http://localhost:8000/api/auth/register/", {
         method: "POST",
         headers: {
@@ -47,7 +47,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
           username: formData.username,
           email: formData.email,
           password: formData.password,
-          tipo_usuario: formData.tipo_usuario,
+          tipo_usuario: "default", // Todos los usuarios se registran como usuarios básicos
         }),
       });
 
@@ -67,9 +67,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -125,17 +123,6 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
               onChange={handleChange}
               required
             />
-          </div>
-          <div className="form-group">
-            <label>Tipo de usuario:</label>
-            <select
-              name="tipo_usuario"
-              value={formData.tipo_usuario}
-              onChange={handleChange}
-            >
-              <option value="default">Usuario Default</option>
-              <option value="refugio">Refugio</option>
-            </select>
           </div>
           <button type="submit" className="submit-button">
             Registrarse

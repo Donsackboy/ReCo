@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./Header.css";
 
 import LoginModal from "../LoginModal";
@@ -205,12 +205,14 @@ function Header() {
             <hr className="side-menu-separator" />
 
             {/* Autenticación en menú móvil */}
-            <li className="side-menu-item">
-              <button onClick={openLogin} className="side-menu-link">
+            <li className="side-menu-item auth-buttons-container">
+              <button onClick={openLogin} className="side-menu-auth-button">
                 <span className="side-menu-icon">👤</span>
                 Iniciar Sesión
               </button>
-              <button onClick={openRegister} className="side-menu-link">
+            </li>
+            <li className="side-menu-item auth-buttons-container">
+              <button onClick={openRegister} className="side-menu-auth-button">
                 <span className="side-menu-icon">✨</span>
                 Registrarse
               </button>

@@ -18,7 +18,7 @@ function Home() {
           
           <section className="intro-section">
             <h2>Conectando refugios con familias amorosas</h2>
-            <p>En ReCo, facilitamos la adopción responsable y conectamos refugios de animales con familias que buscan dar amor y cuidado a una mascota.</p>
+            <p>En ReCo, facilitamos la adopción responsable y conectamos refugios de animales con familias que buscan dar amor y cuidado a un peludito.</p>
           </section>
         </div>
       </main>
