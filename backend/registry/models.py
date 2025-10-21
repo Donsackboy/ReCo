@@ -1,24 +1,45 @@
 from django.db import models
+from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 
-class Usuario(models.Model):
-    class TipoUsuario(models.TextChoices):
-        ADOPTANTE = "adoptante", "Adoptante"
-        DONANTE = "donante", "Donante"
-        VOLUNTARIO = "voluntario", "Voluntario"
-        OTRO = "otro", "Otro"
-
-    id_usuario = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=100)
-    email = models.EmailField(max_length=100, unique=True)
-    password = models.CharField(max_length=255)  # almacenar hash
-    telefono = models.CharField(max_length=20, blank=True, null=True)
-    direccion = models.CharField(max_length=150, blank=True, null=True)
-    tipo_usuario = models.CharField(max_length=20, choices=TipoUsuario.choices, default=TipoUsuario.OTRO)
-    contador_voluntariados = models.PositiveIntegerField(default=0)
-    contador_hogares_temporales = models.PositiveIntegerField(default=0)
+class Usuario(AbstractUser):
+    # Hacer que email sea el campo de identificación
+    username = models.CharField(max_length=150, blank=True)  # Hacerlo opcional
+    email = models.EmailField(unique=True)  # Email como único
+    
+    USERNAME_FIELD = 'email'  # ← Usar email para login
+    REQUIRED_FIELDS = ['username']  # ← username ya no es requerido
+    
+    TIPO_USUARIO_CHOICES = [
+        ('admin', 'Administrador'),
+        ('refugio', 'Refugio'),
+        ('default', 'Usuario Default'),
+    ]
+    
+    tipo_usuario = models.CharField(max_length=10, choices=TIPO_USUARIO_CHOICES, default='default')
+    telefono = models.CharField(max_length=15, blank=True)
+    contador_voluntariados = models.IntegerField(default=0)
+    contador_hogares_temporales = models.IntegerField(default=0)
+    refugio = models.OneToOneField('Refugio', on_delete=models.CASCADE, null=True, blank=True)
+    
+    # Agregar related_name único para evitar conflictos
+    groups = models.ManyToManyField(
+        'auth.Group',
+        verbose_name='groups',
+        blank=True,
+        related_name='usuario_set',  # ← Cambiado
+        related_query_name='usuario',
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        verbose_name='user permissions',
+        blank=True,
+        related_name='usuario_set',  # ← Cambiado
+        related_query_name='usuario',
+    )
 
     def __str__(self):
-        return f"{self.nombre} <{self.email}>"
+        return f"{self.username} ({self.tipo_usuario})"
 
 class Refugio(models.Model):
     id_refugio = models.AutoField(primary_key=True)
@@ -54,3 +75,311 @@ class Animal(models.Model):
 
     def __str__(self):
         return f"{self.nombre} ({self.especie})"
+    
+class HogaresTemporales(models.Model):
+    ESTADO_OPCIONES = [
+        ('en_proceso', 'En Proceso'),
+        ('aprobado', 'Aprobado'),
+        ('finalizado', 'Finalizado'),
+        ('rechazado', 'Rechazado'),
+        ('cancelado_usuario', 'Cancelado por Usuario'),
+    ]
+    
+    TIPO_VIVIENDA_OPCIONES = [
+        ('casa', 'Casa'),
+        ('departamento', 'Departamento'),
+        ('otro', 'Otro'),
+    ]
+
+    id_hogar = models.AutoField(primary_key=True)
+    id_usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    id_animal = models.ForeignKey('Animal', on_delete=models.CASCADE)  # Asumiendo modelo Animal
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateField()
+    estado = models.CharField(max_length=20, choices=ESTADO_OPCIONES, default='en_proceso')
+    motivo_postulacion = models.TextField()
+    experiencia_previa = models.TextField()
+    tipo_vivienda = models.CharField(max_length=15, choices=TIPO_VIVIENDA_OPCIONES)
+    tiene_otras_mascotas = models.BooleanField()
+    duracion_disponible = models.CharField(max_length=50)
+    fecha_postulacion = models.DateTimeField(auto_now_add=True)
+    motivo_rechazo = models.TextField(blank=True, null=True)
+    motivo_cancelacion = models.TextField(blank=True, null=True)
+    fecha_cancelacion = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Hogar Temporal {self.id_hogar} - {self.id_usuario}"
+
+    class Meta:
+        db_table = 'hogares_temporales'
+        verbose_name_plural = 'Hogares Temporales'
+
+class Donaciones(models.Model):
+    TIPO_OPCIONES = [
+        ('unica', 'Única'),
+        ('recurrente', 'Recurrente'),
+    ]
+    
+    ESTADO_OPCIONES = [
+        ('pendiente', 'Pendiente'),
+        ('completada', 'Completada'),
+        ('fallida', 'Fallida'),
+    ]
+
+    id_donacion = models.AutoField(primary_key=True)
+    id_usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    id_refugio = models.ForeignKey('Refugio', on_delete=models.CASCADE)  # Asumiendo modelo Refugio
+    monto = models.DecimalField(max_digits=10, decimal_places=2)
+    tipo = models.CharField(max_length=15, choices=TIPO_OPCIONES)
+    fecha = models.DateTimeField(auto_now_add=True)
+    estado = models.CharField(max_length=15, choices=ESTADO_OPCIONES, default='pendiente')
+    transbank_token = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return f"Donación {self.id_donacion} - ${self.monto}"
+
+    class Meta:
+        db_table = 'donaciones'
+        verbose_name_plural = 'Donaciones'
+
+class Suscripciones(models.Model):
+    ESTADO_OPCIONES = [
+        ('activa', 'Activa'),
+        ('pausada', 'Pausada'),
+        ('cancelada', 'Cancelada'),
+    ]
+
+    id_suscripcion = models.AutoField(primary_key=True)
+    id_usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    id_refugio = models.ForeignKey('Refugio', on_delete=models.CASCADE)
+    monto_mensual = models.DecimalField(max_digits=10, decimal_places=2)
+    estado = models.CharField(max_length=15, choices=ESTADO_OPCIONES, default='activa')
+    fecha_inicio = models.DateField(auto_now_add=True)
+    fecha_proximo_cobro = models.DateField()
+
+    def __str__(self):
+        return f"Suscripción {self.id_suscripcion} - ${self.monto_mensual}/mes"
+
+    class Meta:
+        db_table = 'suscripciones'
+        verbose_name_plural = 'Suscripciones'
+
+class Eventos(models.Model):
+    id_evento = models.AutoField(primary_key=True)
+    id_refugio = models.ForeignKey('Refugio', on_delete=models.CASCADE)
+    nombre = models.CharField(max_length=100)
+    fecha = models.DateField()
+    lugar = models.CharField(max_length=150)
+    descripcion = models.TextField()
+
+    def __str__(self):
+        return f"{self.nombre} - {self.fecha}"
+
+    class Meta:
+        db_table = 'eventos'
+        verbose_name_plural = 'Eventos'
+
+class InscripcionesEventos(models.Model):
+    id_inscripcion = models.AutoField(primary_key=True)
+    id_usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    id_evento = models.ForeignKey('Eventos', on_delete=models.CASCADE)
+    asistencia = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Inscripción {self.id_inscripcion} - {self.id_usuario}"
+
+    class Meta:
+        db_table = 'inscripciones_eventos'
+        verbose_name_plural = 'Inscripciones a Eventos'
+
+class HistorialMedico(models.Model):
+    TIPO_ATENCION_OPCIONES = [
+        ('vacuna', 'Vacuna'),
+        ('desparasitacion', 'Desparasitación'),
+        ('cirugia', 'Cirugía'),
+        ('consulta', 'Consulta'),
+        ('tratamiento', 'Tratamiento'),
+        ('otro', 'Otro'),
+    ]
+
+    id_historial = models.AutoField(primary_key=True)
+    id_animal = models.ForeignKey('Animal', on_delete=models.CASCADE)
+    tipo_atencion = models.CharField(max_length=20, choices=TIPO_ATENCION_OPCIONES)
+    descripcion = models.TextField()
+    veterinario = models.CharField(max_length=100)
+    clinica = models.CharField(max_length=150)
+    fecha = models.DateField()
+    proximo_control = models.DateField(blank=True, null=True)
+    costo = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    documentos_url = models.CharField(max_length=255, blank=True, null=True)
+    notas = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Historial {self.id_historial} - {self.tipo_atencion}"
+
+    class Meta:
+        db_table = 'historial_medico'
+        verbose_name_plural = 'Historiales Médicos'
+
+class CatalogoServicios(models.Model):
+    CATEGORIA_OPCIONES = [
+        ('vacuna', 'Vacuna'),
+        ('desparasitacion', 'Desparasitación'),
+        ('cirugia', 'Cirugía'),
+        ('tratamiento', 'Tratamiento'),
+        ('examen', 'Examen'),
+        ('otro', 'Otro'),
+    ]
+    
+    ESPECIE_APLICABLE_OPCIONES = [
+        ('perro', 'Perro'),
+        ('gato', 'Gato'),
+        ('ambos', 'Ambos'),
+    ]
+
+    id_servicio = models.AutoField(primary_key=True)
+    categoria = models.CharField(max_length=20, choices=CATEGORIA_OPCIONES)
+    nombre = models.CharField(max_length=150)
+    descripcion = models.TextField()
+    costo_promedio = models.DecimalField(max_digits=10, decimal_places=2)
+    especie_aplicable = models.CharField(max_length=10, choices=ESPECIE_APLICABLE_OPCIONES)
+    frecuencia = models.CharField(max_length=50)
+    es_obligatorio = models.BooleanField(default=False)
+    icono_url = models.CharField(max_length=255, blank=True, null=True)
+    activo = models.BooleanField(default=True)
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.nombre} - ${self.costo_promedio}"
+
+    class Meta:
+        db_table = 'catalogo_servicios'
+        verbose_name_plural = 'Catálogo de Servicios'
+
+class DonacionesEspecificas(models.Model):
+    ESTADO_USO_OPCIONES = [
+        ('pendiente', 'Pendiente'),
+        ('utilizado', 'Utilizado'),
+        ('parcial', 'Parcial'),
+    ]
+
+    id_donacion_especifica = models.AutoField(primary_key=True)
+    id_donacion = models.ForeignKey('Donaciones', on_delete=models.CASCADE)
+    id_servicio = models.ForeignKey('CatalogoServicios', on_delete=models.CASCADE)
+    id_animal = models.ForeignKey('Animal', on_delete=models.CASCADE, blank=True, null=True)
+    id_refugio = models.ForeignKey('Refugio', on_delete=models.CASCADE)
+    cantidad = models.IntegerField(default=1)
+    monto_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+    estado_uso = models.CharField(max_length=15, choices=ESTADO_USO_OPCIONES, default='pendiente')
+    fecha_uso = models.DateTimeField(blank=True, null=True)
+    notas = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Donación Específica {self.id_donacion_especifica} - {self.cantidad}u"
+
+    class Meta:
+        db_table = 'donaciones_especificas'
+        verbose_name_plural = 'Donaciones Específicas'
+
+class ComprobantesServicio(models.Model):
+    TIPO_DOCUMENTO_OPCIONES = [
+        ('foto_animal', 'Foto del Animal'),
+        ('boleta', 'Boleta'),
+        ('receta', 'Receta'),
+        ('carnet_vacuna', 'Carnet de Vacuna'),
+        ('otro', 'Otro'),
+    ]
+
+    id_comprobante = models.AutoField(primary_key=True)
+    id_donacion_especifica = models.ForeignKey('DonacionesEspecificas', on_delete=models.CASCADE)
+    id_animal = models.ForeignKey('Animal', on_delete=models.CASCADE)
+    tipo_documento = models.CharField(max_length=20, choices=TIPO_DOCUMENTO_OPCIONES)
+    url_archivo = models.CharField(max_length=255)
+    descripcion = models.TextField(blank=True, null=True)
+    fecha_subida = models.DateTimeField(auto_now_add=True)
+    subido_por = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    verificado = models.BooleanField(default=False)
+    fecha_verificacion = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Comprobante {self.id_comprobante} - {self.tipo_documento}"
+
+    class Meta:
+        db_table = 'comprobantes_servicio'
+        verbose_name_plural = 'Comprobantes de Servicio'
+
+class NecesidadesRefugio(models.Model):
+    TIPO_OPCIONES = [
+        ('alimento', 'Alimento'),
+        ('medicamento', 'Medicamento'),
+        ('servicio', 'Servicio'),
+        ('articulo', 'Artículo'),
+        ('otro', 'Otro'),
+    ]
+    
+    PRIORIDAD_OPCIONES = [
+        ('baja', 'Baja'),
+        ('media', 'Media'),
+        ('alta', 'Alta'),
+        ('urgente', 'Urgente'),
+    ]
+    
+    ESTADO_OPCIONES = [
+        ('activa', 'Activa'),
+        ('cumplida', 'Cumplida'),
+        ('cancelada', 'Cancelada'),
+    ]
+
+    id_necesidad = models.AutoField(primary_key=True)
+    id_refugio = models.ForeignKey('Refugio', on_delete=models.CASCADE)
+    tipo = models.CharField(max_length=15, choices=TIPO_OPCIONES)
+    descripcion = models.CharField(max_length=200)
+    monto_necesario = models.DecimalField(max_digits=10, decimal_places=2)
+    monto_recaudado = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    prioridad = models.CharField(max_length=10, choices=PRIORIDAD_OPCIONES, default='media')
+    estado = models.CharField(max_length=15, choices=ESTADO_OPCIONES, default='activa')
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_limite = models.DateField(blank=True, null=True)
+    imagen_url = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return f"Necesidad {self.id_necesidad} - {self.descripcion}"
+
+    class Meta:
+        db_table = 'necesidades_refugio'
+        verbose_name_plural = 'Necesidades de Refugio'
+
+class PerfilAdoptante(models.Model):
+    TIPO_VIVIENDA_OPCIONES = [
+        ('casa', 'Casa'),
+        ('depto', 'Departamento'),
+    ]
+    
+    HORAS_DISPONIBLES_OPCIONES = [
+        ('muchas', 'Muchas'),
+        ('algunas', 'Algunas'),
+        ('pocas', 'Pocas'),
+    ]
+    
+    NIVEL_ENERGIA_OPCIONES = [
+        ('activo', 'Activo'),
+        ('moderado', 'Moderado'),
+        ('tranquilo', 'Tranquilo'),
+    ]
+
+    id_perfil = models.AutoField(primary_key=True)
+    id_usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    tipo_vivienda = models.CharField(max_length=10, choices=TIPO_VIVIENDA_OPCIONES)
+    tiene_patio = models.BooleanField()
+    horas_disponibles = models.CharField(max_length=10, choices=HORAS_DISPONIBLES_OPCIONES)
+    nivel_energia = models.CharField(max_length=10, choices=NIVEL_ENERGIA_OPCIONES)
+    tiene_mascotas = models.BooleanField()
+    tiene_ninos = models.BooleanField()
+    experiencia_previa = models.BooleanField()
+
+    def __str__(self):
+        return f"Perfil Adoptante - {self.id_usuario}"
+
+    class Meta:
+        db_table = 'perfil_adoptante'
+        verbose_name_plural = 'Perfiles de Adoptantes'
