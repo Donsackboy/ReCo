@@ -22,6 +22,9 @@ const refugios = [
       { id: 102, nombre: 'Max', imagen: '/Images/animales/max.jpg' },
       { id: 103, nombre: 'Toby', imagen: '/Images/animales/toby.jpg' },
       { id: 104, nombre: 'Nina', imagen: '/Images/animales/nina.jpg' },
+      { id: 105, nombre: 'Rocky', imagen: '' },
+      { id: 106, nombre: 'Simba', imagen: '' },
+      { id: 107, nombre: 'Bella', imagen: '' },
     ],
   },
   {
@@ -34,6 +37,8 @@ const refugios = [
       { id: 202, nombre: 'Milo', imagen: '/Images/animales/milo.jpg' },
       { id: 203, nombre: 'Bella', imagen: '/Images/animales/bella.jpg' },
       { id: 204, nombre: 'Rocky', imagen: '/Images/animales/rocky.jpg' },
+      { id: 205, nombre: 'Chester', imagen: '' },
+      { id: 206, nombre: 'Daisy', imagen: '' },
     ],
   },
 ];
@@ -99,56 +104,57 @@ export default function Refugios() {
             style={{ padding: '8px 12px 8px 38px', borderRadius: '8px', border: '1.5px solid #43ea6b', width: '100%', fontSize: '1rem', background: '#fff', color: '#228B22', boxShadow: '0 1px 4px #43ea6b11' }}
           />
         </div>
-        <div style={{ width: '100%', textAlign: 'left', marginBottom: '4px', fontWeight: 600, color: '#228B22', fontSize: '1rem' }}>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ marginRight: '2px' }} xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="#43ea6b"/>
-              <text x="12" y="16" textAnchor="middle" fontSize="10" fill="#228B22">CL</text>
-            </svg>
-            Región:
-          </span>
+        <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+          <span style={{ fontWeight: 600, color: '#228B22', fontSize: '1rem' }}>Región:</span>
+          <select
+            value={region}
+            onChange={e => setRegion(e.target.value)}
+            style={{ padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #43ea6b', fontSize: '1rem', background: '#fff', color: '#228B22', fontWeight: 500, boxShadow: '0 1px 4px #43ea6b11', minWidth: '120px' }}
+          >
+            {regiones.map(r => (
+              <option key={r.nombre} value={r.nombre === 'Todas' ? '' : r.nombre}>
+                {r.num ? `${r.num} - ` : ''}{r.nombre}
+              </option>
+            ))}
+          </select>
         </div>
-        <select
-          value={region}
-          onChange={e => setRegion(e.target.value)}
-          style={{ padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #43ea6b', width: '100%', fontSize: '1rem', background: '#fff', color: '#228B22', fontWeight: 500, boxShadow: '0 1px 4px #43ea6b11' }}
-        >
-          {regiones.map(r => (
-            <option key={r.nombre} value={r.nombre === 'Todas' ? '' : r.nombre}>
-              {r.num ? `${r.num} - ` : ''}{r.nombre}
-            </option>
-          ))}
-        </select>
       </div>
   <div className="refugios-list" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '40px', width: '100%', maxWidth: '1400px', marginTop: '32px' }}>
-    {refugiosFiltrados.map(refugio => (
-  <div key={refugio.id} className="refugio-card" style={{ flex: '1 1 200px', maxWidth: '1000px', minWidth: '700px', background: '#fff', borderRadius: '28px', boxShadow: '0 2px 24px #43ea6b22', padding: '40px 32px', margin: '0 auto', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div className="refugio-info" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '24px' }}>
-          <img src={refugio.logo} alt={refugio.nombre} style={{ width: '90px', height: '90px', borderRadius: '50%', background: '#eaffea', marginBottom: '12px', boxShadow: '0 2px 8px #43ea6b22' }} />
-          <h3 style={{ fontSize: '1.7rem', fontWeight: 700, color: '#228B22', margin: 0, textAlign: 'center' }}>{refugio.nombre}</h3>
-          <Link to={`/refugios/${refugio.id}`} style={{ color: '#43ea6b', fontWeight: 600, marginTop: '12px', textDecoration: 'none', fontSize: '1.15rem' }}>Ver refugio</Link>
-        </div>
-        <div className="refugio-animales" style={{ display: 'flex', flexWrap: 'nowrap', gap: '24px', alignItems: 'center', width: '100%', overflow: 'hidden', minWidth: '0' }}>
-          {refugio.animales.slice(0, 5).map((animal) => (
-            <Link key={animal.id} to={`/animales/${animal.id}`} className="refugio-animal" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textDecoration: 'none', color: '#228B22', fontWeight: 500, minWidth: '0' }}>
-              <img
-                src={animal.imagen && animal.imagen !== '' ? animal.imagen : '/Images/animales/placeholder.png'}
-                alt={animal.nombre}
-                style={animal.imagen && animal.imagen !== ''
-                  ? { width: '170px', height: '170px', objectFit: 'cover', borderRadius: '18px', background: '#f0fff0', boxShadow: '0 2px 8px #43ea6b22', marginBottom: '8px' }
-                  : { width: '170px', height: '170px', objectFit: 'cover', borderRadius: '18px', background: '#eaffea', boxShadow: '0 2px 8px #43ea6b22', marginBottom: '8px' }
-                }
-                onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = '/Images/animales/placeholder.png'; }}
-              />
-              <div style={{ fontSize: '1.18rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{animal.nombre}</div>
-            </Link>
-          ))}
-          {refugio.animales.length > 4 && (
-            <Link to={`/refugios/${refugio.id}`} style={{ marginLeft: '16px', color: '#43ea6b', fontWeight: 600, fontSize: '1.1rem', textDecoration: 'none', whiteSpace: 'nowrap' }}>Ver más animalitos...</Link>
-          )}
-        </div>
+    {refugiosFiltrados.length === 0 ? (
+      <div className="refugio-card" style={{ flex: '1 1 100px', maxWidth: '600px', minWidth: '320px', background: '#fff', borderRadius: '28px', boxShadow: '0 2px 24px #43ea6b22', padding: '40px 32px', margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#228B22', marginBottom: '12px', textAlign: 'center' }}>Aún no hay refugios registrados en esta zona</h3>
+        <p style={{ color: '#228B22', fontSize: '1.1rem', textAlign: 'center', marginBottom: 0 }}>Si conoces algún refugio, comparte la información para que tenga visibilidad y más animalitos puedan encontrar ayuda.</p>
       </div>
-    ))}
+    ) : (
+      refugiosFiltrados.map(refugio => (
+        <div key={refugio.id} className="refugio-card" style={{ flex: '1 1 200px', maxWidth: '1000px', minWidth: '700px', background: '#fff', borderRadius: '28px', boxShadow: '0 2px 24px #43ea6b22', padding: '40px 32px', margin: '0 auto', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div className="refugio-info" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '24px' }}>
+            <img src={refugio.logo} alt={refugio.nombre} style={{ width: '90px', height: '90px', borderRadius: '50%', background: '#eaffea', marginBottom: '12px', boxShadow: '0 2px 8px #43ea6b22' }} />
+            <h3 style={{ fontSize: '1.7rem', fontWeight: 700, color: '#228B22', margin: 0, textAlign: 'center' }}>{refugio.nombre}</h3>
+            <Link to={`/refugios/${refugio.id}`} style={{ color: '#43ea6b', fontWeight: 600, marginTop: '12px', textDecoration: 'none', fontSize: '1.15rem' }}>Ver refugio</Link>
+          </div>
+          <div className="refugio-animales" style={{ display: 'flex', flexWrap: 'nowrap', gap: '24px', alignItems: 'center', width: '100%', overflow: 'hidden', minWidth: '0' }}>
+            {refugio.animales.slice(0, 4).map((animal) => (
+              <Link key={animal.id} to={`/animales/${animal.id}`} className="refugio-animal" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textDecoration: 'none', color: '#228B22', fontWeight: 500, minWidth: '0' }}>
+                <img
+                  src={animal.imagen && animal.imagen !== '' ? animal.imagen : '/Images/animales/placeholder.png'}
+                  alt={animal.nombre}
+                  style={animal.imagen && animal.imagen !== ''
+                    ? { width: '170px', height: '170px', objectFit: 'cover', borderRadius: '18px', background: '#f0fff0', boxShadow: '0 2px 8px #43ea6b22', marginBottom: '8px' }
+                    : { width: '170px', height: '170px', objectFit: 'cover', borderRadius: '18px', background: '#eaffea', boxShadow: '0 2px 8px #43ea6b22', marginBottom: '8px' }
+                  }
+                  onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = '/Images/animales/placeholder.png'; }}
+                />
+                <div style={{ fontSize: '1.18rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{animal.nombre}</div>
+              </Link>
+            ))}
+            {refugio.animales.length > 4 && (
+              <Link to={`/refugios/${refugio.id}`} style={{ marginLeft: '16px', color: '#43ea6b', fontWeight: 600, fontSize: '1.1rem', textDecoration: 'none', whiteSpace: 'nowrap' }}>Ver más ...</Link>
+            )}
+          </div>
+        </div>
+      ))
+    )}
   </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import Header from './components/Header/Header'
-import Home from './pages/Home/Home'
+import Home from './rols/Public/pages/Home/Home'
 import './App.css'
 
 function App() {

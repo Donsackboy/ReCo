@@ -1,8 +1,9 @@
 import React from 'react';
-import HeaderPublic from './variants/HeaderPublic';
-import HeaderRefugio from './variants/HeaderRefugio';
-import HeaderUsuario from './variants/HeaderUsuario';
-import HeaderAdmin from './variants/HeaderAdmin';
+import HeaderPublic from '../../rols/Public/components/HeaderPublic';
+import HeaderRefugio from '../../rols/Refugio/components/HeaderRefugio';
+import HeaderUsuario from '../../rols/Usuario/components/HeaderUsuario';
+import HeaderAdmin from '../../rols/Admin/components/HeaderAdmin';
+// Eliminar imports de variants, ahora los headers están en las carpetas de cada rol
 
 // Tipos de usuario según tu enum de la base de datos
 export type UserType = 'public' | 'usuario' | 'refugio' | 'admin' | null;

@@ -2,13 +2,15 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
-import Home from './pages/Home/Home';
-import RefugiosList from './pages/Refugios/Refugios';
-import Animales from './pages/Animales/Animales.tsx';
-import HogaresTemporales from './pages/HogaresTemporales/HogaresTemporales.tsx';
-import DonacionesPage from './pages/Donaciones/Donaciones';
-import EventosPage from './pages/Eventos/Eventos';
-import VoluntariadoPage from './pages/Voluntariado/Voluntariado';
+import Home from './rols/Public/pages/Home/Home.tsx';
+import RefugiosList from './rols/Public/pages/Refugios/Refugios.tsx';
+import Animales from './rols/Public/pages/Animales/Animales.tsx';
+import AnimalPerfil from './rols/Public/pages/Animales/AnimalPerfil.tsx';
+import AnimalPerfilRefugio from './rols/Refugio/AnimalPerfil.tsx';
+import HogaresTemporales from './rols/Public/pages/HogaresTemporales/HogaresTemporales.tsx';
+import DonacionesPage from './rols/Public/pages/Donaciones/Donaciones.tsx';
+import EventosPage from './rols/Public/pages/Eventos/Eventos.tsx';
+import VoluntariadoPage from './rols/Public/pages/Voluntariado/Voluntariado.tsx';
 
 export default function AppRouter() {
   return (
@@ -20,6 +22,9 @@ export default function AppRouter() {
             <Route path="/" element={<Home />} />
             <Route path="/refugios" element={<RefugiosList />} />
             <Route path="/animales" element={<Animales />} />
+              <Route path="/animales/:id" element={<AnimalPerfil />} />
+              {/* Ruta para perfil editable solo para refugio, condicionar con lógica de autenticación en el futuro */}
+              <Route path="/refugio/animal/:id" element={<AnimalPerfilRefugio />} />
             <Route path="/hogares-temporales" element={<HogaresTemporales />} />
             <Route path="/donaciones" element={<DonacionesPage />} />
             <Route path="/eventos" element={<EventosPage />} />
