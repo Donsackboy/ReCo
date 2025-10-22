@@ -1,11 +1,33 @@
+/*
+========================================
+ Refugios.css
+ Estilos para la página de Refugios y sus tarjetas
+ Edita aquí para cambiar colores, tamaños, layout y efectos visuales
+========================================
+
+Principales clases:
+- .refugios-container: Contenedor principal de la página
+- .refugios-list: Lista de tarjetas de refugio
+- .refugio-card: Tarjeta individual de refugio
+- .refugio-info: Sección con logo, nombre y link del refugio
+- .refugio-animales: Contenedor de animales del refugio
+- .refugio-animal: Tarjeta individual de animal
+
+Recomendaciones:
+- Modifica paddings, widths y max-widths para adaptar el layout
+- Cambia colores y sombras para personalizar el diseño
+- Usa media queries si necesitas adaptar a móviles
+*/
+/* Contenedor principal de la página de refugios */
 .refugios-container {
   padding: 40px 24px 100px; /* deja espacio para el footer */
   background: #f0fff4; /* verde muy claro */
   font-family: 'Montserrat', Arial, sans-serif;
   color: #1a421a;
-  min-height: 100vh;
+  min-height: 120vh;
 }
 
+/* Título principal de la página */
 .refugios-container h2 {
   text-align: center;
   font-size: 2rem;
@@ -14,6 +36,7 @@
   text-shadow: 0 1px 4px #0001;
 }
 
+/* Lista de tarjetas de refugio */
 .refugios-list {
   display: flex;
   flex-direction: column;
@@ -21,12 +44,14 @@
   align-items: center;
 }
 
+/* Tarjeta individual de refugio */
 .refugio-card {
   background: #ffffff;
   border: 1px solid #c6eac6;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 900px;
+  border-radius: 30px;
+  width: 100%;
+  max-width: 1400px;
+  min-width: 1400px; /* En pantallas grandes ocupa mínimo 1400px */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -35,11 +60,24 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* Responsive: achica la tarjeta en pantallas pequeñas */
+@media (max-width: 700px) {
+  .refugio-card {
+    flex-direction: column;
+    padding: 16px 8px;
+    max-width: 98vw;
+    min-width: 320px; /* En móviles puede achicarse más */
+  }
+}
+}
+
+/* Efecto hover en la tarjeta de refugio */
 .refugio-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 6px 18px rgba(0, 100, 0, 0.18);
 }
 
+/* Sección de información del refugio: logo, nombre, link */
 .refugio-info {
   flex: 1;
   display: flex;
@@ -48,6 +86,7 @@
   gap: 8px;
 }
 
+/* Logo del refugio */
 .refugio-info img {
   width: 85px;
   height: 85px;
@@ -57,12 +96,14 @@
   padding: 4px;
 }
 
+/* Nombre del refugio */
 .refugio-info h3 {
   margin: 8px 0 4px;
   font-size: 1.2rem;
   color: #145214;
 }
 
+/* Link 'Ver refugio' */
 .refugio-info a {
   text-decoration: none;
   color: #2ca34b;
@@ -71,40 +112,46 @@
   transition: color 0.2s ease;
 }
 
+/* Hover en el link 'Ver refugio' */
 .refugio-info a:hover {
-  color: #43ea6b;
+  color: #67ad78;
 }
 
+/* Contenedor de animales del refugio */
 .refugio-animales {
-  flex: 2;
+  flex: 4;
   display: flex;
-  gap: 20px;
+  gap: 30px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
+/* Tarjeta individual de animal */
 .refugio-animal {
   text-align: center;
   text-decoration: none;
   color: #1a421a;
-  font-weight: 500;
-  transition: transform 0.2s ease;
+  font-weight: 700;
+  transition: transform 0.3s ease;
 }
 
+/* Imagen del animal */
 .refugio-animal img {
-  width: 90px;
-  height: 90px;
+  width: 130px;
+  height: 130px;
   object-fit: cover;
-  border-radius: 14px;
+  border-radius: 20px;
   box-shadow: 0 2px 8px rgba(0, 100, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* Efecto hover en la imagen del animal */
 .refugio-animal:hover img {
   transform: scale(1.05);
   box-shadow: 0 4px 12px rgba(0, 100, 0, 0.2);
 }
 
+/* Nombre del animal */
 .refugio-animal div {
   margin-top: 6px;
   font-size: 0.9rem;
