@@ -1,5 +1,5 @@
 // frontend/src/api.js
-export const API_BASE = "http://backend:8000/api"; // nombre del servicio de Docker
+export const API_BASE = "http://localhost:8000/api"; // para desarrollo local
 
 export async function getExampleData() {
   const response = await fetch(`${API_BASE}/example/`);

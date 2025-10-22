@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import "./Header.css";
 
 import LoginModal from "../LoginModal";
@@ -48,7 +49,7 @@ function Header() {
         <div className="nav-container">
           {/* Logo y nombre - extremo izquierdo */}
           <div className="nav-logo">
-            <a href="#inicio" className="logo-link">
+            <Link to="/" className="logo-link" onClick={closeMenu}>
               <div className="logo-container">
                 <img
                   src="/Images/reco-logo.png"
@@ -60,47 +61,47 @@ function Header() {
                   <div className="logo-subtitle">REFUGIO CONECTADO</div>
                 </div>
               </div>
-            </a>
+            </Link>
           </div>
 
           {/* Bloque central: Menú de navegación */}
           <nav className="center-nav">
             <ul className="nav-menu">
               <li className="nav-item">
-                <a href="#refugios" className="nav-link">
+                <Link to="/refugios" className="nav-link" onClick={closeMenu}>
                   <span className="nav-icon">🏠</span>
                   <span className="nav-text">Refugios</span>
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
-                <a href="#animales" className="nav-link">
+                <Link to="/animales" className="nav-link" onClick={closeMenu}>
                   <span className="nav-icon">🐕</span>
                   <span className="nav-text">Animales</span>
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
-                <a href="#hogares-temporales" className="nav-link">
+                <Link to="/hogares-temporales" className="nav-link" onClick={closeMenu}>
                   <span className="nav-icon">🏡</span>
                   <span className="nav-text">Hogares Temporales</span>
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
-                <a href="#donaciones" className="nav-link">
+                <Link to="/donaciones" className="nav-link" onClick={closeMenu}>
                   <span className="nav-icon">💝</span>
                   <span className="nav-text">Donaciones</span>
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
-                <a href="#eventos" className="nav-link">
-                  <span className="nav-icon">�</span>
+                <Link to="/eventos" className="nav-link" onClick={closeMenu}>
+                  <span className="nav-icon">🎉</span>
                   <span className="nav-text">Eventos</span>
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
-                <a href="#voluntariado" className="nav-link">
+                <Link to="/voluntariado" className="nav-link" onClick={closeMenu}>
                   <span className="nav-icon">🤝</span>
                   <span className="nav-text">Voluntariado</span>
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>
@@ -131,74 +132,54 @@ function Header() {
         {/* Menú lateral */}
         <div className={`side-menu ${isMenuOpen ? "side-menu-open" : ""}`}>
           <div className="side-menu-header">
-            <div className="side-menu-logo">
+            <Link to="/" className="side-menu-logo" onClick={closeMenu}>
               <img
                 src="/Images/reco-logo.png"
                 alt="ReCo"
                 className="side-logo"
               />
               <span className="side-logo-text">ReCo</span>
-            </div>
+            </Link>
             <button className="close-btn" onClick={closeMenu}>
               <span className="close-icon">×</span>
             </button>
           </div>
           <ul className="side-menu-items">
             <li className="side-menu-item">
-              <a
-                href="#refugios"
-                className="side-menu-link"
-                onClick={closeMenu}
-              >
+              <Link to="/refugios" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">🏠</span>
                 Refugios
-              </a>
+              </Link>
             </li>
             <li className="side-menu-item">
-              <a
-                href="#animales"
-                className="side-menu-link"
-                onClick={closeMenu}
-              >
+              <Link to="/animales" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">🐾</span>
                 Animales
-              </a>
+              </Link>
             </li>
             <li className="side-menu-item">
-              <a
-                href="#hogares-temporales"
-                className="side-menu-link"
-                onClick={closeMenu}
-              >
+              <Link to="/hogares-temporales" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">🏡</span>
                 Hogares Temporales
-              </a>
+              </Link>
             </li>
             <li className="side-menu-item">
-              <a
-                href="#donaciones"
-                className="side-menu-link"
-                onClick={closeMenu}
-              >
+              <Link to="/donaciones" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">💝</span>
                 Donaciones
-              </a>
+              </Link>
             </li>
             <li className="side-menu-item">
-              <a href="#eventos" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">�</span>
+              <Link to="/eventos" className="side-menu-link" onClick={closeMenu}>
+                <span className="side-menu-icon">🎉</span>
                 Eventos
-              </a>
+              </Link>
             </li>
             <li className="side-menu-item">
-              <a
-                href="#voluntariado"
-                className="side-menu-link"
-                onClick={closeMenu}
-              >
+              <Link to="/voluntariado" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">🤝</span>
                 Voluntariado
-              </a>
+              </Link>
             </li>
 
             {/* Separador */}
