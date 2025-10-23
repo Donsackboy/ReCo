@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Logo from '../../../components/Header/shared/Logo';
+import Logo from './Header/shared/Logo';
 import '../Header.css';
 
 interface HeaderPublicProps {

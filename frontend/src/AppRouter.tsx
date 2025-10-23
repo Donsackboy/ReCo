@@ -1,7 +1,7 @@
 // Enrutador principal para las páginas
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Header from './components/Header/Header';
-import Footer from './components/Footer/Footer';
+import Header from './rols/Public/components/Header/Header';
+import Footer from './rols/Public/components/Footer/Footer';
 import Home from './rols/Public/pages/Home/Home.tsx';
 import RefugiosList from './rols/Public/pages/Refugios/Refugios.tsx';
 import Animales from './rols/Public/pages/Animales/Animales.tsx';
@@ -17,7 +17,7 @@ export default function AppRouter() {
     <BrowserRouter>
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         <Header />
-        <main className="main-content" style={{ flex: 1 }}>
+  <main style={{ flex: 1 }}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/refugios" element={<RefugiosList />} />
