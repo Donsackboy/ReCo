@@ -62,6 +62,7 @@ class Animal(models.Model):
         DISPONIBLE = "disponible", "Disponible"
         ADOPTADO = "adoptado", "Adoptado"
         HOGAR_TEMPORAL = "en_hogar_temporal", "En hogar temporal"
+        BUSCANDO_NUEVO_HOGAR_TEMPORAL = "buscando_nuevo_hogar_temporal", "Buscando nuevo hogar temporal"
 
     id_animal = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
@@ -71,6 +72,7 @@ class Animal(models.Model):
     refugio = models.ForeignKey(Refugio, on_delete=models.CASCADE, db_column="id_refugio", related_name="animales")
     busca_hogar_temporal = models.BooleanField(default=False)
     motivo_hogar_temporal = models.TextField(blank=True, null=True)
+    motivo_cambio_hogar_temporal = models.TextField(blank=True, null=True, help_text="Motivo por el que el animal necesita cambiar de hogar temporal")
     duracion_estimada_hogar = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
@@ -106,6 +108,7 @@ class HogaresTemporales(models.Model):
     motivo_rechazo = models.TextField(blank=True, null=True)
     motivo_cancelacion = models.TextField(blank=True, null=True)
     fecha_cancelacion = models.DateTimeField(blank=True, null=True)
+    regiones_postulacion = models.JSONField(default=list, blank=True, help_text="Lista de regiones donde el usuario acepta ser hogar temporal")
 
     def __str__(self):
         return f"Hogar Temporal {self.id_hogar} - {self.id_usuario}"

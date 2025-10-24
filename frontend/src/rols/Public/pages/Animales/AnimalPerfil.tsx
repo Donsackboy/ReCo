@@ -45,9 +45,24 @@ export default function AnimalPerfil() {
       <div style={{ marginBottom: '18px', fontWeight: 600 }}>
         <span style={{ color: '#43ea6b' }}>Refugio:</span> {animal.refugio} <span style={{ color: '#228B22', marginLeft: '8px' }}>({animal.region})</span>
       </div>
+      {/* Estado y motivo de cambio de hogar temporal */}
+      {animal.estado === 'buscando_nuevo_hogar_temporal' && (
+        <div style={{ marginBottom: '18px', fontWeight: 600 }}>
+          <span style={{ color: '#ff6b6b' }}>Buscando nuevo hogar temporal</span>
+          {animal.motivo_cambio_hogar_temporal && (
+            <div style={{ color: '#228B22', marginTop: 6 }}>
+              <strong>Motivo:</strong> {animal.motivo_cambio_hogar_temporal}
+            </div>
+          )}
+        </div>
+      )}
+      {animal.estado !== 'buscando_nuevo_hogar_temporal' && (
+        <div style={{ marginBottom: '18px', fontWeight: 600 }}>
+          <span style={{ color: '#43ea6b' }}>Estado:</span> {animal.estado ? animal.estado : 'No disponible'}
+        </div>
+      )}
       <h3 style={{ color: '#145214', marginBottom: '10px' }}>Salud</h3>
       <ul style={{ fontSize: '1.08rem', color: '#228B22', marginBottom: '18px' }}>
-        <li>Vacunado: {animal.vacunado ? 'Sí' : 'No'}</li>
         <li>Esterilizado: {animal.esterilizado ? 'Sí' : 'No'}</li>
         <li>Desparasitado: {animal.desparasitado ? 'Sí' : 'No'}</li>
         <li>Observaciones: {animal.salud}</li>
@@ -73,9 +88,12 @@ export default function AnimalPerfil() {
           </li>
         )}
       </ul>
-      <button style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22' }}
+      <button style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22', marginRight: '16px' }}
         onClick={() => window.location.href = `/adopcion?animalId=${animal.id}&refugio=${encodeURIComponent(animal.refugio)}`}
       >Adoptar</button>
+      <button style={{ background: '#228B22', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22' }}
+        onClick={() => window.location.href = `/hogares-temporales/registro?animalId=${animal.id}`}
+      >Dar hogar temporal</button>
     </div>
   );
 }

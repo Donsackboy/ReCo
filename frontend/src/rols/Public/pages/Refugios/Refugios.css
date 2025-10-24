@@ -1,3 +1,40 @@
+@media (max-width: 700px) {
+  .refugio-animales-horizontal {
+    justify-content: center !important;
+  }
+}
+@media (max-width: 700px) {
+  .refugio-info {
+    align-items: center !important;
+    margin-right: 0 !important;
+    width: 100%;
+    justify-content: center;
+  }
+  .refugio-card {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+}
+/* Animales en fila horizontal con scroll */
+.refugio-animales-horizontal {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  justify-content: flex-start;
+  align-items: flex-end;
+  width: 100%;
+  overflow-x: hidden;
+  flex-wrap: nowrap;
+  padding-bottom: 12px;
+}
+
+@media (max-width: 900px) {
+  .refugio-animales-horizontal {
+    gap: 18px;
+    padding-bottom: 8px;
+  }
+}
 /*
 ========================================
  Refugios.css
@@ -50,11 +87,12 @@ Recomendaciones:
   border: 1px solid #c6eac6;
   border-radius: 30px;
   width: 100%;
-  max-width: 1400px;
-  min-width: 1400px; /* En pantallas grandes ocupa mínimo 1400px */
+  max-width: 1800px;
+  min-width: 0;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 0px;
   padding: 24px 32px;
   box-shadow: 0 4px 12px rgba(0, 100, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -69,7 +107,6 @@ Recomendaciones:
     min-width: 320px; /* En móviles puede achicarse más */
   }
 }
-}
 
 /* Efecto hover en la tarjeta de refugio */
 .refugio-card:hover {
@@ -79,11 +116,14 @@ Recomendaciones:
 
 /* Sección de información del refugio: logo, nombre, link */
 .refugio-info {
-  flex: 1;
+  flex: 0 0 320px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  margin-right: 0px;
+  align-items: center;
 }
 
 /* Logo del refugio */

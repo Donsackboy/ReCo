@@ -18,13 +18,13 @@ const refugios = [
     region: 'Metropolitana',
     logo: '/Images/reco-logo.png',
     animales: [
-      { id: 101, nombre: 'Luna', imagen: '/Images/animales/luna.jpg' },
-      { id: 102, nombre: 'Max', imagen: '/Images/animales/max.jpg' },
-      { id: 103, nombre: 'Toby', imagen: '/Images/animales/toby.jpg' },
-      { id: 104, nombre: 'Nina', imagen: '/Images/animales/nina.jpg' },
-      { id: 105, nombre: 'Rocky', imagen: '' },
-      { id: 106, nombre: 'Simba', imagen: '' },
-      { id: 107, nombre: 'Bella', imagen: '' },
+  { id: 1, nombre: 'Luna', imagen: '/Images/animales/luna.jpg' },
+  { id: 2, nombre: 'Max', imagen: '/Images/animales/max.jpg' },
+  { id: 3, nombre: 'Toby', imagen: '/Images/animales/toby.jpg' },
+  { id: 4, nombre: 'Nina', imagen: '/Images/animales/nina.jpg' },
+  { id: 5, nombre: 'Rocky', imagen: '' },
+  { id: 6, nombre: 'Simba', imagen: '' },
+  { id: 7, nombre: 'Bella', imagen: '' },
     ],
   },
   {
@@ -33,12 +33,12 @@ const refugios = [
     region: 'Valparaíso',
     logo: '/Images/reco-logo.png',
     animales: [
-      { id: 201, nombre: 'Simba', imagen: '/Images/animales/simba.jpg' },
-      { id: 202, nombre: 'Milo', imagen: '/Images/animales/milo.jpg' },
-      { id: 203, nombre: 'Bella', imagen: '/Images/animales/bella.jpg' },
-      { id: 204, nombre: 'Rocky', imagen: '/Images/animales/rocky.jpg' },
-      { id: 205, nombre: 'Chester', imagen: '' },
-      { id: 206, nombre: 'Daisy', imagen: '' },
+  { id: 6, nombre: 'Simba', imagen: '/Images/animales/simba.jpg' },
+  { id: 8, nombre: 'Milo', imagen: '/Images/animales/milo.jpg' },
+  { id: 7, nombre: 'Bella', imagen: '/Images/animales/bella.jpg' },
+  { id: 5, nombre: 'Rocky', imagen: '/Images/animales/rocky.jpg' },
+  { id: 9, nombre: 'Chester', imagen: '' },
+  { id: 10, nombre: 'Daisy', imagen: '' },
     ],
   },
 ];
@@ -86,9 +86,8 @@ export default function Refugios() {
   // Puedes editar estilos, estructura y componentes visuales
   return (
     <div className="refugios-container">
-      <h2>Refugioss</h2>
   {/* Filtros de búsqueda y región */}
-  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', maxWidth: '350px', marginBottom: '18px', background: '#eaffea', borderRadius: '18px', boxShadow: '0 2px 12px #43ea6b22', padding: '18px 18px 12px 18px' }}>
+  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', maxWidth: '350px', marginBottom: '8px', background: '#eaffea', borderRadius: '18px', boxShadow: '0 2px 12px #43ea6b22', padding: '18px 18px 12px 18px' }}>
         <div style={{ width: '100%', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
             <svg width="20" height="20" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -119,7 +118,7 @@ export default function Refugios() {
           </select>
         </div>
       </div>
-  <div className="refugios-list" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '40px', width: '100%', maxWidth: '1400px', marginTop: '32px' }}>
+  <div className="refugios-list" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '40px', width: '100%', marginTop: '32px' }}>
     {refugiosFiltrados.length === 0 ? (
       <div className="refugio-card" style={{ flex: '1 1 100px', maxWidth: '600px', minWidth: '320px', background: '#fff', borderRadius: '28px', boxShadow: '0 2px 24px #43ea6b22', padding: '40px 32px', margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#228B22', marginBottom: '12px', textAlign: 'center' }}>Aún no hay refugios registrados en esta zona</h3>

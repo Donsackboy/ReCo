@@ -9,13 +9,14 @@ export const animales = [
     refugio: 'Refugio Esperanza',
     region: 'Metropolitana',
     diasEnRefugio: 120,
+    estado: 'buscando_nuevo_hogar_temporal',
+    motivo_cambio_hogar_temporal: 'El hogar temporal actual no puede seguir teniéndola por motivos personales.',
     imagenes: [
       '/Images/animales/placeholder.png',
       '/Images/animales/placeholder2.png',
       '/Images/animales/placeholder3.png'
     ],
     resena: 'Luna es una perrita muy cariñosa y juguetona. Le encanta correr y recibir mimos. Se lleva bien con otros perros y niños.',
-    vacunado: true,
     esterilizado: true,
     desparasitado: true,
     salud: 'Sin problemas de salud conocidos.',
@@ -43,12 +44,14 @@ export const animales = [
     refugio: 'Refugio Esperanza',
     region: 'Metropolitana',
     diasEnRefugio: 45,
-    imagenes: [
-      '/Images/animales/placeholder.png',
-      '/Images/animales/placeholder2.png',
-      '/Images/animales/placeholder3.png'
-    ],
-    resena: 'Max es un perro guardián, muy leal y protector. Busca una familia que le dé amor y espacio para jugar. Es sociable y obediente.'
+      estado: 'en_hogar_temporal',
+      motivo_cambio_hogar_temporal: '',
+      imagenes: [
+        '/Images/animales/placeholder.png',
+        '/Images/animales/placeholder2.png',
+        '/Images/animales/placeholder3.png'
+      ],
+      resena: 'Max es un perro guardián, muy leal y protector. Busca una familia que le dé amor y espacio para jugar. Es sociable y obediente.'
   },
   {
     id: 3,
@@ -59,12 +62,14 @@ export const animales = [
     refugio: 'Refugio Patitas',
     region: 'Valparaíso',
     diasEnRefugio: 200,
-    imagenes: [
-      '/Images/animales/placeholder.png',
-      '/Images/animales/placeholder.png',
-      '/Images/animales/placeholder.png'
-    ],
-    resena: 'Bella es una cachorra muy curiosa y activa. Le gusta explorar y aprender cosas nuevas. Ideal para familias con niños.'
+      estado: 'buscando_nuevo_hogar_temporal',
+      motivo_cambio_hogar_temporal: 'El hogar temporal anterior se mudó y no puede seguir cuidándola.',
+      imagenes: [
+        '/Images/animales/placeholder.png',
+        '/Images/animales/placeholder.png',
+        '/Images/animales/placeholder.png'
+      ],
+      resena: 'Bella es una cachorra muy curiosa y activa. Le gusta explorar y aprender cosas nuevas. Ideal para familias con niños.'
   },
   {
     id: 4,
