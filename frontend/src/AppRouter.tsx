@@ -17,6 +17,7 @@ import DonarVacuna from './rols/Public/pages/Animales/DonarVacuna.tsx';
 import DonarMonetaria from './rols/Public/pages/Donaciones/DonarMonetaria.tsx';
 import DonarInsumo from './rols/Public/pages/Donaciones/DonarInsumo.tsx';
 import DonarServicio from './rols/Public/pages/Donaciones/DonarServicio.tsx';
+import RefugioPerfil from './rols/Public/pages/Refugios/RefugioPerfil.tsx';
 
 export default function AppRouter() {
   return (
@@ -31,6 +32,7 @@ export default function AppRouter() {
               <Route path="/animales/:id" element={<AnimalPerfil />} />
               {/* Ruta para perfil editable solo para refugio, condicionar con lógica de autenticación en el futuro */}
               <Route path="/refugio/animal/:id" element={<AnimalPerfilRefugio />} />
+              <Route path="/refugio/:id" element={<RefugioPerfil />} />
             <Route path="/hogares-temporales" element={<HogaresTemporales />} />
             <Route path="/hogares-temporales/registro" element={<RegistroHogarTemporal />} />
             <Route path="/donaciones" element={<DonacionesPage />} />

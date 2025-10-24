@@ -79,19 +79,26 @@ export default function HogaresTemporales() {
         <h2 style={{ color: '#145214', marginBottom: '18px' }}>Animales que necesitan hogar temporal</h2>
         <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap', justifyContent: 'center' }}>
           {animales.filter(animal => animal.estado === 'buscando_nuevo_hogar_temporal').map(animal => (
-            <div key={animal.id} style={{ background: '#f0fff4', borderRadius: '18px', boxShadow: '0 4px 18px #43ea6b33', width: '300px', padding: '0 0 28px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', transition: 'box-shadow 0.2s' }}
-              onClick={() => navigate(`/animales/${animal.id}`)}
+            <div key={animal.id} style={{ background: '#f0fff4', borderRadius: '18px', boxShadow: '0 4px 18px #43ea6b33', width: '320px', padding: '0 0 28px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'box-shadow 0.2s' }}
               onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 32px #43ea6b55'}
               onMouseOut={e => e.currentTarget.style.boxShadow = '0 4px 18px #43ea6b33'}
             >
               <img src={animal.imagenes?.[0] || '/Images/animales/placeholder.png'} alt={animal.nombre} style={{ width: '100%', height: '250px', objectFit: 'cover', borderTopLeftRadius: '18px', borderTopRightRadius: '18px' }} />
-              <div style={{ padding: '22px', width: '100%' }}>
+              <div style={{ padding: '12px', width: '100%' }}>
                 <h3 style={{ color: '#145214', marginBottom: '10px', fontSize: '1.35rem' }}>{animal.nombre}</h3>
-                <div style={{ color: '#228B22', fontWeight: 600, fontSize: '1.12rem' }}>{animal.tamano} • {animal.edad} años</div>
-                <div style={{ color: '#b2e2c9', fontSize: '1.08rem', marginBottom: '12px' }}>{animal.region}</div>
-                <div style={{ color: '#145214', fontSize: '1.08rem', marginBottom: '12px' }}><b>Motivo:</b> {animal.motivo_cambio_hogar_temporal}</div>
-                <div style={{ color: '#228B22', fontSize: '1.05rem', marginBottom: '12px' }}>Refugio: {animal.refugio}</div>
-                <div style={{ color: '#145214', fontSize: '1.05rem' }}><b>Bio:</b> {animal.resena}</div>
+                <div style={{ color: '#228B22', fontWeight: 500, fontSize: '1.12rem' }}>{animal.tamano} • {animal.edad} años</div>
+                <div style={{ color: '#b2e2c9', fontSize: '1.08rem', marginBottom: '10px' }}>{animal.region}</div>
+                <div style={{ color: '#145214', fontSize: '1.08rem', marginBottom: '10px' }}><b>Motivo:</b> {animal.motivo_cambio_hogar_temporal}</div>
+                <div style={{ color: '#228B22', fontSize: '1.05rem', marginBottom: '10px' }}>Refugio: {animal.refugio}</div>
+                <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/animales/${animal.id}`)}
+                    style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 18px', fontSize: '1rem', cursor: 'pointer', marginTop: 0, marginBottom:0 }}
+                  >
+                    Ver perfil
+                  </button>
+                </div>
               </div>
             </div>
           ))}

@@ -45,22 +45,23 @@ export default function AnimalPerfil() {
       <div style={{ marginBottom: '18px', fontWeight: 600 }}>
         <span style={{ color: '#43ea6b' }}>Refugio:</span> {animal.refugio} <span style={{ color: '#228B22', marginLeft: '8px' }}>({animal.region})</span>
       </div>
-      {/* Estado y motivo de cambio de hogar temporal */}
-      {animal.estado === 'buscando_nuevo_hogar_temporal' && (
-        <div style={{ marginBottom: '18px', fontWeight: 600 }}>
-          <span style={{ color: '#ff6b6b' }}>Buscando nuevo hogar temporal</span>
-          {animal.motivo_cambio_hogar_temporal && (
-            <div style={{ color: '#228B22', marginTop: 6 }}>
-              <strong>Motivo:</strong> {animal.motivo_cambio_hogar_temporal}
-            </div>
-          )}
-        </div>
-      )}
-      {animal.estado !== 'buscando_nuevo_hogar_temporal' && (
-        <div style={{ marginBottom: '18px', fontWeight: 600 }}>
-          <span style={{ color: '#43ea6b' }}>Estado:</span> {animal.estado ? animal.estado : 'No disponible'}
-        </div>
-      )}
+      {/* Ubicación actual, estado y motivo de cambio si corresponde */}
+      <div style={{ marginBottom: '18px', fontWeight: 600 }}>
+        <span style={{ color: '#43ea6b' }}>Ubicación actual:</span> {
+          animal.estado === 'en_hogar_temporal' ? 'En hogar temporal' :
+          animal.estado === 'buscando_nuevo_hogar_temporal' ? 'En hogar temporal' :
+          (animal.estado === 'disponible' || animal.estado === 'adoptado') ? 'En refugio' :
+          'En refugio'
+        }
+        {animal.estado === 'buscando_nuevo_hogar_temporal' && (
+          <div style={{ color: '#ff6b6b', marginTop: 6 }}>Buscando nuevo hogar temporal</div>
+        )}
+        {animal.estado === 'buscando_nuevo_hogar_temporal' && animal.motivo_cambio_hogar_temporal && (
+          <div style={{ color: '#228B22', marginTop: 6 }}>
+            <strong>Motivo de cambio:</strong> {animal.motivo_cambio_hogar_temporal}
+          </div>
+        )}
+      </div>
       <h3 style={{ color: '#145214', marginBottom: '10px' }}>Salud</h3>
       <ul style={{ fontSize: '1.08rem', color: '#228B22', marginBottom: '18px' }}>
         <li>Esterilizado: {animal.esterilizado ? 'Sí' : 'No'}</li>

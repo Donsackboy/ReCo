@@ -48,7 +48,7 @@ const RefugiosCard: React.FC<RefugioCardProps> = ({ refugio }) => {
       <div className="refugio-info">
         <img src={refugio.logo} alt={refugio.nombre} />
         <h3>{refugio.nombre}</h3>
-        <Link to={`/refugios/${refugio.id}`}>Ver refugio</Link>
+  <Link to={`/refugio/${refugio.id}`}>Ver refugio</Link>
         {refugio.region && <div style={{  color: '#228B22', fontSize: '1rem', marginBottom: '8px' }}>{refugio.region}</div>}
         {refugio.descripcion && <div style={{ color: '#1a421a', fontSize: '0.98rem', marginBottom: '8px', textAlign: 'center' }}>{refugio.descripcion}</div>}
         {refugio.direccion && <div style={{ fontSize: '0.95rem', color: '#145214', marginBottom: '6px' }}>Dirección: {refugio.direccion}</div>}
