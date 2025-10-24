@@ -199,13 +199,17 @@ npm run dev
 
 ### 🌐 Acceso Local
 
+
 #### 🎨 Frontend (Interfaz de Usuario)
-- **URL principal**: http://localhost:5173
+- **URL principal**: http://localhost:5174
 - **URLs alternativas** (si el puerto está ocupado): 
-  - http://localhost:5174
-  - http://localhost:5175
-  - http://localhost:5176
-  - etc.
+   - http://localhost:5173
+   - http://localhost:5175
+   - http://localhost:5176
+   - etc.
+## 📁 Nota sobre estructura de carpetas
+
+Actualmente la carpeta principal del proyecto es `reco` (no `ReCo`). Asegúrate de ejecutar los comandos y scripts dentro de `C:\Users\javii\Desktop\reco\reco` para evitar errores de rutas.
 
 **💡 Tip**: Revisa la terminal donde ejecutaste `npm run dev` para ver el puerto exacto asignado.
 

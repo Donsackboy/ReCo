@@ -159,6 +159,8 @@ const filtrosIniciales = {
   region: '',
 };
 
+
+export default function Animales() {
   const location = useLocation();
   const [filtros, setFiltros] = useState(filtrosIniciales);
   const [search, setSearch] = useState('');
@@ -174,59 +176,14 @@ const filtrosIniciales = {
 
   // Mantener el valor del select de refugio sincronizado con el filtro
   useEffect(() => {
-    const select = document.getElementById('filtro-refugio');
+    const select = document.getElementById('filtro-refugio') as HTMLSelectElement | null;
     if (select && filtros.refugio) {
       select.value = filtros.refugio;
     }
   }, [filtros.refugio]);
 
   // Filtrado de animales por categoría de edad
-
-  export default function Animales() {
-    // Datos de ejemplo para animales
-    const animales = [
-      {
-        id: 1,
-        nombre: 'Luna',
-        sexo: 'Hembra',
-        edad: 2,
-        tamano: 'Mediano',
-        refugio: 'Refugio Esperanza',
-        region: 'Metropolitana',
-        diasEnRefugio: 120,
-        imagenes: [
-          '/Images/animales/placeholder.png',
-          '/Images/animales/placeholder.png',
-          '/Images/animales/placeholder.png'
-        ],
-        resena: 'Luna es una perrita muy cariñosa y juguetona. Le encanta correr y recibir mimos. Se lleva bien con otros perros y niños.'
-      },
-      // ...resto de animales...
-    ];
-
-    const filtrosIniciales = {
-      edadCategoria: '',
-      sexo: '',
-      tamano: '',
-      refugio: '',
-      region: '',
-    };
-
-    const location = useLocation();
-    const [filtros, setFiltros] = useState(filtrosIniciales);
-    const [search, setSearch] = useState('');
-
-    // Leer filtro de refugio desde la URL al cargar
-    useEffect(() => {
-      const params = new URLSearchParams(location.search);
-      const refugioParam = params.get('refugio');
-      if (refugioParam) {
-        setFiltros(f => ({ ...f, refugio: refugioParam }));
-      }
-    }, [location.search]);
-
-    // Filtrado de animales por categoría de edad
-    function filtrarPorEdadCategoria(animal, categoria) {
+    function filtrarPorEdadCategoria(animal: any, categoria: any) {
       if (!categoria) return true;
       if (categoria === 'Cachorro') return animal.edad < 0.5; // menos de 6 meses
       if (categoria === 'Joven') return animal.edad >= 0.5 && animal.edad < 1; // 6 meses a 1 año
@@ -234,7 +191,7 @@ const filtrosIniciales = {
       if (categoria === 'Senior') return animal.edad >= 7; // 7+ años
       return true;
     }
-
+  
     const animalesFiltrados = animales.filter(animal => {
       return (
         filtrarPorEdadCategoria(animal, filtros.edadCategoria) &&
@@ -245,7 +202,7 @@ const filtrosIniciales = {
         (animal.nombre.toLowerCase().includes(search.toLowerCase()))
       );
     });
-
+  
     return (
       <div className="animales-page" style={{ display: 'flex', gap: '32px', padding: '40px 24px', alignItems: 'stretch', justifyContent: 'flex-start' }}>
         {/* Filtros en barra lateral mejorados */}
@@ -318,4 +275,4 @@ const filtrosIniciales = {
         </section>
       </div>
     );
-  }
+}
