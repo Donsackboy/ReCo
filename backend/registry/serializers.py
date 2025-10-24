@@ -11,11 +11,20 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email', 'tipo_usuario', 'first_name', 'last_name', 'telefono')
 
 class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
+    email = serializers.EmailField()
     password = serializers.CharField()
 
     def validate(self, data):
-        user = authenticate(**data)
-        if user and user.is_active:
-            return user
-        raise serializers.ValidationError('Credenciales incorrectas')
+        email = data.get('email')
+        password = data.get('password')
+        print(f"[DEBUG] LoginSerializer.validate called with email={email}, password={'*' * len(password) if password else None}")
+        user = authenticate(request=None, email=email, password=password)
+        print(f"[DEBUG] authenticate returned: {user}")
+        if not user:
+            print(f"[DEBUG] Credenciales incorrectas para email={email}")
+            raise serializers.ValidationError('Credenciales incorrectas')
+        if not user.is_active:
+            print(f"[DEBUG] Usuario inactivo: {email}")
+            raise serializers.ValidationError('Usuario inactivo')
+        print(f"[DEBUG] LoginSerializer returning user: {user} (type: {type(user)})")
+        return {'user': user}

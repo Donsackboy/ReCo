@@ -1,3 +1,8 @@
+# Backend de autenticación por email
+AUTHENTICATION_BACKENDS = [
+    'registry.email_backend.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 """
 Django settings for core project.
 
@@ -64,10 +69,11 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Frontend React
+    "http://localhost:5173",  # Frontend Vite/React
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -156,3 +162,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # DEFAULT PRIMARY KEY
 # -----------------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# -----------------------------------
+# CUSTOM USER MODEL
+# -----------------------------------
+AUTH_USER_MODEL = 'registry.Usuario'

@@ -1,4 +1,5 @@
 import Header from './rols/Public/components/Header/Header'
+import HeaderAdmin from './rols/Admin/components/HeaderAdmin';
 import Home from './rols/Public/pages/Home/Home'
 import Footer from './rols/Public/components/Footer/Footer'
 import './App.css'
@@ -20,9 +21,24 @@ function App() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+  // Verificar si el usuario logueado es admin
+  const user = (() => {
+    try {
+      return JSON.parse(localStorage.getItem('user') || 'null');
+    } catch {
+      return null;
+    }
+  })();
+
+  const isAdmin = user && user.tipo_usuario === 'admin';
+
   return (
     <div className="app">
-      <Header />
+      {isAdmin ? (
+        <HeaderAdmin adminName={user?.username || 'Admin'} />
+      ) : (
+        <Header />
+      )}
       <main className="main-content">
         <Home />
       </main>
