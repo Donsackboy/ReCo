@@ -35,7 +35,6 @@ export default function HogaresTemporales() {
         </p>
         <ul style={{ color: '#145214', fontSize: '1.05rem', marginLeft: '18px', marginBottom: '18px' }}>
           <li>Ayudas a la recuperación física y emocional de animales vulnerables.</li>
-          <li>El refugio cubre gastos médicos y alimentación, salvo acuerdo distinto.</li>
           <li>Puedes elegir qué tipo de animales y de qué regiones puedes recibir.</li>
           <li>El compromiso es temporal y puedes indicar tu disponibilidad.</li>
         </ul>

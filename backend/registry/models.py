@@ -68,7 +68,7 @@ class Animal(models.Model):
     nombre = models.CharField(max_length=100)
     especie = models.CharField(max_length=50)
     edad = models.IntegerField(blank=True, null=True)
-    estado = models.CharField(max_length=20, choices=Estado.choices, default=Estado.DISPONIBLE)
+    estado = models.CharField(max_length=30, choices=Estado.choices, default=Estado.DISPONIBLE)
     refugio = models.ForeignKey(Refugio, on_delete=models.CASCADE, db_column="id_refugio", related_name="animales")
     busca_hogar_temporal = models.BooleanField(default=False)
     motivo_hogar_temporal = models.TextField(blank=True, null=True)
@@ -109,6 +109,7 @@ class HogaresTemporales(models.Model):
     motivo_cancelacion = models.TextField(blank=True, null=True)
     fecha_cancelacion = models.DateTimeField(blank=True, null=True)
     regiones_postulacion = models.JSONField(default=list, blank=True, help_text="Lista de regiones donde el usuario acepta ser hogar temporal")
+    region_hogar_temporal = models.CharField(max_length=100, blank=True, null=True, help_text="Región actual donde se encuentra el animal en hogar temporal")
 
     def __str__(self):
         return f"Hogar Temporal {self.id_hogar} - {self.id_usuario}"

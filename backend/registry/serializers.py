@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 
 from django.contrib.auth import authenticate
-from .models import Usuario
+from .models import Usuario, HogaresTemporales
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,3 +28,8 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError('Usuario inactivo')
         print(f"[DEBUG] LoginSerializer returning user: {user} (type: {type(user)})")
         return {'user': user}
+
+class HogarTemporalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HogaresTemporales
+        fields = '__all__'

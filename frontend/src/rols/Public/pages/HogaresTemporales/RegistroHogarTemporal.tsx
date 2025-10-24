@@ -43,6 +43,8 @@ export default function RegistroHogarTemporal() {
     motivoHogarTemporal?: string;
     experienciaAnimales?: string;
     accionProblemas?: string;
+    disponibilidad?: string;
+    regionHogarTemporal?: string;
   }>({
     nombre: '',
     email: '',
@@ -56,8 +58,8 @@ export default function RegistroHogarTemporal() {
     preguntasExtra: '',
     direccion: '',
     motivoHogarTemporal: '',
-    experienciaAnimales: '',
-    accionProblemas: '',
+  experienciaAnimales: '',
+  accionProblemas: '',
   });
   const [enviado, setEnviado] = useState(false);
 
@@ -127,18 +129,8 @@ export default function RegistroHogarTemporal() {
       {animal && (
         <div style={{ background: '#eaffea', borderRadius: 14, boxShadow: '0 1px 8px #43ea6b22', padding: 24, marginBottom: 18 }}>
           <h3 style={{ color: '#145214', marginBottom: 8 }}>Postulación para: {animal.nombre}</h3>
-          <div style={{ color: '#228B22', fontSize: '1.08rem', marginBottom: 6 }}><b>Refugio:</b> {animal.refugio}
-            <button type="button" title="¿Qué es un refugio?" style={{ marginLeft: 8, background: '#43ea6b', color: '#fff', border: 'none', borderRadius: 8, padding: '2px 10px', fontSize: '0.95rem', cursor: 'pointer' }}
-              onClick={() => alert('Un refugio es una organización que rescata, cuida y da en adopción animales en situación de vulnerabilidad.')}>i</button>
-          </div>
-          <div style={{ color: '#145214', fontSize: '1.05rem', marginBottom: 6 }}><b>Bio:</b> {animal.resena}
-            <button type="button" title="¿Qué significa bio?" style={{ marginLeft: 8, background: '#43ea6b', color: '#fff', border: 'none', borderRadius: 8, padding: '2px 10px', fontSize: '0.95rem', cursor: 'pointer' }}
-              onClick={() => alert('La bio es una breve descripción sobre la personalidad, historia y necesidades del animal.')}>i</button>
-          </div>
-          <div style={{ color: '#145214', fontSize: '1.05rem', marginBottom: 6 }}><b>Motivo:</b> {animal.motivo_cambio_hogar_temporal}
-            <button type="button" title="¿Qué significa motivo?" style={{ marginLeft: 8, background: '#43ea6b', color: '#fff', border: 'none', borderRadius: 8, padding: '2px 10px', fontSize: '0.95rem', cursor: 'pointer' }}
-              onClick={() => alert('El motivo explica por qué este animal necesita cambiar de hogar temporal.')}>i</button>
-          </div>
+          <div style={{ color: '#228B22', fontSize: '1.08rem', marginBottom: 6 }}><b>Refugio:</b> {animal.refugio}</div>
+          <div style={{ color: '#145214', fontSize: '1.05rem', marginBottom: 6 }}><b>Motivo:</b> {animal.motivo_cambio_hogar_temporal}</div>
         </div>
       )}
       {enviado ? (
@@ -189,10 +181,26 @@ export default function RegistroHogarTemporal() {
             </>
           )}
           <div style={{ marginBottom: 22 }}>
-            <label style={{ color: '#145214', fontWeight: 600, fontSize: '1.08rem', letterSpacing: 0.5 }}>Detalles adicionales:</label><br />
-            <textarea name="detalles" value={form.detalles} onChange={handleFormChange}
-              style={{ width: '100%', padding: '10px', borderRadius: 10, border: '1.5px solid #b2e2c9', fontSize: '1rem', outline: 'none', transition: 'border-color 0.3s' }}
-              placeholder="Ingresa detalles adicionales sobre tu disponibilidad y condiciones" />
+            <label style={{ color: '#145214', fontWeight: 600, fontSize: '1.08rem', letterSpacing: 0.5 }}>Dirección:</label><br />
+            <input type="text" name="direccion" value={form.direccion || ''} onChange={handleFormChange} required style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #43ea6b', marginTop: 6, fontSize: '1rem', background: '#fff' }} />
+          </div>
+          <div style={{ marginBottom: 22 }}>
+            <label style={{ color: '#145214', fontWeight: 600, fontSize: '1.08rem', letterSpacing: 0.5 }}>Región donde está ubicado tu hogar temporal:</label><br />
+            <select name="regionHogarTemporal" value={form.regionHogarTemporal || ''} onChange={handleFormChange} required style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #43ea6b', marginTop: 6, fontSize: '1rem', background: '#fff' }}>
+              <option value="">Selecciona una región</option>
+              {regiones.map(region => (
+                <option key={region} value={region}>{region}</option>
+              ))}
+            </select>
+          </div>
+          <div style={{ marginBottom: 22 }}>
+            <label style={{ color: '#145214', fontWeight: 600, fontSize: '1.08rem', letterSpacing: 0.5 }}>Tipo de vivienda:</label><br />
+            <select name="vivienda" value={form.vivienda} onChange={handleFormChange}
+              style={{ width: '100%', padding: '10px', borderRadius: 10, border: '1.5px solid #b2e2c9', fontSize: '1rem', outline: 'none', transition: 'border-color 0.3s' }}>
+              <option value="">Selecciona un tipo de vivienda</option>
+              <option value="Casa">Casa</option>
+              <option value="Departamento">Departamento</option>
+            </select>
           </div>
           <div style={{ marginBottom: 22 }}>
             <label style={{ color: '#145214', fontWeight: 600, fontSize: '1.08rem', letterSpacing: 0.5 }}>¿Tienes otros animales en casa?</label><br />
@@ -238,19 +246,6 @@ export default function RegistroHogarTemporal() {
             </div>
           )}
           <div style={{ marginBottom: 22 }}>
-            <label style={{ color: '#145214', fontWeight: 600, fontSize: '1.08rem', letterSpacing: 0.5 }}>Tipo de vivienda:</label><br />
-            <select name="vivienda" value={form.vivienda} onChange={handleFormChange}
-              style={{ width: '100%', padding: '10px', borderRadius: 10, border: '1.5px solid #b2e2c9', fontSize: '1rem', outline: 'none', transition: 'border-color 0.3s' }}>
-              <option value="">Selecciona un tipo de vivienda</option>
-              <option value="Casa">Casa</option>
-              <option value="Departamento">Departamento</option>
-            </select>
-          </div>
-          <div style={{ marginBottom: 22 }}>
-            <label style={{ color: '#145214', fontWeight: 600, fontSize: '1.08rem', letterSpacing: 0.5 }}>Dirección:</label><br />
-            <input type="text" name="direccion" value={form.direccion || ''} onChange={handleFormChange} required style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #43ea6b', marginTop: 6, fontSize: '1rem', background: '#fff' }} />
-          </div>
-          <div style={{ marginBottom: 22 }}>
             <label style={{ color: '#145214', fontWeight: 600, fontSize: '1.08rem', letterSpacing: 0.5 }}>¿Por qué quieres ser hogar temporal?</label><br />
             <textarea name="motivoHogarTemporal" value={form.motivoHogarTemporal || ''} onChange={handleFormChange}
               style={{ width: '100%', padding: '10px', borderRadius: 10, border: '1.5px solid #b2e2c9', fontSize: '1rem', outline: 'none', transition: 'border-color 0.3s' }}
@@ -265,6 +260,24 @@ export default function RegistroHogarTemporal() {
                 placeholder="Explica cómo actuarías ante problemas de salud o comportamiento" />
             </div>
           )}
+          <div style={{ marginBottom: 22 }}>
+            <label style={{ color: '#145214', fontWeight: 600, fontSize: '1.08rem', letterSpacing: 0.5 }}>Disponibilidad para ser hogar temporal:</label><br />
+            <select name="disponibilidad" value={form.disponibilidad || ''} onChange={handleFormChange} required style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #43ea6b', marginTop: 6, fontSize: '1rem', background: '#fff' }}>
+              <option value="">Selecciona una opción</option>
+              <option value="1 mes">1 mes</option>
+              <option value="2 meses">2 meses</option>
+              <option value="3 meses">3 meses</option>
+              <option value="6 meses">6 meses</option>
+              <option value="indefinida">Indefinida</option>
+              <option value="otro">Otro (especificar en comentarios)</option>
+            </select>
+          </div>
+          <div style={{ marginBottom: 22 }}>
+            <label style={{ color: '#145214', fontWeight: 600, fontSize: '1.08rem', letterSpacing: 0.5 }}>Detalles adicionales:</label><br />
+            <textarea name="detalles" value={form.detalles} onChange={handleFormChange}
+              style={{ width: '100%', padding: '10px', borderRadius: 10, border: '1.5px solid #b2e2c9', fontSize: '1rem', outline: 'none', transition: 'border-color 0.3s' }}
+              placeholder="Ingresa detalles adicionales sobre tu disponibilidad y condiciones" />
+          </div>
           <div style={{ marginBottom: 22 }}>
             <label style={{ color: '#145214', fontWeight: 600, fontSize: '1.08rem', letterSpacing: 0.5 }}>Dudas o comentarios:</label><br />
             <textarea name="preguntasExtra" value={form.preguntasExtra} onChange={handleFormChange} rows={2} style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #43ea6b', marginTop: 6, fontSize: '1rem', background: '#fff', resize: 'vertical' }} />

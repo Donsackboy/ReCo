@@ -2,8 +2,8 @@ from rest_framework import status, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from .serializers import UserSerializer, LoginSerializer
-from .models import Usuario
+from .serializers import UserSerializer, LoginSerializer, HogarTemporalSerializer
+from .models import Usuario, HogaresTemporales
 from .permissions import IsAdmin, IsRefugio, IsRefugioOrAdmin
 
 @api_view(['POST'])
@@ -44,3 +44,12 @@ def register(request):
 @api_view(['GET'])
 def user_profile(request):
     return Response(UserSerializer(request.user).data)
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def crear_hogar_temporal(request):
+    serializer = HogarTemporalSerializer(data=request.data)
+    if serializer.is_valid():
+        hogar = serializer.save()
+        return Response(HogarTemporalSerializer(hogar).data, status=201)
+    return Response(serializer.errors, status=400)
