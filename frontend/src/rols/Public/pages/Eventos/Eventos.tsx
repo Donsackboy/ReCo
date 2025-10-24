@@ -1,5 +1,3 @@
-// Página en blanco para Eventos
-import React from 'react';
-export default function EventosPage() {
-  return <div>Eventos</div>;
-}
+
+import EventosPage from './EventosPage';
+export default EventosPage;

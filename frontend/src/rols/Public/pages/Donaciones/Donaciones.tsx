@@ -1,5 +1,5 @@
 // Página en blanco para Donaciones
-import React from 'react';
-export default function DonacionesPage() {
-  return <div>Donaciones</div>;
-}
+
+// Este archivo solo reexporta el verdadero DonacionesPage
+import DonacionesPage from './DonacionesPage';
+export default DonacionesPage;

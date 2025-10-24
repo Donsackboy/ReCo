@@ -5,44 +5,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
-// Datos de ejemplo (puedes conectar con backend o contexto global)
-const animales = [
-  {
-    id: 1,
-    nombre: 'Luna',
-    sexo: 'Hembra',
-    edad: 2,
-    tamano: 'Mediano',
-    refugio: 'Refugio Esperanza',
-    region: 'Metropolitana',
-    diasEnRefugio: 120,
-    imagenes: [
-      '/Images/animales/placeholder.png',
-      '/Images/animales/placeholder.png',
-      '/Images/animales/placeholder.png'
-    ],
-    resena: 'Luna es una perrita muy cariñosa y juguetona. Le encanta correr y recibir mimos. Se lleva bien con otros perros y niños.',
-    vacunado: true,
-    esterilizado: true,
-    desparasitado: true,
-    salud: 'Sin problemas de salud conocidos.',
-    vacunas: [
-      {
-        tipo: 'Séxtuple',
-        fecha: '2025-06-10',
-        refuerzo: '2026-06-10',
-        unica: false
-      },
-      {
-        tipo: 'Rabia',
-        fecha: '2025-06-10',
-        refuerzo: '2026-06-10',
-        unica: false
-      }
-    ]
-  },
-  // ...otros animales
-];
+import { animales } from './animalesData';
 
 export default function AnimalPerfil() {
   const { id } = useParams();
@@ -58,19 +21,19 @@ export default function AnimalPerfil() {
   return (
     <div style={{ maxWidth: '700px', margin: '40px auto', background: '#f0fff4', borderRadius: '24px', boxShadow: '0 4px 18px #43ea6b22', padding: '40px' }}>
       <h2 style={{ color: '#145214', fontSize: '2rem', marginBottom: '18px' }}>{animal.nombre}</h2>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '24px' }}>
-        <div style={{ position: 'relative', width: '2000px', height: '140px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '48px' }}>
+        <div style={{ position: 'relative', width: '320px', height: '250px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           {totalImgs > 1 && (
-            <span style={{ position: 'absolute', top: '0px', left: '60%', transform: 'translateX(-50%)', background: '#43ea6b', color: '#fff', borderRadius: '8px', padding: '2px 10px', fontWeight: 600, fontSize: '0.98rem', zIndex: 2 }}>
+            <button onClick={prevImg} style={{ position: 'absolute', left: '-36px', top: '50%', transform: 'translateY(-50%)', background: '#eaffea', border: 'none', borderRadius: '60%', width: '38px', height: '38px', fontSize: '1.5rem', color: '#228B22', cursor: 'pointer', zIndex: 2 }} aria-label="Anterior">&#8592;</button>
+          )}
+          <img src={animal.imagenes[imgIdx]} alt={animal.nombre + ' foto ' + (imgIdx + 1)} style={{ width: '250px', height: '250px', objectFit: 'cover', borderRadius: '16px', boxShadow: '0 2px 8px #43ea6b22' }} />
+          {totalImgs > 1 && (
+            <button onClick={nextImg} style={{ position: 'absolute', right: '-36px', top: '50%', transform: 'translateY(-50%)', background: '#eaffea', border: 'none', borderRadius: '50%', width: '38px', height: '38px', fontSize: '1.5rem', color: '#228B22', cursor: 'pointer', zIndex: 2 }} aria-label="Siguiente">&#8594;</button>
+          )}
+          {totalImgs > 1 && (
+            <span style={{ position: 'absolute', top: '-40px', left: '50%', transform: 'translateX(-50%)', background: '#43ea6b', color: '#fff', borderRadius: '8px', padding: '2px 10px', fontWeight: 600, fontSize: '0.98rem', zIndex: 2 }}>
               {imgIdx + 1}/{totalImgs}
             </span>
-          )}
-          {totalImgs > 1 && (
-            <button onClick={prevImg} style={{ position: 'absolute', left: '0', top: '50%', transform: 'translateY(-50%)', background: '#eaffea', border: 'none', borderRadius: '50%', width: '32px', height: '32px', fontSize: '1.3rem', color: '#228B22', cursor: 'pointer', zIndex: 2 }} aria-label="Anterior">&#8592;</button>
-          )}
-          <img src={animal.imagenes[imgIdx]} alt={animal.nombre + ' foto ' + (imgIdx + 1)} style={{ width: '140px', height: '140px', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 2px 8px #43ea6b22' }} />
-          {totalImgs > 1 && (
-            <button onClick={nextImg} style={{ position: 'absolute', right: '0', top: '50%', transform: 'translateY(-50%)', background: '#eaffea', border: 'none', borderRadius: '50%', width: '32px', height: '32px', fontSize: '1.3rem', color: '#228B22', cursor: 'pointer', zIndex: 2 }} aria-label="Siguiente">&#8594;</button>
           )}
         </div>
       </div>
@@ -92,14 +55,27 @@ export default function AnimalPerfil() {
       <h3 style={{ color: '#145214', marginBottom: '10px' }}>Vacunas</h3>
       <ul style={{ fontSize: '1.08rem', color: '#228B22', marginBottom: '18px' }}>
         {animal.vacunas && animal.vacunas.length > 0 ? animal.vacunas.map((v, idx) => (
-          <li key={idx}>
-            <strong>{v.tipo}</strong> {v.unica ? '(única aplicación)' : ''}<br />
-            Fecha: {v.fecha} {v.refuerzo ? <span>
-                • Próximo refuerzo: {v.refuerzo}</span> : null}
+          <li key={idx} style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <strong>{v.tipo}</strong> {v.unica ? '(única aplicación)' : ''}<br />
+              Fecha: {v.fecha} {v.refuerzo ? <span>• Próximo refuerzo: {v.refuerzo}</span> : null}
+            </div>
+            <button style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '8px', padding: '7px 16px', fontWeight: 600, fontSize: '0.98rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22', marginLeft: '18px' }}
+              onClick={() => window.location.href = `/donar-vacuna?animalId=${animal.id}&refugio=${encodeURIComponent(animal.refugio)}&vacuna=${encodeURIComponent(v.tipo)}`}
+            >Donar vacuna</button>
           </li>
-        )) : <li>No hay vacunas registradas.</li>}
+        )) : (
+          <li style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span>No hay vacunas registradas.</span>
+            <button style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '8px', padding: '7px 16px', fontWeight: 600, fontSize: '0.98rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22', marginLeft: '18px' }}
+              onClick={() => window.location.href = `/donar-vacuna?animalId=${animal.id}&refugio=${encodeURIComponent(animal.refugio)}`}
+            >Donar vacuna</button>
+          </li>
+        )}
       </ul>
-      <button style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22' }}>Contactar refugio</button>
+      <button style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22' }}
+        onClick={() => window.location.href = `/adopcion?animalId=${animal.id}&refugio=${encodeURIComponent(animal.refugio)}`}
+      >Adoptar</button>
     </div>
   );
 }

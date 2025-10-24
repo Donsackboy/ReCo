@@ -1,0 +1,15 @@
+.galeria-animales {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 32px auto;
+  max-width: 1200px;
+  min-height: 60vh;
+}
+
+.animal-card {
+  flex: 1 1 320px;
+  margin-bottom: 24px;
+}

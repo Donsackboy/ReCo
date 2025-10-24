@@ -86,7 +86,7 @@ export default function Refugios() {
   // Puedes editar estilos, estructura y componentes visuales
   return (
     <div className="refugios-container">
-      <h2>Refugios</h2>
+      <h2>Refugioss</h2>
   {/* Filtros de búsqueda y región */}
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', maxWidth: '350px', marginBottom: '18px', background: '#eaffea', borderRadius: '18px', boxShadow: '0 2px 12px #43ea6b22', padding: '18px 18px 12px 18px' }}>
         <div style={{ width: '100%', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>

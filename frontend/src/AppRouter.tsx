@@ -8,9 +8,15 @@ import Animales from './rols/Public/pages/Animales/Animales.tsx';
 import AnimalPerfil from './rols/Public/pages/Animales/AnimalPerfil.tsx';
 import AnimalPerfilRefugio from './rols/Refugio/AnimalPerfil.tsx';
 import HogaresTemporales from './rols/Public/pages/HogaresTemporales/HogaresTemporales.tsx';
+import RegistroHogarTemporal from './rols/Public/pages/HogaresTemporales/RegistroHogarTemporal.tsx';
 import DonacionesPage from './rols/Public/pages/Donaciones/Donaciones.tsx';
 import EventosPage from './rols/Public/pages/Eventos/Eventos.tsx';
 import VoluntariadoPage from './rols/Public/pages/Voluntariado/Voluntariado.tsx';
+import AdopcionForm from './rols/Public/pages/Animales/AdopcionForm.tsx';
+import DonarVacuna from './rols/Public/pages/Animales/DonarVacuna.tsx';
+import DonarMonetaria from './rols/Public/pages/Donaciones/DonarMonetaria.tsx';
+import DonarInsumo from './rols/Public/pages/Donaciones/DonarInsumo.tsx';
+import DonarServicio from './rols/Public/pages/Donaciones/DonarServicio.tsx';
 
 export default function AppRouter() {
   return (
@@ -26,9 +32,15 @@ export default function AppRouter() {
               {/* Ruta para perfil editable solo para refugio, condicionar con lógica de autenticación en el futuro */}
               <Route path="/refugio/animal/:id" element={<AnimalPerfilRefugio />} />
             <Route path="/hogares-temporales" element={<HogaresTemporales />} />
+            <Route path="/hogares-temporales/registro" element={<RegistroHogarTemporal />} />
             <Route path="/donaciones" element={<DonacionesPage />} />
             <Route path="/eventos" element={<EventosPage />} />
             <Route path="/voluntariado" element={<VoluntariadoPage />} />
+            <Route path="/adopcion" element={<AdopcionForm />} />
+            <Route path="/donar-vacuna" element={<DonarVacuna />} />
+            <Route path="/donar-monetaria" element={<DonarMonetaria />} />
+            <Route path="/donar-insumo" element={<DonarInsumo />} />
+            <Route path="/donar-servicio" element={<DonarServicio />} />
           </Routes>
         </main>
         <Footer />
