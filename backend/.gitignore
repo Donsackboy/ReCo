@@ -1,3 +1,5 @@
 # Ignorar venv y core del backend (patrones relativos a este directorio)
 venv/
 core/
+registry/__pycache__/
+registry/migrations/__pycache__/

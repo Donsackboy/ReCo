@@ -1,7 +1,10 @@
 // Enrutador principal para las páginas
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from './rols/Public/components/Header/Header';
+import HeaderAdmin from './rols/Admin/components/HeaderAdmin';
 import Footer from './rols/Public/components/Footer/Footer';
+import AdminDashboard from './rols/Admin/pages/AdminDashboard';
+import { Navigate } from 'react-router-dom';
 import Home from './rols/Public/pages/Home/Home.tsx';
 import RefugiosList from './rols/Public/pages/Refugios/Refugios.tsx';
 import Animales from './rols/Public/pages/Animales/Animales.tsx';
@@ -20,10 +23,21 @@ import DonarServicio from './rols/Public/pages/Donaciones/DonarServicio.tsx';
 import RefugioPerfil from './rols/Public/pages/Refugios/RefugioPerfil.tsx';
 
 export default function AppRouter() {
+  // Intent: elegir el header según el tipo de usuario guardado en localStorage
+  const user = (() => {
+    try {
+      return JSON.parse(localStorage.getItem('user') || 'null');
+    } catch {
+      return null;
+    }
+  })();
+
+  const isAdmin = user && user.tipo_usuario === 'admin';
+
   return (
     <BrowserRouter>
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <Header />
+        {isAdmin ? <HeaderAdmin adminName={user?.username} /> : <Header />}
   <main style={{ flex: 1 }}>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -43,6 +57,11 @@ export default function AppRouter() {
             <Route path="/donar-monetaria" element={<DonarMonetaria />} />
             <Route path="/donar-insumo" element={<DonarInsumo />} />
             <Route path="/donar-servicio" element={<DonarServicio />} />
+            {/* Rutas administrativas: sólo accesible si el usuario es admin */}
+            <Route
+              path="/admin"
+              element={isAdmin ? <AdminDashboard /> : <Navigate to="/" replace />}
+            />
           </Routes>
         </main>
         <Footer />

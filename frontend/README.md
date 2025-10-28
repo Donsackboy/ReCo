@@ -73,3 +73,13 @@ export default defineConfig([
   },
 ])
 ```
+
+# Dependencias para trabajar localmente
+
+*Probablemente este comando esta malo, busca otro*
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
+"source algo" # TODO
+
+cd fronend
+npm install
