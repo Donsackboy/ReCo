@@ -29,11 +29,6 @@ env = environ.Env(
     DEBUG=(bool, True)  # valor por defecto si no hay variable DEBUG
 )
 
-# Leer archivo .env si existe
-env_file = os.path.join(BASE_DIR, '..', '.env')
-if os.path.exists(env_file):
-    environ.Env.read_env(env_file)
-
 # -----------------------------------
 # SECURITY / DEBUG
 # -----------------------------------
@@ -68,9 +63,9 @@ REST_FRAMEWORK = {
     ],
 }
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Frontend Vite/React
-]
+
+
+CORS_ALLOWED_ORIGINS = env.list('DJANGO_CORS_ALLOWED_ORIGINS')
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',

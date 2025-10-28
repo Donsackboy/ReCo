@@ -10,12 +10,17 @@ from .permissions import IsAdmin, IsRefugio, IsRefugioOrAdmin
 @permission_classes([permissions.AllowAny])
 def login(request):
     serializer = LoginSerializer(data=request.data)
+
     print(f"[DEBUG] login called with data: {request.data}")
+
     if serializer.is_valid():
         user = serializer.validated_data['user']
+
         print(f"[DEBUG] Login successful for user: {user!r} (type: {type(user)})")
+
         if not isinstance(user, Usuario):
             print(f"[DEBUG] ERROR: user is not an instance of Usuario, value: {user!r}, type: {type(user)}")
+            
             return Response({'error': f'Internal server error: user is not a Usuario instance, got {user!r} of type {type(user)}'}, status=500)
         token, created = Token.objects.get_or_create(user=user)
         print(f"[DEBUG] Token: {token.key}, created: {created}")
