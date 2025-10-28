@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from './rols/Public/components/Header/Header';
 import HeaderAdmin from './rols/Admin/components/HeaderAdmin';
 import Footer from './rols/Public/components/Footer/Footer';
-import AdminDashboard from './rols/Admin/pages/AdminDashboard.tsx';
+import AdminDashboard from './rols/Admin/pages/AdminDashboard';
 import { Navigate } from 'react-router-dom';
 import Home from './rols/Public/pages/Home/Home.tsx';
 import RefugiosList from './rols/Public/pages/Refugios/Refugios.tsx';
