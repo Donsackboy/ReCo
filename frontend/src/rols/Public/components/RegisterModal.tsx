@@ -38,7 +38,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
     try {
       // Todos los usuarios se registran como "default" por seguridad
       // Los refugios deben ser aprobados por un administrador mediante un proceso específico
-      const response = await fetch("http://localhost:8000/api/auth/register/", {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE}/auth/register/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
