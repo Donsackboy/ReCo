@@ -3,7 +3,13 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from './rols/Public/components/Header/Header';
 import HeaderAdmin from './rols/Admin/components/HeaderAdmin';
 import Footer from './rols/Public/components/Footer/Footer';
+
+// Admin
 import AdminDashboard from './rols/Admin/pages/AdminDashboard';
+import GestionarUsuarios from './rols/Admin/pages/Usuarios/GestionarUsuarios.tsx';
+import GestionarRefugios from './rols/Admin/pages/Refugios/GestionarRefugios.tsx';
+import Verificaciones from './rols/Admin/pages/Verificaciones/Verificaciones.tsx';
+
 import { Navigate } from 'react-router-dom';
 import Home from './rols/Public/pages/Home/Home.tsx';
 import RefugiosList from './rols/Public/pages/Refugios/Refugios.tsx';
@@ -75,13 +81,19 @@ export default function AppRouter() {
         />
         {/* Ruta admin protegida con header admin */}
         <Route
-          path="/admin"
+          path="/admin/*"
           element={
             isAdmin ? (
               <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
                 <HeaderAdmin adminName={user?.username} onLogout={handleAdminLogout} />
                 <main className="admin-main" style={{ flex: 1 }}>
-                  <AdminDashboard />
+                  <Routes>
+                    <Route path="" element={<AdminDashboard />} />
+                    <Route path="gestionar-refugios" element={<GestionarRefugios />} />
+                    <Route path="gestionar-usuarios" element={<GestionarUsuarios />} />
+                    <Route path="verificaciones" element={<Verificaciones />} />
+                    {/* <Route path="" */}
+                  </Routes>
                 </main>
                 <Footer />
               </div>

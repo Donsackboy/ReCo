@@ -10,8 +10,8 @@ const AdminDashboard: React.FC = () => {
 
       <nav style={{ marginTop: 16 }}>
         <ul>
-          <li><Link to="/admin/refugios">Gestionar Refugios</Link></li>
-          <li><Link to="/admin/usuarios">Gestionar Usuarios</Link></li>
+          <li><Link to="/admin/gestionar-refugios">Gestionar Refugios</Link></li>
+          <li><Link to="/admin/gestionar-usuarios">Gestionar Usuarios</Link></li>
           <li><Link to="/admin/verificaciones">Verificar Comprobantes</Link></li>
           <li><Link to="/admin/reportes">Reportes</Link></li>
         </ul>

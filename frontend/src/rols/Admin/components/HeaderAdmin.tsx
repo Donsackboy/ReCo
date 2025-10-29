@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import Logo from '../../Public/components/Header/shared/Logo';
+import { useNavigate } from 'react-router-dom';
+import LogoAdmin from './Header/LogoAdmin';
 import "./HeaderAdmin.css";
 
 interface HeaderAdminProps {
@@ -8,12 +9,17 @@ interface HeaderAdminProps {
   onLogout?: () => void;
 }
 
+
 const HeaderAdmin: React.FC<HeaderAdminProps> = ({ 
-  onNavigateHome, 
   adminName = "Admin",
   onLogout 
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    navigate('/admin');
+  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -26,10 +32,9 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
   return (
   <header className="header-admin">
       <nav className="navbar">
+  {/* Logo (admin) */}
+  <LogoAdmin onClick={handleLogoClick} />
         <div className="nav-container">
-          {/* Logo */}
-          <Logo onClick={onNavigateHome} />
-          
           {/* Navegación central - ADMINISTRADOR */}
           <nav className="center-nav">
             <ul className="nav-menu">
@@ -69,11 +74,24 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
           {/* Perfil de admin y menú */}
           <div className="hamburger-container">
             <div className="auth-buttons desktop-auth">
-              <div className="user-profile admin-profile">
-                <span className="user-icon">⚡</span>
+              <button
+                className={`user-profile admin-profile admin-switch${location.pathname.startsWith('/admin') ? ' admin-on' : ' admin-off'}`}
+                onClick={() => {
+                  if (location.pathname.startsWith('/admin')) {
+                    navigate('/');
+                  } else {
+                    navigate('/admin');
+                  }
+                }}
+                aria-label={location.pathname.startsWith('/admin') ? 'Cambiar a modo público' : 'Cambiar a modo admin'}
+              >
+                <span className="user-icon">
+                  {location.pathname.startsWith('/admin') ? '⚡' : '⚡'}
+                </span>
                 <span className="user-name">{adminName}</span>
                 <span className="admin-badge">Admin</span>
-              </div>
+                <span className="switch-indicator"></span>
+              </button>
               <button onClick={onLogout} className="btn-logout">
                 <span className="auth-icon">🚪</span>
                 <span className="auth-text">Cerrar Sesión</span>
