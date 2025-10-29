@@ -1,6 +1,7 @@
 // Enrutador principal para las páginas
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from './rols/Public/components/Header/Header';
+import HeaderUsuario from './rols/Usuario/components/HeaderUsuario';
 import HeaderAdmin from './rols/Admin/components/HeaderAdmin';
 import Footer from './rols/Public/components/Footer/Footer';
 
@@ -44,6 +45,7 @@ export default function AppRouter() {
   })();
 
   const isAdmin = user && user.tipo_usuario === 'admin';
+  const isUsuario = user && user.tipo_usuario === 'default';
 
   return (
     <BrowserRouter>
@@ -53,7 +55,11 @@ export default function AppRouter() {
           path="/*"
           element={
             <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-              <Header />
+              {isUsuario ? (
+                <HeaderUsuario userName={user?.username} onLogout={() => { localStorage.removeItem('user'); window.location.href = '/'; }} />
+              ) : (
+                <Header />
+              )}
               <main style={{ flex: 1 }}>
                 <Routes>
                   <Route path="/" element={<Home />} />
