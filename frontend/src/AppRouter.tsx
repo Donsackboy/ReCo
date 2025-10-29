@@ -23,6 +23,11 @@ import DonarServicio from './rols/Public/pages/Donaciones/DonarServicio.tsx';
 import RefugioPerfil from './rols/Public/pages/Refugios/RefugioPerfil.tsx';
 
 export default function AppRouter() {
+  // Logout handler para admin
+  const handleAdminLogout = () => {
+    localStorage.removeItem('user');
+    window.location.href = '/';
+  };
   // Intent: elegir el header según el tipo de usuario guardado en localStorage
   const user = (() => {
     try {
@@ -36,36 +41,56 @@ export default function AppRouter() {
 
   return (
     <BrowserRouter>
-      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-        {isAdmin ? <HeaderAdmin adminName={user?.username} /> : <Header />}
-  <main style={{ flex: 1 }}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/refugios" element={<RefugiosList />} />
-            <Route path="/animales" element={<Animales />} />
-              <Route path="/animales/:id" element={<AnimalPerfil />} />
-              {/* Ruta para perfil editable solo para refugio, condicionar con lógica de autenticación en el futuro */}
-              <Route path="/refugio/animal/:id" element={<AnimalPerfilRefugio />} />
-              <Route path="/refugio/:id" element={<RefugioPerfil />} />
-            <Route path="/hogares-temporales" element={<HogaresTemporales />} />
-            <Route path="/hogares-temporales/registro" element={<RegistroHogarTemporal />} />
-            <Route path="/donaciones" element={<DonacionesPage />} />
-            <Route path="/eventos" element={<EventosPage />} />
-            <Route path="/voluntariado" element={<VoluntariadoPage />} />
-            <Route path="/adopcion" element={<AdopcionForm />} />
-            <Route path="/donar-vacuna" element={<DonarVacuna />} />
-            <Route path="/donar-monetaria" element={<DonarMonetaria />} />
-            <Route path="/donar-insumo" element={<DonarInsumo />} />
-            <Route path="/donar-servicio" element={<DonarServicio />} />
-            {/* Rutas administrativas: sólo accesible si el usuario es admin */}
-            <Route
-              path="/admin"
-              element={isAdmin ? <AdminDashboard /> : <Navigate to="/" replace />}
-            />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
+      <Routes>
+        {/* Rutas públicas */}
+        <Route
+          path="/*"
+          element={
+            <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+              <Header />
+              <main style={{ flex: 1 }}>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/refugios" element={<RefugiosList />} />
+                  <Route path="/animales" element={<Animales />} />
+                  <Route path="/animales/:id" element={<AnimalPerfil />} />
+                  {/* Ruta para perfil editable solo para refugio, condicionar con lógica de autenticación en el futuro */}
+                  <Route path="/refugio/animal/:id" element={<AnimalPerfilRefugio />} />
+                  <Route path="/refugio/:id" element={<RefugioPerfil />} />
+                  <Route path="/hogares-temporales" element={<HogaresTemporales />} />
+                  <Route path="/hogares-temporales/registro" element={<RegistroHogarTemporal />} />
+                  <Route path="/donaciones" element={<DonacionesPage />} />
+                  <Route path="/eventos" element={<EventosPage />} />
+                  <Route path="/voluntariado" element={<VoluntariadoPage />} />
+                  <Route path="/adopcion" element={<AdopcionForm />} />
+                  <Route path="/donar-vacuna" element={<DonarVacuna />} />
+                  <Route path="/donar-monetaria" element={<DonarMonetaria />} />
+                  <Route path="/donar-insumo" element={<DonarInsumo />} />
+                  <Route path="/donar-servicio" element={<DonarServicio />} />
+                </Routes>
+              </main>
+              <Footer />
+            </div>
+          }
+        />
+        {/* Ruta admin protegida con header admin */}
+        <Route
+          path="/admin"
+          element={
+            isAdmin ? (
+              <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+                <HeaderAdmin adminName={user?.username} onLogout={handleAdminLogout} />
+                <main className="admin-main" style={{ flex: 1 }}>
+                  <AdminDashboard />
+                </main>
+                <Footer />
+              </div>
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
+      </Routes>
     </BrowserRouter>
   );
 }

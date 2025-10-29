@@ -3,3 +3,4 @@ venv/
 core/
 registry/__pycache__/
 registry/migrations/__pycache__/
+/node_modules/

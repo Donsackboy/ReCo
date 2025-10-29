@@ -83,3 +83,11 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 
 cd fronend
 npm install
+
+
+# IMPORTANTE
+Cambiar el archivo .env para que el api funcione. Esto se ha hecho por una excepcion
+Colocar/reemplazar en /localhost/.env :
+VITE_API_BASE=http://localhost:8000/api
+
+si es que tu ambiente es totalmente local.

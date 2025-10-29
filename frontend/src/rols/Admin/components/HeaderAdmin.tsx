@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Logo from '../../Public/components/Header/shared/Logo';
-import '../Header.css';
+import "./HeaderAdmin.css";
 
 interface HeaderAdminProps {
   onNavigateHome?: () => void;
@@ -24,7 +24,7 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
   };
 
   return (
-    <header className="header">
+  <header className="header-admin">
       <nav className="navbar">
         <div className="nav-container">
           {/* Logo */}
