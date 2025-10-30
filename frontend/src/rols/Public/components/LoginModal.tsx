@@ -26,7 +26,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8000/api/auth/login/", {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE}/auth/login/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -42,8 +42,21 @@ const LoginModal: React.FC<LoginModalProps> = ({
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         alert("¡Login exitoso!");
-        onClose();
-        window.location.reload();
+
+        // Redireccionar dependiendo de autoridad de usuario
+        const user = JSON.parse(localStorage.getItem("user") || "null");
+        console.log("[DEBUG] user en localStorage:", user);
+        console.log("[DEBUG] tipo_usuario:", user?.tipo_usuario);
+        if (user?.tipo_usuario === "admin") {
+          console.log("[DEBUG] Redirigiendo a /admin");
+          window.location.href = "/admin";
+        } else {
+          console.log("[DEBUG] No es admin, recargando página normal");
+          onClose();
+          window.location.reload();
+        }
+
+
       } else {
         alert("Error en login: Credenciales incorrectas");
       }

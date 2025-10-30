@@ -1,12 +1,14 @@
 import React from 'react';
 
+
 interface LogoProps {
   onClick?: () => void;
+  className?: string;
 }
 
-const Logo: React.FC<LogoProps> = ({ onClick }) => {
+const Logo: React.FC<LogoProps> = ({ onClick, className }) => {
   return (
-    <div className="nav-logo">
+    <div className={className ? className : "nav-logo"}>
       <button onClick={onClick || (() => {})} className="logo-link">
         <div className="logo-container">
           <img 

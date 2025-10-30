@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import './Home.css'
 
@@ -13,7 +14,7 @@ function Home() {
           <section className="hero-section">
             <h1>¡Bienvenida a {nombreDelRefugio}! 🐾</h1>
             <p>Tenemos {numeroAnimales} animales esperando una familia</p>
-            <button className="btn-primary">Ver Animales</button>
+            <Link to="/animales" className="btn-primary">Ver Animales</Link>
           </section>
           
           <section className="intro-section">

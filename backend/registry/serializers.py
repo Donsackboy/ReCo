@@ -17,6 +17,7 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, data):
         email = data.get('email')
         password = data.get('password')
+        # tipo_usuario = data.get("tipo_usuario")
         print(f"[DEBUG] LoginSerializer.validate called with email={email}, password={'*' * len(password) if password else None}")
         user = authenticate(request=None, email=email, password=password)
         print(f"[DEBUG] authenticate returned: {user}")
