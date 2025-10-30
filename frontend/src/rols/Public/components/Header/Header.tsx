@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
+import "./HeaderLayout.css";
 import "./Logo.css";
 import "./NavMenu.css";
 import "./UserProfile.css";
@@ -210,13 +211,13 @@ function Header() {
 
             {/* Autenticación en menú móvil */}
             <li className="side-menu-item auth-buttons-container">
-              <button onClick={openLogin} className="side-menu-auth-button">
+              <button onClick={openLogin} className="side-menu-link">
                 <span className="side-menu-icon">👤</span>
                 Iniciar Sesión
               </button>
             </li>
             <li className="side-menu-item auth-buttons-container">
-              <button onClick={openRegister} className="side-menu-auth-button">
+              <button onClick={openRegister} className="side-menu-link">
                 <span className="side-menu-icon">✨</span>
                 Registrarse
               </button>

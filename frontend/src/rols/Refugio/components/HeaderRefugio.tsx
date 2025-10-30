@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import Logo from '../../Public/components/Header/shared/Logo';
-import '../../Public/components/Header/Header.css'; 
+import '../../Public/components/Header/Logo.css';
+import '../../Public/components/Header/NavMenu.css';
+import '../../Public/components/Header/UserProfile.css';
+import '../../Public/components/Header/HamburgerMenu.css';
+import '../../Public/components/Header/AuthButtons.css';
 
+  
 interface HeaderRefugioProps {
   onNavigateHome?: () => void;
   refugioNombre?: string;
