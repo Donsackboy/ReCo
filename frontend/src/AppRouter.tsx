@@ -29,6 +29,14 @@ import DonarInsumo from './rols/Public/pages/Donaciones/DonarInsumo.tsx';
 import DonarServicio from './rols/Public/pages/Donaciones/DonarServicio.tsx';
 import RefugioPerfil from './rols/Public/pages/Refugios/RefugioPerfil.tsx';
 
+
+//refugio
+
+import HeaderRefugio from './rols/Refugio/components/HeaderRefugio.tsx';
+import RefugioDashboard from './rols/Refugio/pages/RefugioDashboard/RefugioDashboard.tsx';
+
+
+
 export default function AppRouter() {
   // Logout handler para admin
   const handleAdminLogout = () => {
@@ -46,69 +54,85 @@ export default function AppRouter() {
 
   const isAdmin = user && user.tipo_usuario === 'admin';
   const isUsuario = user && user.tipo_usuario === 'default';
+  const isRefugio = user && user.tipo_usuario === 'refugio';
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    window.location.href = '/';
+  };
 
   return (
-    <BrowserRouter>
+  <BrowserRouter>
+    {/* AQUÍ VA LA LÓGICA DE SELECCIÓN DEL HEADER */}
+    {isAdmin ? (
+      // Si es Admin, muestra HeaderAdmin
+      <HeaderAdmin adminName={user?.username} onLogout={handleLogout} />
+    ) : isRefugio ? (
+      // Si no es Admin PERO es Refugio, muestra HeaderRefugio
+      <HeaderRefugio refugioNombre={user?.refugio_nombre || user?.username} onLogout={handleLogout} />
+    ) : isUsuario ? (
+      // Si no es Admin ni Refugio PERO es Usuario normal, muestra HeaderUsuario
+      <HeaderUsuario userName={user?.username} onLogout={handleLogout} />
+    ) : (
+      // Si no es ninguno de los anteriores (es público), muestra Header (el público)
+      <Header />
+    )}
+    {/* FIN DE LA LÓGICA DE SELECCIÓN DEL HEADER */}
+
+    <main style={{ flex: 1, paddingTop: '80px' }}> {/* Padding para que el contenido no quede debajo del header fijo */}
       <Routes>
-        {/* Rutas públicas */}
-        <Route
-          path="/*"
-          element={
-            <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-              {isUsuario ? (
-                <HeaderUsuario userName={user?.username} onLogout={() => { localStorage.removeItem('user'); window.location.href = '/'; }} />
-              ) : (
-                <Header />
-              )}
-              <main style={{ flex: 1 }}>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/refugios" element={<RefugiosList />} />
-                  <Route path="/animales" element={<Animales />} />
-                  <Route path="/animales/:id" element={<AnimalPerfil />} />
-                  {/* Ruta para perfil editable solo para refugio, condicionar con lógica de autenticación en el futuro */}
-                  <Route path="/refugio/animal/:id" element={<AnimalPerfilRefugio />} />
-                  <Route path="/refugio/:id" element={<RefugioPerfil />} />
-                  <Route path="/hogares-temporales" element={<HogaresTemporales />} />
-                  <Route path="/hogares-temporales/registro" element={<RegistroHogarTemporal />} />
-                  <Route path="/donaciones" element={<DonacionesPage />} />
-                  <Route path="/eventos" element={<EventosPage />} />
-                  <Route path="/voluntariado" element={<VoluntariadoPage />} />
-                  <Route path="/adopcion" element={<AdopcionForm />} />
-                  <Route path="/donar-vacuna" element={<DonarVacuna />} />
-                  <Route path="/donar-monetaria" element={<DonarMonetaria />} />
-                  <Route path="/donar-insumo" element={<DonarInsumo />} />
-                  <Route path="/donar-servicio" element={<DonarServicio />} />
-                </Routes>
-              </main>
-              <Footer />
-            </div>
-          }
-        />
-        {/* Ruta admin protegida con header admin */}
+        {/* --- Rutas Públicas y Usuario --- */}
+        <Route path="/" element={<Home />} />
+        <Route path="/refugios" element={<RefugiosList />} />
+        <Route path="/refugio/:id" element={<RefugioPerfil />} />
+        <Route path="/animales" element={<Animales />} />
+        <Route path="/animales/:id" element={<AnimalPerfil />} />
+        <Route path="/hogares-temporales" element={<HogaresTemporales />} />
+        <Route path="/hogares-temporales/registro" element={<RegistroHogarTemporal />} />
+        <Route path="/donaciones" element={<DonacionesPage />} />
+        <Route path="/eventos" element={<EventosPage />} />
+        <Route path="/voluntariado" element={<VoluntariadoPage />} />
+        <Route path="/adopcion" element={<AdopcionForm />} />
+        <Route path="/donar-vacuna" element={<DonarVacuna />} />
+        <Route path="/donar-monetaria" element={<DonarMonetaria />} />
+        <Route path="/donar-insumo" element={<DonarInsumo />} />
+        <Route path="/donar-servicio" element={<DonarServicio />} />
+
+        {/* --- Rutas Admin --- */}
         <Route
           path="/admin/*"
           element={
             isAdmin ? (
-              <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-                <HeaderAdmin adminName={user?.username} onLogout={handleAdminLogout} />
-                <main className="admin-main" style={{ flex: 1 }}>
-                  <Routes>
-                    <Route path="" element={<AdminDashboard />} />
-                    <Route path="gestionar-refugios" element={<GestionarRefugios />} />
-                    <Route path="gestionar-usuarios" element={<GestionarUsuarios />} />
-                    <Route path="verificaciones" element={<Verificaciones />} />
-                    {/* <Route path="" */}
-                  </Routes>
-                </main>
-                <Footer />
-              </div>
+              <Routes> {/* Rutas anidadas para admin */}
+                <Route path="" element={<AdminDashboard />} />
+                <Route path="gestionar-refugios" element={<GestionarRefugios />} />
+                <Route path="gestionar-usuarios" element={<GestionarUsuarios />} />
+                <Route path="verificaciones" element={<Verificaciones />} />
+              </Routes>
             ) : (
               <Navigate to="/" replace />
             )
           }
         />
+
+        {/* --- Rutas Refugio --- */}
+        <Route
+          path="/refugio/dashboard" // Define la URL para el dashboard del refugio
+          element={
+            isRefugio ? ( // Verifica si el usuario es de tipo refugio
+              <RefugioDashboard /> // Si es, muestra el dashboard
+            ) : (
+              <Navigate to="/" replace /> // Si no, redirige a la página principal
+            )
+          }
+        />
+        {/* Puedes añadir más rutas específicas de refugio aquí en el futuro */}
+
       </Routes>
-    </BrowserRouter>
-  );
+    </main>
+
+    <Footer />
+  </BrowserRouter>
+);
 }

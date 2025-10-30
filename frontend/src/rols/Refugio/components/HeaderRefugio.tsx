@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Logo from '../../Public/components/Header/shared/Logo';
-import '../Header.css';
+import '../../Public/components/Header/Header.css'; 
 
 interface HeaderRefugioProps {
   onNavigateHome?: () => void;
