@@ -1,0 +1,1 @@
+# Inicializador de migraciones para core
