@@ -67,7 +67,7 @@
 }
 /* HeaderAdmin estilos modernos morado-rojo-naranja */
 .header-admin {
-		background: #f370c5; /* Rosa claro, calmado */
+	    background: #fff;
 	color: #222;
 	position: fixed;
 	top: 0;
@@ -77,8 +77,7 @@
 	width: 100%;
 	box-shadow: 0 4px 24px rgba(0, 191, 99, 0.10), 0 1.5px 0 #ffb300;
 	border-bottom: 3px solid #ffb300;
-						background: linear-gradient(135deg, #00bf63 0%, #47a063 25%, #7ac063 60%, #6caf63 100%),
-												radial-gradient(ellipse 120vw 80vh at 50% 40%, rgba(255, 0, 128, 0.85) 0%, rgba(123, 31, 162, 0.85) 100%, transparent 90%);
+	/* Fondo blanco, sin gradientes */
 	color: #228B22;
 	position: fixed;
 	top: 0;
@@ -232,6 +231,7 @@
 	/* Asegurar que el perfil tenga separación respecto a los links centrales */
 	margin-left: 0.8rem;
 	box-shadow: 0 2px 8px rgba(0, 191, 99, 0.05);
+	border: 2px solid #228B22;
 }
 .admin-badge {
 	background: #ffb300;
