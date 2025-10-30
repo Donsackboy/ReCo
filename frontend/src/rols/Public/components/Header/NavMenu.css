@@ -1,0 +1,69 @@
+/* =============== NAV MENU =============== */
+
+.nav-menu {
+  display: flex;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #228B22;
+  font-weight: 700;
+  font-size: 0.97rem;
+  text-decoration: none;
+  padding: 6px 26px;
+  border-radius: 1.2em;
+  background: #f0fff4;
+  box-shadow: 0 2px 8px #508f5f5b;
+  border: 2.5px solid #8bf7b4;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.15s, border-color 0.2s;
+  position: relative;
+  margin: 0 2px;
+}
+
+.nav-link:hover, .nav-link.active {
+  background: #d6f5e3;
+  color: #145214;
+  box-shadow: 0 4px 16px #43ea6b33;
+  border-color: #b6f2d2;
+  text-decoration: none;
+  transform: scale(1.06);
+}
+
+.nav-icon {
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.nav-text {
+  display: inline;
+}
+
+@media (max-width: 1300px) {
+  .nav-menu {
+    gap: 0.4rem;
+  }
+  .nav-link {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+  }
+}
+
+@media (max-width: 700px) {
+  .nav-menu {
+    display: none;
+  }
+}

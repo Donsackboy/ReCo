@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import "./Logo.css";
+import "./NavMenu.css";
 import "./UserProfile.css";
 import "./HamburgerMenu.css";
 import "./AuthButtons.css";
@@ -73,31 +74,26 @@ function Header() {
             <ul className="nav-menu">
               <li className="nav-item">
                 <Link to="/refugios" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">🏠</span>
                   <span className="nav-text">Refugios</span>
                 </Link>
               </li>
               <li className="nav-item">
                 <Link to="/animales" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">🐕</span>
                   <span className="nav-text">Animales</span>
                 </Link>
               </li>
               <li className="nav-item">
                 <Link to="/hogares-temporales" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">🏡</span>
                   <span className="nav-text">Hogares Temporales</span>
                 </Link>
               </li>
               <li className="nav-item">
                 <Link to="/donaciones" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">💝</span>
                   <span className="nav-text">Donaciones</span>
                 </Link>
               </li>
               <li className="nav-item">
                 <Link to="/eventos" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">🎉</span>
                   <span className="nav-text">Eventos</span>
                 </Link>
               </li>
@@ -115,7 +111,6 @@ function Header() {
                     }
                   }}
                 >
-                  <span className="nav-icon">🤝</span>
                   <span className="nav-text">Voluntariado</span>
                 </a>
               </li>
