@@ -1,0 +1,130 @@
+/* =============== AUTH BUTTONS =============== */
+.auth-buttons {
+  display: flex;
+  gap: 0.8rem;
+}
+.btn-login,
+.btn-register {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 20px;
+  transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.btn-login {
+  color: #228B22;
+  background: rgba(255,255,255,0.9);
+  border-color: #90EE90;
+  box-shadow: 0 4px 15px rgba(144,238,144,0.2);
+}
+.btn-login:hover {
+  background: #90EE90;
+  color: #FFFFFF;
+  border-color: #228B22;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 30px rgba(144,238,144,0.4);
+}
+.btn-register {
+  background: linear-gradient(135deg, #228B22 0%, #32CD32 100%);
+  color: #FFFFFF !important;
+  border-color: #228B22;
+  box-shadow: 0 6px 20px rgba(34,139,34,0.3);
+}
+.btn-register:hover {
+  background: linear-gradient(135deg, #32CD32 0%, #00FF32 100%);
+  color: #FFFFFF !important;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 35px rgba(50,205,50,0.4);
+}
+.btn-register:visited,
+.btn-register:active,
+.btn-register:focus {
+  color: #FFFFFF !important;
+}
+.auth-icon { display: none; }
+.auth-text {
+  transition: opacity 0.3s ease;
+  color: inherit;
+}
+.btn-register .auth-text,
+.btn-register:hover .auth-text,
+.btn-register:visited .auth-text,
+.btn-register:active .auth-text,
+.btn-register:focus .auth-text {
+  color: #FFFFFF !important;
+}
+/* Ripple effect */
+.btn-login::after,
+.btn-register::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255,255,255,0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+}
+.btn-login:active::after,
+.btn-register:active::after {
+  width: 200px;
+  height: 200px;
+}
+	/* Ripple effect */
+	.btn-login::after,
+	.btn-register::after {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 0;
+		height: 0;
+		background: rgba(255,255,255,0.3);
+		border-radius: 50%;
+		transform: translate(-50%, -50%);
+		transition: width 0.4s ease, height 0.4s ease;
+	}
+	.btn-login:active::after,
+	.btn-register:active::after {
+		width: 200px;
+		height: 200px;
+	}
+	color: #FFFFFF !important;
+}
+/* Ripple effect */
+.btn-login::after,
+.btn-register::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 0;
+	height: 0;
+	background: rgba(255,255,255,0.3);
+	border-radius: 50%;
+	transform: translate(-50%, -50%);
+	transition: width 0.4s ease, height 0.4s ease;
+}
+.btn-login:active::after,
+.btn-register:active::after {
+	width: 200px;
+	height: 200px;
+}
+/* Authentication buttons styles */
+
+.auth-text { ...existing code... }
+
+.btn-register:focus .auth-text { ...existing code... }
+@media (max-width: 1400px) { .btn-register { ...existing code... } .auth-buttons { ...existing code... } }
+@media (max-width: 1300px) { .btn-login { ...existing code... } .auth-buttons { ...existing code... } }
+@media (max-width: 1100px) { .auth-buttons { ...existing code... } }

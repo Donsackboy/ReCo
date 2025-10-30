@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import AnimalCard from '../../components/Animales/AnimalCard';
 import { animales } from './animalesData';
 import './Animales.css';
 
 const Animales = () => {
+  const location = useLocation();
   const [filtros, setFiltros] = useState({
     edadCategoria: '',
     sexo: '',
@@ -12,6 +14,15 @@ const Animales = () => {
     region: ''
   });
   const [search, setSearch] = useState('');
+
+  // Si hay un filtro de refugio en la URL, aplicarlo automáticamente al cargar
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const refugioParam = params.get('refugio');
+    if (refugioParam) {
+      setFiltros(f => ({ ...f, refugio: refugioParam }));
+    }
+  }, [location.search]);
 
   // Filtrado de animales
   const animalesFiltrados = animales.filter(animal => {
@@ -90,7 +101,16 @@ const Animales = () => {
           <label style={{ fontWeight: 600, color: '#145214', marginBottom: '2px' }} htmlFor="filtro-nombre">Buscar por nombre</label>
           <input id="filtro-nombre" type="text" value={search} onChange={e => setSearch(e.target.value)} style={{ width: '100%', padding: '7px 10px', borderRadius: '8px', border: '1.5px solid #43ea6b', background: '#fff', fontSize: '1rem' }} placeholder="Ej: Luna" />
         </div>
-        <button type="button" style={{ marginTop: '18px', background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 0', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22', transition: 'background 0.2s' }}>Aplicar filtros</button>
+        <button
+          type="button"
+          onClick={() => {
+            setFiltros({ edadCategoria: '', sexo: '', tamano: '', refugio: '', region: '' });
+            setSearch('');
+          }}
+          style={{ marginTop: '18px', background: '#e74c3c', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 0', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #e74c3c22', transition: 'background 0.2s' }}
+        >
+          Limpiar filtros
+        </button>
       </aside>
       {/* Galería de animales */}
       <section className="animales-galeria" style={{

@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import "./Header.css";
+
+import "./Logo.css";
+import "./UserProfile.css";
+import "./HamburgerMenu.css";
+import "./AuthButtons.css";
 
 import LoginModal from "../LoginModal";
 import RegisterModal from "../RegisterModal";
@@ -98,10 +102,22 @@ function Header() {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/voluntariado" className="nav-link" onClick={closeMenu}>
+                <a
+                  href="#"
+                  className="nav-link"
+                  onClick={e => {
+                    e.preventDefault();
+                    const token = localStorage.getItem("token");
+                    if (!token) {
+                      setShowLogin(true);
+                    } else {
+                      window.location.href = "/voluntariado";
+                    }
+                  }}
+                >
                   <span className="nav-icon">🤝</span>
                   <span className="nav-text">Voluntariado</span>
-                </Link>
+                </a>
               </li>
             </ul>
           </nav>
@@ -176,10 +192,22 @@ function Header() {
               </Link>
             </li>
             <li className="side-menu-item">
-              <Link to="/voluntariado" className="side-menu-link" onClick={closeMenu}>
+              <a
+                href="#"
+                className="side-menu-link"
+                onClick={e => {
+                  e.preventDefault();
+                  const token = localStorage.getItem("token");
+                  if (!token) {
+                    setShowLogin(true);
+                  } else {
+                    window.location.href = "/voluntariado";
+                  }
+                }}
+              >
                 <span className="side-menu-icon">🤝</span>
                 Voluntariado
-              </Link>
+              </a>
             </li>
 
             {/* Separador */}
