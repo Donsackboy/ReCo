@@ -1,0 +1,121 @@
+.footer {
+  width: 100%;
+  min-height: 180px;
+  background: linear-gradient(135deg, #00bf63 0%, #47a063 25%, #7ac063 60%, #6caf63 100%);
+  color: #f0fff0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Montserrat', Arial, sans-serif;
+  box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.1);
+  border-top: 3px solid #228B22;
+  padding: 24px 24px 20px 24px;
+  letter-spacing: 0.5px;
+  z-index: 100;
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 0.5s;
+}
+
+.footer.footer-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.footer-content {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-logo img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(20, 82, 20, 0.3);
+  background-color: #eaffea;
+  padding: 4px;
+}
+
+.footer-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+}
+
+.footer-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.footer-link {
+  color: #eaffea;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+  color: #b4ffb4;
+}
+
+.footer-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.9rem;
+}
+
+.footer-contact-link {
+  color: #d8ffd8;
+  text-decoration: none;
+}
+
+.footer-contact-link:hover {
+  color: #b4ffb4;
+}
+
+.footer-social {
+  display: flex;
+  gap: 12px;
+}
+
+.footer-social-icon img {
+  width: 26px;
+  height: 26px;
+  filter: brightness(0.95) saturate(0.9);
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.footer-social-icon:hover img {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+.footer-bottom {
+  text-align: center;
+  font-size: 0.85rem;
+  margin-top: 10px;
+  color: #e0ffe0;
+  opacity: 0.9;
+}

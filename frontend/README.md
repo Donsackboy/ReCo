@@ -1,3 +1,9 @@
+# Localhosts
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:8000
+- **Admin Django**: http://localhost:8000/admin
+
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
@@ -73,3 +79,21 @@ export default defineConfig([
   },
 ])
 ```
+
+# Dependencias para trabajar localmente
+
+*Probablemente este comando esta malo, busca otro*
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
+"source algo" # TODO
+
+cd fronend
+npm install
+
+
+# IMPORTANTE
+Cambiar el archivo .env para que el api funcione. Esto se ha hecho por una excepcion
+Colocar/reemplazar en /localhost/.env :
+VITE_API_BASE=http://localhost:8000/api
+
+si es que tu ambiente es totalmente local.
