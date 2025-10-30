@@ -1,0 +1,10 @@
+.refugio-dashboard-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Alinea al inicio por si el contenido es más alto */
+  padding: 40px 20px;
+  min-height: calc(100vh - 160px); /* Ajusta altura considerando header y footer */
+  background: linear-gradient(135deg, #f0fff0 0%, #e0ffe0 100%);
+}
+
+/* Estilos compartidos entre el formulario y el menú se pueden mover a GestionRefugioMenu.css si prefieres */
