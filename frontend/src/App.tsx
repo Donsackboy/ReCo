@@ -1,5 +1,7 @@
-import Header from './rols/Public/components/Header/Header'
+import Header from './rols/Public/components/Header/Header';
 import HeaderAdmin from './rols/Admin/components/HeaderAdmin';
+import HeaderRefugio from './rols/Refugio/components/HeaderRefugio';
+import HeaderUsuario from './rols/Usuario/components/HeaderUsuario';
 import Home from './rols/Public/pages/Home/Home'
 import Footer from './rols/Public/components/Footer/Footer'
 import './App.css'
@@ -30,15 +32,25 @@ function App() {
     }
   })();
 
-  const isAdmin = user && user.tipo_usuario === 'admin';
+  const tipoUsuario = user?.tipo_usuario;
+  const pathname = window.location.pathname;
+
+  let headerComponent = <Header />;
+  if (tipoUsuario === 'admin') {
+    if (pathname.startsWith('/admin')) {
+      headerComponent = <HeaderAdmin adminName={user?.username || 'Admin'} />;
+    } else {
+      headerComponent = <Header />;
+    }
+  } else if (tipoUsuario === 'refugio') {
+    headerComponent = <HeaderRefugio refugioNombre={user?.username || 'Refugio'} />;
+  } else if (tipoUsuario === 'usuario') {
+    headerComponent = <HeaderUsuario userName={user?.username || 'Usuario'} />;
+  }
 
   return (
     <div className="app">
-      {isAdmin ? (
-        <HeaderAdmin adminName={user?.username || 'Admin'} />
-      ) : (
-        <Header />
-      )}
+      {headerComponent}
       <main className="main-content">
         <Home />
       </main>

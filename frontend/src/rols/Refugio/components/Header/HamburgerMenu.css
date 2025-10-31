@@ -104,26 +104,24 @@
   backdrop-filter: blur(8px);
 }
 
-/* Unificar botones de menú lateral y autenticación */
-.side-menu-link,
-button.side-menu-link {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding: 18px 2rem;
-  text-decoration: none;
-  color: #228B22;
-  font-weight: 700;
-  font-size: 1.1rem;
-  background: none;
-  border: none;
-  transition: all 0.4s ease;
-  border-right: 4px solid transparent;
-  position: relative;
-  cursor: pointer;
-  width: 100%;
-  box-sizing: border-box;
+.side-menu {
+  position: fixed;
+  top: 0;
+  right: -380px;
+  width: 380px;
+  height: 100vh;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F0FFF0 50%, #E0FFE0 100%);
+  z-index: 1002;
+  transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: -8px 0 40px rgba(144, 238, 144, 0.4);
+  overflow-y: auto;
+  border-left: 3px solid #90EE90;
 }
+
+.side-menu-open {
+  right: 0;
+}
+
 .side-menu-header {
   display: flex;
   align-items: center;
@@ -239,9 +237,7 @@ button.side-menu-link {
   margin: 0;
 }
 
-/* Unificar botones de menú lateral y autenticación */
-.side-menu-link,
-button.side-menu-link {
+.side-menu-link {
   display: flex;
   align-items: center;
   gap: 18px;
@@ -250,12 +246,9 @@ button.side-menu-link {
   color: #228B22;
   font-weight: 700;
   font-size: 1.1rem;
-  background: none;
-  border: none;
   transition: all 0.4s ease;
   border-right: 4px solid transparent;
   position: relative;
-  cursor: pointer;
 }
 
 .side-menu-link::before {
@@ -312,27 +305,4 @@ button.side-menu-link {
 
 /* Estilos específicos para botones de autenticación en el menú lateral */
 
-/* === BOTONES DE AUTENTICACIÓN MENÚ LATERAL (estilo usuario) === */
-.btn-logout-public {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  background: linear-gradient(135deg, #E74C3C, #C0392B);
-  color: white;
-  border: none;
-  border-radius: 15px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
-  margin-left: 1em;
-}
-.btn-logout-public:hover {
-  background: linear-gradient(135deg, #C0392B, #A93226);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
-}
-/* Los botones de inicio de sesión y registro usan solo side-menu-link para unificar la estética y animación */
-
+/* Removed authentication button styles */

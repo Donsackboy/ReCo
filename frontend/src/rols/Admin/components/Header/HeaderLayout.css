@@ -1,0 +1,27 @@
+/* =============== HEADER LAYOUT =============== */
+.header-layout {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: linear-gradient(135deg, #00bf63 0%, #47a063 25%, #7ac063 60%, #6caf63 100%);
+  box-shadow: 0 8px 32px rgba(65, 134, 65, 0.781);
+  backdrop-filter: blur(20px);
+  border-bottom: 3px solid #228B22;
+}
+
+.navbar {
+  width: 100%;
+  padding: 0;
+}
+
+.nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1rem 1rem 0; /* Sin padding izquierdo */
+  gap: 2rem;
+}

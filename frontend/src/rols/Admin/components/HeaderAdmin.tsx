@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LogoAdmin from './Header/LogoAdmin';
-import "./HeaderAdmin.css";
+import Logo from '../../Public/components/Header/shared/Logo';
+import "./Header/HamburgerMenu.css";
+import "./Header/HeaderLayout.css";
+import "./Header/NavMenu.css";
+import "./Header/UserProfile.css";
+import "./Header/Logo.css";
 
 interface HeaderAdminProps {
   onNavigateHome?: () => void;
@@ -29,49 +33,85 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
     setIsMenuOpen(false);
   };
 
+  const isAdminMode = window.location.pathname.startsWith('/admin');
   return (
-  <header className="header-admin">
+    <header className="header">
       <nav className="navbar">
-  {/* Logo (admin) */}
-  <LogoAdmin onClick={handleLogoClick} />
         <div className="nav-container">
-          {/* Navegación central - ADMINISTRADOR */}
+          <div className="nav-logo">
+            <Logo onClick={handleLogoClick} />
+          </div>
           <nav className="center-nav">
             <ul className="nav-menu">
-              <li className="nav-item">
-                <a href="#admin-dashboard" className="nav-link">
-                  <span className="nav-icon">📈</span>
-                  <span className="nav-text">Dashboard</span>
-                </a>
-              </li>
-              <li className="nav-item">
-                <a href="#gestionar-refugios" className="nav-link">
-                  <span className="nav-icon">🏛️</span>
-                  <span className="nav-text">Refugios</span>
-                </a>
-              </li>
-              <li className="nav-item">
-                <a href="#usuarios" className="nav-link">
-                  <span className="nav-icon">👥</span>
-                  <span className="nav-text">Usuarios</span>
-                </a>
-              </li>
-              <li className="nav-item">
-                <a href="#verificar-comprobantes" className="nav-link">
-                  <span className="nav-icon">✅</span>
-                  <span className="nav-text">Verificaciones</span>
-                </a>
-              </li>
-              <li className="nav-item">
-                <a href="#reportes" className="nav-link">
-                  <span className="nav-icon">📊</span>
-                  <span className="nav-text">Reportes</span>
-                </a>
-              </li>
+              {isAdminMode ? (
+                <>
+                  <li className="nav-item">
+                    <a href="#admin-dashboard" className="nav-link">
+                      <span className="nav-icon">📈</span>
+                      <span className="nav-text">Dashboard</span>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="#gestionar-refugios" className="nav-link">
+                      <span className="nav-icon">🏛️</span>
+                      <span className="nav-text">Refugios</span>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="#usuarios" className="nav-link">
+                      <span className="nav-icon">👥</span>
+                      <span className="nav-text">Usuarios</span>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="#verificar-comprobantes" className="nav-link">
+                      <span className="nav-icon">✅</span>
+                      <span className="nav-text">Verificaciones</span>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="#reportes" className="nav-link">
+                      <span className="nav-icon">📊</span>
+                      <span className="nav-text">Reportes</span>
+                    </a>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li className="nav-item">
+                    <a href="/refugios" className="nav-link">
+                      <span className="nav-text">Refugios</span>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/animales" className="nav-link">
+                      <span className="nav-text">Animales</span>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/hogares-temporales" className="nav-link">
+                      <span className="nav-text">Hogares Temporales</span>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/donaciones" className="nav-link">
+                      <span className="nav-text">Donaciones</span>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/eventos" className="nav-link">
+                      <span className="nav-text">Eventos</span>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/voluntariado" className="nav-link">
+                      <span className="nav-text">Voluntariado</span>
+                    </a>
+                  </li>
+                </>
+              )}
             </ul>
           </nav>
-          
-          {/* Perfil de admin y menú */}
           <div className="hamburger-container">
             <div className="auth-buttons desktop-auth">
               <button
@@ -214,7 +254,7 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
               </a>
             </li>
             <li className="side-menu-item">
-              <button onClick={() => { onLogout?.(); closeMenu(); }} className="side-menu-link logout-btn">
+              <button onClick={() => { onLogout?.(); closeMenu(); }} className="btn-logout">
                 <span className="side-menu-icon">🚪</span>
                 Cerrar Sesión
               </button>
