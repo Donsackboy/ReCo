@@ -34,49 +34,47 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
         <div className="nav-container">
           {/* Logo */}
           <Logo onClick={onNavigateHome} />
-          
           {/* Navegación central - Usuario REFUGIO */}
           <nav className="center-nav">
             <ul className="nav-menu">
               <li className="nav-item">
-                <a href="#dashboard" className="nav-link">
+                <a href="/refugio/dashboard" className="nav-link">
                   <span className="nav-icon">📊</span>
                   <span className="nav-text">Dashboard</span>
                 </a>
               </li>
               <li className="nav-item">
-                <a href="#mis-animales" className="nav-link">
+                <a href="/refugio/mis-animales" className="nav-link">
                   <span className="nav-icon">🐕</span>
                   <span className="nav-text">Mis Animales</span>
                 </a>
               </li>
               <li className="nav-item">
-                <a href="#postulaciones" className="nav-link">
+                <a href="/refugio/postulaciones" className="nav-link">
                   <span className="nav-icon">📋</span>
                   <span className="nav-text">Postulaciones</span>
                 </a>
               </li>
               <li className="nav-item">
-                <a href="#mis-eventos" className="nav-link">
+                <a href="/refugio/mis-eventos" className="nav-link">
                   <span className="nav-icon">🎪</span>
                   <span className="nav-text">Mis Eventos</span>
                 </a>
               </li>
               <li className="nav-item">
-                <a href="#donaciones-recibidas" className="nav-link">
+                <a href="/refugio/donaciones" className="nav-link">
                   <span className="nav-icon">💰</span>
                   <span className="nav-text">Donaciones</span>
                 </a>
               </li>
               <li className="nav-item">
-                <a href="#historial-medico" className="nav-link">
+                <a href="/refugio/historial-medico" className="nav-link">
                   <span className="nav-icon">🏥</span>
                   <span className="nav-text">Historial Médico</span>
                 </a>
               </li>
             </ul>
           </nav>
-          
           {/* Perfil de refugio y menú */}
           <div className="hamburger-container">
             <div className="auth-buttons desktop-auth">
@@ -116,37 +114,37 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
           </div>
           <ul className="side-menu-items">
             <li className="side-menu-item">
-              <a href="#dashboard" className="side-menu-link" onClick={closeMenu}>
+              <a href="/refugio/dashboard" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">📊</span>
                 Dashboard
               </a>
             </li>
             <li className="side-menu-item">
-              <a href="#mis-animales" className="side-menu-link" onClick={closeMenu}>
+              <a href="/refugio/mis-animales" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">🐕</span>
                 Mis Animales
               </a>
             </li>
             <li className="side-menu-item">
-              <a href="#postulaciones" className="side-menu-link" onClick={closeMenu}>
+              <a href="/refugio/postulaciones" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">📋</span>
                 Postulaciones
               </a>
             </li>
             <li className="side-menu-item">
-              <a href="#mis-eventos" className="side-menu-link" onClick={closeMenu}>
+              <a href="/refugio/mis-eventos" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">🎪</span>
                 Mis Eventos
               </a>
             </li>
             <li className="side-menu-item">
-              <a href="#donaciones-recibidas" className="side-menu-link" onClick={closeMenu}>
+              <a href="/refugio/donaciones" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">💰</span>
-                Donaciones Recibidas
+                Donaciones
               </a>
             </li>
             <li className="side-menu-item">
-              <a href="#historial-medico" className="side-menu-link" onClick={closeMenu}>
+              <a href="/refugio/historial-medico" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">🏥</span>
                 Historial Médico
               </a>
@@ -154,11 +152,17 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
             <li className="side-menu-item">
               <a href="#voluntarios" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">🤝</span>
-                Mis Voluntarios
+                  Mis Voluntarios
               </a>
             </li>
+              <li className="side-menu-item">
+                <a href="/refugio/inscritos-evento" className="side-menu-link" onClick={closeMenu}>
+                  <span className="side-menu-icon">📋</span>
+                  Inscritos Evento
+                </a>
+              </li>
             <li className="side-menu-item">
-              <a href="#necesidades" className="side-menu-link" onClick={closeMenu}>
+              <a href="/refugio/necesidades" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">📝</span>
                 Necesidades
               </a>

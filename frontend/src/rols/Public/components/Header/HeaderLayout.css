@@ -22,9 +22,14 @@
 .nav-container {
   max-width: 1400px;
   margin: 0 auto;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
   padding: 1rem 1rem 1rem 0; /* Sin padding izquierdo */
   gap: 2rem;
+}
+.center-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

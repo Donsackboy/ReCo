@@ -1,3 +1,6 @@
+import Voluntarios from './rols/Refugio/pages/Voluntarios';
+import InscritosEvento from './rols/Refugio/pages/InscritosEvento';
+import Necesidades from './rols/Refugio/pages/Necesidades';
 // Enrutador principal para las páginas
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from './rols/Public/components/Header/Header';
@@ -31,9 +34,13 @@ import RefugioPerfil from './rols/Public/pages/Refugios/RefugioPerfil.tsx';
 
 
 //refugio
-
 import HeaderRefugio from './rols/Refugio/components/HeaderRefugio.tsx';
-import RefugioDashboard from './rols/Refugio/pages/RefugioDashboard/RefugioDashboard.tsx';
+import Dashboard from './rols/Refugio/pages/Dashboard/index';
+import MisAnimales from './rols/Refugio/pages/MisAnimales';
+import Postulaciones from './rols/Refugio/pages/Postulaciones';
+import MisEventos from './rols/Refugio/pages/MisEventos';
+import Donaciones from './rols/Refugio/pages/Donaciones';
+import HistorialMedico from './rols/Refugio/pages/HistorialMedico';
 
 
 
@@ -117,18 +124,16 @@ export default function AppRouter() {
         />
 
         {/* --- Rutas Refugio --- */}
-        <Route
-          path="/refugio/dashboard" // Define la URL para el dashboard del refugio
-          element={
-            isRefugio ? ( // Verifica si el usuario es de tipo refugio
-              <RefugioDashboard /> // Si es, muestra el dashboard
-            ) : (
-              <Navigate to="/" replace /> // Si no, redirige a la página principal
-            )
-          }
-        />
-        {/* Puedes añadir más rutas específicas de refugio aquí en el futuro */}
+        <Route path="/refugio/dashboard" element={isRefugio ? (<Dashboard />) : (<Navigate to="/" replace />)} />
+        <Route path="/refugio/mis-animales" element={isRefugio ? (<MisAnimales />) : (<Navigate to="/" replace />)} />
+        <Route path="/refugio/postulaciones" element={isRefugio ? (<Postulaciones />) : (<Navigate to="/" replace />)} />
+        <Route path="/refugio/mis-eventos" element={isRefugio ? (<MisEventos />) : (<Navigate to="/" replace />)} />
+        <Route path="/refugio/donaciones" element={isRefugio ? (<Donaciones />) : (<Navigate to="/" replace />)} />
+        <Route path="/refugio/historial-medico" element={isRefugio ? (<HistorialMedico />) : (<Navigate to="/" replace />)} />
 
+        <Route path="/refugio/voluntarios" element={isRefugio ? (<Voluntarios />) : (<Navigate to="/" replace />)} />
+        <Route path="/refugio/inscritos-evento" element={isRefugio ? (<InscritosEvento />) : (<Navigate to="/" replace />)} />
+        <Route path="/refugio/necesidades" element={isRefugio ? (<Necesidades />) : (<Navigate to="/" replace />)} />
       </Routes>
     </main>
 
