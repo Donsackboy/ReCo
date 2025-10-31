@@ -1,9 +1,13 @@
+
 from django.conf import settings
 from rest_framework import serializers
-
-
 from django.contrib.auth import authenticate
-from .models import Usuario, HogaresTemporales
+from .models import Usuario, HogaresTemporales, Refugio
+
+class RefugioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Refugio
+        fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

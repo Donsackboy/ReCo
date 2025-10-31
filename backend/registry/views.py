@@ -1,10 +1,29 @@
-from rest_framework import status, permissions
+from rest_framework import status, permissions, generics
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from .serializers import UserSerializer, LoginSerializer, HogarTemporalSerializer
-from .models import Usuario, HogaresTemporales
+from .serializers import UserSerializer, LoginSerializer, HogarTemporalSerializer, RefugioSerializer
+from .models import Usuario, HogaresTemporales, Refugio
 from .permissions import IsAdmin, IsRefugio, IsRefugioOrAdmin
+
+class RefugioListCreateView(generics.ListCreateAPIView):
+    queryset = Refugio.objects.all()
+    serializer_class = RefugioSerializer
+    permission_classes = [IsAdmin]
+
+class RefugioDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Refugio.objects.all()
+    serializer_class = RefugioSerializer
+    permission_classes = [IsAdmin]
+class UserListAdminView(generics.ListCreateAPIView):
+    queryset = Usuario.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAdmin]
+
+class UserDetailAdminView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Usuario.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAdmin]
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])

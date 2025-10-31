@@ -1,9 +1,15 @@
 from django.urls import path
 from . import views
 
+
+
 urlpatterns = [
     path('auth/login/', views.login, name='login'),
     path('auth/register/', views.register, name='register'),
     path('auth/profile/', views.user_profile, name='profile'),
     path('hogares-temporales/', views.crear_hogar_temporal, name='crear_hogar_temporal'),
+    path('admin/users/', views.UserListAdminView.as_view(), name='admin_user_list'),
+    path('admin/users/<int:pk>/', views.UserDetailAdminView.as_view(), name='admin_user_detail'),
+    path('admin/refugios/', views.RefugioListCreateView.as_view(), name='admin_refugio_list_create'),
+    path('admin/refugios/<int:pk>/', views.RefugioDetailView.as_view(), name='admin_refugio_detail'),
 ]
