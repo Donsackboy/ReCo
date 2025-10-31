@@ -2,7 +2,7 @@
 from django.conf import settings
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from .models import Usuario, HogaresTemporales, Refugio
+from .models import Usuario, HogaresTemporales, Refugio, Animal
 
 class RefugioSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,9 +10,10 @@ class RefugioSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
+    refugio = RefugioSerializer(read_only=True)
     class Meta:
         model = Usuario
-        fields = ('id', 'username', 'email', 'tipo_usuario', 'first_name', 'last_name', 'telefono')
+        fields = ('id', 'username', 'email', 'tipo_usuario', 'first_name', 'last_name', 'telefono', 'refugio')
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -37,4 +38,10 @@ class LoginSerializer(serializers.Serializer):
 class HogarTemporalSerializer(serializers.ModelSerializer):
     class Meta:
         model = HogaresTemporales
+        fields = '__all__'
+
+# Serializer para Animal
+class AnimalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Animal
         fields = '__all__'

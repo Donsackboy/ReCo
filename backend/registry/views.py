@@ -2,8 +2,8 @@ from rest_framework import status, permissions, generics
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from .serializers import UserSerializer, LoginSerializer, HogarTemporalSerializer, RefugioSerializer
-from .models import Usuario, HogaresTemporales, Refugio
+from .serializers import UserSerializer, LoginSerializer, HogarTemporalSerializer, RefugioSerializer, AnimalSerializer
+from .models import Usuario, HogaresTemporales, Refugio, Animal
 from .permissions import IsAdmin, IsRefugio, IsRefugioOrAdmin
 
 class RefugioListCreateView(generics.ListCreateAPIView):
@@ -45,6 +45,20 @@ class RefugioDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Refugio.objects.all()
     serializer_class = RefugioSerializer
     permission_classes = [IsAdmin]
+
+# CRUD para animales (solo refugio y admin pueden crear/listar)
+class AnimalListCreateView(generics.ListCreateAPIView):
+    queryset = Animal.objects.all()
+    serializer_class = AnimalSerializer
+    permission_classes = [IsRefugioOrAdmin]
+
+    def perform_create(self, serializer):
+        # Asignar refugio automáticamente si el usuario es refugio
+        user = self.request.user
+        if hasattr(user, 'refugio') and user.refugio:
+            serializer.save(refugio=user.refugio)
+        else:
+            serializer.save()
 class UserListAdminView(generics.ListCreateAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UserSerializer

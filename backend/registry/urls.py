@@ -12,4 +12,5 @@ urlpatterns = [
     path('admin/users/<int:pk>/', views.UserDetailAdminView.as_view(), name='admin_user_detail'),
     path('admin/refugios/', views.RefugioListCreateView.as_view(), name='admin_refugio_list_create'),
     path('admin/refugios/<int:pk>/', views.RefugioDetailView.as_view(), name='admin_refugio_detail'),
+    path('animales/', views.AnimalListCreateView.as_view(), name='animal_list_create'),
 ]

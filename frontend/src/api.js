@@ -42,3 +42,28 @@ export async function deleteUsuario(id, token) {
   if (!response.ok) throw new Error('Error al eliminar usuario');
   return true;
 }
+
+// Obtener todos los animales (refugio o admin)
+export async function getAnimales(token) {
+  const response = await fetch(`${API_BASE}/animales/`, {
+    headers: {
+      'Authorization': `Token ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error('Error al obtener animales');
+  return response.json();
+}
+
+// Crear animal (refugio o admin)
+export async function createAnimal(data, token) {
+  const response = await fetch(`${API_BASE}/animales/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Error al crear animal');
+  return response.json();
+}
