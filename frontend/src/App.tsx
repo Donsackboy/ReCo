@@ -48,12 +48,19 @@ function App() {
     headerComponent = <HeaderUsuario userName={user?.username || 'Usuario'} />;
   }
 
+  // Detectar si el header es fijo (solo admin en modo admin)
+  const isHeaderFixed = tipoUsuario === 'admin' && pathname.startsWith('/admin');
   return (
-    <div className="app">
+    <div
+      className="app-main-layout"
+      style={isHeaderFixed ? { paddingTop: '70px', minHeight: '100vh', display: 'flex', flexDirection: 'column' } : { minHeight: '100vh', display: 'flex', flexDirection: 'column' }}
+    >
       {headerComponent}
-      <main className="main-content">
-        <Home />
-      </main>
+      <div style={{ flex: 1 }}>
+        <main className="main-content">
+          <Home />
+        </main>
+      </div>
       <Footer />
     </div>
   );
