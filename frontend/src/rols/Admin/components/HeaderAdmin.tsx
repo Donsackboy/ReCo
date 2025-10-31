@@ -70,7 +70,7 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
                     </a>
                   </li>
                   <li className="nav-item">
-                    <a href="#reportes" className="nav-link">
+                    <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/reportes')}}>
                       <span className="nav-icon">📊</span>
                       <span className="nav-text">Reportes</span>
                     </a>
