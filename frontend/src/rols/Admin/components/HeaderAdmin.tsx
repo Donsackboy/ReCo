@@ -46,25 +46,25 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
               {isAdminMode ? (
                 <>
                   <li className="nav-item">
-                    <a href="#admin-dashboard" className="nav-link">
+                    <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin')}}>
                       <span className="nav-icon">📈</span>
                       <span className="nav-text">Dashboard</span>
                     </a>
                   </li>
                   <li className="nav-item">
-                    <a href="#gestionar-refugios" className="nav-link">
+                    <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/gestionar-refugios')}}>
                       <span className="nav-icon">🏛️</span>
                       <span className="nav-text">Refugios</span>
                     </a>
                   </li>
                   <li className="nav-item">
-                    <a href="#usuarios" className="nav-link">
+                    <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/gestionar-usuarios')}}>
                       <span className="nav-icon">👥</span>
                       <span className="nav-text">Usuarios</span>
                     </a>
                   </li>
                   <li className="nav-item">
-                    <a href="#verificar-comprobantes" className="nav-link">
+                    <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/verificaciones')}}>
                       <span className="nav-icon">✅</span>
                       <span className="nav-text">Verificaciones</span>
                     </a>

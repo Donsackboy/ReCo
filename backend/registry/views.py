@@ -11,6 +11,36 @@ class RefugioListCreateView(generics.ListCreateAPIView):
     serializer_class = RefugioSerializer
     permission_classes = [IsAdmin]
 
+    def create(self, request, *args, **kwargs):
+        # Espera datos: nombre, direccion, correo_contacto, etc. + username, email, password
+        refugio_data = request.data.copy()
+        username = refugio_data.pop('username', None)
+        email = refugio_data.pop('email', None)
+        password = refugio_data.pop('password', None)
+
+        if not (username and email and password and refugio_data.get('nombre')):
+            return Response({'error': 'Faltan datos requeridos: nombre, username, email, password'}, status=400)
+
+        # Crear refugio
+        refugio_serializer = self.get_serializer(data=refugio_data)
+        refugio_serializer.is_valid(raise_exception=True)
+        refugio = refugio_serializer.save()
+
+        # Crear usuario tipo refugio asociado
+        usuario = Usuario.objects.create_user(
+            username=username,
+            email=email,
+            password=password,
+            tipo_usuario='refugio',
+            refugio=refugio
+        )
+
+        # Retornar ambos objetos
+        return Response({
+            'refugio': RefugioSerializer(refugio).data,
+            'usuario_refugio': UserSerializer(usuario).data
+        }, status=201)
+
 class RefugioDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Refugio.objects.all()
     serializer_class = RefugioSerializer
