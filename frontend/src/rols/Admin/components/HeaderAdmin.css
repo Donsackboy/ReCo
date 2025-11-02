@@ -15,15 +15,18 @@
 	transition: color 0.3s, filter 0.3s;
 }
 .admin-switch .switch-indicator {
-	width: 22px;
-	height: 22px;
+	width: 28px;
+	height: 28px;
 	border-radius: 50%;
-	margin-left: 0.5em;
+	margin-right: 0.5em;
+	margin-left: 0;
 	background: #bbb;
 	box-shadow: 0 0 0 0 #00bf63;
 	transition: background 0.3s, box-shadow 0.3s;
 	display: inline-block;
 	position: relative;
+	border: 2.5px solid #fff;
+	outline: 2px solid #ffb300;
 }
 .admin-switch.admin-on .switch-indicator {
 	background: #00bf63;

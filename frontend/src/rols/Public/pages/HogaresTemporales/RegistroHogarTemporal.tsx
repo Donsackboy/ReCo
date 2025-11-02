@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import HogarTemporalForm from '../../components/HogarTemporal/HogarTemporalForm';
 import { useLocation } from 'react-router-dom';
 import { animales } from '../Animales/animalesData';
 

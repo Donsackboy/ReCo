@@ -5,7 +5,7 @@ import "./Header/HamburgerMenu.css";
 import "./Header/HeaderLayout.css";
 import "./Header/NavMenu.css";
 import "./Header/UserProfile.css";
-import "./Header/Logo.css";
+// import removed: Logo.css does not exist in Admin/Header
 
 interface HeaderAdminProps {
   onNavigateHome?: () => void;
@@ -34,6 +34,8 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
   };
 
   const isAdminMode = window.location.pathname.startsWith('/admin');
+  // Puedes cambiar el color aquí: "green", "red", "orange" según el estado que prefieras
+  const ledColor = isAdminMode ? 'green' : 'gray';
   return (
     <header className="header">
       <nav className="navbar">
@@ -115,22 +117,20 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
           <div className="hamburger-container">
             <div className="auth-buttons desktop-auth">
               <button
-                className={`user-profile admin-profile admin-switch${location.pathname.startsWith('/admin') ? ' admin-on' : ' admin-off'}`}
+                className={`user-profile admin-profile admin-switch${isAdminMode ? ' admin-on' : ' admin-off'}`}
                 onClick={() => {
-                  if (location.pathname.startsWith('/admin')) {
+                  if (isAdminMode) {
                     navigate('/');
                   } else {
                     navigate('/admin');
                   }
                 }}
-                aria-label={location.pathname.startsWith('/admin') ? 'Cambiar a modo público' : 'Cambiar a modo admin'}
+                aria-label={isAdminMode ? 'Cambiar a modo público' : 'Cambiar a modo admin'}
               >
-                <span className="user-icon">
-                  {location.pathname.startsWith('/admin') ? '⚡' : '⚡'}
-                </span>
+                <span className="switch-indicator" style={{background: isAdminMode ? '#00bf63' : '#bbb', boxShadow: isAdminMode ? '0 0 12px 2px #00bf63' : 'none'}}></span>
+                <span className="user-icon">⚡</span>
                 <span className="user-name">{adminName}</span>
                 <span className="admin-badge">Admin</span>
-                <span className="switch-indicator"></span>
               </button>
               <button onClick={onLogout} className="btn-logout">
                 <span className="auth-icon">🚪</span>

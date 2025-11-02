@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -8,10 +9,10 @@ import "./UserProfile.css";
 import "./HamburgerMenu.css";
 import "./AuthButtons.css";
 
-import LoginModal from "../LoginModal";
-import RegisterModal from "../RegisterModal";
+import LoginModal from "./LoginModal";
+import RegisterModal from "./RegisterModal";
 
-function Header() {
+function HeaderPublic() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
@@ -183,7 +184,7 @@ function Header() {
             </li>
             <li className="side-menu-item">
               <Link to="/eventos" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">🎉</span>
+                <span className="side-menu-icon">�</span>
                 Eventos
               </Link>
             </li>
@@ -240,4 +241,4 @@ function Header() {
   );
 }
 
-export default Header;
+export default HeaderPublic;

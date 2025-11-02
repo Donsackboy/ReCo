@@ -327,7 +327,7 @@ button.side-menu-link {
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
-  margin-left: 1em;
+  /* margin-left removed to avoid interfering with logo alignment */
 }
 .btn-logout-public:hover {
   background: linear-gradient(135deg, #C0392B, #A93226);

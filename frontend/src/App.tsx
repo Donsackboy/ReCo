@@ -1,11 +1,11 @@
-import Header from './rols/Public/components/Header/Header';
+
+import HeaderPublic from './rols/Public/components/Header/HeaderPublic';
 import HeaderAdmin from './rols/Admin/components/HeaderAdmin';
 import HeaderRefugio from './rols/Refugio/components/HeaderRefugio';
 import HeaderUsuario from './rols/Usuario/components/HeaderUsuario';
-import Home from './rols/Public/pages/Home/Home'
-import Footer from './rols/Public/components/Footer/Footer'
-import './App.css'
-import React, { useEffect } from 'react';
+import Home from './rols/Public/pages/Home/Home';
+import Footer from './rols/Public/components/Footer/Footer';
+import { useEffect } from 'react';
 
 function App() {
   useEffect(() => {
@@ -35,12 +35,13 @@ function App() {
   const tipoUsuario = user?.tipo_usuario;
   const pathname = window.location.pathname;
 
-  let headerComponent = <Header />;
+
+  let headerComponent = <HeaderPublic />;
   if (tipoUsuario === 'admin') {
     if (pathname.startsWith('/admin')) {
       headerComponent = <HeaderAdmin adminName={user?.username || 'Admin'} />;
     } else {
-      headerComponent = <Header />;
+      headerComponent = <HeaderPublic />;
     }
   } else if (tipoUsuario === 'refugio') {
     headerComponent = <HeaderRefugio refugioNombre={user?.username || 'Refugio'} />;

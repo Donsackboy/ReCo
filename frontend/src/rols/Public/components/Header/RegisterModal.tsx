@@ -1,39 +1,53 @@
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
-import "./AuthModals.css";
+import "../AuthModals.css";
 
-interface LoginModalProps {
+interface RegisterModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSwitchToRegister: () => void;
+  onSwitchToLogin: () => void;
 }
 
 interface FormData {
+  username: string;
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({
+const RegisterModal: React.FC<RegisterModalProps> = ({
   isOpen,
   onClose,
-  onSwitchToRegister,
+  onSwitchToLogin,
 }) => {
   const [formData, setFormData] = useState<FormData>({
+    username: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Las contraseñas no coinciden");
+      return;
+    }
+
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE}/auth/login/`, {
+      // Todos los usuarios se registran como "default" por seguridad
+      // Los refugios deben ser aprobados por un administrador mediante un proceso específico
+      const response = await fetch(`${import.meta.env.VITE_API_BASE}/auth/register/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          username: formData.username,
           email: formData.email,
           password: formData.password,
+          tipo_usuario: "default", // Todos los usuarios se registran como usuarios básicos
         }),
       });
 
@@ -41,24 +55,12 @@ const LoginModal: React.FC<LoginModalProps> = ({
         const data = await response.json();
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        alert("¡Login exitoso!");
-
-        // Redireccionar dependiendo de autoridad de usuario
-        const user = JSON.parse(localStorage.getItem("user") || "null");
-        console.log("[DEBUG] user en localStorage:", user);
-        console.log("[DEBUG] tipo_usuario:", user?.tipo_usuario);
-        if (user?.tipo_usuario === "admin") {
-          console.log("[DEBUG] Redirigiendo a /admin");
-          window.location.href = "/admin";
-        } else {
-          console.log("[DEBUG] No es admin, recargando página normal");
-          onClose();
-          window.location.reload();
-        }
-
-
+        alert("¡Registro exitoso!");
+        onClose();
+        window.location.reload();
       } else {
-        alert("Error en login: Credenciales incorrectas");
+        const error = await response.json();
+        alert("Error en registro: " + JSON.stringify(error));
       }
     } catch (error) {
       alert("Error de conexión");
@@ -80,8 +82,18 @@ const LoginModal: React.FC<LoginModalProps> = ({
         <button className="close-button" onClick={onClose}>
           ×
         </button>
-        <h2>Iniciar Sesión</h2>
+        <h2>Registrarse</h2>
         <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Nombre de usuario:</label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+            />
+          </div>
           <div className="form-group">
             <label>Email:</label>
             <input
@@ -102,18 +114,28 @@ const LoginModal: React.FC<LoginModalProps> = ({
               required
             />
           </div>
+          <div className="form-group">
+            <label>Confirmar Contraseña:</label>
+            <input
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+          </div>
           <button type="submit" className="submit-button">
-            Ingresar
+            Registrarse
           </button>
         </form>
         <p className="switch-auth">
-          ¿No tienes cuenta?{" "}
+          ¿Ya tienes cuenta?{" "}
           <button
             type="button"
             className="switch-button"
-            onClick={onSwitchToRegister}
+            onClick={onSwitchToLogin}
           >
-            Regístrate aquí
+            Inicia sesión aquí
           </button>
         </p>
       </div>
@@ -122,4 +144,4 @@ const LoginModal: React.FC<LoginModalProps> = ({
   );
 };
 
-export default LoginModal;
+export default RegisterModal;

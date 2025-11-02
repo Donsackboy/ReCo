@@ -25,7 +25,7 @@
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  padding: 1rem 1rem 1rem 0; /* Sin padding izquierdo */
+  padding: 1rem 1rem 1rem 10px; /* Padding izquierdo fijo de 10px */
   gap: 2rem;
 }
 .center-nav {

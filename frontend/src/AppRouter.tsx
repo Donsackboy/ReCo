@@ -3,7 +3,7 @@ import InscritosEvento from './rols/Refugio/pages/InscritosEvento';
 import Necesidades from './rols/Refugio/pages/Necesidades';
 // Enrutador principal para las páginas
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Header from './rols/Public/components/Header/Header';
+import HeaderPublic from './rols/Public/components/Header/HeaderPublic';
 import HeaderUsuario from './rols/Usuario/components/HeaderUsuario';
 import HeaderAdmin from './rols/Admin/components/HeaderAdmin';
 import Footer from './rols/Public/components/Footer/Footer';
@@ -19,7 +19,6 @@ import Home from './rols/Public/pages/Home/Home.tsx';
 import RefugiosList from './rols/Public/pages/Refugios/Refugios.tsx';
 import Animales from './rols/Public/pages/Animales/Animales.tsx';
 import AnimalPerfil from './rols/Public/pages/Animales/AnimalPerfil.tsx';
-import AnimalPerfilRefugio from './rols/Refugio/AnimalPerfil.tsx';
 import HogaresTemporales from './rols/Public/pages/HogaresTemporales/HogaresTemporales.tsx';
 import RegistroHogarTemporal from './rols/Public/pages/HogaresTemporales/RegistroHogarTemporal.tsx';
 import DonacionesPage from './rols/Public/pages/Donaciones/Donaciones.tsx';
@@ -45,11 +44,6 @@ import HistorialMedico from './rols/Refugio/pages/HistorialMedico';
 
 
 export default function AppRouter() {
-  // Logout handler para admin
-  const handleAdminLogout = () => {
-    localStorage.removeItem('user');
-    window.location.href = '/';
-  };
   // Intent: elegir el header según el tipo de usuario guardado en localStorage
   const user = (() => {
     try {
@@ -82,8 +76,8 @@ export default function AppRouter() {
       // Si no es Admin ni Refugio PERO es Usuario normal, muestra HeaderUsuario
       <HeaderUsuario userName={user?.username} onLogout={handleLogout} />
     ) : (
-      // Si no es ninguno de los anteriores (es público), muestra Header (el público)
-      <Header />
+  // Si no es ninguno de los anteriores (es público), muestra HeaderPublic
+  <HeaderPublic />
     )}
     {/* FIN DE LA LÓGICA DE SELECCIÓN DEL HEADER */}
 
