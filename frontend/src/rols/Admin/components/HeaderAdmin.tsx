@@ -22,7 +22,11 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
   const navigate = useNavigate();
 
   const handleLogoClick = () => {
-    navigate('/admin');
+    if (isAdminMode) {
+      navigate('/admin');
+    } else {
+      navigate('/');
+    }
   };
 
   const toggleMenu = () => {
@@ -34,15 +38,11 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
   };
 
   const isAdminMode = window.location.pathname.startsWith('/admin');
-  // Puedes cambiar el color aquí: "green", "red", "orange" según el estado que prefieras
-  const ledColor = isAdminMode ? 'green' : 'gray';
   return (
     <header className="header">
       <nav className="navbar">
         <div className="nav-container">
-          <div className="nav-logo">
-            <Logo onClick={handleLogoClick} />
-          </div>
+          <Logo onClick={handleLogoClick} className="nav-logo" />
           <nav className="center-nav">
             <ul className="nav-menu">
               {isAdminMode ? (
@@ -152,7 +152,7 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
         <div className={`side-menu ${isMenuOpen ? 'side-menu-open' : ''}`}>
           <div className="side-menu-header admin-header">
             <div className="side-menu-logo">
-              <img src="/Images/reco-logo.png" alt="ReCo" className="side-logo" />
+                <Logo className="side-logo" />
               <div className="user-info">
                 <span className="side-logo-text">⚡ {adminName}</span>
                 <span className="user-role admin-role">Administrador</span>

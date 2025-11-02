@@ -16,6 +16,7 @@ import Verificaciones from './rols/Admin/pages/Verificaciones/Verificaciones.tsx
 
 import { Navigate } from 'react-router-dom';
 import Home from './rols/Public/pages/Home/Home.tsx';
+import PostulacionRefugio from './rols/Public/pages/PostulacionRefugio';
 import RefugiosList from './rols/Public/pages/Refugios/Refugios.tsx';
 import Animales from './rols/Public/pages/Animales/Animales.tsx';
 import AnimalPerfil from './rols/Public/pages/Animales/AnimalPerfil.tsx';
@@ -85,7 +86,8 @@ export default function AppRouter() {
       <Routes>
         {/* --- Rutas Públicas y Usuario --- */}
         <Route path="/" element={<Home />} />
-        <Route path="/refugios" element={<RefugiosList />} />
+  <Route path="/refugios" element={<RefugiosList />} />
+  <Route path="/postulacion-refugio" element={<PostulacionRefugio />} />
         <Route path="/refugio/:id" element={<RefugioPerfil />} />
         <Route path="/animales" element={<Animales />} />
         <Route path="/animales/:id" element={<AnimalPerfil />} />

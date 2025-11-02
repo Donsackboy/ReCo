@@ -1,8 +1,13 @@
-
-from django.conf import settings
 from rest_framework import serializers
+from .models import PostulacionRefugio, Usuario, HogaresTemporales, Refugio, Animal
+from django.conf import settings
 from django.contrib.auth import authenticate
-from .models import Usuario, HogaresTemporales, Refugio, Animal
+
+# --- Postulación de Refugio ---
+class PostulacionRefugioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostulacionRefugio
+        fields = '__all__'
 
 class RefugioSerializer(serializers.ModelSerializer):
     class Meta:

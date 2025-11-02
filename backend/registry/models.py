@@ -1,4 +1,45 @@
 from django.db import models
+# --- Postulación de Refugio ---
+class PostulacionRefugio(models.Model):
+    nombre = models.CharField(max_length=120)
+    persona_contacto = models.CharField(max_length=120)
+    email = models.EmailField()
+    telefono = models.CharField(max_length=30)
+    direccion = models.CharField(max_length=200)
+    comuna = models.CharField(max_length=80)
+    REGIONES_CHILE = [
+        ("Arica y Parinacota", "Arica y Parinacota"),
+        ("Tarapacá", "Tarapacá"),
+        ("Antofagasta", "Antofagasta"),
+        ("Atacama", "Atacama"),
+        ("Coquimbo", "Coquimbo"),
+        ("Valparaíso", "Valparaíso"),
+        ("Metropolitana", "Metropolitana"),
+        ("O'Higgins", "O'Higgins"),
+        ("Maule", "Maule"),
+        ("Ñuble", "Ñuble"),
+        ("Biobío", "Biobío"),
+        ("La Araucanía", "La Araucanía"),
+        ("Los Ríos", "Los Ríos"),
+        ("Los Lagos", "Los Lagos"),
+        ("Aysén", "Aysén"),
+        ("Magallanes", "Magallanes")
+    ]
+    region = models.CharField(max_length=80, choices=REGIONES_CHILE)
+    cantidad_animales = models.PositiveIntegerField(default=0)
+    tipos_animales = models.CharField(max_length=120)  # Ej: "Perros, Gatos, Otros"
+    descripcion = models.TextField()
+    ano_fundacion = models.CharField(max_length=10, blank=True)
+    sitios_web = models.JSONField(default=list, blank=True, help_text="Lista de enlaces y redes sociales del refugio")
+    personalidad_juridica = models.BooleanField(default=False)
+    organizaciones_previas = models.TextField(blank=True)
+    necesidades_actuales = models.TextField(blank=True)
+    estado = models.CharField(max_length=20, default='pendiente')  # pendiente, aceptada, rechazada
+    fecha_postulacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.nombre} ({self.comuna}, {self.region})"
+from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 

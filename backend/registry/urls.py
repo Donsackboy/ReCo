@@ -13,4 +13,6 @@ urlpatterns = [
     path('admin/refugios/', views.RefugioListCreateView.as_view(), name='admin_refugio_list_create'),
     path('admin/refugios/<int:pk>/', views.RefugioDetailView.as_view(), name='admin_refugio_detail'),
     path('animales/', views.AnimalListCreateView.as_view(), name='animal_list_create'),
+    path('public/postulacion-refugio/', views.PostulacionRefugioListCreateView.as_view(), name='public_postulacion_refugio'),
+    path('public/postulacion-refugio/<int:pk>/', views.PostulacionRefugioUpdateView.as_view(), name='public_postulacion_refugio_update'),
 ]

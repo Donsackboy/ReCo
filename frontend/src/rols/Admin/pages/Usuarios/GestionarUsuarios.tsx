@@ -1,7 +1,14 @@
-
 import React, { useState, useEffect } from 'react';
 import './GestionarUsuarios.css';
-import { getUsuarios, updateUsuario, deleteUsuario } from '../../../../api';
+// @ts-ignore: Dynamic import to avoid TS module error
+let getUsuarios: any, updateUsuario: any, deleteUsuario: any;
+
+import('../../../../api.js').then(api => {
+  getUsuarios = api.getUsuarios;
+  updateUsuario = api.updateUsuario;
+  deleteUsuario = api.deleteUsuario;
+});
+import HeaderAdmin from '../../components/HeaderAdmin';
 
 interface Usuario {
   id: number;
@@ -106,6 +113,7 @@ const GestionarUsuarios = () => {
 
   return (
     <div className="usuarios-admin-page">
+      <HeaderAdmin adminName="Admin" />
       <h2>Gestionar Usuarios</h2>
       <input
         type="text"
@@ -134,9 +142,16 @@ const GestionarUsuarios = () => {
                 {usuario.tipo_usuario !== 'admin' && (
                   <button className="btn-eliminar" onClick={() => handleEliminar(usuario.id)}>Eliminar</button>
                 )}
-      {/* Modal de confirmación de eliminación */}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Modal de confirmación de eliminación fuera de la tabla */}
       {confirmDeleteId !== null && (() => {
         const usuario = usuarios.find(u => u.id === confirmDeleteId);
+        if (!usuario) return null;
         if (usuario?.tipo_usuario === 'admin') {
           return (
             <div className="modal-usuario-bg">
@@ -172,11 +187,6 @@ const GestionarUsuarios = () => {
           </div>
         );
       })()}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
 
       {modalOpen && usuarioEdit && (
         <div className="modal-usuario-bg">
@@ -196,16 +206,18 @@ const GestionarUsuarios = () => {
                 onChange={e => setUsuarioEdit({ ...usuarioEdit, email: e.target.value })}
               />
             </label>
-            <label>Tipo:
-              <select
-                value={usuarioEdit.tipo_usuario}
-                onChange={e => setUsuarioEdit({ ...usuarioEdit, tipo_usuario: e.target.value })}
-              >
-                <option value="default">Usuario</option>
-                <option value="refugio">Refugio</option>
-                <option value="admin">Admin</option>
-              </select>
-            </label>
+            {usuarioEdit.tipo_usuario !== 'admin' && (
+              <label>Tipo:
+                <select
+                  value={usuarioEdit.tipo_usuario}
+                  onChange={e => setUsuarioEdit({ ...usuarioEdit, tipo_usuario: e.target.value })}
+                >
+                  <option value="default">Usuario</option>
+                  <option value="refugio">Refugio</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </label>
+            )}
             <label>Nombre:
               <input
                 type="text"
@@ -236,6 +248,7 @@ const GestionarUsuarios = () => {
       )}
     </div>
   );
-};
+}
 
 export default GestionarUsuarios;
+

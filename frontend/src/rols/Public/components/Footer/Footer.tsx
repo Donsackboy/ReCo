@@ -15,6 +15,7 @@ export default function Footer() {
             <a href="/refugios" className="footer-link">Refugios</a>
             <a href="/animales" className="footer-link">Animales</a>
             <a href="/donaciones" className="footer-link">Donaciones</a>
+            <a href="/postulacion-refugio" className="footer-link" style={{color:'#7b1fa2',fontWeight:700}}>Postula tu refugio</a>
           </div>
           <div className="footer-contact">
             <span>Contacto:</span>

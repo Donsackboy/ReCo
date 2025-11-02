@@ -1,10 +1,49 @@
+
 from rest_framework import status, permissions, generics
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from .serializers import UserSerializer, LoginSerializer, HogarTemporalSerializer, RefugioSerializer, AnimalSerializer
-from .models import Usuario, HogaresTemporales, Refugio, Animal
+from .serializers import PostulacionRefugioSerializer, UserSerializer, LoginSerializer, HogarTemporalSerializer, RefugioSerializer, AnimalSerializer
+from .models import PostulacionRefugio, Usuario, HogaresTemporales, Refugio, Animal
 from .permissions import IsAdmin, IsRefugio, IsRefugioOrAdmin
+
+# --- Postulación de Refugio pública ---
+
+class PostulacionRefugioListCreateView(generics.ListCreateAPIView):
+    serializer_class = PostulacionRefugioSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        estado = self.request.query_params.get('estado')
+        qs = PostulacionRefugio.objects.all()
+        if estado:
+            qs = qs.filter(estado=estado)
+        return qs
+
+
+# PATCH /public/postulacion-refugio/<id>/
+class PostulacionRefugioUpdateView(generics.RetrieveUpdateAPIView):
+    queryset = PostulacionRefugio.objects.all()
+    serializer_class = PostulacionRefugioSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def patch(self, request, *args, **kwargs):
+        instance = self.get_object()
+        estado = request.data.get('estado')
+        if estado == 'aceptada':
+            # Crear refugio automáticamente
+            refugio = Refugio.objects.create(
+                nombre=instance.nombre,
+                direccion=instance.direccion,
+                correo_contacto=instance.email,
+                telefono=instance.telefono,
+                descripcion=instance.descripcion,
+                comuna=instance.comuna,
+                region=instance.region
+            )
+        instance.estado = estado
+        instance.save()
+        return Response(PostulacionRefugioSerializer(instance).data)
 
 class RefugioListCreateView(generics.ListCreateAPIView):
     queryset = Refugio.objects.all()

@@ -1,12 +1,55 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './AdminDashboard.css';
 
 const AdminDashboard: React.FC = () => {
+  const [refugiosCount, setRefugiosCount] = useState(0);
+  const [donacionesSinVerificar, setDonacionesSinVerificar] = useState(0);
+  const [reportesGenerados, setReportesGenerados] = useState(0);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    // Refugios
+    fetch(`${import.meta.env.VITE_API_BASE}/admin/refugios/`, {
+      headers: { 'Authorization': `Token ${token}` }
+    })
+      .then(res => res.ok ? res.json() : [])
+      .then(data => setRefugiosCount(Array.isArray(data) ? data.length : (data?.results?.length || 0)));
+
+
+    // Donaciones sin verificar (placeholder, requiere endpoint real)
+    setDonacionesSinVerificar(3);
+    // Reportes generados (placeholder, requiere endpoint real)
+    setReportesGenerados(7);
+  }, []);
   return (
     <div className="admin-dashboard" style={{ padding: 24 }}>
       <h1>Panel de administración</h1>
-      <p>Bienvenido al panel administrativo. Desde aquí puedes gestionar la aplicación.</p>
+      <p style={{ fontSize: '1.2em', color: '#fff', marginBottom: 24 }}>Bienvenido al panel administrativo. Desde aquí puedes gestionar la aplicación y ver métricas clave.</p>
+
+      <div style={{ display: 'flex', gap: '2em', marginBottom: '2em', flexWrap: 'wrap' }}>
+        <div style={{ background: 'linear-gradient(90deg,#d32f2f,#ffb300)', color: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #d32f2f33', padding: '1.5em 2em', minWidth: 220, display: 'flex', alignItems: 'center', gap: 16 }}>
+          <span style={{ fontSize: '2.2em' }}>🏛️</span>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: '1.2em' }}>Refugios</div>
+            <div style={{ fontSize: '2em', fontWeight: 800 }}>{refugiosCount}</div>
+          </div>
+        </div>
+        <div style={{ background: 'linear-gradient(90deg,#ffb300,#d32f2f)', color: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #ffb30033', padding: '1.5em 2em', minWidth: 220, display: 'flex', alignItems: 'center', gap: 16 }}>
+          <span style={{ fontSize: '2.2em' }}>💸</span>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: '1.2em' }}>Donaciones sin verificar</div>
+            <div style={{ fontSize: '2em', fontWeight: 800 }}>{donacionesSinVerificar}</div>
+          </div>
+        </div>
+        <div style={{ background: 'linear-gradient(90deg,#43ea6b,#7b1fa2)', color: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #43ea6b33', padding: '1.5em 2em', minWidth: 220, display: 'flex', alignItems: 'center', gap: 16 }}>
+          <span style={{ fontSize: '2.2em' }}>📊</span>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: '1.2em' }}>Reportes</div>
+            <div style={{ fontSize: '2em', fontWeight: 800 }}>{reportesGenerados}</div>
+          </div>
+        </div>
+      </div>
 
       <nav style={{ marginTop: 16 }}>
         <ul>
@@ -19,10 +62,16 @@ const AdminDashboard: React.FC = () => {
 
       <section style={{ marginTop: 24 }}>
         <h2>Resumen rápido</h2>
-        <div>
-          <p>— Total refugios: 0</p>
-          <p>— Usuarios pendientes por revisar: 0</p>
-          <p>— Donaciones sin verificar: 0</p>
+        <div style={{ display: 'flex', gap: '2em', flexWrap: 'wrap' }}>
+          <div style={{ background: '#fff2', borderRadius: 8, padding: '1em 2em', minWidth: 180 }}>
+            <span style={{ fontWeight: 700 }}>Refugios activos:</span> 12
+          </div>
+          <div style={{ background: '#fff2', borderRadius: 8, padding: '1em 2em', minWidth: 180 }}>
+            <span style={{ fontWeight: 700 }}>Donaciones sin verificar:</span> 3
+          </div>
+          <div style={{ background: '#fff2', borderRadius: 8, padding: '1em 2em', minWidth: 180 }}>
+            <span style={{ fontWeight: 700 }}>Reportes generados:</span> 7
+          </div>
         </div>
       </section>
     </div>

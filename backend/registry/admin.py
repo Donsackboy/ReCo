@@ -1,5 +1,12 @@
 from django.contrib import admin
-from .models import Usuario, Refugio, Animal, HogaresTemporales, Donaciones, Suscripciones, Eventos, InscripcionesEventos, HistorialMedico, CatalogoServicios, DonacionesEspecificas, ComprobantesServicio, NecesidadesRefugio, PerfilAdoptante
+from .models import PostulacionRefugio, Usuario, Refugio, Animal, HogaresTemporales, Donaciones, Suscripciones, Eventos, InscripcionesEventos, HistorialMedico, CatalogoServicios, DonacionesEspecificas, ComprobantesServicio, NecesidadesRefugio, PerfilAdoptante
+
+# Postulación de Refugio
+@admin.register(PostulacionRefugio)
+class PostulacionRefugioAdmin(admin.ModelAdmin):
+    list_display = ("id", "nombre", "email", "comuna", "region", "estado", "fecha_postulacion")
+    list_filter = ("estado", "region")
+    search_fields = ("nombre", "email", "comuna", "region")
 
 @admin.register(Usuario)
 class UsuarioAdmin(admin.ModelAdmin):
