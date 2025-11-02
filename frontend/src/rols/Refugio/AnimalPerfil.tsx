@@ -54,12 +54,13 @@ export default function AnimalPerfil() {
   const totalImgs = animal.imagenes.length;
   const prevImg = () => setImgIdx(i => (i === 0 ? totalImgs - 1 : i - 1));
   const nextImg = () => setImgIdx(i => (i === totalImgs - 1 ? 0 : i + 1));
+  const [fullscreenImg, setFullscreenImg] = React.useState<string | null>(null);
 
   return (
     <div style={{ maxWidth: '700px', margin: '40px auto', background: '#f0fff4', borderRadius: '24px', boxShadow: '0 4px 18px #43ea6b22', padding: '40px' }}>
       <h2 style={{ color: '#145214', fontSize: '2rem', marginBottom: '18px' }}>{animal.nombre}</h2>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '24px' }}>
-        <div style={{ position: 'relative', width: '2000px', height: '140px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ position: 'relative', width: '200px', height: '140px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           {totalImgs > 1 && (
             <span style={{ position: 'absolute', top: '0px', left: '60%', transform: 'translateX(-50%)', background: '#43ea6b', color: '#fff', borderRadius: '8px', padding: '2px 10px', fontWeight: 600, fontSize: '0.98rem', zIndex: 2 }}>
               {imgIdx + 1}/{totalImgs}
@@ -68,12 +69,63 @@ export default function AnimalPerfil() {
           {totalImgs > 1 && (
             <button onClick={prevImg} style={{ position: 'absolute', left: '0', top: '50%', transform: 'translateY(-50%)', background: '#eaffea', border: 'none', borderRadius: '50%', width: '32px', height: '32px', fontSize: '1.3rem', color: '#228B22', cursor: 'pointer', zIndex: 2 }} aria-label="Anterior">&#8592;</button>
           )}
-          <img src={animal.imagenes[imgIdx]} alt={animal.nombre + ' foto ' + (imgIdx + 1)} style={{ width: '140px', height: '140px', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 2px 8px #43ea6b22' }} />
+          <img
+            src={animal.imagenes[imgIdx]}
+            alt={animal.nombre + ' foto ' + (imgIdx + 1)}
+            style={{ width: '140px', height: '140px', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 2px 8px #43ea6b22', cursor: 'pointer' }}
+            onClick={() => setFullscreenImg(animal.imagenes[imgIdx])}
+          />
           {totalImgs > 1 && (
             <button onClick={nextImg} style={{ position: 'absolute', right: '0', top: '50%', transform: 'translateY(-50%)', background: '#eaffea', border: 'none', borderRadius: '50%', width: '32px', height: '32px', fontSize: '1.3rem', color: '#228B22', cursor: 'pointer', zIndex: 2 }} aria-label="Siguiente">&#8594;</button>
           )}
         </div>
       </div>
+      {/* Modal de pantalla completa */}
+      {fullscreenImg && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(0,0,0,0.85)',
+            zIndex: 10000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onClick={() => setFullscreenImg(null)}
+        >
+          <img
+            src={fullscreenImg}
+            alt="Foto animal pantalla completa"
+            style={{
+              maxWidth: '90vw',
+              maxHeight: '90vh',
+              borderRadius: 24,
+              boxShadow: '0 4px 32px #000a',
+              border: '4px solid #90EE90',
+            }}
+          />
+          <button
+            onClick={() => setFullscreenImg(null)}
+            style={{
+              position: 'absolute',
+              top: 32,
+              right: 48,
+              background: 'none',
+              color: '#fff',
+              fontSize: '2.5rem',
+              fontWeight: 700,
+              border: 'none',
+              cursor: 'pointer',
+              zIndex: 10001,
+              textShadow: '0 2px 8px #000a',
+            }}
+          >×</button>
+        </div>
+      )}
       <div style={{ color: '#228B22', fontSize: '1.1rem', marginBottom: '10px' }}>{animal.sexo} • {animal.edad} años • {animal.tamano}</div>
       <div style={{ color: '#1a421a', fontSize: '1.05rem', marginBottom: '18px' }}>{animal.resena}</div>
       <div style={{ marginBottom: '18px', fontWeight: 600 }}>

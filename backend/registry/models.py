@@ -150,6 +150,13 @@ class Animal(models.Model):
     motivo_cambio_hogar_temporal = models.TextField(blank=True, null=True, help_text="Motivo por el que el animal necesita cambiar de hogar temporal")
     duracion_estimada_hogar = models.CharField(max_length=50, blank=True, null=True)
     fotos = models.JSONField(default=list, blank=True, help_text="Lista de hasta 3 URLs de fotos del animal")
+    fecha_ingreso = models.DateField(blank=True, null=True, help_text="Fecha de ingreso al refugio")
+    fecha_cumpleanos = models.DateField(blank=True, null=True, help_text="Fecha de cumpleaños del animal (opcional)")
+    UBICACION_CHOICES = [
+        ("refugio", "Refugio"),
+        ("hogar_temporal", "Hogar temporal"),
+    ]
+    ubicacion_actual = models.CharField(max_length=20, choices=UBICACION_CHOICES, default="refugio", help_text="Ubicación actual del animal")
 
     def __str__(self):
         return f"{self.nombre} ({self.especie})"

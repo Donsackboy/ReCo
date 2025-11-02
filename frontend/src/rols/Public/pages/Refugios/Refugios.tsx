@@ -77,7 +77,10 @@ const Refugios: React.FC = () => {
   const refugiosConAnimales = refugios.map(refugio => ({
     ...refugio,
     id: refugio.id_refugio, // mapeo para compatibilidad con RefugiosCard
-    animales: animales.filter(a => a.refugio === refugio.id_refugio)
+    animales: animales.filter(a => a.refugio === refugio.id_refugio).map(animal => ({
+      ...animal,
+      imagen: (animal.imagenes && animal.imagenes.length > 0) ? animal.imagenes[0] : (animal.fotos && animal.fotos.length > 0 ? animal.fotos[0] : '')
+    }))
   }));
 
   const refugiosFiltrados = refugiosConAnimales.filter(refugio => {

@@ -23,6 +23,9 @@ export type Animal = {
   busca_hogar_temporal?: boolean;
   refugio: number;
   vacunas?: Vacuna[];
+  fecha_ingreso?: string;
+  fecha_cumpleanos?: string;
+  ubicacion_actual?: string;
 };
 
 const AnimalList: React.FC = () => {
@@ -32,6 +35,7 @@ const AnimalList: React.FC = () => {
   const [filtro, setFiltro] = useState({ nombre: '', especie: '', sexo: '', tamano: '' });
   const [showCreate, setShowCreate] = useState(false);
   const [editAnimal, setEditAnimal] = useState<Animal | null>(null);
+  const [fullscreenImg, setFullscreenImg] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAnimales = async () => {
@@ -66,9 +70,12 @@ const AnimalList: React.FC = () => {
 
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24, justifyContent: 'space-between' }}>
         <h2 style={{ color: '#145214' }}>Animales del Refugio</h2>
-        <button onClick={() => setShowCreate(true)} style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22' }}>Crear Animal</button>
+        <button
+          style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '8px', padding: '10px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22', marginLeft: 16 }}
+          onClick={() => setShowCreate(true)}
+        >Crear animal</button>
       </div>
       <div style={{ display: 'flex', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
         <input type="text" value={filtro.nombre} onChange={e => setFiltro(f => ({ ...f, nombre: e.target.value }))} placeholder="Buscar por nombre" style={{ padding: 8, borderRadius: 8, border: '1px solid #43ea6b', minWidth: 160 }} />
@@ -98,16 +105,32 @@ const AnimalList: React.FC = () => {
       {animalesFiltrados.length === 0 ? (
         <div style={{ color: '#888', fontSize: '1.1rem', textAlign: 'center', marginTop: 32 }}>No hay animales que coincidan con los filtros.</div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
           {animalesFiltrados.map(animal => (
-            <div key={animal.id_animal} style={{ background: '#f6fff6', borderRadius: '16px', boxShadow: '0 2px 12px #228b2233', padding: '18px 24px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative' }}>
-              <div style={{ fontWeight: 700, fontSize: '1.25rem', color: '#228B22', marginBottom: 8 }}>{animal.nombre}</div>
-              <div style={{ color: '#145214', fontSize: '1.08rem', marginBottom: 6 }}>{animal.especie} • {animal.sexo} • {animal.tamano}</div>
-              <div style={{ color: '#1a421a', fontSize: '1.05rem', marginBottom: 10 }}>ID: {animal.id_animal}</div>
-              <button
-                style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '8px', padding: '8px 18px', fontWeight: 600, fontSize: '1.05rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22', marginTop: 8 }}
-                onClick={() => setEditAnimal(animal)}
-              >Editar perfil</button>
+            <div key={animal.id_animal} style={{ background: '#f6fff6', borderRadius: '16px', boxShadow: '0 2px 12px #228b2233', padding: '18px 24px', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', position: 'relative', minHeight: 100 }}>
+              {/* Datos a la izquierda */}
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
+                <div style={{ fontWeight: 700, fontSize: '1.25rem', color: '#228B22', marginBottom: 8 }}>{animal.nombre}</div>
+                <div style={{ color: '#145214', fontSize: '1.08rem', marginBottom: 6 }}>{animal.especie} • {animal.sexo} • {animal.tamano}</div>
+                <div style={{ color: '#1a421a', fontSize: '1.05rem', marginBottom: 10 }}>ID: {animal.id_animal}</div>
+                <button
+                  style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '8px', padding: '8px 18px', fontWeight: 600, fontSize: '1.05rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22', marginTop: 8 }}
+                  onClick={() => setEditAnimal(animal)}
+                >Editar perfil</button>
+              </div>
+              {/* Foto a la derecha */}
+              <div style={{ marginLeft: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {Array.isArray((animal as any).fotos) && (animal as any).fotos.length > 0 ? (
+                  <img
+                    src={(animal as any).fotos[0]}
+                    alt="Foto animal"
+                    style={{ width: 160, height: 160, objectFit: 'cover', borderRadius: 18, border: '2.5px solid #90EE90', boxShadow: '0 2px 12px #90EE9022', cursor: 'pointer' }}
+                    onClick={() => setFullscreenImg((animal as any).fotos[0])}
+                  />
+                ) : (
+                  <div style={{ width: 160, height: 160, background: '#eee', borderRadius: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#aaa', fontSize: 60, boxShadow: '0 2px 12px #90EE9022' }}>🐾</div>
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -116,26 +139,10 @@ const AnimalList: React.FC = () => {
       {/* Modal para crear animal */}
       {showCreate && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: '#0008', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 18px #228b2233', padding: 32, minWidth: 350, maxWidth: 420, position: 'relative' }}>
+          <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 18px #228b2233', padding: 32, minWidth: 500, maxWidth: 700, position: 'relative', maxHeight: '80vh', overflowY: 'auto' }}>
             <button onClick={() => setShowCreate(false)} style={{ position: 'absolute', top: 12, right: 18, color: '#e74c3c', fontWeight: 700, fontSize: '1.2rem', background: 'none', border: 'none', cursor: 'pointer' }}>×</button>
             {/* AnimalForm con diseño integrado */}
-            <AnimalForm onCreated={async () => {
-              setShowCreate(false);
-              setLoading(true);
-              setError('');
-              try {
-                const token = localStorage.getItem('token');
-                const userStr = localStorage.getItem('user');
-                const userObj = userStr ? JSON.parse(userStr) : null;
-                const refugioId = userObj?.refugio?.id_refugio;
-                const data = await getAnimales(token);
-                const animalesRefugio = data.filter((a: Animal) => a.refugio === refugioId);
-                setAnimales(animalesRefugio);
-              } catch (err) {
-                setError('Error al cargar animales');
-              }
-              setLoading(false);
-            }} />
+            <AnimalForm onCreated={() => setShowCreate(false)} onCancel={() => setShowCreate(false)} />
           </div>
         </div>
       )}
@@ -168,6 +175,52 @@ const AnimalList: React.FC = () => {
               }}
             />
           </div>
+        </div>
+      )}
+      {/* Modal de imagen en pantalla completa */}
+      {fullscreenImg && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(0,0,0,0.85)',
+            zIndex: 10000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onClick={() => setFullscreenImg(null)}
+        >
+          <img
+            src={fullscreenImg}
+            alt="Foto animal pantalla completa"
+            style={{
+              maxWidth: '90vw',
+              maxHeight: '90vh',
+              borderRadius: 24,
+              boxShadow: '0 4px 32px #000a',
+              border: '4px solid #90EE90',
+            }}
+          />
+          <button
+            onClick={() => setFullscreenImg(null)}
+            style={{
+              position: 'absolute',
+              top: 32,
+              right: 48,
+              background: 'none',
+              color: '#fff',
+              fontSize: '2.5rem',
+              fontWeight: 700,
+              border: 'none',
+              cursor: 'pointer',
+              zIndex: 10001,
+              textShadow: '0 2px 8px #000a',
+            }}
+          >×</button>
         </div>
       )}
     </div>

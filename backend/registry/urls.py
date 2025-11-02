@@ -12,6 +12,7 @@ urlpatterns = [
     path('admin/refugios/<int:pk>/', views.RefugioDetailView.as_view(), name='admin_refugio_detail'),
     path('animales/', views.AnimalListCreateView.as_view(), name='animal_list_create'),
     path('animales/<int:pk>/', views.AnimalDetailView.as_view(), name='animal_detail'),
+    path('animales/<int:animal_id>/historial-medico/', views.HistorialMedicoAnimalListView.as_view(), name='animal_historial_medico'),
     path('public/postulacion-refugio/', views.PostulacionRefugioListCreateView.as_view(), name='public_postulacion_refugio'),
     path('public/postulacion-refugio/<int:pk>/', views.PostulacionRefugioUpdateView.as_view(), name='public_postulacion_refugio_update'),
     path('public/refugios/', views.RefugioPublicListView.as_view(), name='public_refugios_list'),

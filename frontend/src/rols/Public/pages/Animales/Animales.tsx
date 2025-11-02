@@ -27,8 +27,12 @@ const Animales = () => {
       try {
         const res = await fetch(`${import.meta.env.VITE_API_BASE}/public/animales/`);
         let data = await res.json();
-        // Mapear id_animal a id para compatibilidad
-        data = data.map((a: any) => ({ ...a, id: a.id_animal }));
+        // Mapear id_animal a id y fotos a imagenes para compatibilidad
+        data = data.map((a: any) => ({
+          ...a,
+          id: a.id_animal,
+          imagenes: a.imagenes || a.fotos || []
+        }));
         setAnimales(data);
       } catch {
         setAnimales([]);

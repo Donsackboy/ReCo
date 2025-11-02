@@ -36,10 +36,12 @@ export default function AnimalPerfil() {
     fetchAnimal();
   }, [id]);
 
+  const [fullscreenImg, setFullscreenImg] = React.useState<string | null>(null);
+
   if (loading) return <div>Cargando...</div>;
   if (!animal) return <div>Animal no encontrado</div>;
 
-  const totalImgs = animal.imagenes?.length || 1;
+  const totalImgs = animal.fotos?.length || 1;
   const prevImg = () => setImgIdx(i => (i === 0 ? totalImgs - 1 : i - 1));
   const nextImg = () => setImgIdx(i => (i === totalImgs - 1 ? 0 : i + 1));
 
@@ -51,7 +53,12 @@ export default function AnimalPerfil() {
           {totalImgs > 1 && (
             <button onClick={prevImg} style={{ position: 'absolute', left: '-36px', top: '50%', transform: 'translateY(-50%)', background: '#eaffea', border: 'none', borderRadius: '60%', width: '38px', height: '38px', fontSize: '1.5rem', color: '#228B22', cursor: 'pointer', zIndex: 2 }} aria-label="Anterior">&#8592;</button>
           )}
-          <img src={animal.imagenes?.[imgIdx] || animal.imagen || '/Images/animales/placeholder.png'} alt={animal.nombre + ' foto ' + (imgIdx + 1)} style={{ width: '250px', height: '250px', objectFit: 'cover', borderRadius: '16px', boxShadow: '0 2px 8px #43ea6b22' }} />
+          <img
+            src={animal.fotos?.[imgIdx] || animal.imagen || '/Images/animales/placeholder.png'}
+            alt={animal.nombre + ' foto ' + (imgIdx + 1)}
+            style={{ width: '250px', height: '250px', objectFit: 'cover', borderRadius: '16px', boxShadow: '0 2px 8px #43ea6b22', cursor: 'pointer' }}
+            onClick={() => setFullscreenImg(animal.fotos?.[imgIdx] || animal.imagen || '/Images/animales/placeholder.png')}
+          />
           {totalImgs > 1 && (
             <button onClick={nextImg} style={{ position: 'absolute', right: '-36px', top: '50%', transform: 'translateY(-50%)', background: '#eaffea', border: 'none', borderRadius: '50%', width: '38px', height: '38px', fontSize: '1.5rem', color: '#228B22', cursor: 'pointer', zIndex: 2 }} aria-label="Siguiente">&#8594;</button>
           )}
@@ -62,21 +69,73 @@ export default function AnimalPerfil() {
           )}
         </div>
       </div>
+      {/* Modal de pantalla completa */}
+      {fullscreenImg && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(0,0,0,0.85)',
+            zIndex: 10000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onClick={() => setFullscreenImg(null)}
+        >
+          <img
+            src={fullscreenImg}
+            alt="Foto animal pantalla completa"
+            style={{
+              maxWidth: '90vw',
+              maxHeight: '90vh',
+              borderRadius: 24,
+              boxShadow: '0 4px 32px #000a',
+              border: '4px solid #90EE90',
+            }}
+          />
+          <button
+            onClick={() => setFullscreenImg(null)}
+            style={{
+              position: 'absolute',
+              top: 32,
+              right: 48,
+              background: 'none',
+              color: '#fff',
+              fontSize: '2.5rem',
+              fontWeight: 700,
+              border: 'none',
+              cursor: 'pointer',
+              zIndex: 10001,
+              textShadow: '0 2px 8px #000a',
+            }}
+          >×</button>
+        </div>
+      )}
       <div style={{ color: '#228B22', fontSize: '1.1rem', marginBottom: '10px' }}>{animal.sexo} • {animal.edad} años • {animal.tamano}</div>
       <div style={{ color: '#1a421a', fontSize: '1.05rem', marginBottom: '18px' }}>{animal.resena}</div>
       <div style={{ marginBottom: '18px', fontWeight: 600 }}>
-        <span style={{ color: '#43ea6b' }}>Días en refugio:</span> {animal.diasEnRefugio}
+        <span style={{ color: '#43ea6b' }}>Días en refugio:</span> {
+          animal.fecha_ingreso
+            ? Math.max(0, Math.floor((new Date().getTime() - new Date(animal.fecha_ingreso).getTime()) / (1000 * 60 * 60 * 24)))
+            : 'No disponible'
+        }
       </div>
       <div style={{ marginBottom: '18px', fontWeight: 600 }}>
         <span style={{ color: '#43ea6b' }}>Refugio:</span> {animal.refugio} <span style={{ color: '#228B22', marginLeft: '8px' }}>({animal.region})</span>
       </div>
+      {animal.fecha_cumpleanos && (
+        <div style={{ marginBottom: '18px', fontWeight: 600 }}>
+          <span style={{ color: '#43ea6b' }}>Cumpleaños:</span> {new Date(animal.fecha_cumpleanos).toLocaleDateString()}
+        </div>
+      )}
       {/* Ubicación actual, estado y motivo de cambio si corresponde */}
       <div style={{ marginBottom: '18px', fontWeight: 600 }}>
         <span style={{ color: '#43ea6b' }}>Ubicación actual:</span> {
-          animal.estado === 'en_hogar_temporal' ? 'En hogar temporal' :
-          animal.estado === 'buscando_nuevo_hogar_temporal' ? 'En hogar temporal' :
-          (animal.estado === 'disponible' || animal.estado === 'adoptado') ? 'En refugio' :
-          'En refugio'
+          animal.ubicacion_actual === 'hogar_temporal' ? 'En hogar temporal' : 'En refugio'
         }
         {animal.estado === 'buscando_nuevo_hogar_temporal' && (
           <div style={{ color: '#ff6b6b', marginTop: 6 }}>Buscando nuevo hogar temporal</div>

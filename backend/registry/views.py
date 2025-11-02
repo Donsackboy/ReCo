@@ -230,3 +230,14 @@ def crear_hogar_temporal(request):
         hogar = serializer.save()
         return Response(HogarTemporalSerializer(hogar).data, status=201)
     return Response(serializer.errors, status=400)
+from .models import HistorialMedico
+from .serializers import HistorialMedicoSerializer
+from rest_framework import generics
+
+class HistorialMedicoAnimalListView(generics.ListAPIView):
+    serializer_class = HistorialMedicoSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        animal_id = self.kwargs.get('animal_id')
+        return HistorialMedico.objects.filter(id_animal=animal_id)

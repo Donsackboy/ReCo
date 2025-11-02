@@ -6,9 +6,10 @@ import { createAnimal, API_BASE } from '../../../../../../src/api';
 
 interface AnimalFormProps {
   onCreated?: () => void;
+  onCancel?: () => void;
 }
 
-const AnimalForm: React.FC<AnimalFormProps> = ({ onCreated }) => {
+const AnimalForm: React.FC<AnimalFormProps> = ({ onCreated, onCancel }) => {
   // Obtener refugio del usuario autenticado
   const userStr = localStorage.getItem('user');
   const userObj = userStr ? JSON.parse(userStr) : null;
@@ -191,7 +192,10 @@ const AnimalForm: React.FC<AnimalFormProps> = ({ onCreated }) => {
             )}
           </div>
         </div>
-        <button type="submit" disabled={loading} style={{ background: '#228B22', color: '#fff', padding: '12px 32px', borderRadius: 10, border: 'none', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #228b2233', marginTop: 10, width: '100%' }}>Guardar</button>
+        <div style={{ display: 'flex', gap: 16, marginTop: 10 }}>
+          <button type="submit" disabled={loading} style={{ background: '#228B22', color: '#fff', padding: '12px 32px', borderRadius: 10, border: 'none', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #228b2233', width: '100%' }}>Guardar</button>
+          <button type="button" onClick={onCancel} style={{ background: '#eee', color: '#228B22', padding: '12px 32px', borderRadius: 10, border: '1.5px solid #43ea6b', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22', width: '100%' }}>Cancelar</button>
+        </div>
         {error && <div style={{ color: 'red', marginTop: 10 }}>{error}</div>}
         {success && <div style={{ color: 'green', marginTop: 10 }}>¡Animal creado correctamente!</div>}
       </form>
