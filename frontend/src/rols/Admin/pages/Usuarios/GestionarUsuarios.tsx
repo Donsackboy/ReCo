@@ -25,6 +25,8 @@ const GestionarUsuarios = () => {
   const [busqueda, setBusqueda] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [usuarioEdit, setUsuarioEdit] = useState<Usuario | null>(null);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -81,6 +83,8 @@ const GestionarUsuarios = () => {
   const handleModalClose = () => {
     setModalOpen(false);
     setUsuarioEdit(null);
+    setNewPassword('');
+    setConfirmPassword('');
   };
 
   const handleModalSave = async () => {
@@ -88,7 +92,7 @@ const GestionarUsuarios = () => {
       try {
         const token = localStorage.getItem('token');
         if (!token) return;
-        const data = {
+        const data: any = {
           username: usuarioEdit.username,
           email: usuarioEdit.email,
           tipo_usuario: usuarioEdit.tipo_usuario,
@@ -96,12 +100,18 @@ const GestionarUsuarios = () => {
           last_name: usuarioEdit.last_name,
           telefono: usuarioEdit.telefono,
         };
+        if (newPassword || confirmPassword) {
+          data.new_password = newPassword;
+          data.confirm_password = confirmPassword;
+        }
         const updated = await updateUsuario(usuarioEdit.id, data, token);
         setUsuarios(usuarios.map(u => u.id === usuarioEdit.id ? updated : u));
         setModalOpen(false);
         setUsuarioEdit(null);
-      } catch (err) {
-        alert('Error al editar usuario');
+        setNewPassword('');
+        setConfirmPassword('');
+      } catch (err: any) {
+        alert(err?.response?.data?.error || 'Error al editar usuario');
       }
     }
   };
@@ -237,6 +247,22 @@ const GestionarUsuarios = () => {
                 type="text"
                 value={usuarioEdit.telefono || ''}
                 onChange={e => setUsuarioEdit({ ...usuarioEdit, telefono: e.target.value })}
+              />
+            </label>
+            <label>Nueva contraseña:
+              <input
+                type="password"
+                value={newPassword}
+                onChange={e => setNewPassword(e.target.value)}
+                placeholder="Nueva contraseña"
+              />
+            </label>
+            <label>Confirmar contraseña:
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={e => setConfirmPassword(e.target.value)}
+                placeholder="Confirmar contraseña"
               />
             </label>
             <div className="modal-usuario-actions">

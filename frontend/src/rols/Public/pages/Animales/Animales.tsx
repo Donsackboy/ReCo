@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import AnimalCard from '../../components/Animales/AnimalCard';
-import { animales } from './animalesData';
+// import { animales } from './animalesData';
 import './Animales.css';
 
 const Animales = () => {
@@ -15,13 +15,26 @@ const Animales = () => {
   });
   const [search, setSearch] = useState('');
 
-  // Si hay un filtro de refugio en la URL, aplicarlo automáticamente al cargar
+  const [animales, setAnimales] = useState<any[]>([]);
+  // Si hay un filtro de refugio en la URL, aplicarlo automáticamente al cargar y obtener animales reales
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const refugioParam = params.get('refugio');
     if (refugioParam) {
       setFiltros(f => ({ ...f, refugio: refugioParam }));
     }
+    async function fetchAnimales() {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE}/public/animales/`);
+        let data = await res.json();
+        // Mapear id_animal a id para compatibilidad
+        data = data.map((a: any) => ({ ...a, id: a.id_animal }));
+        setAnimales(data);
+      } catch {
+        setAnimales([]);
+      }
+    }
+    fetchAnimales();
   }, [location.search]);
 
   // Filtrado de animales
@@ -38,8 +51,8 @@ const Animales = () => {
     let sexoMatch = filtros.sexo ? animal.sexo === filtros.sexo : true;
     // Filtrar por tamaño
     let tamanoMatch = filtros.tamano ? animal.tamano === filtros.tamano : true;
-    // Filtrar por refugio
-    let refugioMatch = filtros.refugio ? animal.refugio === filtros.refugio : true;
+    // Filtrar por refugio (usar id, asegurando tipo string/int)
+    let refugioMatch = filtros.refugio ? String(animal.refugio) === String(filtros.refugio) : true;
     // Filtrar por región
     let regionMatch = filtros.region ? animal.region === filtros.region : true;
     // Filtrar por nombre

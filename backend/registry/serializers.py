@@ -5,11 +5,17 @@ from django.contrib.auth import authenticate
 
 # --- Postulación de Refugio ---
 class PostulacionRefugioSerializer(serializers.ModelSerializer):
+    region = serializers.ChoiceField(choices=[
+        "Arica y Parinacota", "Tarapacá", "Antofagasta", "Atacama", "Coquimbo", "Valparaíso", "Metropolitana", "O'Higgins", "Maule", "Ñuble", "Biobío", "La Araucanía", "Los Ríos", "Los Lagos", "Aysén", "Magallanes"
+    ])
     class Meta:
         model = PostulacionRefugio
         fields = '__all__'
 
 class RefugioSerializer(serializers.ModelSerializer):
+    region = serializers.ChoiceField(choices=[
+        "Arica y Parinacota", "Tarapacá", "Antofagasta", "Atacama", "Coquimbo", "Valparaíso", "Metropolitana", "O'Higgins", "Maule", "Ñuble", "Biobío", "La Araucanía", "Los Ríos", "Los Lagos", "Aysén", "Magallanes"
+    ], required=False, allow_null=True)
     class Meta:
         model = Refugio
         fields = '__all__'
@@ -47,6 +53,13 @@ class HogarTemporalSerializer(serializers.ModelSerializer):
 
 # Serializer para Animal
 class AnimalSerializer(serializers.ModelSerializer):
+    refugio = serializers.PrimaryKeyRelatedField(queryset=Refugio.objects.all())
+    sexo = serializers.ChoiceField(choices=[
+        "Macho", "Hembra"
+    ], required=False, allow_null=True)
+    tamano = serializers.ChoiceField(choices=[
+        "Pequeño", "Pequeño-Grande", "Media", "Mediano", "Mediano-Grande", "Grande", "Gigante"
+    ], required=False, allow_null=True)
     class Meta:
         model = Animal
         fields = '__all__'

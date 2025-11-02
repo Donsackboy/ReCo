@@ -48,16 +48,13 @@ const RefugiosCard: React.FC<RefugioCardProps> = ({ refugio }) => {
       <div className="refugio-info">
         <img src={refugio.logo} alt={refugio.nombre} />
         <h3>{refugio.nombre}</h3>
-  <Link to={`/refugio/${refugio.id}`}>Ver refugio</Link>
-        {refugio.region && <div style={{  color: '#228B22', fontSize: '1rem', marginBottom: '8px' }}>{refugio.region}</div>}
-        {refugio.descripcion && <div style={{ color: '#1a421a', fontSize: '0.98rem', marginBottom: '8px', textAlign: 'center' }}>{refugio.descripcion}</div>}
-        {refugio.direccion && <div style={{ fontSize: '0.95rem', color: '#145214', marginBottom: '6px' }}>Dirección: {refugio.direccion}</div>}
-        {refugio.telefono && <div style={{ fontSize: '0.95rem', color: '#145214', marginBottom: '6px' }}>Tel: {refugio.telefono}</div>}
-        {refugio.email && <div style={{ fontSize: '0.95rem', color: '#145214', marginBottom: '6px' }}>Email: {refugio.email}</div>}
+        <Link to={`/refugio/${refugio.id}`}>Ver refugio</Link>
+        {refugio.region && <div style={{ color: '#228B22', fontSize: '1rem', marginBottom: '8px' }}>{refugio.region}</div>}
+        {/* Descripción, dirección y teléfono ocultos en la tarjeta */}
       </div>
   <div className="refugio-animales-horizontal">
-  {refugio.animales.slice(0, visibleCount).map((animal) => (
-          <Link key={animal.id} to={`/animales/${animal.id}`} className="refugio-animal">
+  {refugio.animales.slice(0, visibleCount).map((animal, idx) => (
+    <Link key={animal.id ? `animal-${animal.id}` : `animal-idx-${idx}`} to={`/animales/${animal.id}`} className="refugio-animal">
             <img
               src={animal.imagen && animal.imagen !== '' ? animal.imagen : '/Images/animales/placeholder.png'}
               alt={animal.nombre}
@@ -68,7 +65,7 @@ const RefugiosCard: React.FC<RefugioCardProps> = ({ refugio }) => {
           </Link>
         ))}
         {refugio.animales.length > visibleCount && (
-          <Link to={`/animales?refugio=${encodeURIComponent(refugio.nombre)}`}
+          <Link to={`/animales?refugio=${encodeURIComponent(refugio.id)}`}
             style={{ marginLeft: '16px', color: '#43ea6b', fontWeight: 600, fontSize: '1.1rem', textDecoration: 'none', whiteSpace: 'nowrap', display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '130px', height: '100%' }}>
             <span>Ver más ...</span>
           </Link>

@@ -9,12 +9,37 @@ import { animales } from './animalesData';
 
 export default function AnimalPerfil() {
   const { id } = useParams();
-  const animal = animales.find(a => a.id === Number(id));
+  const [animal, setAnimal] = React.useState<any>(null);
+  const [imgIdx, setImgIdx] = React.useState(0);
+  const [loading, setLoading] = React.useState(true);
 
+  React.useEffect(() => {
+    // Validar que el id existe y es un número
+    if (!id || isNaN(Number(id))) {
+      setAnimal(null);
+      setLoading(false);
+      return;
+    }
+    async function fetchAnimal() {
+      setLoading(true);
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE}/public/animales/${id}/`);
+        if (!res.ok) throw new Error('No se pudo cargar el animal');
+        const data = await res.json();
+        setAnimal(data);
+      } catch (err) {
+        setAnimal(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchAnimal();
+  }, [id]);
+
+  if (loading) return <div>Cargando...</div>;
   if (!animal) return <div>Animal no encontrado</div>;
 
-  const [imgIdx, setImgIdx] = React.useState(0);
-  const totalImgs = animal.imagenes.length;
+  const totalImgs = animal.imagenes?.length || 1;
   const prevImg = () => setImgIdx(i => (i === 0 ? totalImgs - 1 : i - 1));
   const nextImg = () => setImgIdx(i => (i === totalImgs - 1 ? 0 : i + 1));
 
@@ -26,7 +51,7 @@ export default function AnimalPerfil() {
           {totalImgs > 1 && (
             <button onClick={prevImg} style={{ position: 'absolute', left: '-36px', top: '50%', transform: 'translateY(-50%)', background: '#eaffea', border: 'none', borderRadius: '60%', width: '38px', height: '38px', fontSize: '1.5rem', color: '#228B22', cursor: 'pointer', zIndex: 2 }} aria-label="Anterior">&#8592;</button>
           )}
-          <img src={animal.imagenes[imgIdx]} alt={animal.nombre + ' foto ' + (imgIdx + 1)} style={{ width: '250px', height: '250px', objectFit: 'cover', borderRadius: '16px', boxShadow: '0 2px 8px #43ea6b22' }} />
+          <img src={animal.imagenes?.[imgIdx] || animal.imagen || '/Images/animales/placeholder.png'} alt={animal.nombre + ' foto ' + (imgIdx + 1)} style={{ width: '250px', height: '250px', objectFit: 'cover', borderRadius: '16px', boxShadow: '0 2px 8px #43ea6b22' }} />
           {totalImgs > 1 && (
             <button onClick={nextImg} style={{ position: 'absolute', right: '-36px', top: '50%', transform: 'translateY(-50%)', background: '#eaffea', border: 'none', borderRadius: '50%', width: '38px', height: '38px', fontSize: '1.5rem', color: '#228B22', cursor: 'pointer', zIndex: 2 }} aria-label="Siguiente">&#8594;</button>
           )}

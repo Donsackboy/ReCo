@@ -67,3 +67,17 @@ export async function createAnimal(data, token) {
   if (!response.ok) throw new Error('Error al crear animal');
   return response.json();
 }
+
+// Editar animal (refugio o admin)
+export async function updateAnimal(id, data, token) {
+  const response = await fetch(`${API_BASE}/animales/${id}/`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Error al editar animal');
+  return response.json();
+}

@@ -1,10 +1,43 @@
-
-from rest_framework import status, permissions, generics
+from .permissions import IsRefugioOrAdmin
+from .serializers import AnimalSerializer
+from .models import Animal
+from rest_framework import generics
+class AnimalDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Animal.objects.all()
+    serializer_class = AnimalSerializer
+    permission_classes = [IsRefugioOrAdmin]
+from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from .serializers import PostulacionRefugioSerializer, UserSerializer, LoginSerializer, HogarTemporalSerializer, RefugioSerializer, AnimalSerializer
 from .models import PostulacionRefugio, Usuario, HogaresTemporales, Refugio, Animal
+
+from rest_framework import generics
+# Vista pública para listar refugios
+class RefugioPublicListView(generics.ListAPIView):
+    queryset = Refugio.objects.all()
+    serializer_class = RefugioSerializer
+    permission_classes = [permissions.AllowAny]
+
+# Vista pública para detalle de refugio
+class RefugioPublicDetailView(generics.RetrieveAPIView):
+    queryset = Refugio.objects.all()
+    serializer_class = RefugioSerializer
+    permission_classes = [permissions.AllowAny]
+
+from rest_framework import generics
+# Vista pública para listar animales
+class AnimalPublicListView(generics.ListAPIView):
+    queryset = Animal.objects.all()
+    serializer_class = AnimalSerializer
+    permission_classes = [permissions.AllowAny]
+
+# Vista pública para detalle de animal
+class AnimalPublicDetailView(generics.RetrieveAPIView):
+    queryset = Animal.objects.all()
+    serializer_class = AnimalSerializer
+    permission_classes = [permissions.AllowAny]
 from .permissions import IsAdmin, IsRefugio, IsRefugioOrAdmin
 
 # --- Postulación de Refugio pública ---
@@ -30,6 +63,8 @@ class PostulacionRefugioUpdateView(generics.RetrieveUpdateAPIView):
     def patch(self, request, *args, **kwargs):
         instance = self.get_object()
         estado = request.data.get('estado')
+        usuario_refugio = None
+        refugio = None
         if estado == 'aceptada':
             # Crear refugio automáticamente
             refugio = Refugio.objects.create(
@@ -41,9 +76,27 @@ class PostulacionRefugioUpdateView(generics.RetrieveUpdateAPIView):
                 comuna=instance.comuna,
                 region=instance.region
             )
+            # Crear usuario tipo refugio asociado
+            from .models import Usuario
+            password = 'refugio2025'
+            username = instance.nombre.replace(' ', '').lower()[:20]
+            usuario_refugio = Usuario.objects.create_user(
+                username=username,
+                email=instance.email,
+                password=password,
+                tipo_usuario='refugio',
+                refugio=refugio,
+                telefono=instance.telefono
+            )
+            # Opcional: enviar password por email al contacto
         instance.estado = estado
         instance.save()
-        return Response(PostulacionRefugioSerializer(instance).data)
+        data = PostulacionRefugioSerializer(instance).data
+        if refugio and usuario_refugio:
+            from .serializers import RefugioSerializer, UserSerializer
+            data['refugio'] = RefugioSerializer(refugio).data
+            data['usuario_refugio'] = UserSerializer(usuario_refugio).data
+        return Response(data)
 
 class RefugioListCreateView(generics.ListCreateAPIView):
     queryset = Refugio.objects.all()
@@ -107,6 +160,23 @@ class UserDetailAdminView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAdmin]
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        new_password = request.data.get('new_password')
+        confirm_password = request.data.get('confirm_password')
+        if new_password or confirm_password:
+            if not new_password or not confirm_password:
+                return Response({'error': 'Debes ingresar y confirmar la nueva contraseña.'}, status=400)
+            if new_password != confirm_password:
+                return Response({'error': 'Las contraseñas no coinciden.'}, status=400)
+            instance.set_password(new_password)
+            instance.save()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])

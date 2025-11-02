@@ -40,7 +40,7 @@ const PerfilRefugio: React.FC<PerfilRefugioProps> = ({ refugio }) => {
       </div>
       <h3 style={{ color: '#145214', marginBottom: '10px' }}>Eventos activos</h3>
       <ul style={{ color: '#228B22', fontSize: '1.08rem', marginBottom: '18px' }}>
-        {refugio.eventos.map(ev => (
+        {(refugio.eventos ?? []).map(ev => (
           <li key={ev.id}>{ev.nombre} - {ev.fecha}</li>
         ))}
       </ul>
@@ -54,7 +54,7 @@ const PerfilRefugio: React.FC<PerfilRefugioProps> = ({ refugio }) => {
         </Link>
       </div>
       <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', marginBottom: '18px' }}>
-        {refugio.animales.map(animal => (
+        {(refugio.animales ?? []).slice(0, 10).map(animal => (
           <AnimalCard key={animal.id} animal={{
             id: animal.id,
             nombre: animal.nombre,

@@ -6,88 +6,92 @@
 // =============================
 // --- DATOS DE REFUGIOS ---
 // Puedes agregar, quitar o modificar refugios y animales aquí
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getAnimales } from '../../../../api';
 import RefugiosCard from '../../components/Refugios/Refugioscard';
 import './Refugios.css';
 
-const refugios = [
-// --- FUNCIÓN PARA MOSTRAR ANIMALES ALEATORIOS (NO USADA ACTUALMENTE) ---
-  {
-    id: 1,
-    nombre: 'Refugio Esperanza',
-    region: 'Metropolitana',
-    logo: '/Images/reco-logo.png',
-    animales: [
-  { id: 1, nombre: 'Luna', imagen: '/Images/animales/luna.jpg' },
-  { id: 2, nombre: 'Max', imagen: '/Images/animales/max.jpg' },
-  { id: 3, nombre: 'Toby', imagen: '/Images/animales/toby.jpg' },
-  { id: 4, nombre: 'Nina', imagen: '/Images/animales/nina.jpg' },
-  { id: 5, nombre: 'Rocky', imagen: '' },
-  { id: 6, nombre: 'Simba', imagen: '' },
-  { id: 7, nombre: 'Bella', imagen: '' },
-    ],
-  },
-  {
-    id: 2,
-    nombre: 'Refugio Patitas',
-    region: 'Valparaíso',
-    logo: '/Images/reco-logo.png',
-    animales: [
-  { id: 6, nombre: 'Simba', imagen: '/Images/animales/simba.jpg' },
-  { id: 8, nombre: 'Milo', imagen: '/Images/animales/milo.jpg' },
-  { id: 7, nombre: 'Bella', imagen: '/Images/animales/bella.jpg' },
-  { id: 5, nombre: 'Rocky', imagen: '/Images/animales/rocky.jpg' },
-  { id: 9, nombre: 'Chester', imagen: '' },
-  { id: 10, nombre: 'Daisy', imagen: '' },
-    ],
-  },
-];
+// Los refugios y animales se obtendrán desde la API
 
 function getRandomAnimales(animales: { id: number; nombre: string; imagen: string }[], count = 3) {
   return animales.sort(() => 0.5 - Math.random()).slice(0, count);
 }
 
-export default function Refugios() {
+
+const Refugios: React.FC = () => {
   const [search, setSearch] = useState('');
   const [region, setRegion] = useState('');
+  const [refugios, setRefugios] = useState<any[]>([]);
+  const [animales, setAnimales] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        let refugiosUrl = import.meta.env.VITE_API_BASE + '/public/refugios/';
+        let animalesUrl = import.meta.env.VITE_API_BASE + '/public/animales/';
+        let options: RequestInit = {};
+        if (token) {
+          refugiosUrl = import.meta.env.VITE_API_BASE + '/admin/refugios/';
+          animalesUrl = import.meta.env.VITE_API_BASE + '/animales/';
+          options = { headers: { 'Authorization': `Token ${token}` } };
+        }
+        const refugiosRes = await fetch(refugiosUrl, options);
+        const refugiosData = await refugiosRes.json();
+        setRefugios(refugiosData);
+        const animalesRes = await fetch(animalesUrl, options);
+        let animalesData = await animalesRes.json();
+        // Mapear id_animal a id para compatibilidad con componentes
+        animalesData = animalesData.map((a: any) => ({ ...a, id: a.id_animal }));
+        setAnimales(animalesData);
+      } catch (err) {
+        setRefugios([]);
+        setAnimales([]);
+      }
+    };
+    fetchData();
+  }, []);
 
   // --- LISTA DE REGIONES DE CHILE ---
-  // Puedes agregar o modificar regiones aquí
   const regiones = [
-  // --- FILTRADO DE REFUGIOS ---
-  // Aquí se filtran los refugios por nombre y región seleccionada
-    { num: '', nombre: 'Todas' },
-    { num: 'I', nombre: 'Arica y Parinacota' },
-    { num: 'II', nombre: 'Tarapacá' },
-    { num: 'III', nombre: 'Antofagasta' },
-    { num: 'IV', nombre: 'Atacama' },
-    { num: 'V', nombre: 'Coquimbo' },
-    { num: 'VI', nombre: 'Valparaíso' },
-    { num: 'VII', nombre: 'Metropolitana' },
-    { num: 'VIII', nombre: 'O’Higgins' },
-    { num: 'IX', nombre: 'Maule' },
-    { num: 'X', nombre: 'Ñuble' },
-    { num: 'XI', nombre: 'Biobío' },
-    { num: 'XII', nombre: 'La Araucanía' },
-    { num: 'XIII', nombre: 'Los Ríos' },
-    { num: 'XIV', nombre: 'Los Lagos' },
-    { num: 'XV', nombre: 'Aysén' },
-    { num: 'XVI', nombre: 'Magallanes' }
+  { nombre: 'Todas', value: '' },
+  { nombre: 'Arica y Parinacota', value: 'Arica y Parinacota' },
+  { nombre: 'Tarapacá', value: 'Tarapacá' },
+  { nombre: 'Antofagasta', value: 'Antofagasta' },
+  { nombre: 'Atacama', value: 'Atacama' },
+  { nombre: 'Coquimbo', value: 'Coquimbo' },
+  { nombre: 'Valparaíso', value: 'Valparaíso' },
+  { nombre: 'Metropolitana', value: 'Metropolitana' },
+  { nombre: "O'Higgins", value: "O'Higgins" },
+  { nombre: 'Maule', value: 'Maule' },
+  { nombre: 'Ñuble', value: 'Ñuble' },
+  { nombre: 'Biobío', value: 'Biobío' },
+  { nombre: 'La Araucanía', value: 'La Araucanía' },
+  { nombre: 'Los Ríos', value: 'Los Ríos' },
+  { nombre: 'Los Lagos', value: 'Los Lagos' },
+  { nombre: 'Aysén', value: 'Aysén' },
+  { nombre: 'Magallanes', value: 'Magallanes' }
   ];
 
-  const refugiosFiltrados = refugios.filter(refugio => {
-    const coincideNombre = refugio.nombre.toLowerCase().includes(search.toLowerCase());
-    const coincideRegion = region === '' || region === 'Todas' || refugio.region === region;
-    return coincideNombre && coincideRegion;
+  // Relacionar animales con refugios y mapear id_refugio a id
+  const refugiosConAnimales = refugios.map(refugio => ({
+    ...refugio,
+    id: refugio.id_refugio, // mapeo para compatibilidad con RefugiosCard
+    animales: animales.filter(a => a.refugio === refugio.id_refugio)
+  }));
+
+  const refugiosFiltrados = refugiosConAnimales.filter(refugio => {
+  const coincideNombre = refugio.nombre?.toLowerCase().includes(search.toLowerCase());
+  // Normalizar para comparar región ignorando mayúsculas/minúsculas y espacios
+  const normalize = (str: string) => (str || '').toLowerCase().replace(/\s+/g, ' ').trim();
+  const coincideRegion = region === '' || region === 'Todas' || normalize(refugio.region).includes(normalize(region));
+  return coincideNombre && coincideRegion;
   });
 
-  // --- RENDER PRINCIPAL ---
-  // Aquí se define el layout visual de la página de refugios
-  // Puedes editar estilos, estructura y componentes visuales
   return (
     <div className="refugios-container">
-  {/* Filtros de búsqueda y región */}
-  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', maxWidth: '350px', marginBottom: '8px', background: '#eaffea', borderRadius: '18px', boxShadow: '0 2px 12px #43ea6b22', padding: '18px 18px 12px 18px' }}>
+      {/* Filtros de búsqueda y región */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', maxWidth: '350px', marginBottom: '8px', background: '#eaffea', borderRadius: '18px', boxShadow: '0 2px 12px #43ea6b22', padding: '18px 18px 12px 18px' }}>
         <div style={{ width: '100%', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
             <svg width="20" height="20" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -111,25 +115,25 @@ export default function Refugios() {
             style={{ padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #43ea6b', fontSize: '1rem', background: '#fff', color: '#228B22', fontWeight: 500, boxShadow: '0 1px 4px #43ea6b11', minWidth: '120px' }}
           >
             {regiones.map(r => (
-              <option key={r.nombre} value={r.nombre === 'Todas' ? '' : r.nombre}>
-                {r.num ? `${r.num} - ` : ''}{r.nombre}
-              </option>
+              <option key={r.nombre} value={r.value}>{r.nombre}</option>
             ))}
           </select>
         </div>
       </div>
-  <div className="refugios-list" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '40px', width: '100%', marginTop: '32px' }}>
-    {refugiosFiltrados.length === 0 ? (
-      <div className="refugio-card" style={{ flex: '1 1 100px', maxWidth: '600px', minWidth: '320px', background: '#fff', borderRadius: '28px', boxShadow: '0 2px 24px #43ea6b22', padding: '40px 32px', margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#228B22', marginBottom: '12px', textAlign: 'center' }}>Aún no hay refugios registrados en esta zona</h3>
-        <p style={{ color: '#228B22', fontSize: '1.1rem', textAlign: 'center', marginBottom: 0 }}>Si conoces algún refugio, comparte la información para que tenga visibilidad y más animalitos puedan encontrar ayuda.</p>
+      <div className="refugios-list" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '40px', width: '100%', marginTop: '32px' }}>
+        {refugiosFiltrados.length === 0 ? (
+          <div className="refugio-card" style={{ flex: '1 1 100px', maxWidth: '600px', minWidth: '320px', background: '#fff', borderRadius: '28px', boxShadow: '0 2px 24px #43ea6b22', padding: '40px 32px', margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#228B22', marginBottom: '12px', textAlign: 'center' }}>Aún no hay refugios registrados en esta zona</h3>
+            <p style={{ color: '#228B22', fontSize: '1.1rem', textAlign: 'center', marginBottom: 0 }}>Si conoces algún refugio, comparte la información para que tenga visibilidad y más animalitos puedan encontrar ayuda.</p>
+          </div>
+        ) : (
+          refugiosFiltrados.map(refugio => (
+            <RefugiosCard key={refugio.id ? `refugio-${refugio.id}` : `refugio-nombre-${refugio.nombre}`} refugio={refugio} />
+          ))
+        )}
       </div>
-    ) : (
-      refugiosFiltrados.map(refugio => (
-        <RefugiosCard key={refugio.id} refugio={refugio} />
-      ))
-    )}
-  </div>
     </div>
   );
-}
+};
+
+export default Refugios;
