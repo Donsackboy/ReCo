@@ -53,7 +53,8 @@ const Verificaciones: React.FC = () => {
   return (
     <div style={{ padding: 24, minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'rgba(255,255,255,0.1)' }}>
       <h1 style={{ color: '#228B22', fontWeight: 800, fontSize: '2.5rem', marginBottom: 8, textAlign: 'center' }}>Verificaciones de Refugios</h1>
-  <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
+      <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+        <h2 style={{ color: '#228B22', fontWeight: 700, fontSize: '1.4rem', margin: 0 }}>Solicitudes por revisar o clasificar</h2>
         <button
           onClick={() => navigate('/admin/verificaciones/historial')}
           style={{
@@ -75,7 +76,6 @@ const Verificaciones: React.FC = () => {
           Ir a historial de solicitudes
         </button>
       </div>
-  <h2 style={{ marginTop: 32, marginBottom: 24, color: '#228B22', fontWeight: 700, fontSize: '1.4rem', textAlign: 'left', width: '100%' }}>Solicitudes por revisar o clasificar</h2>
   <div style={{ display: 'flex', gap: 18, marginBottom: 32, justifyContent: 'flex-start', width: '100%' }}>
         <input
           type='text'
@@ -130,7 +130,20 @@ const Verificaciones: React.FC = () => {
       {error ? <p style={{ color: 'red', textAlign: 'center', fontSize: '1.1rem' }}>{error}</p> : null}
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         {postulaciones.length === 0 && !loading ? (
-          <p style={{ textAlign: 'center', fontSize: '1.2rem', color: '#555', marginTop: 32 }}>No hay postulaciones pendientes.</p>
+          <div style={{
+            width: '100%',
+            maxWidth: 700,
+            minHeight: 180,
+            background: '#f4fff1ff',
+            borderRadius: 14,
+            boxShadow: '0 2px 16px #43a04722',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: 32
+          }}>
+            <p style={{ textAlign: 'center', fontSize: '1.2rem', color: '#555' }}>No hay postulaciones pendientes.</p>
+          </div>
         ) : null}
         <ul style={{ listStyle: 'none', padding: 0, width: '100%', maxWidth: 700 }}>
           {postulaciones.filter(post => {
@@ -138,28 +151,30 @@ const Verificaciones: React.FC = () => {
             if (filtroNombrePend && post.nombre.toLowerCase().indexOf(filtroNombrePend.toLowerCase()) === -1) return false;
             return true;
           }).map(post => (
-            <li key={post.id} style={{ background: '#fff', marginBottom: 18, padding: 24, borderRadius: 14, boxShadow: '0 2px 16px #43a04722', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor:'pointer' }}
+            <li key={post.id} style={{ background: '#fff', marginBottom: 18, padding: 24, borderRadius: 14, boxShadow: '0 2px 16px #43a04722', position: 'relative', cursor:'pointer' }}
               onClick={() => { setModalOpen(true); setModalData(post); setObservaciones(post.observaciones || ''); setAccionError(''); }}>
+              <span style={{
+                position: 'absolute',
+                top: 14,
+                right: 18,
+                display: 'inline-block',
+                padding: '4px 12px',
+                borderRadius: 10,
+                background: post.estado === 'pendiente' ? 'linear-gradient(90deg,#ffe082,#fffde7)' : post.estado === 'aceptada' ? '#b9f6ca' : post.estado === 'rechazada' ? '#ffcdd2' : '#e0e0e0',
+                color: post.estado === 'pendiente' ? '#a19100ff' : post.estado === 'aceptada' ? '#228B22' : post.estado === 'rechazada' ? '#c62828' : '#555',
+                fontWeight: 700,
+                fontSize: '0.95rem',
+                border: post.estado === 'pendiente' ? '1.5px solid #ffe082' : undefined,
+                zIndex: 2
+              }}>
+                {post.estado === 'pendiente' ? 'PENDIENTE' : post.estado === 'aceptada' ? 'Aceptada' : post.estado === 'rechazada' ? 'Rechazada' : 'Por revisar'}
+              </span>
               <div>
                 <h3 style={{ marginBottom: 8, color: '#7b1fa2', fontSize: '1.2rem' }}>{post.nombre}</h3>
                 <p style={{ marginBottom: 4 }}><b>Contacto:</b> {post.persona_contacto} | <b>Email:</b> {post.email}</p>
                 <p style={{ marginBottom: 4 }}><b>Región:</b> {post.region} | <b>Comuna:</b> {post.comuna}</p>
                 <p style={{ marginBottom: 4 }}><b>Fecha postulación:</b> {post.fecha_postulacion ? post.fecha_postulacion.split('T')[0] : ''}</p>
               </div>
-              <span style={{
-                display: 'inline-block',
-                padding: '6px 18px',
-                borderRadius: 12,
-                background: post.estado === 'pendiente' ? 'linear-gradient(90deg,#ff9800,#ffeb3b)' : post.estado === 'aceptada' ? '#43a047' : post.estado === 'rechazada' ? '#e53935' : '#bdbdbd',
-                color: post.estado === 'pendiente' ? '#222' : '#fff',
-                fontWeight: 900,
-                fontSize: '1.05rem',
-                marginLeft: 18,
-                boxShadow: post.estado === 'pendiente' ? '0 2px 8px #ff980044' : undefined,
-                border: post.estado === 'pendiente' ? '2px solid #ff9800' : undefined
-              }}>
-                {post.estado === 'pendiente' ? 'PENDIENTE' : post.estado === 'aceptada' ? 'Aceptada' : post.estado === 'rechazada' ? 'Rechazada' : 'Por revisar'}
-              </span>
             </li>
           ))}
         </ul>

@@ -128,7 +128,7 @@ const PostulacionRefugio: React.FC = () => {
   }
 
   return (
-    <div style={{maxWidth:500,margin:'32px auto',background:'#fff',borderRadius:16,padding:32,boxShadow:'0 2px 16px #43a04722'}}>
+  <div style={{maxWidth:800,margin:'32px auto',background:'#fff',borderRadius:16,padding:32,boxShadow:'0 2px 16px #43a04722'}}>
       <h2 style={{color:'#43a047',marginBottom:18}}>Postula tu refugio</h2>
   <form onSubmit={handleSubmit} style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:18}}>
         {error && <div style={{color:'red'}}>{error}</div>}
