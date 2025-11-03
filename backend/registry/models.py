@@ -36,6 +36,7 @@ class PostulacionRefugio(models.Model):
     necesidades_actuales = models.TextField(blank=True)
     estado = models.CharField(max_length=20, default='pendiente')  # pendiente, aceptada, rechazada
     fecha_postulacion = models.DateTimeField(auto_now_add=True)
+    observaciones = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.nombre} ({self.comuna}, {self.region})"

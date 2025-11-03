@@ -13,6 +13,7 @@ import AdminDashboard from './rols/Admin/pages/AdminDashboard';
 import GestionarUsuarios from './rols/Admin/pages/Usuarios/GestionarUsuarios.tsx';
 import GestionarRefugios from './rols/Admin/pages/Refugios/GestionarRefugios.tsx';
 import Verificaciones from './rols/Admin/pages/Verificaciones/Verificaciones.tsx';
+import HistorialSolicitudes from './rols/Admin/pages/Verificaciones/HistorialSolicitudes.tsx';
 import GestionarAnimalesAdmin from './rols/Admin/pages/Animales/GestionarAnimalesAdmin';
 
 import { Navigate } from 'react-router-dom';
@@ -113,6 +114,8 @@ export default function AppRouter() {
                 <Route path="gestionar-refugios" element={<GestionarRefugios />} />
                 <Route path="gestionar-usuarios" element={<GestionarUsuarios />} />
                 <Route path="verificaciones" element={<Verificaciones />} />
+                <Route path="verificaciones/historial" element={<HistorialSolicitudes />} />
+                <Route path="verificaciones/historial" element={<HistorialSolicitudes />} />
                 <Route path="animales" element={<GestionarAnimalesAdmin />} />
               </Routes>
             ) : (

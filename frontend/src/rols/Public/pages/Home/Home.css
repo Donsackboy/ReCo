@@ -1,3 +1,120 @@
+/* --- Pista del carrusel --- */
+.carousel-track {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.8rem; /* espacio entre tarjetas */
+  transition: transform 0.5s ease;
+  position: relative;
+}
+
+/* --- Tarjetas individuales --- */
+.carousel-item {
+  background: #f8fff9;
+  border: 3px solid #43ea6b;
+  border-radius: 24px;
+  box-shadow: 0 6px 20px rgba(34, 139, 34, 0.15);
+  width: 230px;
+  height: 260px;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(.77,.2,.32,1.01);
+  transform: scale(0.92);
+  opacity: 0.7;
+  z-index: 1;
+}
+
+/* --- Tarjeta activa (centrada y en foco) --- */
+.carousel-item.active {
+  transform: scale(1.1);
+  opacity: 1;
+  z-index: 3;
+  box-shadow: 0 10px 28px rgba(34, 139, 34, 0.25);
+}
+
+/* --- Contenedor principal del carrusel --- */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  max-width: 1600px;
+  height: 420px;
+  margin: -230px auto 3rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  perspective: 1000px; /* efecto 3D sutil */
+}
+
+/* --- Botones de navegación --- */
+.carousel-arrow {
+  background: linear-gradient(135deg, #43ea6b, #2ecc71);
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  position: absolute;
+  top: 90%;
+  transform: translateY(-50%);
+  box-shadow: 0 4px 12px rgba(34, 139, 34, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.carousel-arrow:hover {
+  background: linear-gradient(135deg, #2ecc71, #43ea6b);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.carousel-arrow:first-child {
+  left: 30px;
+}
+.carousel-arrow:last-child {
+  right: 30px;
+}
+
+/* Tarjeta especial para postulación de refugio */
+.refugio-apply-section {
+  background: none;
+  margin-bottom: 2.2rem;
+}
+.refugio-apply-card {
+  background: linear-gradient(135deg, #a084ca 0%, #7b1fa2 100%);
+  color: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 18px #7b1fa222;
+  padding: 2.2rem 2rem;
+  max-width: 700px;
+  margin: 0 auto 2.2rem auto;
+  position: relative;
+}
+.refugio-apply-card h2 {
+  color: #fff;
+  margin-bottom: 0.8rem;
+}
+.refugio-apply-card ul {
+  margin: 1rem 0 1rem 1.2rem;
+  padding: 0;
+}
+.refugio-apply-card li {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+.refugio-apply-card p {
+  color: #f3eaff;
+}
+.refugio-apply-card .btn-secondary {
+  background: #6d28a7 !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px #7b1fa222;
+}
 /* Tarjetas generales para secciones */
 .info-section, .advice-section, .event-section, .donation-section {
   background: #fff;
@@ -159,13 +276,16 @@
 
 .hero-section {
   text-align: center;
-  padding: 3rem 2rem;
+  padding: 3rem 2rem 5.5rem 2rem;
   background: linear-gradient(135deg, #f0fff0 0%, #e8f5e8 100%);
   border-radius: 15px;
   margin-bottom: 2rem;
   box-shadow: 0 4px 20px rgba(34, 139, 34, 0.1);
   position: relative;
-  z-index: 1; /* Asegurar que esté por debajo del menú */
+  z-index: 1;
+  max-width: 1700px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .hero-section h1 {
@@ -268,4 +388,5 @@
   .intro-section p {
     font-size: 1rem;
   }
+  filter: drop-shadow(0 6px 18px #228b2233);
 }

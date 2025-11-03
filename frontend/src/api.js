@@ -1,3 +1,9 @@
+// Obtener 5 animales random con foto principal (público)
+export async function getAnimalesCarousel() {
+  const response = await fetch(`${API_BASE}/public/animales/carousel/`);
+  if (!response.ok) throw new Error('Error al obtener animales para el carrusel');
+  return response.json();
+}
 // frontend/src/api.js
 export const API_BASE = import.meta.env.VITE_API_BASE;
 export async function getExampleData() {
@@ -52,6 +58,14 @@ export async function getAnimales(token) {
   });
   if (!response.ok) throw new Error('Error al obtener animales');
   return response.json();
+}
+
+// Obtener cantidad de animales (público)
+export async function getAnimalesCount() {
+  const response = await fetch(`${API_BASE}/public/animales/count/`);
+  if (!response.ok) throw new Error('Error al obtener cantidad de animales');
+  const data = await response.json();
+  return data.count;
 }
 
 // Crear animal (refugio o admin)

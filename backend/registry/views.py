@@ -1,56 +1,97 @@
-from .permissions import IsRefugioOrAdmin
-from .serializers import AnimalSerializer
-from .models import Animal
-from rest_framework import generics
-class AnimalDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Animal.objects.all()
-    serializer_class = AnimalSerializer
-    permission_classes = [IsRefugioOrAdmin]
+from django.db.models import F
+import random
 from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from .serializers import PostulacionRefugioSerializer, UserSerializer, LoginSerializer, HogarTemporalSerializer, RefugioSerializer, AnimalSerializer
-from .models import PostulacionRefugio, Usuario, HogaresTemporales, Refugio, Animal
+from rest_framework.views import APIView
+from .permissions import IsRefugioOrAdmin, IsAdmin, IsRefugio
+from .serializers import (
+    AnimalSerializer, PostulacionRefugioSerializer, UserSerializer, LoginSerializer,
+    HogarTemporalSerializer, RefugioSerializer, HistorialMedicoSerializer
+)
+from .models import (
+    Animal, PostulacionRefugio, Usuario, HogaresTemporales, Refugio, HistorialMedico
+)
 
-from rest_framework import generics
-# Vista pública para listar refugios
+# Endpoint público para 5 animales random con foto principal
+class AnimalPublicCarouselView(APIView):
+    permission_classes = [permissions.AllowAny]
+    def get(self, request):
+        animales = list(Animal.objects.all())
+        if not animales:
+            return Response([])
+        seleccionados = random.sample(animales, min(5, len(animales)))
+        data = []
+        from datetime import date
+        for animal in seleccionados:
+            foto_principal = None
+            try:
+                if hasattr(animal, 'fotos') and isinstance(animal.fotos, list) and len(animal.fotos) > 0:
+                    foto_principal = animal.fotos[0]
+            except Exception:
+                foto_principal = None
+            # Calcular días en refugio
+            dias_en_refugio = 0
+            if animal.fecha_ingreso:
+                dias_en_refugio = (date.today() - animal.fecha_ingreso).days
+            data.append({
+                "id": animal.pk,
+                "nombre": animal.nombre,
+                "edad": animal.edad if animal.edad is not None else '',
+                "refugio": animal.refugio.nombre if animal.refugio else '',
+                "diasEnRefugio": dias_en_refugio,
+                "foto_principal": foto_principal
+            })
+        return Response(data)
+
+class AnimalDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Animal.objects.all()
+    serializer_class = AnimalSerializer
+    permission_classes = [IsRefugioOrAdmin]
+
 class RefugioPublicListView(generics.ListAPIView):
     queryset = Refugio.objects.all()
     serializer_class = RefugioSerializer
     permission_classes = [permissions.AllowAny]
 
-# Vista pública para detalle de refugio
 class RefugioPublicDetailView(generics.RetrieveAPIView):
     queryset = Refugio.objects.all()
     serializer_class = RefugioSerializer
     permission_classes = [permissions.AllowAny]
 
-from rest_framework import generics
-# Vista pública para listar animales
 class AnimalPublicListView(generics.ListAPIView):
     queryset = Animal.objects.all()
     serializer_class = AnimalSerializer
     permission_classes = [permissions.AllowAny]
 
-# Vista pública para detalle de animal
+class AnimalPublicCountView(APIView):
+    permission_classes = [permissions.AllowAny]
+    def get(self, request):
+        count = Animal.objects.count()
+        return Response({"count": count})
+
 class AnimalPublicDetailView(generics.RetrieveAPIView):
     queryset = Animal.objects.all()
     serializer_class = AnimalSerializer
     permission_classes = [permissions.AllowAny]
-from .permissions import IsAdmin, IsRefugio, IsRefugioOrAdmin
 
 # --- Postulación de Refugio pública ---
 
+
+# Listar postulaciones por estado (pendiente, aceptada, rechazada)
 class PostulacionRefugioListCreateView(generics.ListCreateAPIView):
     serializer_class = PostulacionRefugioSerializer
     permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
         estado = self.request.query_params.get('estado')
+        historial = self.request.query_params.get('historial')
         qs = PostulacionRefugio.objects.all()
         if estado:
             qs = qs.filter(estado=estado)
+        elif historial == 'true':
+            qs = qs.filter(estado__in=['aceptada', 'rechazada'])
         return qs
 
 
@@ -137,6 +178,15 @@ class RefugioDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Refugio.objects.all()
     serializer_class = RefugioSerializer
     permission_classes = [IsAdmin]
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        # Eliminar usuario asociado al refugio (si existe)
+        usuario = Usuario.objects.filter(refugio=instance).first()
+        if usuario:
+            usuario.delete()
+        # Los animales se eliminan automáticamente por on_delete=models.CASCADE
+        return super().destroy(request, *args, **kwargs)
 
 # CRUD para animales (solo refugio y admin pueden crear/listar)
 class AnimalListCreateView(generics.ListCreateAPIView):

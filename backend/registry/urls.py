@@ -19,4 +19,6 @@ urlpatterns = [
     path('public/refugios/<int:pk>/', views.RefugioPublicDetailView.as_view(), name='public_refugios_detail'),
     path('public/animales/', views.AnimalPublicListView.as_view(), name='public_animales_list'),
     path('public/animales/<int:pk>/', views.AnimalPublicDetailView.as_view(), name='public_animales_detail'),
+    path('public/animales/count/', views.AnimalPublicCountView.as_view(), name='public_animales_count'),
+    path('public/animales/carousel/', views.AnimalPublicCarouselView.as_view(), name='public_animales_carousel'),
 ]

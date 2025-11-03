@@ -1,13 +1,19 @@
+
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Verificaciones: React.FC = () => {
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [confirmAction, setConfirmAction] = useState<'aceptada'|'rechazada'|null>(null);
   const [postulaciones, setPostulaciones] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [modalData, setModalData] = useState<any | null>(null);
+  const [observaciones, setObservaciones] = useState('');
+  const [accionLoading, setAccionLoading] = useState(false);
+  const [accionError, setAccionError] = useState('');
+  const [filtroRegionPend, setFiltroRegionPend] = useState('');
+  const [filtroNombrePend, setFiltroNombrePend] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_BASE}/public/postulacion-refugio/?estado=pendiente`)
@@ -22,88 +28,167 @@ const Verificaciones: React.FC = () => {
       });
   }, []);
 
-  const actualizarEstado = async (id: number, estado: string) => {
-    await fetch(`${import.meta.env.VITE_API_BASE}/public/postulacion-refugio/${id}/`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ estado })
-    });
-    setPostulaciones(postulaciones.filter(p => p.id !== id));
-    setModalOpen(false);
-    setModalData(null);
-    setConfirmOpen(false);
-    setConfirmAction(null);
-  };
+  // Función para actualizar estado y observaciones
+    async function actualizarEstado(nuevoEstado: string) {
+      if (!modalData) return;
+      setAccionLoading(true);
+      setAccionError('');
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE}/public/postulacion-refugio/${modalData.id}/`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ estado: nuevoEstado, observaciones })
+        });
+        if (!res.ok) throw new Error('Error al actualizar la solicitud');
+        setModalOpen(false);
+        setPostulaciones(postulaciones.filter(p => p.id !== modalData.id));
+      } catch (err) {
+        setAccionError((err as Error).message || 'Error desconocido');
+      }
+      setAccionLoading(false);
+    }
 
   return (
-    <div style={{ padding: 24 }}>
-      <h1>Verificaciones de Refugios</h1>
-      {loading ? <p>Cargando...</p> : null}
-      {error ? <p style={{color:'red'}}>{error}</p> : null}
-      {postulaciones.length === 0 && !loading ? <p>No hay postulaciones pendientes.</p> : null}
-      <ul style={{listStyle:'none',padding:0}}>
-        {postulaciones.map(post => (
-          <li key={post.id} style={{background:'#fff',marginBottom:16,padding:16,borderRadius:8,boxShadow:'0 2px 8px #43a04722',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-            <div>
-              <h3 style={{marginBottom:8}}>{post.nombre}</h3>
-              <p><b>Contacto:</b> {post.persona_contacto} | <b>Email:</b> {post.email}</p>
-              <p><b>Región:</b> {post.region} | <b>Comuna:</b> {post.comuna}</p>
-            </div>
-            <button onClick={() => {setModalOpen(true);setModalData(post);}} style={{background:'#7b1fa2',color:'#fff',border:'none',borderRadius:8,padding:'10px 20px',fontWeight:700,cursor:'pointer'}}>Ver detalles</button>
-          </li>
-        ))}
-      </ul>
-
-      {modalOpen && modalData && (
-        <div style={{position:'fixed',top:0,left:0,width:'100vw',height:'100vh',background:'#0008',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center'}} onClick={()=>{setModalOpen(false);setModalData(null);}}>
-          <div style={{background:'#fff',borderRadius:16,padding:32,minWidth:350,maxWidth:500,boxShadow:'0 4px 32px #43a04744',position:'relative'}} onClick={e=>e.stopPropagation()}>
-            <button onClick={()=>{setModalOpen(false);setModalData(null);}} style={{position:'absolute',top:16,right:16,background:'none',border:'none',fontSize:22,cursor:'pointer',color:'#888'}}>×</button>
-            <h2 style={{color:'#43a047',marginBottom:12}}>{modalData.nombre}</h2>
-            <div style={{marginBottom:16}}>
-              <div style={{display:'flex',gap:16,marginBottom:8}}>
-                <div style={{flex:1}}>
-                  <b>Contacto:</b>
-                  <div style={{marginTop:4}}>{modalData.persona_contacto}</div>
-                  <div style={{marginTop:4}}><b>Email:</b> {modalData.email}</div>
-                  <div style={{marginTop:4}}><b>Tel:</b> {modalData.telefono}</div>
-                </div>
-                <div style={{flex:1}}>
-                  <b>Ubicación:</b>
-                  <div style={{marginTop:4}}><b>Región:</b> {modalData.region}</div>
-                  <div style={{marginTop:4}}><b>Comuna:</b> {modalData.comuna}</div>
-                </div>
+    <div style={{ padding: 24, minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'rgba(255,255,255,0.1)' }}>
+      <h1 style={{ color: '#228B22', fontWeight: 800, fontSize: '2.5rem', marginBottom: 8, textAlign: 'center' }}>Verificaciones de Refugios</h1>
+  <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
+        <button
+          onClick={() => navigate('/admin/verificaciones/historial')}
+          style={{
+            background: '#43a047',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 10,
+            padding: '12px 32px',
+            fontWeight: 700,
+            fontSize: '1rem',
+            cursor: 'pointer',
+            boxShadow: '0 2px 8px #43a04744',
+            transition: 'background 0.2s',
+            minWidth: 220
+          }}
+          onMouseOver={e => (e.currentTarget.style.background = '#388e3c')}
+          onMouseOut={e => (e.currentTarget.style.background = '#43a047')}
+        >
+          Ir a historial de solicitudes
+        </button>
+      </div>
+  <h2 style={{ marginTop: 32, marginBottom: 24, color: '#228B22', fontWeight: 700, fontSize: '1.4rem', textAlign: 'left', width: '100%' }}>Solicitudes por revisar o clasificar</h2>
+  <div style={{ display: 'flex', gap: 18, marginBottom: 32, justifyContent: 'flex-start', width: '100%' }}>
+        <input
+          type='text'
+          placeholder='Filtrar por región'
+          value={filtroRegionPend}
+          onChange={e => setFiltroRegionPend(e.target.value)}
+          style={{
+            padding: '12px',
+            borderRadius: 10,
+            border: '2px solid #43a047',
+            fontSize: '1rem',
+            minWidth: 180,
+            background: '#f8fff8',
+            boxShadow: '0 2px 8px #43a04722',
+            outline: 'none'
+          }}
+        />
+        <input
+          type='text'
+          placeholder='Filtrar por nombre'
+          value={filtroNombrePend}
+          onChange={e => setFiltroNombrePend(e.target.value)}
+          style={{
+            padding: '12px',
+            borderRadius: 10,
+            border: '2px solid #43a047',
+            fontSize: '1rem',
+            minWidth: 180,
+            background: '#f8fff8',
+            boxShadow: '0 2px 8px #43a04722',
+            outline: 'none'
+          }}
+        />
+        <input
+          type='date'
+          placeholder='Filtrar por fecha'
+          value={''}
+          onChange={() => {}}
+          style={{
+            padding: '12px',
+            borderRadius: 10,
+            border: '2px solid #43a047',
+            fontSize: '1rem',
+            minWidth: 180,
+            background: '#f8fff8',
+            boxShadow: '0 2px 8px #43a04722',
+            outline: 'none'
+          }}
+        />
+      </div>
+      {loading ? <p style={{ textAlign: 'center', fontSize: '1.1rem', color: '#888' }}>Cargando...</p> : null}
+      {error ? <p style={{ color: 'red', textAlign: 'center', fontSize: '1.1rem' }}>{error}</p> : null}
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        {postulaciones.length === 0 && !loading ? (
+          <p style={{ textAlign: 'center', fontSize: '1.2rem', color: '#555', marginTop: 32 }}>No hay postulaciones pendientes.</p>
+        ) : null}
+        <ul style={{ listStyle: 'none', padding: 0, width: '100%', maxWidth: 700 }}>
+          {postulaciones.filter(post => {
+            if (filtroRegionPend && post.region.toLowerCase().indexOf(filtroRegionPend.toLowerCase()) === -1) return false;
+            if (filtroNombrePend && post.nombre.toLowerCase().indexOf(filtroNombrePend.toLowerCase()) === -1) return false;
+            return true;
+          }).map(post => (
+            <li key={post.id} style={{ background: '#fff', marginBottom: 18, padding: 24, borderRadius: 14, boxShadow: '0 2px 16px #43a04722', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor:'pointer' }}
+              onClick={() => { setModalOpen(true); setModalData(post); setObservaciones(post.observaciones || ''); setAccionError(''); }}>
+              <div>
+                <h3 style={{ marginBottom: 8, color: '#7b1fa2', fontSize: '1.2rem' }}>{post.nombre}</h3>
+                <p style={{ marginBottom: 4 }}><b>Contacto:</b> {post.persona_contacto} | <b>Email:</b> {post.email}</p>
+                <p style={{ marginBottom: 4 }}><b>Región:</b> {post.region} | <b>Comuna:</b> {post.comuna}</p>
+                <p style={{ marginBottom: 4 }}><b>Fecha postulación:</b> {post.fecha_postulacion ? post.fecha_postulacion.split('T')[0] : ''}</p>
               </div>
-              <div style={{marginTop:12}}>
-                <b>Descripción:</b>
-                <div style={{marginTop:4}}>{modalData.descripcion}</div>
+              <span style={{
+                display: 'inline-block',
+                padding: '6px 18px',
+                borderRadius: 12,
+                background: post.estado === 'pendiente' ? 'linear-gradient(90deg,#ff9800,#ffeb3b)' : post.estado === 'aceptada' ? '#43a047' : post.estado === 'rechazada' ? '#e53935' : '#bdbdbd',
+                color: post.estado === 'pendiente' ? '#222' : '#fff',
+                fontWeight: 900,
+                fontSize: '1.05rem',
+                marginLeft: 18,
+                boxShadow: post.estado === 'pendiente' ? '0 2px 8px #ff980044' : undefined,
+                border: post.estado === 'pendiente' ? '2px solid #ff9800' : undefined
+              }}>
+                {post.estado === 'pendiente' ? 'PENDIENTE' : post.estado === 'aceptada' ? 'Aceptada' : post.estado === 'rechazada' ? 'Rechazada' : 'Por revisar'}
+              </span>
+            </li>
+          ))}
+        </ul>
+        {modalOpen && modalData && (
+          <div style={{position:'fixed',top:0,left:0,width:'100vw',height:'100vh',background:'#0007',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center'}}>
+            <div style={{background:'#fff',borderRadius:16,padding:32,minWidth:340,maxWidth:500,boxShadow:'0 2px 24px #43a04744',position:'relative'}}>
+              <button onClick={()=>setModalOpen(false)} style={{position:'absolute',top:12,right:12,background:'#eee',border:'none',borderRadius:8,padding:'4px 12px',cursor:'pointer'}}>Cerrar</button>
+              <h2 style={{marginBottom:12,color:'#228B22'}}>{modalData.nombre}</h2>
+              <p><b>Contacto:</b> {modalData.persona_contacto} | <b>Email:</b> {modalData.email}</p>
+              <p><b>Región:</b> {modalData.region} | <b>Comuna:</b> {modalData.comuna}</p>
+              <p><b>Fecha postulación:</b> {modalData.fecha_postulacion ? modalData.fecha_postulacion.split('T')[0] : ''}</p>
+              <p><b>Descripción:</b> {modalData.descripcion}</p>
+              <div style={{marginTop:18}}>
+                <label htmlFor='observaciones'><b>Observaciones:</b></label>
+                <textarea id='observaciones' value={observaciones} onChange={e=>setObservaciones(e.target.value)} rows={3} style={{width:'100%',marginTop:6,padding:8,borderRadius:8,border:'1.5px solid #43a047',resize:'vertical'}} placeholder='Agrega observaciones aquí...'/>
               </div>
-              <div style={{marginTop:12}}>
-                <b>Sitios web:</b>
-                <div style={{marginTop:4}}>{Array.isArray(modalData.sitios_web) ? modalData.sitios_web.map((s:any) => <span key={s.url}>{s.tipo}: <a href={s.url} target="_blank" rel="noopener noreferrer">{s.url}</a> &nbsp;</span>) : modalData.sitios_web}</div>
+              {accionError && <p style={{color:'red',marginTop:8}}>{accionError}</p>}
+              <div style={{marginTop:24,display:'flex',gap:16,justifyContent:'center'}}>
+                <button disabled={accionLoading} onClick={()=>actualizarEstado('aceptada')} style={{background:'#43a047',color:'#fff',border:'none',borderRadius:8,padding:'10px 24px',fontWeight:700,cursor:'pointer'}}>Aceptar</button>
+                <button disabled={accionLoading} onClick={()=>actualizarEstado('rechazada')} style={{background:'#e53935',color:'#fff',border:'none',borderRadius:8,padding:'10px 24px',fontWeight:700,cursor:'pointer'}}>Rechazar</button>
+                <button disabled={accionLoading} onClick={()=>actualizarEstado('pendiente')} style={{background:'#ffeb3b',color:'#333',border:'none',borderRadius:8,padding:'10px 24px',fontWeight:700,cursor:'pointer'}}>Dejar en pendiente</button>
               </div>
-            </div>
-            <div style={{marginTop:24,display:'flex',gap:12,justifyContent:'center'}}>
-              <button onClick={() => {setConfirmOpen(true);setConfirmAction('aceptada');}} style={{background:'#43a047',color:'#fff',border:'none',borderRadius:8,padding:'10px 24px',fontWeight:700,cursor:'pointer'}}>Aceptar</button>
-              <button onClick={() => {setConfirmOpen(true);setConfirmAction('rechazada');}} style={{background:'#e53935',color:'#fff',border:'none',borderRadius:8,padding:'10px 24px',fontWeight:700,cursor:'pointer'}}>Rechazar</button>
             </div>
           </div>
-        </div>
-      )}
 
-      {confirmOpen && modalData && confirmAction && (
-        <div style={{position:'fixed',top:0,left:0,width:'100vw',height:'100vh',background:'#0006',zIndex:1100,display:'flex',alignItems:'center',justifyContent:'center'}}>
-          <div style={{background:'#fff',borderRadius:12,padding:32,minWidth:300,maxWidth:400,boxShadow:'0 2px 16px #43a04744',textAlign:'center'}}>
-            <h3 style={{marginBottom:18}}>{confirmAction === 'aceptada' ? '¿Aceptar postulación?' : '¿Rechazar postulación?'}</h3>
-            <p>¿Estás seguro que deseas {confirmAction === 'aceptada' ? 'aceptar' : 'rechazar'} la postulación de <b>{modalData.nombre}</b>?</p>
-            <div style={{marginTop:24,display:'flex',gap:12,justifyContent:'center'}}>
-              <button onClick={() => actualizarEstado(modalData.id, confirmAction)} style={{background: confirmAction === 'aceptada' ? '#43a047' : '#e53935',color:'#fff',border:'none',borderRadius:8,padding:'10px 24px',fontWeight:700,cursor:'pointer'}}>Confirmar</button>
-              <button onClick={() => {setConfirmOpen(false);setConfirmAction(null);}} style={{background:'#888',color:'#fff',border:'none',borderRadius:8,padding:'10px 24px',fontWeight:700,cursor:'pointer'}}>Cancelar</button>
-            </div>
-          </div>
-        </div>
-  )}
+        )}
+      </div>
     </div>
   );
-};
+}
 
 export default Verificaciones;
