@@ -17,18 +17,6 @@
 }
 
 @media (max-width: 480px) {
-  .btn-logout {
-    padding: 6px 8px;
-    font-size: 0.75rem;
-  }
-}
-@media (max-width: 1100px) {
-  .user-name {
-    display: none;
-  }
-}
-
-@media (max-width: 480px) {
   .user-profile {
     padding: 6px 8px;
     gap: 4px;
@@ -59,10 +47,10 @@
   font-size: 0.85rem;
   font-weight: 600;
   color: #228B22;
-  max-width: 120px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  max-width: none;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
 }
 .admin-profile {
   border-color: #FF6B35;
@@ -98,7 +86,6 @@
   box-shadow: 0 6px 20px rgba(231,76,60,0.4);
 }
 @media (max-width: 1100px) {
-	.user-name { display: none; }
 	.admin-badge { font-size: 0.6rem; padding: 1px 4px; }
 	.btn-logout {
 	  display: flex;
@@ -115,13 +102,9 @@
 	  transition: all 0.3s ease;
 	  box-shadow: 0 4px 15px rgba(231,76,60,0.3);
 	}
-@media (max-width: 480px) {
-	.user-profile { padding: 6px 8px; gap: 4px; }
-	.btn-logout { padding: 6px 8px; font-size: 0.75rem; }
-}
 /* User profile styles */
 .btn-logout:hover {
     background: linear-gradient(135deg, #C0392B, #A93226);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(231,76,60,0.4);
-  }
+}

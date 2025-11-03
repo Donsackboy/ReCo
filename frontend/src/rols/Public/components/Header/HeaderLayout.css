@@ -1,3 +1,71 @@
+/*=============================================*/
+/*        MEDIA QUERIES HEADER PUBLIC          */
+/*=============================================*/
+@media (max-width: 1450px) {
+  .header .nav-menu .nav-item .nav-link[href*="eventos"] {
+    display: none !important;
+  }
+}
+
+/*=============================================*/
+/*        MEDIA QUERIES HEADER  USUARIO        */
+/*=============================================*/
+
+
+
+/*=============================================*/
+/*        MEDIA QUERIES HEADER ADMIN           */
+/*=============================================*/
+
+
+
+/*=============================================*/
+/*        MEDIA QUERIES HEADER REFUGIO         */
+/*=============================================*/
+@media (max-width: 1700px) {
+  .header .nav-container .nav-logo {
+    margin-left: 0 !important;
+    position: relative;
+    left: 10px !important;
+  }
+}
+@media (max-width: 800px) {
+  .header .nav-menu .nav-item .nav-link[href*="mis-animales"] {
+    display: none !important;
+  }
+}
+@media (max-width: 700px) {
+  .header .nav-menu .nav-item .nav-link[href*="dashboard"] {
+    display: none !important;
+  }
+}
+@media (max-width: 1000px) {
+  .header .nav-menu .nav-item .nav-link[href*="postulaciones"] {
+    display: none !important;
+  }
+}
+@media (max-width: 1150px) {
+  .header .nav-menu .nav-item .nav-link[href*="mis-eventos"] {
+    display: none !important;
+  }
+}
+@media (max-width: 1600px) {
+  .header .nav-menu .nav-item .nav-link[href*="donaciones"] {
+    display: none !important;
+  }
+}
+@media (max-width: 1700px) {
+  .header .nav-menu .nav-item .nav-link[href*="historial-medico"] {
+    display: none !important;
+  }
+}
+/* ================================= */
+/*        MEDIA QUERIES HEADER       */
+@media (max-width: 1800px) {
+  .header .auth-buttons .btn-logout {
+    display: none !important;
+  }
+}
 /* ================================= */
 /*           HEADER PRINCIPAL        */
 /* ================================= */
@@ -22,10 +90,10 @@
 .nav-container {
   max-width: 1400px;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
-  padding: 1rem 1rem 1rem 10px; /* Padding izquierdo fijo de 10px */
+  justify-content: center;
+  padding: 1rem 2rem;
   gap: 2rem;
 }
 .center-nav {

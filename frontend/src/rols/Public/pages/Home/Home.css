@@ -1,3 +1,134 @@
+/* Tarjetas generales para secciones */
+.info-section, .advice-section, .event-section, .donation-section {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 18px #43ea6b22;
+  padding: 2.2rem 2rem;
+  margin-bottom: 2.2rem;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+}
+
+.info-cards {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1.2rem;
+}
+.info-card {
+  background: #eafbe7;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px #43ea6b22;
+  padding: 1.2rem 1.4rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+  min-width: 220px;
+  max-width: 320px;
+}
+.info-icon {
+  font-size: 2.2rem;
+  color: #145214;
+  flex-shrink: 0;
+}
+.advice-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.2rem 0 0 0;
+}
+.advice-list li {
+  background: #eafbe7;
+  border-radius: 10px;
+  margin-bottom: 0.8rem;
+  padding: 0.9rem 1.2rem;
+  font-size: 1.08rem;
+  color: #228B22;
+  box-shadow: 0 2px 8px #43ea6b22;
+}
+.event-section {
+  padding-bottom: 0.5rem;
+}
+.event-cards {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 1.2rem;
+}
+.event-card {
+  background: #f0fff4;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px #43ea6b22;
+  padding: 1.2rem 1.4rem;
+  min-width: 220px;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.event-img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 0.8rem;
+}
+.event-info {
+  text-align: center;
+}
+.event-date {
+  font-size: 1rem;
+  color: #145214;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+.event-link {
+  display: inline-block;
+  margin-top: 0.7rem;
+  background: #43ea6b;
+  color: #fff;
+  padding: 7px 18px;
+  border-radius: 8px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+.event-link:hover {
+  background: #145214;
+}
+.donation-section {
+  text-align: center;
+}
+.donation-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+}
+.donation-icon {
+  font-size: 2.5rem;
+  color: #E74C3C;
+}
+.btn-donation {
+  background: linear-gradient(135deg, #E74C3C, #C0392B);
+  color: white;
+  border: none;
+  padding: 1rem 2.2rem;
+  border-radius: 15px;
+  font-size: 1.08rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(231,76,60,0.3);
+  margin-top: 0.5rem;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+.btn-donation:hover {
+  background: linear-gradient(135deg, #C0392B, #A93226);
+}
 /* Estilos específicos para Home */
 .app {
   min-height: 100vh;

@@ -79,10 +79,10 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
           {/* Perfil de refugio y menú */}
           <div className="hamburger-container">
             <div className="auth-buttons desktop-auth">
-              <div className="user-profile">
+              <button className="user-profile" onClick={() => window.location.href = '/refugio/configuracion'}>
                 <span className="user-icon">🏠</span>
                 <span className="user-name">{refugioNombre}</span>
-              </div>
+              </button>
               <button onClick={onLogout} className="btn-logout">
                 <span className="auth-icon">🚪</span>
                 <span className="auth-text">Cerrar Sesión</span>

@@ -70,7 +70,7 @@
 	50% { transform: translateY(-5px); }
 }
 
-@media (max-width: 1450px) {
+@media (max-width: 1700px) {
 	.nav-logo {
 		margin-left: 10px !important;
 	}
