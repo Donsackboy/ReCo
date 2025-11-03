@@ -167,8 +167,28 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
         padding: 0,
         display: 'flex',
         flexDirection: 'column',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        position: 'relative'
       }}>
+        {/* Botón X de cerrar/cancelar arriba a la derecha */}
+        <button
+          type="button"
+          onClick={onClose}
+          style={{
+            position: 'absolute',
+            top: 18,
+            right: 28,
+            background: 'none',
+            color: '#e74c3c',
+            fontSize: '2.2rem',
+            fontWeight: 900,
+            border: 'none',
+            cursor: 'pointer',
+            zIndex: 10001,
+            lineHeight: 1
+          }}
+          aria-label="Cerrar edición"
+        >×</button>
         <div style={{ flex: 1, overflowY: 'auto', padding: 48 }}>
           <h2 style={{ color: '#145214', marginBottom: 18, textAlign: 'center', fontWeight: 800, letterSpacing: 1.5, fontSize: '2.2rem' }}>Editar Perfil de {form.nombre}</h2>
           <form onSubmit={handleSubmit} style={{ overflowY: 'auto', maxHeight: '70vh' }}>

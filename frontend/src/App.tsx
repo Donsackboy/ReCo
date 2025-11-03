@@ -1,8 +1,8 @@
 
 import HeaderPublic from './rols/Public/components/Header/HeaderPublic';
-import HeaderAdmin from './rols/Admin/components/HeaderAdmin';
-import HeaderRefugio from './rols/Refugio/components/HeaderRefugio';
-import HeaderUsuario from './rols/Usuario/components/HeaderUsuario';
+import HeaderAdmin from './rols/Admin/components/Header/HeaderAdmin';
+import HeaderRefugio from './rols/Refugio/components/Header/HeaderRefugio';
+import HeaderUsuario from './rols/Usuario/components/Header/HeaderUsuario';
 import Home from './rols/Public/pages/Home/Home';
 import Footer from './rols/Public/components/Footer/Footer';
 import { useEffect } from 'react';

@@ -4,8 +4,8 @@ import Necesidades from './rols/Refugio/pages/Necesidades';
 // Enrutador principal para las páginas
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HeaderPublic from './rols/Public/components/Header/HeaderPublic';
-import HeaderUsuario from './rols/Usuario/components/HeaderUsuario';
-import HeaderAdmin from './rols/Admin/components/HeaderAdmin';
+import HeaderUsuario from './rols/Usuario/components/Header/HeaderUsuario';
+import HeaderAdmin from './rols/Admin/components/Header/HeaderAdmin';
 import Footer from './rols/Public/components/Footer/Footer';
 
 // Admin
@@ -13,6 +13,7 @@ import AdminDashboard from './rols/Admin/pages/AdminDashboard';
 import GestionarUsuarios from './rols/Admin/pages/Usuarios/GestionarUsuarios.tsx';
 import GestionarRefugios from './rols/Admin/pages/Refugios/GestionarRefugios.tsx';
 import Verificaciones from './rols/Admin/pages/Verificaciones/Verificaciones.tsx';
+import GestionarAnimalesAdmin from './rols/Admin/pages/Animales/GestionarAnimalesAdmin';
 
 import { Navigate } from 'react-router-dom';
 import Home from './rols/Public/pages/Home/Home.tsx';
@@ -34,7 +35,7 @@ import RefugioPerfil from './rols/Public/pages/Refugios/RefugioPerfil.tsx';
 
 
 //refugio
-import HeaderRefugio from './rols/Refugio/components/HeaderRefugio.tsx';
+import HeaderRefugio from './rols/Refugio/components/Header/HeaderRefugio.tsx';
 import Dashboard from './rols/Refugio/pages/Dashboard/index';
 import MisAnimales from './rols/Refugio/pages/MisAnimales';
 import Postulaciones from './rols/Refugio/pages/Postulaciones';
@@ -112,6 +113,7 @@ export default function AppRouter() {
                 <Route path="gestionar-refugios" element={<GestionarRefugios />} />
                 <Route path="gestionar-usuarios" element={<GestionarUsuarios />} />
                 <Route path="verificaciones" element={<Verificaciones />} />
+                <Route path="animales" element={<GestionarAnimalesAdmin />} />
               </Routes>
             ) : (
               <Navigate to="/" replace />

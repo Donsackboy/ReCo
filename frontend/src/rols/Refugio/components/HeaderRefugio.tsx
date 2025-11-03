@@ -5,6 +5,7 @@ import '../../Public/components/Header/NavMenu.css';
 import '../../Public/components/Header/UserProfile.css';
 import '../../Public/components/Header/HamburgerMenu.css';
 import '../../Public/components/Header/AuthButtons.css';
+import '../../Public/components/Header/HeaderLayout.css';
 
   
 interface HeaderRefugioProps {
@@ -29,7 +30,7 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
   };
 
   return (
-    <header className="header">
+    <header className="header header-layout">
       <nav className="navbar">
         <div className="nav-container">
           {/* Logo */}
@@ -179,7 +180,13 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
               </a>
             </li>
             <li className="side-menu-item">
-              <button onClick={() => { onLogout?.(); closeMenu(); }} className="side-menu-link logout-btn">
+              <button
+                onClick={() => {
+                  closeMenu();
+                  setTimeout(() => { onLogout?.(); }, 100);
+                }}
+                className="side-menu-link logout-btn"
+              >
                 <span className="side-menu-icon">🚪</span>
                 Cerrar Sesión
               </button>

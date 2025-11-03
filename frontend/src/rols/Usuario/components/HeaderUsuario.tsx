@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Logo from '../../Public/components/Header/shared/Logo';
 import './Header/UserProfile.css';
 import './Header/NavMenu.css';
-import './Header/HeaderLayout.css';
+import '../../Public/components/Header/HeaderLayout.css';
 import './Header/HamburgerMenu.css';
 
 interface HeaderUsuarioProps {
@@ -167,7 +167,13 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
               </a>
             </li>
             <li className="side-menu-item">
-              <button onClick={() => { onLogout?.(); closeMenu(); }} className="side-menu-link logout-btn">
+              <button
+                onClick={() => {
+                  closeMenu();
+                  setTimeout(() => { onLogout?.(); }, 100);
+                }}
+                className="side-menu-link logout-btn"
+              >
                 <span className="side-menu-icon">🚪</span>
                 Cerrar Sesión
               </button>

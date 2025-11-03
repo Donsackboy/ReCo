@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './GestionRefugioMenu.css';
 
 interface GestionRefugioMenuProps {
@@ -6,10 +7,14 @@ interface GestionRefugioMenuProps {
 }
 
 const GestionRefugioMenu: React.FC<GestionRefugioMenuProps> = ({ nombreRefugio }) => {
+  const navigate = useNavigate();
 
   const handleButtonClick = (seccion: string) => {
-    // Por ahora, solo muestra un mensaje. Más tarde, navegará a la sección correspondiente.
-    alert(`Navegando a la sección: ${seccion} (Próximamente)`);
+    if (seccion === 'Animales') {
+      navigate('/refugio/animales');
+    } else {
+      alert(`Navegando a la sección: ${seccion} (Próximamente)`);
+    }
   };
 
   return (

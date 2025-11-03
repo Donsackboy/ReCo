@@ -56,6 +56,7 @@ const AdminDashboard: React.FC = () => {
           <li><Link to="/admin/gestionar-refugios">Gestionar Refugios</Link></li>
           <li><Link to="/admin/gestionar-usuarios">Gestionar Usuarios</Link></li>
           <li><Link to="/admin/verificaciones">Verificar Comprobantes</Link></li>
+          <li><Link to="/admin/animales">Gestionar Animales</Link></li>
           <li><Link to="/admin/reportes">Reportes</Link></li>
         </ul>
       </nav>

@@ -8,7 +8,7 @@ import('../../../../api.js').then(api => {
   updateUsuario = api.updateUsuario;
   deleteUsuario = api.deleteUsuario;
 });
-import HeaderAdmin from '../../components/HeaderAdmin';
+import HeaderAdmin from '../../components/Header/HeaderAdmin';
 
 interface Usuario {
   id: number;

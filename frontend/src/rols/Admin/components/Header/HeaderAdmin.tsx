@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Logo from '../../Public/components/Header/shared/Logo';
-import "./Header/HamburgerMenu.css";
-import '../../Public/components/Header/HeaderLayout.css';
-import "./Header/NavMenu.css";
-import "./Header/UserProfile.css";
+import Logo from '../../../Public/components/Header/shared/Logo';
+import "./HamburgerMenu.css";
+import '../../../Public/components/Header/HeaderLayout.css';
+import "./NavMenu.css";
+import "./UserProfile.css";
 // import removed: Logo.css does not exist in Admin/Header
 
 interface HeaderAdminProps {
