@@ -7,8 +7,10 @@ import AnimalForm from './AnimalForm';
 export type Vacuna = {
   tipo: string;
   fecha: string;
-  refuerzo?: string;
-  unica?: boolean;
+  unica: boolean;
+  refuerzo: boolean;
+  proxima?: string;
+  especificaciones?: string;
 };
 
 export type Animal = {
@@ -153,7 +155,7 @@ const AnimalList: React.FC = () => {
           <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 18px #228b2233', padding: 32, minWidth: 350, maxWidth: 600, position: 'relative' }}>
             <button onClick={() => setEditAnimal(null)} style={{ position: 'absolute', top: 12, right: 18, color: '#e74c3c', fontWeight: 700, fontSize: '1.2rem', background: 'none', border: 'none', cursor: 'pointer' }}>×</button>
             <AnimalEditPerfil
-              animal={editAnimal}
+              animal={editAnimal as any}
               onClose={() => setEditAnimal(null)}
               onSave={async () => {
                 setEditAnimal(null);

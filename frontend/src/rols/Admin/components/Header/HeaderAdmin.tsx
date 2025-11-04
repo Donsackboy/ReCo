@@ -47,36 +47,60 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
             <ul className="nav-menu">
               {isAdminMode ? (
                 <>
-                  <li className="nav-item">
-                    <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin')}}>
-                      <span className="nav-icon">📈</span>
-                      <span className="nav-text">Dashboard</span>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/gestionar-refugios')}}>
-                      <span className="nav-icon">🏛️</span>
-                      <span className="nav-text">Refugios</span>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/gestionar-usuarios')}}>
-                      <span className="nav-icon">👥</span>
-                      <span className="nav-text">Usuarios</span>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/verificaciones')}}>
-                      <span className="nav-icon">✅</span>
-                      <span className="nav-text">Verificaciones</span>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/reportes')}}>
-                      <span className="nav-icon">📊</span>
-                      <span className="nav-text">Reportes</span>
-                    </a>
-                  </li>
+                  {window.innerWidth > 900 && (
+                    <li className="nav-item">
+                      <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin')}}>
+                        <span className="nav-icon">📈</span>
+                        <span className="nav-text">Dashboard</span>
+                      </a>
+                    </li>
+                  )}
+                  {window.innerWidth > 1000 && (
+                    <li className="nav-item">
+                      <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/gestionar-refugios')}}>
+                        <span className="nav-icon">🏛️</span>
+                        <span className="nav-text">Refugios</span>
+                      </a>
+                    </li>
+                  )}
+                  {window.innerWidth > 1100 && (
+                    <li className="nav-item">
+                      <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/gestionar-usuarios')}}>
+                        <span className="nav-icon">👥</span>
+                        <span className="nav-text">Usuarios</span>
+                      </a>
+                    </li>
+                  )}
+                  {window.innerWidth > 1200 && (
+                    <li className="nav-item">
+                      <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/verificaciones')}}>
+                        <span className="nav-icon">✅</span>
+                        <span className="nav-text">Verificaciones</span>
+                      </a>
+                    </li>
+                  )}
+                   <li className="nav-item">
+                     <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/animales')}}>
+                       <span className="nav-icon">🐾</span>
+                       <span className="nav-text">Animales</span>
+                     </a>
+                   </li>
+                  {window.innerWidth > 1300 && (
+                    <li className="nav-item">
+                      <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/animales')}}>
+                        <span className="nav-icon">🐾</span>
+                        <span className="nav-text">Animales</span>
+                      </a>
+                    </li>
+                  )}
+                  {window.innerWidth > 1700 && (
+                    <li className="nav-item">
+                      <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/reportes')}}>
+                        <span className="nav-icon">📊</span>
+                        <span className="nav-text">Reportes</span>
+                      </a>
+                    </li>
+                  )}
                 </>
               ) : (
                 <>

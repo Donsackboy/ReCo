@@ -21,4 +21,9 @@ urlpatterns = [
     path('public/animales/<int:pk>/', views.AnimalPublicDetailView.as_view(), name='public_animales_detail'),
     path('public/animales/count/', views.AnimalPublicCountView.as_view(), name='public_animales_count'),
     path('public/animales/carousel/', views.AnimalPublicCarouselView.as_view(), name='public_animales_carousel'),
+    path('cirugias/', views.CirugiaListCreateView.as_view(), name='cirugia_list_create'),
+    path('cirugias/<int:pk>/', views.CirugiaRetrieveUpdateDestroyView.as_view(), name='cirugia_detail'),
+    path('tratamientos/', views.TratamientoListCreateView.as_view(), name='tratamiento_list_create'),
+    path('tratamientos/<int:pk>/', views.TratamientoRetrieveUpdateDestroyView.as_view(), name='tratamiento_detail'),
+    path('adopciones/', views.SolicitudAdopcionListCreateView.as_view(), name='solicitud_adopcion_list_create'),
 ]

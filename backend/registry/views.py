@@ -1,6 +1,20 @@
+from rest_framework import generics, permissions, status
+from .serializers import SolicitudAdopcionSerializer
+from .models import SolicitudAdopcion
+# --- Solicitud de Adopción ---
+class SolicitudAdopcionListCreateView(generics.ListCreateAPIView):
+    serializer_class = SolicitudAdopcionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Solo mostrar solicitudes del usuario autenticado
+        return SolicitudAdopcion.objects.filter(usuario=self.request.user)
+
+    def perform_create(self, serializer):
+        # Asociar la solicitud al usuario autenticado
+        serializer.save(usuario=self.request.user)
 from django.db.models import F
 import random
-from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
@@ -8,10 +22,12 @@ from rest_framework.views import APIView
 from .permissions import IsRefugioOrAdmin, IsAdmin, IsRefugio
 from .serializers import (
     AnimalSerializer, PostulacionRefugioSerializer, UserSerializer, LoginSerializer,
-    HogarTemporalSerializer, RefugioSerializer, HistorialMedicoSerializer
+    HogarTemporalSerializer, RefugioSerializer, HistorialMedicoSerializer,
+    CirugiaSerializer, TratamientoSerializer
 )
 from .models import (
-    Animal, PostulacionRefugio, Usuario, HogaresTemporales, Refugio, HistorialMedico
+    Animal, PostulacionRefugio, Usuario, HogaresTemporales, Refugio, HistorialMedico,
+    Cirugia, Tratamiento
 )
 
 # Endpoint público para 5 animales random con foto principal
@@ -291,3 +307,34 @@ class HistorialMedicoAnimalListView(generics.ListAPIView):
     def get_queryset(self):
         animal_id = self.kwargs.get('animal_id')
         return HistorialMedico.objects.filter(id_animal=animal_id)
+
+class CirugiaListCreateView(generics.ListCreateAPIView):
+    def get_queryset(self):
+        queryset = Cirugia.objects.all()
+        id_animal = self.request.query_params.get('id_animal')
+        if id_animal:
+            queryset = queryset.filter(id_animal=id_animal)
+        return queryset
+    serializer_class = CirugiaSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class CirugiaRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Cirugia.objects.all()
+    serializer_class = CirugiaSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class TratamientoListCreateView(generics.ListCreateAPIView):
+    serializer_class = TratamientoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = Tratamiento.objects.all()
+        id_animal = self.request.query_params.get('id_animal')
+        if id_animal:
+            queryset = queryset.filter(id_animal=id_animal)
+        return queryset
+
+class TratamientoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Tratamiento.objects.all()
+    serializer_class = TratamientoSerializer
+    permission_classes = [permissions.IsAuthenticated]

@@ -26,7 +26,8 @@ export default function AnimalPerfil() {
         const res = await fetch(`${import.meta.env.VITE_API_BASE}/public/animales/${id}/`);
         if (!res.ok) throw new Error('No se pudo cargar el animal');
         const data = await res.json();
-        setAnimal(data);
+        // Asegura que el objeto animal tenga la propiedad 'id' correctamente
+        setAnimal({ ...data, id: data.id_animal ?? data.id });
       } catch (err) {
         setAnimal(null);
       } finally {
@@ -37,6 +38,9 @@ export default function AnimalPerfil() {
   }, [id]);
 
   const [fullscreenImg, setFullscreenImg] = React.useState<string | null>(null);
+
+  // Log para debug del objeto animal y su campo ID
+  console.log('animal:', animal);
 
   if (loading) return <div>Cargando...</div>;
   if (!animal) return <div>Animal no encontrado</div>;
@@ -174,7 +178,7 @@ export default function AnimalPerfil() {
         )}
       </ul>
       <button style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22', marginRight: '16px' }}
-        onClick={() => window.location.href = `/adopcion?animalId=${animal.id}&refugio=${encodeURIComponent(animal.refugio)}`}
+  onClick={() => window.location.href = `/adopcion?animalId=${animal.id_animal}&refugio=${encodeURIComponent(animal.refugio)}`}
       >Adoptar</button>
       <button style={{ background: '#228B22', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22' }}
         onClick={() => window.location.href = `/hogares-temporales/registro?animalId=${animal.id}`}

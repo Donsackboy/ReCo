@@ -1,5 +1,12 @@
 from rest_framework import serializers
-from .models import PostulacionRefugio, Usuario, HogaresTemporales, Refugio, Animal, HistorialMedico
+# --- Solicitud de Adopción ---
+from .models import SolicitudAdopcion
+
+class SolicitudAdopcionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SolicitudAdopcion
+        fields = '__all__'
+from .models import PostulacionRefugio, Usuario, HogaresTemporales, Refugio, Animal, HistorialMedico, Cirugia, Tratamiento
 from django.conf import settings
 from django.contrib.auth import authenticate
 
@@ -68,4 +75,16 @@ class AnimalSerializer(serializers.ModelSerializer):
 class HistorialMedicoSerializer(serializers.ModelSerializer):
     class Meta:
         model = HistorialMedico
+        fields = '__all__'
+
+# Serializer para Cirugia
+class CirugiaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cirugia
+        fields = '__all__'
+
+# Serializer para Tratamiento
+class TratamientoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tratamiento
         fields = '__all__'

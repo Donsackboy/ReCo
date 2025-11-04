@@ -1,0 +1,19 @@
+@media (max-width: 700px) {
+  .animal-edit-form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+.animal-edit-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 500px) {
+  .animal-edit-form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

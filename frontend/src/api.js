@@ -95,3 +95,93 @@ export async function updateAnimal(id, data, token) {
   if (!response.ok) throw new Error('Error al editar animal');
   return response.json();
 }
+
+// Cirugías
+export async function getCirugias(token, animalId) {
+  const url = animalId ? `${API_BASE}/cirugias/?id_animal=${animalId}` : `${API_BASE}/cirugias/`;
+  const response = await fetch(url, {
+    headers: { 'Authorization': `Token ${token}` },
+  });
+  if (!response.ok) throw new Error('Error al obtener cirugías');
+  return response.json();
+}
+
+export async function createCirugia(data, token) {
+  const response = await fetch(`${API_BASE}/cirugias/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Error al crear cirugía');
+  return response.json();
+}
+
+export async function updateCirugia(id, data, token) {
+  const response = await fetch(`${API_BASE}/cirugias/${id}/`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Error al actualizar cirugía');
+  return response.json();
+}
+
+export async function deleteCirugia(id, token) {
+  const response = await fetch(`${API_BASE}/cirugias/${id}/`, {
+    method: 'DELETE',
+    headers: { 'Authorization': `Token ${token}` },
+  });
+  if (!response.ok) throw new Error('Error al eliminar cirugía');
+  return true;
+}
+
+// Tratamientos
+export async function getTratamientos(token, animalId) {
+  const url = animalId ? `${API_BASE}/tratamientos/?id_animal=${animalId}` : `${API_BASE}/tratamientos/`;
+  const response = await fetch(url, {
+    headers: { 'Authorization': `Token ${token}` },
+  });
+  if (!response.ok) throw new Error('Error al obtener tratamientos');
+  return response.json();
+}
+
+export async function createTratamiento(data, token) {
+  const response = await fetch(`${API_BASE}/tratamientos/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Error al crear tratamiento');
+  return response.json();
+}
+
+export async function updateTratamiento(id, data, token) {
+  const response = await fetch(`${API_BASE}/tratamientos/${id}/`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Error al actualizar tratamiento');
+  return response.json();
+}
+
+export async function deleteTratamiento(id, token) {
+  const response = await fetch(`${API_BASE}/tratamientos/${id}/`, {
+    method: 'DELETE',
+    headers: { 'Authorization': `Token ${token}` },
+  });
+  if (!response.ok) throw new Error('Error al eliminar tratamiento');
+  return true;
+}

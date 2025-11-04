@@ -1,4 +1,101 @@
+
+# --- IMPORTS ---
 from django.db import models
+from django.conf import settings
+from django.contrib.auth.models import AbstractUser
+
+# --- Solicitud de Adopción ---
+class SolicitudAdopcion(models.Model):
+    ESTADO_OPCIONES = [
+        ('pendiente', 'Pendiente'),
+        ('aceptada', 'Aceptada'),
+        ('rechazada', 'Rechazada'),
+    ]
+
+    id_solicitud = models.AutoField(primary_key=True)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='solicitudes_adopcion')
+    animal = models.ForeignKey('Animal', on_delete=models.CASCADE, related_name='solicitudes_adopcion')
+    nombre = models.CharField(max_length=120)
+    direccion = models.CharField(max_length=200)
+    fecha_nacimiento = models.DateField()
+    telefono = models.CharField(max_length=30)
+    email = models.EmailField()
+    rol_familia = models.CharField(max_length=100)
+    respuestas = models.JSONField(default=list, blank=True, help_text="Respuestas del formulario de adopción")
+    estado = models.CharField(max_length=20, choices=ESTADO_OPCIONES, default='pendiente')
+    fecha_solicitud = models.DateTimeField(auto_now_add=True)
+    anotaciones = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"SolicitudAdopcion {self.id_solicitud} - {self.usuario} - {self.animal}" 
+
+    class Meta:
+        db_table = 'solicitudes_adopcion'
+        verbose_name_plural = 'Solicitudes de Adopción'
+# --- Modelo Cirugia ---
+class Cirugia(models.Model):
+    PAGO_ESTADO_OPCIONES = [
+        ('pagada', 'Pagada'),
+        ('no_pagada', 'No pagada'),
+        ('parcial', 'Parcialmente pagada'),
+    ]
+
+    id_cirugia = models.AutoField(primary_key=True)
+    id_animal = models.ForeignKey('Animal', on_delete=models.CASCADE, related_name='cirugias')
+    tipo = models.CharField(max_length=100)
+    otro_nombre = models.CharField(max_length=100, blank=True, null=True)
+    motivo = models.TextField(blank=True, null=True)
+    fecha = models.DateField()
+    costo = models.DecimalField(max_digits=10, decimal_places=2)
+    veterinario = models.CharField(max_length=100, blank=True, null=True)
+    observaciones = models.TextField(blank=True, null=True)
+    pago_estado = models.CharField(max_length=15, choices=PAGO_ESTADO_OPCIONES, default='no_pagada')
+    monto_pagado = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    adjunto = models.FileField(upload_to='cirugias_adjuntos/', blank=True, null=True)
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Cirugía {self.tipo} ({self.fecha}) - Animal {self.id_animal_id}"
+
+    class Meta:
+        db_table = 'cirugias'
+        verbose_name_plural = 'Cirugías'
+    # --- Modelo Tratamiento ---
+    # ...existing code...
+
+# --- Modelo Tratamiento ---
+class Tratamiento(models.Model):
+    ESTADO_OPCIONES = [
+        ('en_curso', 'En curso'),
+        ('finalizado', 'Finalizado'),
+        ('suspendido', 'Suspendido'),
+        ('pendiente', 'Pendiente'),
+    ]
+
+    id_tratamiento = models.AutoField(primary_key=True)
+    id_animal = models.ForeignKey('Animal', on_delete=models.CASCADE, related_name='tratamientos')
+    tipo = models.CharField(max_length=100)
+    nombre = models.CharField(max_length=100)
+    motivo = models.TextField(blank=True, null=True)
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateField(blank=True, null=True)
+    duracion_dias = models.IntegerField(blank=True, null=True)
+    dosis = models.CharField(max_length=100)
+    via_administracion = models.CharField(max_length=50)
+    veterinario = models.CharField(max_length=100, blank=True, null=True)
+    estado = models.CharField(max_length=15, choices=ESTADO_OPCIONES, default='en_curso')
+    costo = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    pagado = models.BooleanField(default=False)
+    observaciones = models.TextField(blank=True, null=True)
+    adjunto = models.FileField(upload_to='tratamientos_adjuntos/', blank=True, null=True)
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Tratamiento {self.nombre} ({self.fecha_inicio}) - Animal {self.id_animal_id}"
+
+    class Meta:
+        db_table = 'tratamientos'
+        verbose_name_plural = 'Tratamientos'
 # --- Postulación de Refugio ---
 class PostulacionRefugio(models.Model):
     nombre = models.CharField(max_length=120)

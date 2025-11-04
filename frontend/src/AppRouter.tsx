@@ -34,12 +34,14 @@ import DonarInsumo from './rols/Public/pages/Donaciones/DonarInsumo.tsx';
 import DonarServicio from './rols/Public/pages/Donaciones/DonarServicio.tsx';
 import RefugioPerfil from './rols/Public/pages/Refugios/RefugioPerfil.tsx';
 
+import MisAdopciones from './rols/Public/pages/MisAdopciones';
+
 
 //refugio
 import HeaderRefugio from './rols/Refugio/components/Header/HeaderRefugio.tsx';
 import Dashboard from './rols/Refugio/pages/Dashboard/index';
 import MisAnimales from './rols/Refugio/pages/MisAnimales';
-import Postulaciones from './rols/Refugio/pages/Postulaciones';
+import GestionAdopciones from './rols/Refugio/pages/Adopciones/GestionAdopciones.tsx';
 import MisEventos from './rols/Refugio/pages/MisEventos';
 import Donaciones from './rols/Refugio/pages/Donaciones';
 import HistorialMedico from './rols/Refugio/pages/HistorialMedico';
@@ -104,6 +106,11 @@ export default function AppRouter() {
         <Route path="/donar-insumo" element={<DonarInsumo />} />
         <Route path="/donar-servicio" element={<DonarServicio />} />
 
+  {/* Ruta para Mis Adopciones */}
+  <Route path="/mis-adopciones" element={<MisAdopciones />} />
+
+  {/* Ruta para Mis Adopciones */}
+
         {/* --- Rutas Admin --- */}
         <Route
           path="/admin/*"
@@ -127,7 +134,7 @@ export default function AppRouter() {
         {/* --- Rutas Refugio --- */}
         <Route path="/refugio/dashboard" element={isRefugio ? (<Dashboard />) : (<Navigate to="/" replace />)} />
         <Route path="/refugio/mis-animales" element={isRefugio ? (<MisAnimales />) : (<Navigate to="/" replace />)} />
-        <Route path="/refugio/postulaciones" element={isRefugio ? (<Postulaciones />) : (<Navigate to="/" replace />)} />
+  <Route path="/refugio/adopciones" element={isRefugio ? (<GestionAdopciones />) : (<Navigate to="/" replace />)} />
         <Route path="/refugio/mis-eventos" element={isRefugio ? (<MisEventos />) : (<Navigate to="/" replace />)} />
         <Route path="/refugio/donaciones" element={isRefugio ? (<Donaciones />) : (<Navigate to="/" replace />)} />
         <Route path="/refugio/historial-medico" element={isRefugio ? (<HistorialMedico />) : (<Navigate to="/" replace />)} />

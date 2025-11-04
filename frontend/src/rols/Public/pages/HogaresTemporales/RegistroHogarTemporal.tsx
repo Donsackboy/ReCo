@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { animales } from '../Animales/animalesData';
+import { useEffect } from 'react';
+import { getAnimales } from '../../../../api';
 
 import { regionesChile, regionesComunasChile as comunasPorRegion } from '../../../../utils/regionesComunasChile';
 const regiones = regionesChile;
@@ -11,7 +12,17 @@ export default function RegistroHogarTemporal() {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const animalId = params.get('animalId');
-  const animal = animalId ? animales.find(a => a.id === Number(animalId)) : null;
+  const [animal, setAnimal] = useState<any>(null);
+
+  useEffect(() => {
+    if (animalId) {
+      const token = localStorage.getItem('token');
+      getAnimales(token).then(animales => {
+        const found = animales.find((a: any) => a.id === Number(animalId));
+        setAnimal(found || null);
+      });
+    }
+  }, [animalId]);
   const [form, setForm] = useState<{
     nombre: string;
     email: string;

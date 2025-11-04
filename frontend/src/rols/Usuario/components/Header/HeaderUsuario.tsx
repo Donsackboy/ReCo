@@ -54,6 +54,12 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
                 </a>
               </li>
               <li className="nav-item">
+                <a href="/mis-adopciones" className="nav-link" onClick={closeMenu}>
+                  <span className="nav-icon">📄</span>
+                  <span className="nav-text">Mis Adopciones</span>
+                </a>
+              </li>
+              <li className="nav-item">
                 <a href="#eventos" className="nav-link" onClick={closeMenu}>
                   <span className="nav-icon">🎪</span>
                   <span className="nav-text">Eventos</span>
@@ -119,6 +125,12 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
               <a href="#mis-postulaciones" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">📋</span>
                 Mis Postulaciones
+              </a>
+            </li>
+            <li className="side-menu-item">
+              <a href="/mis-adopciones" className="side-menu-link" onClick={closeMenu}>
+                <span className="side-menu-icon">📄</span>
+                Mis Adopciones
               </a>
             </li>
             <li className="side-menu-item">

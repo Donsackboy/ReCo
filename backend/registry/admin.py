@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import PostulacionRefugio, Usuario, Refugio, Animal, HogaresTemporales, Donaciones, Suscripciones, Eventos, InscripcionesEventos, HistorialMedico, CatalogoServicios, DonacionesEspecificas, ComprobantesServicio, NecesidadesRefugio, PerfilAdoptante
+from .models import PostulacionRefugio, Usuario, Refugio, Animal, HogaresTemporales, Donaciones, Suscripciones, Eventos, InscripcionesEventos, HistorialMedico, CatalogoServicios, DonacionesEspecificas, ComprobantesServicio, NecesidadesRefugio, PerfilAdoptante, Cirugia, Tratamiento, SolicitudAdopcion
 
 # Postulación de Refugio
 @admin.register(PostulacionRefugio)
@@ -89,3 +89,21 @@ class PerfilAdoptanteAdmin(admin.ModelAdmin):
     list_display = ("id_perfil", "id_usuario", "tipo_vivienda", "tiene_patio", "horas_disponibles", "nivel_energia")
     list_filter = ("tipo_vivienda", "horas_disponibles", "nivel_energia")
     search_fields = ("id_usuario__nombre",)
+
+@admin.register(Cirugia)
+class CirugiaAdmin(admin.ModelAdmin):
+    list_display = ("id_cirugia", "id_animal", "tipo", "fecha", "costo", "pago_estado", "monto_pagado")
+    list_filter = ("pago_estado", "tipo")
+    search_fields = ("tipo", "motivo", "veterinario")
+
+@admin.register(Tratamiento)
+class TratamientoAdmin(admin.ModelAdmin):
+    list_display = ("id_tratamiento", "id_animal", "tipo", "nombre", "fecha_inicio", "estado", "pagado")
+    list_filter = ("estado", "tipo", "pagado")
+    search_fields = ("nombre", "motivo", "veterinario")
+
+@admin.register(SolicitudAdopcion)
+class SolicitudAdopcionAdmin(admin.ModelAdmin):
+    list_display = ("id_solicitud", "usuario", "animal", "estado", "fecha_solicitud")
+    list_filter = ("estado",)
+    search_fields = ("usuario__username", "animal__nombre")

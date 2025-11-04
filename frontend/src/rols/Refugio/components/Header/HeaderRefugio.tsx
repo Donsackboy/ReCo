@@ -127,9 +127,9 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
               </a>
             </li>
             <li className="side-menu-item">
-              <a href="/refugio/postulaciones" className="side-menu-link" onClick={closeMenu}>
+              <a href="/refugio/adopciones" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">📋</span>
-                Postulaciones
+                Adopciones
               </a>
             </li>
             <li className="side-menu-item">
