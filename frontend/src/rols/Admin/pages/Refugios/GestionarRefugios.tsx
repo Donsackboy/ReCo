@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { regionesComunasChile, regionesChile } from '../../../../utils/regionesComunasChile';
 
 const GestionarRefugios: React.FC = () => {
@@ -7,22 +7,31 @@ const GestionarRefugios: React.FC = () => {
   // Estado para comuna en edición
   const [editComuna, setEditComuna] = useState<string>('');
   const [refugios, setRefugios] = useState<any[]>([]);
+  const [animales, setAnimales] = useState<any[]>([]);
   const [busqueda, setBusqueda] = useState('');
   const [editRefugio, setEditRefugio] = useState<any | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
 
-  React.useEffect(() => {
-    const fetchRefugios = async () => {
+  useEffect(() => {
+    const fetchRefugiosYAnimales = async () => {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${import.meta.env.VITE_API_BASE}/admin/refugios/`, {
+      const refugiosRes = await fetch(`${import.meta.env.VITE_API_BASE}/admin/refugios/`, {
         headers: { 'Authorization': `Token ${token}` }
       });
-      if (response.ok) {
-        const data = await response.json();
-        setRefugios(data);
+      if (refugiosRes.ok) {
+        const refugiosData = await refugiosRes.json();
+        setRefugios(refugiosData);
+      }
+      // Animales
+      const animalesRes = await fetch(`${import.meta.env.VITE_API_BASE}/animales/`, {
+        headers: { 'Authorization': `Token ${token}` }
+      });
+      if (animalesRes.ok) {
+        const animalesData = await animalesRes.json();
+        setAnimales(animalesData);
       }
     };
-    fetchRefugios();
+    fetchRefugiosYAnimales();
   }, []);
 
   const refugiosFiltrados = refugios.filter(r =>
@@ -123,14 +132,19 @@ const GestionarRefugios: React.FC = () => {
           password: nuevoRefugio.password
         })
       });
+      const data = await response.json();
       if (response.ok) {
         alert('Refugio creado correctamente');
         setModalOpen(false);
         setNuevoRefugio({
           nombre: '', direccion: '', correo_contacto: '', telefono: '', descripcion: '', comuna: '', region: '', regionCustom: '', usarRegionCustom: false, username: '', email: '', password: '', confirmPassword: '', persona_contacto: ''
         });
+        // Actualizar la lista de refugios automáticamente
+        if (data.refugio) {
+          setRefugios(prev => [...prev, data.refugio]);
+        }
       } else {
-        setError('Error al crear refugio');
+        setError(data.error || JSON.stringify(data));
       }
     } catch (err) {
       setError('Error de conexión');
@@ -172,28 +186,33 @@ const GestionarRefugios: React.FC = () => {
               <th style={{ padding: '14px 10px', border: 'none', fontWeight: 700, fontSize: 17, borderTopLeftRadius: 12 }}>Nombre</th>
               <th style={{ padding: '14px 10px', border: 'none', fontWeight: 700, fontSize: 17 }}>Comuna</th>
               <th style={{ padding: '14px 10px', border: 'none', fontWeight: 700, fontSize: 17 }}>Región</th>
+              <th style={{ padding: '14px 10px', border: 'none', fontWeight: 700, fontSize: 17 }}>Animales</th>
               <th style={{ padding: '14px 10px', border: 'none', fontWeight: 700, fontSize: 17, borderTopRightRadius: 12 }}>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {refugiosFiltrados.length === 0 ? (
               <tr>
-                <td colSpan={4} style={{ textAlign: 'center', padding: '2em', color: '#888', fontSize: 18 }}>No se encontraron refugios.</td>
+                <td colSpan={5} style={{ textAlign: 'center', padding: '2em', color: '#888', fontSize: 18 }}>No se encontraron refugios.</td>
               </tr>
-            ) : refugiosFiltrados.map(refugio => (
-              <tr key={refugio.id_refugio} style={{ background: '#fff', transition: 'background 0.2s', borderRadius: 12, boxShadow: '0 1px 8px #43a04711', cursor: 'pointer' }}
-                onMouseEnter={e => (e.currentTarget.style.background = '#e8f5e9')}
-                onMouseLeave={e => (e.currentTarget.style.background = '#fff')}
-              >
-                <td style={{ padding: '12px 10px', borderBottom: '1px solid #e0e0e0', fontWeight: 500 }}>{refugio.nombre}</td>
-                <td style={{ padding: '12px 10px', borderBottom: '1px solid #e0e0e0' }}>{refugio.comuna}</td>
-                <td style={{ padding: '12px 10px', borderBottom: '1px solid #e0e0e0' }}>{refugio.region}</td>
-                <td style={{ padding: '12px 10px', borderBottom: '1px solid #e0e0e0', textAlign: 'center' }}>
-                  <button onClick={() => handleEditRefugio(refugio)} style={{ marginRight: 8, background: '#43a047', color: '#fff', border: 'none', borderRadius: 8, padding: '7px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 16 }} title="Editar"><span role="img" aria-label="editar">✏️</span></button>
-                  <button onClick={() => setConfirmDeleteId(refugio.id_refugio)} style={{ background: '#e53935', color: '#fff', border: 'none', borderRadius: 8, padding: '7px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 16 }} title="Eliminar"><span role="img" aria-label="eliminar">🗑️</span></button>
-                </td>
-              </tr>
-            ))}
+            ) : refugiosFiltrados.map(refugio => {
+              const cantidadAnimales = animales.filter(a => a.refugio === refugio.id_refugio).length;
+              return (
+                <tr key={refugio.id_refugio} style={{ background: '#fff', transition: 'background 0.2s', borderRadius: 12, boxShadow: '0 1px 8px #43a04711', cursor: 'pointer' }}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#e8f5e9')}
+                  onMouseLeave={e => (e.currentTarget.style.background = '#fff')}
+                >
+                  <td style={{ padding: '12px 10px', borderBottom: '1px solid #e0e0e0', fontWeight: 500 }}>{refugio.nombre}</td>
+                  <td style={{ padding: '12px 10px', borderBottom: '1px solid #e0e0e0' }}>{refugio.comuna}</td>
+                  <td style={{ padding: '12px 10px', borderBottom: '1px solid #e0e0e0' }}>{refugio.region}</td>
+                  <td style={{ padding: '12px 10px', borderBottom: '1px solid #e0e0e0', textAlign: 'center', fontWeight: 700, color: '#228B22' }}>{cantidadAnimales}</td>
+                  <td style={{ padding: '12px 10px', borderBottom: '1px solid #e0e0e0', textAlign: 'center' }}>
+                    <button onClick={() => handleEditRefugio(refugio)} style={{ marginRight: 8, background: '#43a047', color: '#fff', border: 'none', borderRadius: 8, padding: '7px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 16 }} title="Editar"><span role="img" aria-label="editar">✏️</span></button>
+                    <button onClick={() => setConfirmDeleteId(refugio.id_refugio)} style={{ background: '#e53935', color: '#fff', border: 'none', borderRadius: 8, padding: '7px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 16 }} title="Eliminar"><span role="img" aria-label="eliminar">🗑️</span></button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

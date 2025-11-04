@@ -1,30 +1,14 @@
 import React, { useState } from 'react';
 import { FaInstagram, FaTwitter, FaFacebook, FaGlobe } from 'react-icons/fa';
 
+import { regionesChile, regionesComunasChile as comunasPorRegion } from '../../../utils/regionesComunasChile';
+
 type SitioWeb = {
   tipo: string;
   url: string;
 };
 
 const PostulacionRefugio: React.FC = () => {
-  const regionesChile = [
-    "Arica y Parinacota",
-    "Tarapacá",
-    "Antofagasta",
-    "Atacama",
-    "Coquimbo",
-    "Valparaíso",
-    "Metropolitana",
-    "O'Higgins",
-    "Maule",
-    "Ñuble",
-    "Biobío",
-    "La Araucanía",
-    "Los Ríos",
-    "Los Lagos",
-    "Aysén",
-    "Magallanes"
-  ];
   // Devuelve el ícono según el tipo de sitio
   const getSocialIcon = (tipo: string, url: string) => {
     if (tipo === 'Instagram' || url.includes('instagram.com')) return <FaInstagram style={{ color: '#E1306C' }} />;
@@ -148,13 +132,31 @@ const PostulacionRefugio: React.FC = () => {
           <input name="direccion" value={form.direccion} onChange={handleChange} placeholder="Dirección" required style={{padding:10,borderRadius:8,border:'1px solid #bdbdbd',width:'100%'}} />
         </div>
         <div>
-          <input name="comuna" value={form.comuna} onChange={handleChange} placeholder="Comuna" required style={{padding:10,borderRadius:8,border:'1px solid #bdbdbd',width:'100%'}} />
+          <select
+            name="region"
+            value={form.region}
+            onChange={handleChange}
+            required
+            style={{padding:10,borderRadius:8,border:'1px solid #bdbdbd',width:'100%'}}
+          >
+            <option value="">Selecciona una región</option>
+            {regionesChile.map((region: string) => (
+              <option key={region} value={region}>{region}</option>
+            ))}
+          </select>
         </div>
         <div>
-          <select name="region" value={form.region} onChange={handleChange} required style={{padding:10,borderRadius:8,border:'1px solid #bdbdbd',width:'100%'}}>
-            <option value="">Selecciona una región</option>
-            {regionesChile.map(region => (
-              <option key={region} value={region}>{region}</option>
+          <select
+            name="comuna"
+            value={form.comuna}
+            onChange={handleChange}
+            required
+            disabled={!form.region}
+            style={{padding:10,borderRadius:8,border:'1px solid #bdbdbd',width:'100%'}}
+          >
+            <option value="">Selecciona una comuna</option>
+            {(comunasPorRegion[form.region] || []).map((comuna: string) => (
+              <option key={comuna} value={comuna}>{comuna}</option>
             ))}
           </select>
         </div>

@@ -199,78 +199,80 @@ const GestionarUsuarios = () => {
       })()}
 
       {modalOpen && usuarioEdit && (
-        <div className="modal-usuario-bg">
-          <div className="modal-usuario">
-            <h3>Editar Usuario</h3>
-            <label>Usuario:
-              <input
-                type="text"
-                value={usuarioEdit.username}
-                onChange={e => setUsuarioEdit({ ...usuarioEdit, username: e.target.value })}
-              />
-            </label>
-            <label>Email:
-              <input
-                type="email"
-                value={usuarioEdit.email}
-                onChange={e => setUsuarioEdit({ ...usuarioEdit, email: e.target.value })}
-              />
-            </label>
-            {usuarioEdit.tipo_usuario !== 'admin' && (
-              <label>Tipo:
-                <select
-                  value={usuarioEdit.tipo_usuario}
-                  onChange={e => setUsuarioEdit({ ...usuarioEdit, tipo_usuario: e.target.value })}
-                >
-                  <option value="default">Usuario</option>
-                  <option value="refugio">Refugio</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </label>
-            )}
-            <label>Nombre:
-              <input
-                type="text"
-                value={usuarioEdit.first_name || ''}
-                onChange={e => setUsuarioEdit({ ...usuarioEdit, first_name: e.target.value })}
-              />
-            </label>
-            <label>Apellido:
-              <input
-                type="text"
-                value={usuarioEdit.last_name || ''}
-                onChange={e => setUsuarioEdit({ ...usuarioEdit, last_name: e.target.value })}
-              />
-            </label>
-            <label>Teléfono:
-              <input
-                type="text"
-                value={usuarioEdit.telefono || ''}
-                onChange={e => setUsuarioEdit({ ...usuarioEdit, telefono: e.target.value })}
-              />
-            </label>
-            <label>Nueva contraseña:
-              <input
-                type="password"
-                value={newPassword}
-                onChange={e => setNewPassword(e.target.value)}
-                placeholder="Nueva contraseña"
-              />
-            </label>
-            <label>Confirmar contraseña:
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={e => setConfirmPassword(e.target.value)}
-                placeholder="Confirmar contraseña"
-              />
-            </label>
-            <div className="modal-usuario-actions">
-              <button className="btn-editar" onClick={handleModalSave}>Guardar</button>
-              <button className="btn-eliminar" onClick={handleModalClose}>Cancelar</button>
+          <div className="modal-usuario-bg">
+            <div className="modal-usuario">
+              <h3>Editar Usuario</h3>
+              <form style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px' }}>
+                <label>Usuario:
+                  <input
+                    type="text"
+                    value={usuarioEdit.username}
+                    onChange={e => setUsuarioEdit({ ...usuarioEdit, username: e.target.value })}
+                  />
+                </label>
+                <label>Email:
+                  <input
+                    type="email"
+                    value={usuarioEdit.email}
+                    onChange={e => setUsuarioEdit({ ...usuarioEdit, email: e.target.value })}
+                  />
+                </label>
+                {usuarioEdit.tipo_usuario !== 'admin' && (
+                  <label>Tipo:
+                    <select
+                      value={usuarioEdit.tipo_usuario}
+                      onChange={e => setUsuarioEdit({ ...usuarioEdit, tipo_usuario: e.target.value })}
+                    >
+                      <option value="default">Usuario</option>
+                      <option value="refugio">Refugio</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </label>
+                )}
+                <label>Nombre:
+                  <input
+                    type="text"
+                    value={usuarioEdit.first_name || ''}
+                    onChange={e => setUsuarioEdit({ ...usuarioEdit, first_name: e.target.value })}
+                  />
+                </label>
+                <label>Apellido:
+                  <input
+                    type="text"
+                    value={usuarioEdit.last_name || ''}
+                    onChange={e => setUsuarioEdit({ ...usuarioEdit, last_name: e.target.value })}
+                  />
+                </label>
+                <label>Teléfono:
+                  <input
+                    type="text"
+                    value={usuarioEdit.telefono || ''}
+                    onChange={e => setUsuarioEdit({ ...usuarioEdit, telefono: e.target.value })}
+                  />
+                </label>
+                <label>Nueva contraseña:
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={e => setNewPassword(e.target.value)}
+                    placeholder="Nueva contraseña"
+                  />
+                </label>
+                <label>Confirmar contraseña:
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={e => setConfirmPassword(e.target.value)}
+                    placeholder="Confirmar contraseña"
+                  />
+                </label>
+              </form>
+              <div className="modal-usuario-actions" style={{ marginTop: 24, gridColumn: '1/3', display: 'flex', gap: 16, justifyContent: 'center' }}>
+                <button className="btn-editar" onClick={handleModalSave}>Guardar</button>
+                <button className="btn-eliminar" onClick={handleModalClose}>Cancelar</button>
+              </div>
             </div>
           </div>
-        </div>
       )}
     </div>
   );

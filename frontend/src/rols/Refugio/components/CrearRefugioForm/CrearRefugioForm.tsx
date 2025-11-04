@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { regionesChile, regionesComunasChile as comunasPorRegion } from '../../../utils/regionesComunasChile';
 import '../GestionRefugioMenu/GestionRefugioMenu.css'; // Reutilizamos algunos estilos
 
 interface CrearRefugioFormProps {
@@ -54,11 +55,7 @@ const CrearRefugioForm: React.FC<CrearRefugioFormProps> = ({ onRefugioCreado }) 
   };
 
   // Lista simple de regiones (puedes expandirla o cargarla desde otro lugar)
-  const regionesChile = [
-    'Arica y Parinacota', 'Tarapacá', 'Antofagasta', 'Atacama', 'Coquimbo',
-    'Valparaíso', 'Metropolitana', 'O’Higgins', 'Maule', 'Ñuble', 'Biobío',
-    'Araucanía', 'Los Ríos', 'Los Lagos', 'Aysén', 'Magallanes'
-  ];
+  // regionesChile y comunasPorRegion importados desde utils
 
   return (
     <div className="gestion-refugio-card form-card">
@@ -84,23 +81,28 @@ const CrearRefugioForm: React.FC<CrearRefugioFormProps> = ({ onRefugioCreado }) 
           <select
             id="region"
             value={region}
-            onChange={(e) => setRegion(e.target.value)}
+            onChange={e => {
+              setRegion(e.target.value);
+              setComuna('');
+            }}
             required
           >
             <option value="" disabled>Selecciona una región</option>
-            {regionesChile.map(r => <option key={r} value={r}>{r}</option>)}
+            {regionesChile.map((r: string) => <option key={r} value={r}>{r}</option>)}
           </select>
         </div>
         <div className="form-group">
           <label htmlFor="comuna">Comuna:</label>
-          <input
-            type="text"
+          <select
             id="comuna"
             value={comuna}
-            onChange={(e) => setComuna(e.target.value)}
+            onChange={e => setComuna(e.target.value)}
             required
-            placeholder="Ej: Macul"
-          />
+            disabled={!region}
+          >
+            <option value="" disabled>Selecciona una comuna</option>
+            {(comunasPorRegion[region] || []).map((c: string) => <option key={c} value={c}>{c}</option>)}
+          </select>
         </div>
         <div className="form-group">
           <label htmlFor="direccion">Dirección (Calle y Número):</label>

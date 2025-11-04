@@ -15,6 +15,36 @@
 
 /*=============================================*/
 /*        MEDIA QUERIES HEADER ADMIN           */
+@media (max-width: 1700px) {
+  .header .nav-menu .nav-item .nav-link[href*="reportes"] {
+    display: none !important;
+  }
+}
+@media (max-width: 1300px) {
+  .header .nav-menu .nav-item .nav-link[href*="animales"] {
+    display: none !important;
+  }
+}
+@media (max-width: 1200px) {
+  .header .nav-menu .nav-item .nav-link[href*="verificaciones"] {
+    display: none !important;
+  }
+}
+@media (max-width: 1100px) {
+  .header .nav-menu .nav-item .nav-link[href*="usuarios"] {
+    display: none !important;
+  }
+}
+@media (max-width: 1000px) {
+  .header .nav-menu .nav-item .nav-link[href*="refugios"] {
+    display: none !important;
+  }
+}
+@media (max-width: 900px) {
+  .header .nav-menu .nav-item .nav-link[href*="admin"] {
+    display: none !important;
+  }
+}
 /*=============================================*/
 
 

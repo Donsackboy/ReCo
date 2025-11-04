@@ -11,6 +11,8 @@ import { getAnimales } from '../../../../api';
 import RefugiosCard from '../../components/Refugios/Refugioscard';
 import './Refugios.css';
 
+import { regionesChile } from '../../../../utils/regionesComunasChile';
+
 // Los refugios y animales se obtendrán desde la API
 
 function getRandomAnimales(animales: { id: number; nombre: string; imagen: string }[], count = 3) {
@@ -52,26 +54,7 @@ const Refugios: React.FC = () => {
     fetchData();
   }, []);
 
-  // --- LISTA DE REGIONES DE CHILE ---
-  const regiones = [
-  { nombre: 'Todas', value: '' },
-  { nombre: 'Arica y Parinacota', value: 'Arica y Parinacota' },
-  { nombre: 'Tarapacá', value: 'Tarapacá' },
-  { nombre: 'Antofagasta', value: 'Antofagasta' },
-  { nombre: 'Atacama', value: 'Atacama' },
-  { nombre: 'Coquimbo', value: 'Coquimbo' },
-  { nombre: 'Valparaíso', value: 'Valparaíso' },
-  { nombre: 'Metropolitana', value: 'Metropolitana' },
-  { nombre: "O'Higgins", value: "O'Higgins" },
-  { nombre: 'Maule', value: 'Maule' },
-  { nombre: 'Ñuble', value: 'Ñuble' },
-  { nombre: 'Biobío', value: 'Biobío' },
-  { nombre: 'La Araucanía', value: 'La Araucanía' },
-  { nombre: 'Los Ríos', value: 'Los Ríos' },
-  { nombre: 'Los Lagos', value: 'Los Lagos' },
-  { nombre: 'Aysén', value: 'Aysén' },
-  { nombre: 'Magallanes', value: 'Magallanes' }
-  ];
+  const regiones = [{ nombre: 'Todas', value: '' }, ...regionesChile.map((r: string) => ({ nombre: r, value: r }))];
 
   // Relacionar animales con refugios y mapear id_refugio a id
   const refugiosConAnimales = refugios.map(refugio => ({

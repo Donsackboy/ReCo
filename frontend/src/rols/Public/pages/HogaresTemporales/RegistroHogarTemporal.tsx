@@ -2,24 +2,9 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { animales } from '../Animales/animalesData';
 
-const regiones = [
-  'Arica y Parinacota',
-  'Tarapacá',
-  'Antofagasta',
-  'Atacama',
-  'Coquimbo',
-  'Valparaíso',
-  'Metropolitana',
-  'O’Higgins',
-  'Maule',
-  'Ñuble',
-  'Biobío',
-  'Araucanía',
-  'Los Ríos',
-  'Los Lagos',
-  'Aysén',
-  'Magallanes',
-];
+import { regionesChile, regionesComunasChile as comunasPorRegion } from '../../../../utils/regionesComunasChile';
+const regiones = regionesChile;
+// comunasPorRegion is now used for dependent comuna select
 const especies = ['Perro', 'Gato', 'Conejo', 'Ave', 'Otro'];
 
 export default function RegistroHogarTemporal() {
@@ -44,22 +29,28 @@ export default function RegistroHogarTemporal() {
     accionProblemas?: string;
     disponibilidad?: string;
     regionHogarTemporal?: string;
-  }>({
-    nombre: '',
-    email: '',
-    telefono: '',
-    regiones: [],
-    especies: [],
-    detalles: '',
-    otrosAnimales: false,
-    animalesHogar: [],
-    vivienda: '',
-    preguntasExtra: '',
-    direccion: '',
-    motivoHogarTemporal: '',
-  experienciaAnimales: '',
-  accionProblemas: '',
-  });
+    comunaHogarTemporal?: string;
+  }>(
+    {
+      nombre: '',
+      email: '',
+      telefono: '',
+      regiones: [],
+      especies: [],
+      detalles: '',
+      otrosAnimales: false,
+      animalesHogar: [],
+      vivienda: '',
+      preguntasExtra: '',
+      direccion: '',
+      motivoHogarTemporal: '',
+      experienciaAnimales: '',
+      accionProblemas: '',
+      disponibilidad: '',
+      regionHogarTemporal: '',
+      comunaHogarTemporal: '',
+    }
+  );
   const [enviado, setEnviado] = useState(false);
 
   // Si hay animalId, no mostrar selección de regiones ni especies
@@ -185,12 +176,21 @@ export default function RegistroHogarTemporal() {
           </div>
           <div style={{ marginBottom: 22 }}>
             <label style={{ color: '#145214', fontWeight: 600, fontSize: '1.08rem', letterSpacing: 0.5 }}>Región donde está ubicado tu hogar temporal:</label><br />
-            <select name="regionHogarTemporal" value={form.regionHogarTemporal || ''} onChange={handleFormChange} required style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #43ea6b', marginTop: 6, fontSize: '1rem', background: '#fff' }}>
-              <option value="">Selecciona una región</option>
-              {regiones.map(region => (
-                <option key={region} value={region}>{region}</option>
-              ))}
-            </select>
+              <select name="regionHogarTemporal" value={form.regionHogarTemporal || ''} onChange={handleFormChange} required style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #43ea6b', marginTop: 6, fontSize: '1rem', background: '#fff' }}>
+                <option value="">Selecciona una región</option>
+                {regiones.map(region => (
+                  <option key={region} value={region}>{region}</option>
+                ))}
+              </select>
+            </div>
+            <div style={{ marginBottom: 22 }}>
+              <label style={{ color: '#145214', fontWeight: 600, fontSize: '1.08rem', letterSpacing: 0.5 }}>Comuna donde está ubicado tu hogar temporal:</label><br />
+              <select name="comunaHogarTemporal" value={form.comunaHogarTemporal || ''} onChange={handleFormChange} required disabled={!form.regionHogarTemporal} style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #43ea6b', marginTop: 6, fontSize: '1rem', background: '#fff' }}>
+                <option value="">Selecciona una comuna</option>
+                {(comunasPorRegion[form.regionHogarTemporal || ''] || []).map((comuna: string) => (
+                  <option key={comuna} value={comuna}>{comuna}</option>
+                ))}
+              </select>
           </div>
           <div style={{ marginBottom: 22 }}>
             <label style={{ color: '#145214', fontWeight: 600, fontSize: '1.08rem', letterSpacing: 0.5 }}>Tipo de vivienda:</label><br />

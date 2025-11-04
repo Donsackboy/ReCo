@@ -367,7 +367,7 @@ export const regionesComunasChile: Record<string, string[]> = {
             'Tortel'
   ],
 
-  'Magallanes y Antártica Chilena': [   'Antártica',
+  'Magallanes': [   'Antártica',
                                         'Cabo de Hornos',
                                         'Laguna Blanca',
                                         'Natales',

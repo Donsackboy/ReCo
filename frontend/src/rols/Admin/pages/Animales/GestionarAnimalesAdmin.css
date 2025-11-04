@@ -1,0 +1,18 @@
+
+.form-animal-admin-checkbox-row {
+	display: flex;
+	align-items: center;
+	margin-bottom: 8px;
+}
+
+.form-animal-admin-checkbox-row label {
+	margin-right: 12px;
+	vertical-align: middle;
+}
+
+/* Opcional: mejora el aspecto del checkbox */
+.form-animal-admin-checkbox-row input[type="checkbox"] {
+	width: 18px;
+	height: 18px;
+	accent-color: #43a047;
+}
