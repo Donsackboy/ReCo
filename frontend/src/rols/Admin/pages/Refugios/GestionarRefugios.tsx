@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
+import { regionesComunasChile, regionesChile } from '../../../../utils/regionesComunasChile';
 
 const GestionarRefugios: React.FC = () => {
+  // Comunas por región ahora importadas
+  const comunasPorRegion = regionesComunasChile;
+  // Estado para comuna en edición
+  const [editComuna, setEditComuna] = useState<string>('');
   const [refugios, setRefugios] = useState<any[]>([]);
   const [busqueda, setBusqueda] = useState('');
   const [editRefugio, setEditRefugio] = useState<any | null>(null);
@@ -58,11 +63,7 @@ const GestionarRefugios: React.FC = () => {
     }
   };
   const [modalOpen, setModalOpen] = useState(false);
-  const regionesChile = [
-    'Arica y Parinacota', 'Tarapacá', 'Antofagasta', 'Atacama', 'Coquimbo', 'Valparaíso',
-    'Metropolitana de Santiago', 'O’Higgins', 'Maule', 'Ñuble', 'Biobío', 'La Araucanía',
-    'Los Ríos', 'Los Lagos', 'Aysén', 'Magallanes y Antártica Chilena'
-  ];
+  // regionesChile ahora importado desde utils
 
   const [nuevoRefugio, setNuevoRefugio] = useState({
     nombre: '',
@@ -78,6 +79,7 @@ const GestionarRefugios: React.FC = () => {
     email: '',
     password: '',
     confirmPassword: '',
+    persona_contacto: '',
   });
   const [error, setError] = useState('');
 
@@ -85,7 +87,7 @@ const GestionarRefugios: React.FC = () => {
   const handleCloseModal = () => setModalOpen(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
+  const { name, value } = e.target;
     if (name === 'usarRegionCustom') {
       setNuevoRefugio({ ...nuevoRefugio, usarRegionCustom: (e.target as HTMLInputElement).checked });
       return;
@@ -125,7 +127,7 @@ const GestionarRefugios: React.FC = () => {
         alert('Refugio creado correctamente');
         setModalOpen(false);
         setNuevoRefugio({
-          nombre: '', direccion: '', correo_contacto: '', telefono: '', descripcion: '', comuna: '', region: '', regionCustom: '', usarRegionCustom: false, username: '', email: '', password: '', confirmPassword: ''
+          nombre: '', direccion: '', correo_contacto: '', telefono: '', descripcion: '', comuna: '', region: '', regionCustom: '', usarRegionCustom: false, username: '', email: '', password: '', confirmPassword: '', persona_contacto: ''
         });
       } else {
         setError('Error al crear refugio');
@@ -201,9 +203,55 @@ const GestionarRefugios: React.FC = () => {
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#fff', padding: 32, borderRadius: 16, minWidth: 350, boxShadow: '0 8px 32px rgba(67,160,71,0.12)' }}>
             <h2 style={{ color: '#43a047', fontWeight: 700 }}>Editar Refugio</h2>
-            <input value={editRefugio.nombre} onChange={e => setEditRefugio({ ...editRefugio, nombre: e.target.value })} style={{ marginBottom: 8, padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', width: '100%' }} />
-            <input value={editRefugio.comuna} onChange={e => setEditRefugio({ ...editRefugio, comuna: e.target.value })} style={{ marginBottom: 8, padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', width: '100%' }} />
-            <input value={editRefugio.region} onChange={e => setEditRefugio({ ...editRefugio, region: e.target.value })} style={{ marginBottom: 8, padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', width: '100%' }} />
+            <label style={{fontWeight:500}}>Nombre del refugio:
+              <input value={editRefugio.nombre} onChange={e => setEditRefugio({ ...editRefugio, nombre: e.target.value })} style={{ marginBottom: 8, padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', width: '100%' }} />
+            </label>
+            <label style={{fontWeight:500}}>Región:
+              <select
+                value={editRefugio.region}
+                onChange={e => {
+                  setEditRefugio({ ...editRefugio, region: e.target.value });
+                  setEditComuna('');
+                }}
+                style={{ marginBottom: 8, padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', width: '100%' }}
+              >
+                <option value="">Selecciona una región...</option>
+                {regionesChile.map((r: string) => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
+            </label>
+            <label style={{fontWeight:500}}>Comuna:
+              <select
+                value={editComuna || editRefugio.comuna}
+                onChange={e => {
+                  setEditComuna(e.target.value);
+                  setEditRefugio({ ...editRefugio, comuna: e.target.value });
+                }}
+                style={{ marginBottom: 8, padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', width: '100%' }}
+                disabled={!editRefugio.region}
+              >
+                <option value="">Selecciona una comuna...</option>
+                {(comunasPorRegion[editRefugio.region] || []).map((c: string) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </label>
+            <label style={{fontWeight:500}}>Dirección física:
+              <input value={editRefugio.direccion || ''} onChange={e => setEditRefugio({ ...editRefugio, direccion: e.target.value })} style={{ marginBottom: 8, padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', width: '100%' }} />
+            </label>
+            <label style={{fontWeight:500}}>Teléfono de contacto:
+              <input value={editRefugio.telefono || ''} onChange={e => setEditRefugio({ ...editRefugio, telefono: e.target.value })} style={{ marginBottom: 8, padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', width: '100%' }} />
+            </label>
+            <label style={{fontWeight:500}}>Correo de contacto del refugio:
+              <input value={editRefugio.correo_contacto || ''} onChange={e => setEditRefugio({ ...editRefugio, correo_contacto: e.target.value })} style={{ marginBottom: 8, padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', width: '100%' }} />
+            </label>
+            <label style={{fontWeight:500}}>Persona responsable/contacto principal:
+              <input value={editRefugio.persona_contacto || ''} onChange={e => setEditRefugio({ ...editRefugio, persona_contacto: e.target.value })} style={{ marginBottom: 8, padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', width: '100%' }} />
+            </label>
+            <label style={{fontWeight:500}}>Descripción del refugio:
+              <textarea value={editRefugio.descripcion || ''} onChange={e => setEditRefugio({ ...editRefugio, descripcion: e.target.value })} style={{ marginBottom: 8, padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', width: '100%', minHeight: 60, resize: 'vertical' }} />
+            </label>
             <div style={{ marginTop: 18, display: 'flex', justifyContent: 'center', gap: 16 }}>
               <button onClick={handleSaveEdit} style={{ background: '#43a047', color: '#fff', fontWeight: 600, border: 'none', borderRadius: 8, padding: '10px 28px', fontSize: 16, cursor: 'pointer' }}>Guardar</button>
               <button onClick={() => setEditRefugio(null)} style={{ background: '#eee', color: '#333', fontWeight: 600, border: 'none', borderRadius: 8, padding: '10px 28px', fontSize: 16, cursor: 'pointer' }}>Cancelar</button>
@@ -233,13 +281,13 @@ const GestionarRefugios: React.FC = () => {
             <form style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
               {error && <div style={{color: 'red', marginBottom: 8, gridColumn: '1/3'}}>{error}</div>}
               <div>
-                <label style={{ fontWeight: 500 }}>Nombre de usuario:
+                <label style={{ fontWeight: 500 }}>Nombre de usuario para logeo (acceso al sistema):
                   <input name="username" value={nuevoRefugio.username} onChange={handleChange} style={{ width: '100%', padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', marginTop: 4 }} placeholder="Ej: refugiofeliz" />
                 </label>
               </div>
               <div>
-                <label style={{ fontWeight: 500 }}>Email:
-                  <input name="email" type="email" value={nuevoRefugio.email} onChange={handleChange} style={{ width: '100%', padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', marginTop: 4 }} placeholder="Ej: contacto@refugiofeliz.cl" />
+                <label style={{ fontWeight: 500 }}>Email para logeo (acceso al sistema):
+                  <input name="email" type="email" value={nuevoRefugio.email} onChange={handleChange} style={{ width: '100%', padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', marginTop: 4 }} placeholder="Ej: acceso@refugiofeliz.cl" />
                 </label>
               </div>
               <div>
@@ -253,50 +301,33 @@ const GestionarRefugios: React.FC = () => {
                 </label>
               </div>
               <div>
-                <label style={{ fontWeight: 500 }}>Nombre:
+                <label style={{ fontWeight: 500 }}>Nombre del refugio:
                   <input name="nombre" value={nuevoRefugio.nombre} onChange={handleChange} style={{ width: '100%', padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', marginTop: 4 }} />
                 </label>
               </div>
               <div>
-                <label style={{ fontWeight: 500 }}>Dirección:
+                <label style={{ fontWeight: 500 }}>Dirección física:
                   <input name="direccion" value={nuevoRefugio.direccion} onChange={handleChange} style={{ width: '100%', padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', marginTop: 4 }} />
                 </label>
               </div>
               <div>
-                <label style={{ fontWeight: 500 }}>Correo de contacto:
+                <label style={{ fontWeight: 500 }}>Correo de contacto del refugio:
                   <input name="correo_contacto" value={nuevoRefugio.correo_contacto} onChange={handleChange} style={{ width: '100%', padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', marginTop: 4 }} />
                 </label>
               </div>
               <div>
-                <label style={{ fontWeight: 500 }}>Teléfono:
+                <label style={{ fontWeight: 500 }}>Teléfono de contacto:
                   <input name="telefono" value={nuevoRefugio.telefono} onChange={handleChange} style={{ width: '100%', padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', marginTop: 4 }} />
                 </label>
               </div>
               <div style={{ gridColumn: '1/3' }}>
-                <label style={{ fontWeight: 500 }}>Descripción:
+                <label style={{ fontWeight: 500 }}>Descripción del refugio:
                   <textarea name="descripcion" value={nuevoRefugio.descripcion} onChange={handleChange} style={{ width: '100%', padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', marginTop: 4, minHeight: 60, resize: 'vertical' }} />
                 </label>
               </div>
               <div>
-                <label style={{ fontWeight: 500 }}>Comuna:
-                  <input name="comuna" value={nuevoRefugio.comuna} onChange={handleChange} style={{ width: '100%', padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', marginTop: 4 }} />
-                </label>
-              </div>
-              <div>
                 <label style={{ fontWeight: 500 }}>Región:
-                  {!nuevoRefugio.usarRegionCustom ? (
-                    <select
-                      name="region"
-                      value={nuevoRefugio.region}
-                      onChange={handleChange}
-                      style={{ width: '100%', padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', marginTop: 4 }}
-                    >
-                      <option value="">Selecciona una región...</option>
-                      {regionesChile.map(r => (
-                        <option key={r} value={r}>{r}</option>
-                      ))}
-                    </select>
-                  ) : (
+                  {nuevoRefugio.usarRegionCustom ? (
                     <input
                       name="regionCustom"
                       value={nuevoRefugio.regionCustom}
@@ -304,6 +335,21 @@ const GestionarRefugios: React.FC = () => {
                       placeholder="Escribe una región personalizada..."
                       style={{ width: '100%', padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', marginTop: 4 }}
                     />
+                  ) : (
+                    <select
+                      name="region"
+                      value={nuevoRefugio.region}
+                      onChange={e => {
+                        const value = e.target.value;
+                        setNuevoRefugio(prev => ({ ...prev, region: value, comuna: '' }));
+                      }}
+                      style={{ width: '100%', padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', marginTop: 4 }}
+                    >
+                      <option value="">Selecciona una región...</option>
+                      {regionesChile.map((r: string) => (
+                        <option key={r} value={r}>{r}</option>
+                      ))}
+                    </select>
                   )}
                   <div style={{ marginTop: 8 }}>
                     <label style={{ fontSize: 14 }}>
@@ -317,6 +363,30 @@ const GestionarRefugios: React.FC = () => {
                       Escribir región personalizada
                     </label>
                   </div>
+                </label>
+              </div>
+              <div>
+                <label style={{ fontWeight: 500 }}>Comuna:
+                  <select
+                    name="comuna"
+                    value={nuevoRefugio.comuna}
+                    onChange={e => {
+                      const value = e.target.value;
+                      setNuevoRefugio(prev => ({ ...prev, comuna: value }));
+                    }}
+                    style={{ width: '100%', padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', marginTop: 4 }}
+                    disabled={!nuevoRefugio.region || nuevoRefugio.usarRegionCustom}
+                  >
+                    <option value="">Selecciona una comuna...</option>
+                    {(comunasPorRegion[nuevoRefugio.region] || []).map((c: string) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <div style={{ gridColumn: '1/3' }}>
+                <label style={{ fontWeight: 500 }}>Persona responsable/contacto principal:
+                  <input name="persona_contacto" value={nuevoRefugio.persona_contacto || ''} onChange={handleChange} style={{ width: '100%', padding: '7px 10px', borderRadius: 6, border: '1px solid #bdbdbd', marginTop: 4 }} />
                 </label>
               </div>
             </form>

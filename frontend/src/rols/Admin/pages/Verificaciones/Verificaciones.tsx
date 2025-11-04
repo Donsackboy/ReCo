@@ -43,7 +43,18 @@ const Verificaciones: React.FC = () => {
         });
         if (!res.ok) throw new Error('Error al actualizar la solicitud');
         setModalOpen(false);
-        setPostulaciones(postulaciones.filter(p => p.id !== modalData.id));
+        // Volver a pedir la lista actualizada al backend
+        setLoading(true);
+        fetch(`${import.meta.env.VITE_API_BASE}/public/postulacion-refugio/?estado=pendiente`)
+          .then(res => res.json())
+          .then(data => {
+            setPostulaciones(data);
+            setLoading(false);
+          })
+          .catch(() => {
+            setError('Error al cargar postulaciones');
+            setLoading(false);
+          });
       } catch (err) {
         setAccionError((err as Error).message || 'Error desconocido');
       }
@@ -145,7 +156,7 @@ const Verificaciones: React.FC = () => {
             <p style={{ textAlign: 'center', fontSize: '1.2rem', color: '#555' }}>No hay postulaciones pendientes.</p>
           </div>
         ) : null}
-        <ul style={{ listStyle: 'none', padding: 0, width: '100%', maxWidth: 700 }}>
+        <ul style={{ listStyle: 'none', padding: 0, width: '100%', maxWidth: 1800 }}>
           {postulaciones.filter(post => {
             if (filtroRegionPend && post.region.toLowerCase().indexOf(filtroRegionPend.toLowerCase()) === -1) return false;
             if (filtroNombrePend && post.nombre.toLowerCase().indexOf(filtroNombrePend.toLowerCase()) === -1) return false;
