@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import FichaMedicaModal from './FichaMedicaModal';
 import type { FichaMedica } from './FichaMedicaModal';
-import { updateAnimal, getCirugias } from '../../../../../../src/api.js';
+import { updateAnimal, getCirugias, API_BASE } from '../../../../../../src/api.js';
 import type { Vacuna } from './AnimalList';
 
 // Tipos mínimos para evitar errores
@@ -248,18 +248,28 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
     setError('');
     try {
       const token = localStorage.getItem('token');
-      await fetch(`/api/animales/${animal.id_animal}/`, {
+      console.log('Intentando eliminar animal', animal.id_animal, 'con token', token);
+  const response = await fetch(`${API_BASE}/animales/${animal.id_animal}/`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Token ${token}`,
           'Content-Type': 'application/json',
         },
       });
+      console.log('Respuesta DELETE:', response.status, response.statusText);
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('Error al eliminar animal:', response.status, text);
+        setError(`Error al eliminar el animal: ${response.status} ${text}`);
+        setLoading(false);
+        return;
+      }
       setSuccess(true);
       if (onSave) onSave();
       onClose();
     } catch (err) {
       setError('Error al eliminar el animal');
+      console.error('Error en fetch DELETE:', err);
     }
     setLoading(false);
     setShowDeleteModal(false);
@@ -547,7 +557,7 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
           left: 0,
           width: '100vw',
           height: '100vh',
-          background: 'rgba(34,139,34,0.18)',
+          background: 'rgba(20, 20, 20, 0.35)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -555,38 +565,42 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
         }}>
           <div style={{
             background: '#fff',
-            borderRadius: 18,
-            boxShadow: '0 8px 40px #228b2233',
-            padding: '38px 48px',
-            minWidth: 380,
-            maxWidth: 480,
+            borderRadius: 22,
+            boxShadow: '0 12px 48px #228b2244',
+            padding: '44px 54px',
+            minWidth: 400,
+            maxWidth: 520,
             textAlign: 'center',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: 18
+            gap: 22,
+            border: '2.5px solid #e74c3c22',
+            position: 'relative'
           }}>
-            <h2 style={{ color: '#e74c3c', fontWeight: 800, marginBottom: 12 }}>¿Eliminar animal?</h2>
-            <p style={{ color: '#145214', fontSize: '1.1rem', marginBottom: 18 }}>
+            <span style={{ fontSize: 48, color: '#e74c3c', marginBottom: 8 }}>⚠️</span>
+            <h2 style={{ color: '#e74c3c', fontWeight: 900, marginBottom: 8, fontSize: '2rem' }}>¿Eliminar animal?</h2>
+            <p style={{ color: '#333', fontSize: '1.15rem', marginBottom: 10 }}>
               Esta acción eliminará el animal y <b>toda su información asociada</b>:
             </p>
-            <ul style={{ textAlign: 'left', margin: '12px auto', color: '#145214', fontSize: '1rem' }}>
+            <ul style={{ textAlign: 'left', margin: '18px auto', color: '#145214', fontSize: '1.08rem', lineHeight: 1.7, fontWeight: 600, background: '#f6fff6', borderRadius: 10, padding: '18px 24px', boxShadow: '0 2px 8px #90EE9022', border: '1.5px solid #90EE90' }}>
+              <li>Formularios de adopción pendientes y su historial</li>
               <li>Ficha médica</li>
-              <li>Cirugías</li>
               <li>Vacunas</li>
+              <li>Cirugías</li>
               <li>Alergias y condiciones crónicas</li>
             </ul>
-            <span style={{ color: '#e74c3c', fontWeight: 700 }}>Esta acción no se puede deshacer.</span>
-            <div style={{ display: 'flex', gap: 24, justifyContent: 'center', marginTop: 12 }}>
+            <span style={{ color: '#e74c3c', fontWeight: 800, fontSize: '1.08rem', marginBottom: 8 }}>Esta acción no se puede deshacer.</span>
+            <div style={{ display: 'flex', gap: 28, justifyContent: 'center', marginTop: 18 }}>
               <button
                 type="button"
                 onClick={confirmDeleteAnimal}
-                style={{ background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 28px', fontWeight: 700, fontSize: '1.1rem', cursor: 'pointer', boxShadow: '0 2px 8px #e74c3c22' }}
+                style={{ background: 'linear-gradient(90deg,#e74c3c 60%,#ffb3b3 100%)', color: '#fff', border: 'none', borderRadius: 10, padding: '12px 32px', fontWeight: 800, fontSize: '1.15rem', cursor: 'pointer', boxShadow: '0 2px 12px #e74c3c33', letterSpacing: 1 }}
               >Eliminar</button>
               <button
                 type="button"
                 onClick={() => setShowDeleteModal(false)}
-                style={{ background: '#90EE90', color: '#145214', border: 'none', borderRadius: 8, padding: '10px 28px', fontWeight: 700, fontSize: '1.1rem', cursor: 'pointer', boxShadow: '0 2px 8px #90EE9022' }}
+                style={{ background: 'linear-gradient(90deg,#90EE90 60%,#eaffea 100%)', color: '#145214', border: 'none', borderRadius: 10, padding: '12px 32px', fontWeight: 800, fontSize: '1.15rem', cursor: 'pointer', boxShadow: '0 2px 12px #90EE9033', letterSpacing: 1 }}
               >Cancelar</button>
             </div>
           </div>

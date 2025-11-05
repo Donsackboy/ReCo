@@ -163,20 +163,33 @@ class AnimalPublicCarouselView(APIView):
         return Response(data)
 
 class AnimalDetailView(generics.RetrieveUpdateDestroyAPIView):
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        from .models import SolicitudAdopcion
-        # Buscar solicitudes pendientes asociadas a este animal
-        solicitudes_pendientes = SolicitudAdopcion.objects.filter(animal=instance, estado='pendiente')
-        for solicitud in solicitudes_pendientes:
-            solicitud.estado = 'rechazada'
-            solicitud.anotaciones = (solicitud.anotaciones or '') + '\nRechazada automáticamente: el animal fue eliminado de la base de datos o ya no está disponible.'
-            solicitud.save()
-        # Ahora sí eliminar el animal
-        return super().destroy(request, *args, **kwargs)
     queryset = Animal.objects.all()
     serializer_class = AnimalSerializer
     permission_classes = [IsRefugioOrAdmin]
+
+    def destroy(self, request, *args, **kwargs):
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning('Intentando eliminar animal')
+        try:
+            instance = self.get_object()
+            logger.warning(f'Animal a eliminar: {instance.id_animal} - {instance.nombre}')
+            # Rechazar automáticamente solicitudes de adopción pendientes
+            from .models import SolicitudAdopcion
+            solicitudes = SolicitudAdopcion.objects.filter(animal=instance, estado='pendiente')
+            logger.warning(f'Solicitudes pendientes encontradas: {solicitudes.count()}')
+            for solicitud in solicitudes:
+                logger.warning(f'Rechazando solicitud {solicitud.id_solicitud}')
+                solicitud.estado = 'rechazada'
+                solicitud.anotaciones = (solicitud.anotaciones or '') + '\nRechazada automáticamente: el animal fue eliminado del sistema.'
+                solicitud.save()
+            logger.warning('Eliminación de animal completada, llamando super().destroy')
+            return super().destroy(request, *args, **kwargs)
+        except Exception as e:
+            logger.error(f'Error al eliminar animal: {e}', exc_info=True)
+            from rest_framework.response import Response
+            from rest_framework import status
+            return Response({'error': f'Error interno al eliminar animal: {e}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class RefugioPublicListView(generics.ListAPIView):
     queryset = Refugio.objects.all()
