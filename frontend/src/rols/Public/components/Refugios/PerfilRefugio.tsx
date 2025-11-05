@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import AnimalCard from '../Animales/AnimalCard';
 
 // Animal type is now imported from AnimalCard props
@@ -39,13 +40,21 @@ const PerfilRefugio: React.FC<PerfilRefugioProps> = ({ refugio }) => {
       </div>
       <h3 style={{ color: '#145214', marginBottom: '10px' }}>Eventos activos</h3>
       <ul style={{ color: '#228B22', fontSize: '1.08rem', marginBottom: '18px' }}>
-        {refugio.eventos.map(ev => (
+        {(refugio.eventos ?? []).map(ev => (
           <li key={ev.id}>{ev.nombre} - {ev.fecha}</li>
         ))}
       </ul>
-      <h3 style={{ color: '#145214', marginBottom: '10px' }}>Animales del refugio</h3>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+        <h3 style={{ color: '#145214', marginBottom: 0 }}>Animales del refugio</h3>
+        <Link
+          to={`/animales?refugio=${encodeURIComponent(refugio.nombre)}`}
+          style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '8px 18px', fontWeight: 700, fontSize: '1rem', textDecoration: 'none', boxShadow: '0 2px 8px #43ea6b22' }}
+        >
+          Ver todos
+        </Link>
+      </div>
       <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', marginBottom: '18px' }}>
-        {refugio.animales.map(animal => (
+        {(refugio.animales ?? []).slice(0, 10).map(animal => (
           <AnimalCard key={animal.id} animal={{
             id: animal.id,
             nombre: animal.nombre,

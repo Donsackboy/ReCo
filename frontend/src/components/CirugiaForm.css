@@ -1,0 +1,11 @@
+.cirugia-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+@media (max-width: 700px) {
+  .cirugia-form-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}

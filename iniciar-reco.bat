@@ -41,6 +41,9 @@ echo [4/4] ✅ Aplicando migraciones de base de datos...
 timeout /t 5 /nobreak >nul
 docker compose exec backend python manage.py migrate
 
+REM Crear usuario admin por defecto
+docker compose exec backend python manage.py create_default_admin
+
 echo.
 echo ================================
 echo    🎉 ¡RECO ESTÁ LISTO! 🎉

@@ -1,0 +1,23 @@
+# Credenciales Django Superuser
+
+Email: admin@reco.cl
+Username: adminreco
+Password: adminreco2025
+
+Nota: Si olvidas la contraseña, puedes restablecerla desde el panel de administración o crear otro superusuario con:
+docker-compose exec backend python manage.py createsuperuser
+
+# Cómo convertir un usuario en superusuario y staff desde Django shell
+
+1. Abre el shell de Django dentro del contenedor:
+	docker-compose exec backend python manage.py shell
+
+2. Ejecuta lo siguiente:
+
+from registry.models import Usuario
+u = Usuario.objects.get(username='adminreco')
+u.is_superuser = True
+u.is_staff = True
+u.save()
+
+Esto convertirá el usuario en superusuario y staff si no lo es.

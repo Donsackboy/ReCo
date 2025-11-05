@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import LoginModal from '../../components/Header/LoginModal';
+import RegisterModal from '../../components/Header/RegisterModal';
 import { useLocation } from 'react-router-dom';
-import { animales } from './animalesData';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -24,10 +25,19 @@ const preguntas = [
 ];
 
 const AdopcionForm = () => {
+  // All hooks at the top
+  const token = localStorage.getItem('token');
+  const [showLogin, setShowLogin] = useState(!token);
+  const [showRegister, setShowRegister] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const query = useQuery();
   const animalId = query.get('animalId');
   const refugio = query.get('refugio');
-  const animal = animales.find(a => String(a.id) === animalId);
+  const [animal, setAnimal] = useState<any>(null);
+  const [animalLoading, setAnimalLoading] = useState(true);
+  const [animalError, setAnimalError] = useState<string>('');
+  const [user, setUser] = useState<any>(null);
   const [form, setForm] = useState({
     nombre: '',
     direccion: '',
@@ -39,43 +49,207 @@ const AdopcionForm = () => {
   });
   const [enviado, setEnviado] = useState(false);
 
-  const handleChange = e => {
+  // Effects
+  React.useEffect(() => {
+    if (!animalId || isNaN(Number(animalId))) {
+      setAnimal(null);
+      setAnimalLoading(false);
+      setAnimalError('ID de animal inválido.');
+      return;
+    }
+    async function fetchAnimal() {
+      setAnimalLoading(true);
+      setAnimalError('');
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE}/public/animales/${animalId}/`);
+        if (!res.ok) {
+          setAnimalError('No se pudo cargar el animal.');
+          setAnimal(null);
+          return;
+        }
+        const data = await res.json();
+        setAnimal({ ...data, id: data.id_animal ?? data.id });
+      } catch (err) {
+        setAnimal(null);
+        setAnimalError('Error de conexión al cargar el animal.');
+      } finally {
+        setAnimalLoading(false);
+      }
+    }
+    fetchAnimal();
+  }, [animalId]);
+
+  React.useEffect(() => {
+    try {
+      setUser(JSON.parse(localStorage.getItem('user') || 'null'));
+    } catch {
+      setUser(null);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (user) {
+      setForm(f => ({
+        ...f,
+        nombre: user?.username || '',
+        email: user?.email || ''
+      }));
+    }
+  }, [user]);
+
+  // Handlers
+  const closeModals = () => {
+    setShowLogin(false);
+    setShowRegister(false);
+    if (!localStorage.getItem('token')) {
+      setRedirecting(true);
+      window.location.href = '/';
+    }
+  };
+  const switchToRegister = () => {
+    setShowLogin(false);
+    setShowRegister(true);
+  };
+  const switchToLogin = () => {
+    setShowRegister(false);
+    setShowLogin(true);
+  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-  const handleRespuesta = (idx, value) => {
+  const handleRespuesta = (idx: number, value: string) => {
     const nuevas = [...form.respuestas];
     nuevas[idx] = value;
     setForm({ ...form, respuestas: nuevas });
   };
-  const handleSubmit = e => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setEnviado(true);
+    setErrorMsg('');
+    if (!token) {
+      setShowLogin(true);
+      return;
+    }
+    if (!animalId || isNaN(Number(animalId))) {
+      setErrorMsg('No se ha seleccionado un animal válido para la adopción.');
+      return;
+    }
+    // Construir el payload para el backend (incluyendo usuario)
+    const payload = {
+      nombre: form.nombre,
+      direccion: form.direccion,
+      fecha_nacimiento: form.fechaNacimiento, // debe ser YYYY-MM-DD
+      telefono: form.telefono,
+      email: form.email,
+      rol_familia: form.rolFamilia,
+      respuestas: form.respuestas,
+      animal: Number(animalId), // aseguramos que sea un número
+      usuario: user?.id // <-- Agregado el id del usuario
+    };
+    console.log('Payload enviado:', payload);
+    try {
+      const res = await fetch('http://localhost:8000/api/adopciones/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        setEnviado(true);
+      } else {
+        const data = await res.json();
+        // Show full error object for debugging
+        setErrorMsg(
+          typeof data === 'string' ? data :
+          data?.detail ? data.detail :
+          JSON.stringify(data, null, 2)
+        );
+      }
+    } catch (err) {
+      setErrorMsg('Error de conexión al enviar la solicitud.');
+    }
   };
 
+  // Conditional returns after all hooks
+  if (!animalId || isNaN(Number(animalId)) || animalLoading) {
+    return (
+      <div style={{ maxWidth: '650px', margin: '40px auto', background: '#fff0f0', borderRadius: '18px', boxShadow: '0 2px 12px #ea434322', padding: '32px', textAlign: 'center' }}>
+        <h2 style={{ color: '#228B22' }}>Cargando información del animal...</h2>
+        {animalError && (
+          <div style={{ color: '#f44336', marginTop: '18px', fontWeight: 600 }}>{animalError}</div>
+        )}
+      </div>
+    );
+  }
+  if (!animal) {
+    return (
+      <div style={{ maxWidth: '650px', margin: '40px auto', background: '#fff0f0', borderRadius: '18px', boxShadow: '0 2px 12px #ea434322', padding: '32px', textAlign: 'center' }}>
+        <h2 style={{ color: '#f44336' }}>No se ha encontrado el animal seleccionado.</h2>
+        {animalError && (
+          <div style={{ color: '#f44336', marginTop: '18px', fontWeight: 600 }}>{animalError}</div>
+        )}
+        <p>Por favor, selecciona un animal desde la página de animales antes de iniciar el proceso de adopción.</p>
+        <button style={{ marginTop: '28px', background: '#ea4343', color: '#fff', border: 'none', borderRadius: '10px', padding: '12px 32px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #ea434322' }}
+          onClick={() => window.location.href = '/animales'}>
+          Volver a Animales
+        </button>
+      </div>
+    );
+  }
+  if (redirecting) {
+    return null;
+  }
+  if (showLogin || showRegister) {
+    return (
+      <>
+        <LoginModal
+          isOpen={showLogin}
+          onClose={closeModals}
+          onSwitchToRegister={switchToRegister}
+        />
+        <RegisterModal
+          isOpen={showRegister}
+          onClose={closeModals}
+          onSwitchToLogin={switchToLogin}
+        />
+        <div style={{textAlign:'center',marginTop:40}}>
+          <h2 style={{color:'#228B22'}}>Debes iniciar sesión para adoptar</h2>
+          <p>Por favor inicia sesión o regístrate para poder completar el formulario de adopción.</p>
+        </div>
+      </>
+    );
+  }
   if (enviado) {
     return (
       <div style={{ maxWidth: '650px', margin: '40px auto', background: '#eaffea', borderRadius: '18px', boxShadow: '0 2px 12px #43ea6b22', padding: '32px', textAlign: 'center' }}>
         <h2 style={{ color: '#228B22' }}>¡Solicitud enviada!</h2>
         <p>Tu solicitud de adopción ha sido enviada al refugio <strong>{refugio}</strong>.<br />Pronto te contactarán para continuar el proceso.</p>
+        <button style={{ marginTop: '28px', background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '12px 32px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22' }}
+          onClick={() => window.location.href = '/'}>
+          Volver al inicio
+        </button>
       </div>
     );
   }
 
   return (
     <div style={{ maxWidth: '650px', margin: '40px auto', background: '#f0fff4', borderRadius: '18px', boxShadow: '0 2px 12px #43ea6b22', padding: '32px' }}>
-      <h2 style={{ color: '#145214', marginBottom: '18px' }}>Formulario de Adopción</h2>
-      <p style={{ color: '#228B22', marginBottom: '18px', fontSize: '1.08rem' }}>
-        El objetivo de este cuestionario es elegir la mejor familia para nuestros rescatados.<br />
-        Relleno este formulario para optar a la adopción de <strong>{animal ? animal.nombre : 'este animal'}</strong>
-      </p>
+      <h2 style={{ color: '#145214', marginBottom: '18px' }}>
+        Formulario de adopción para <strong>{animal ? animal.nombre : 'este animal'}</strong>
+      </h2>
       {animal && (
         <div style={{ background: '#eaffea', borderRadius: '12px', padding: '16px', marginBottom: '18px', boxShadow: '0 1px 6px #43ea6b22' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
-            <img src={animal.imagenes[0]} alt={animal.nombre} style={{ width: '250px', height: '250px', objectFit: 'cover', borderRadius: '16px', boxShadow: '0 1px 6px #43ea6b22' }} />
+            <img src={animal.fotos?.[0] || animal.imagen || animal.imagenes?.[0] || '/Images/placeholder.png'} alt={animal.nombre} style={{ width: '180px', height: '180px', objectFit: 'cover', borderRadius: '16px', boxShadow: '0 1px 6px #43ea6b22' }} />
             <div>
               <div style={{ fontWeight: 700, fontSize: '1.25rem', color: '#145214' }}>{animal.nombre}</div>
-              <div style={{ color: '#228B22', fontSize: '1.08rem' }}>{animal.sexo} • {animal.edad} años • {animal.tamano}</div>
-              <div style={{ color: '#145214', fontSize: '1rem' }}>Refugio: {animal.refugio} ({animal.region})</div>
+              <div style={{ color: '#228B22', fontSize: '1.08rem' }}>
+                {animal.sexo} • {animal.edad} años • {animal.tamano}
+              </div>
+              <div style={{ color: '#145214', fontSize: '1rem' }}>
+                Refugio: {animal.refugio} ({animal.region})
+              </div>
             </div>
           </div>
         </div>
@@ -118,6 +292,11 @@ const AdopcionForm = () => {
         ))}
         <button type="submit" style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 0', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22', marginTop: '12px' }}>Enviar solicitud</button>
       </form>
+      {errorMsg && (
+        <div style={{ color: '#f44336', background: '#fff0f0', borderRadius: '8px', padding: '10px', marginBottom: '12px', fontWeight: 600 }}>
+          {errorMsg}
+        </div>
+      )}
       <div style={{ marginTop: '18px', color: '#228B22', fontSize: '0.98rem' }}>
         <strong>Refugio:</strong> {refugio}
       </div>

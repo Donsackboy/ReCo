@@ -1,0 +1,110 @@
+/* Botón logout en menú lateral */
+.logout-btn {
+  all: unset;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 15px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #E74C3C;
+  font-weight: 600;
+}
+
+.logout-btn:hover {
+  background: rgba(231, 76, 60, 0.1);
+  color: #C0392B;
+}
+
+@media (max-width: 480px) {
+  .user-profile {
+    padding: 6px 8px;
+    gap: 4px;
+  }
+}
+/* =============== USER PROFILE =============== */
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 20px;
+  border: 2px solid rgba(34,139,34,0.3);
+  box-shadow: 0 4px 15px rgba(34,139,34,0.1);
+  transition: all 0.3s ease;
+}
+.user-profile:hover {
+  background: rgba(255,255,255,1);
+  border-color: #228B22;
+  box-shadow: 0 6px 20px rgba(34,139,34,0.2);
+  transform: translateY(-1px);
+}
+.user-icon {
+  font-size: 1.2rem;
+}
+.user-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #228B22;
+  max-width: none;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
+.admin-profile {
+  border-color: #FF6B35;
+  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,107,53,0.1));
+.admin-badge {
+  background: #FF6B35;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.btn-logout {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #E74C3C, #C0392B);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(231,76,60,0.3);
+}
+.btn-logout:hover {
+  background: linear-gradient(135deg, #C0392B, #A93226);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(231,76,60,0.4);
+}
+@media (max-width: 1100px) {
+	.admin-badge { font-size: 0.6rem; padding: 1px 4px; }
+	.btn-logout {
+	  display: flex;
+	  align-items: center;
+	  gap: 6px;
+	  padding: 8px 12px;
+	  background: linear-gradient(135deg, #E74C3C, #C0392B);
+	  color: white;
+	  border: none;
+	  border-radius: 15px;
+	  font-size: 0.8rem;
+	  font-weight: 600;
+	  cursor: pointer;
+	  transition: all 0.3s ease;
+	  box-shadow: 0 4px 15px rgba(231,76,60,0.3);
+	}
+/* User profile styles */
+.btn-logout:hover {
+    background: linear-gradient(135deg, #C0392B, #A93226);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(231,76,60,0.4);
+}

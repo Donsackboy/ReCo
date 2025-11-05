@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LogoAdmin from './Header/LogoAdmin';
-import "./HeaderAdmin.css";
+import Logo from '../../Public/components/Header/shared/Logo';
+import "./Header/HamburgerMenu.css";
+import '../../Public/components/Header/HeaderLayout.css';
+import "./Header/NavMenu.css";
+import "./Header/UserProfile.css";
+// import removed: Logo.css does not exist in Admin/Header
 
 interface HeaderAdminProps {
   onNavigateHome?: () => void;
@@ -18,7 +22,11 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
   const navigate = useNavigate();
 
   const handleLogoClick = () => {
-    navigate('/admin');
+    if (isAdminMode) {
+      navigate('/admin');
+    } else {
+      navigate('/');
+    }
   };
 
   const toggleMenu = () => {
@@ -29,68 +37,100 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
     setIsMenuOpen(false);
   };
 
+  const isAdminMode = window.location.pathname.startsWith('/admin');
   return (
-  <header className="header-admin">
+    <header className="header">
       <nav className="navbar">
-  {/* Logo (admin) */}
-  <LogoAdmin onClick={handleLogoClick} />
         <div className="nav-container">
-          {/* Navegación central - ADMINISTRADOR */}
+          <Logo onClick={handleLogoClick} className="nav-logo" />
           <nav className="center-nav">
             <ul className="nav-menu">
-              <li className="nav-item">
-                <a href="#admin-dashboard" className="nav-link">
-                  <span className="nav-icon">📈</span>
-                  <span className="nav-text">Dashboard</span>
-                </a>
-              </li>
-              <li className="nav-item">
-                <a href="#gestionar-refugios" className="nav-link">
-                  <span className="nav-icon">🏛️</span>
-                  <span className="nav-text">Refugios</span>
-                </a>
-              </li>
-              <li className="nav-item">
-                <a href="#usuarios" className="nav-link">
-                  <span className="nav-icon">👥</span>
-                  <span className="nav-text">Usuarios</span>
-                </a>
-              </li>
-              <li className="nav-item">
-                <a href="#verificar-comprobantes" className="nav-link">
-                  <span className="nav-icon">✅</span>
-                  <span className="nav-text">Verificaciones</span>
-                </a>
-              </li>
-              <li className="nav-item">
-                <a href="#reportes" className="nav-link">
-                  <span className="nav-icon">📊</span>
-                  <span className="nav-text">Reportes</span>
-                </a>
-              </li>
+              {isAdminMode ? (
+                <>
+                  <li className="nav-item">
+                    <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin')}}>
+                      <span className="nav-icon">📈</span>
+                      <span className="nav-text">Dashboard</span>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/gestionar-refugios')}}>
+                      <span className="nav-icon">🏛️</span>
+                      <span className="nav-text">Refugios</span>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/gestionar-usuarios')}}>
+                      <span className="nav-icon">👥</span>
+                      <span className="nav-text">Usuarios</span>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/verificaciones')}}>
+                      <span className="nav-icon">✅</span>
+                      <span className="nav-text">Verificaciones</span>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/reportes')}}>
+                      <span className="nav-icon">📊</span>
+                      <span className="nav-text">Reportes</span>
+                    </a>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li className="nav-item">
+                    <a href="/refugios" className="nav-link">
+                      <span className="nav-text">Refugios</span>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/animales" className="nav-link">
+                      <span className="nav-text">Animales</span>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/hogares-temporales" className="nav-link">
+                      <span className="nav-text">Hogares Temporales</span>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/donaciones" className="nav-link">
+                      <span className="nav-text">Donaciones</span>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/eventos" className="nav-link">
+                      <span className="nav-text">Eventos</span>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/voluntariado" className="nav-link">
+                      <span className="nav-text">Voluntariado</span>
+                    </a>
+                  </li>
+                </>
+              )}
             </ul>
           </nav>
-          
-          {/* Perfil de admin y menú */}
           <div className="hamburger-container">
             <div className="auth-buttons desktop-auth">
               <button
-                className={`user-profile admin-profile admin-switch${location.pathname.startsWith('/admin') ? ' admin-on' : ' admin-off'}`}
+                className={`user-profile admin-profile admin-switch${isAdminMode ? ' admin-on' : ' admin-off'}`}
                 onClick={() => {
-                  if (location.pathname.startsWith('/admin')) {
+                  if (isAdminMode) {
                     navigate('/');
                   } else {
                     navigate('/admin');
                   }
                 }}
-                aria-label={location.pathname.startsWith('/admin') ? 'Cambiar a modo público' : 'Cambiar a modo admin'}
+                aria-label={isAdminMode ? 'Cambiar a modo público' : 'Cambiar a modo admin'}
               >
-                <span className="user-icon">
-                  {location.pathname.startsWith('/admin') ? '⚡' : '⚡'}
-                </span>
+                <span className="switch-indicator" style={{background: isAdminMode ? '#00bf63' : '#bbb', boxShadow: isAdminMode ? '0 0 12px 2px #00bf63' : 'none'}}></span>
+                <span className="user-icon">⚡</span>
                 <span className="user-name">{adminName}</span>
                 <span className="admin-badge">Admin</span>
-                <span className="switch-indicator"></span>
               </button>
               <button onClick={onLogout} className="btn-logout">
                 <span className="auth-icon">🚪</span>
@@ -112,7 +152,7 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
         <div className={`side-menu ${isMenuOpen ? 'side-menu-open' : ''}`}>
           <div className="side-menu-header admin-header">
             <div className="side-menu-logo">
-              <img src="/Images/reco-logo.png" alt="ReCo" className="side-logo" />
+                <Logo className="side-logo" />
               <div className="user-info">
                 <span className="side-logo-text">⚡ {adminName}</span>
                 <span className="user-role admin-role">Administrador</span>
@@ -214,7 +254,13 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
               </a>
             </li>
             <li className="side-menu-item">
-              <button onClick={() => { onLogout?.(); closeMenu(); }} className="side-menu-link logout-btn">
+              <button
+                onClick={() => {
+                  closeMenu();
+                  setTimeout(() => { onLogout?.(); }, 100);
+                }}
+                className="btn-logout"
+              >
                 <span className="side-menu-icon">🚪</span>
                 Cerrar Sesión
               </button>

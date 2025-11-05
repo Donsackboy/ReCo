@@ -1,0 +1,308 @@
+/* Header de admin en menú lateral */
+/* Removed admin header styles */
+
+
+/* Categorías en menú lateral */
+/* Removed category styles */
+
+
+.category-title {
+  font-size: 0.75rem;
+  color: #7F8C8D;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+@media (max-width: 1100px) {
+  .admin-badge {
+    font-size: 0.6rem;
+    padding: 1px 4px;
+  }
+}
+/* =============== HAMBURGER MENU & SIDE MENU =============== */
+.hamburger-container {
+  display: flex !important;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+.hamburger-btn {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255,255,255,0.9);
+  border: 2px solid #90EE90 !important;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 10px;
+  transition: all 0.4s ease;
+  box-shadow: 0 4px 15px rgba(144,238,144,0.2);
+  outline: none !important;
+  flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
+}
+.hamburger-btn:hover {
+  background: #90EE90 !important;
+  transform: scale(1.05) rotate(5deg);
+  box-shadow: 0 6px 25px rgba(144,238,144,0.4) !important;
+  border-color: #228B22 !important;
+  border: 2px solid #228B22 !important;
+  outline: none !important;
+}
+.hamburger-btn:focus {
+  outline: 2px solid #32CD32 !important;
+  outline-offset: 2px;
+  border-color: #228B22 !important;
+  border: 2px solid #228B22 !important;
+}
+.hamburger-btn:active {
+  background: #228B22 !important;
+  transform: scale(0.98);
+  border: 2px solid #228B22 !important;
+  outline: none !important;
+}
+.hamburger-btn:focus-visible {
+  outline: 2px solid #32CD32 !important;
+  outline-offset: 2px;
+}
+.hamburger-btn::-moz-focus-inner {
+  border: 0 !important;
+}
+.hamburger-line {
+  width: 24px;
+  height: 3px;
+  background: linear-gradient(90deg, #228B22, #90EE90);
+  margin: 2px 0;
+  border-radius: 2px;
+  transition: all 0.4s ease;
+}
+.hamburger-btn:hover .hamburger-line {
+  background: #FFFFFF;
+  transform: scaleX(1.1);
+}
+/* Side menu styles */
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(144,238,144,0.3);
+  z-index: 1001;
+  backdrop-filter: blur(8px);
+}
+
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(144, 238, 144, 0.3);
+  z-index: 1001;
+  backdrop-filter: blur(8px);
+}
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  right: -380px;
+  width: 380px;
+  height: 100vh;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F0FFF0 50%, #E0FFE0 100%);
+  z-index: 1002;
+  transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: -8px 0 40px rgba(144, 238, 144, 0.4);
+  overflow-y: auto;
+  border-left: 3px solid #90EE90;
+}
+
+.side-menu-open {
+  right: 0;
+}
+
+.side-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem;
+  border-bottom: 2px solid rgba(144, 238, 144, 0.3);
+  background: linear-gradient(135deg, #90EE90 0%, #98FB98 100%);
+  position: relative;
+}
+
+.side-menu-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #228B22, transparent);
+}
+
+.side-menu-logo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 15px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  border: 2px solid #228B22;
+}
+
+.side-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid #32CD32;
+  box-shadow: 0 4px 15px rgba(50, 205, 50, 0.3);
+}
+
+.side-logo-text {
+  font-size: 1.8rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #228B22, #32CD32);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #228B22 !important;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(34, 139, 34, 0.2);
+  outline: none !important;
+}
+
+.close-btn:hover {
+  background: #228B22 !important;
+  transform: none;
+  box-shadow: 0 6px 20px rgba(34, 139, 34, 0.3) !important;
+  border-color: #32CD32 !important;
+  border: 2px solid #32CD32 !important;
+  outline: none !important;
+}
+
+.close-btn:focus {
+  outline: 2px solid #32CD32 !important;
+  outline-offset: 2px;
+  border-color: #32CD32 !important;
+  border: 2px solid #32CD32 !important;
+}
+
+.close-btn:active {
+  background: #32CD32 !important;
+  transform: scale(0.95);
+  border: 2px solid #32CD32 !important;
+  outline: none !important;
+}
+
+.close-btn:focus-visible {
+  outline: 2px solid #32CD32 !important;
+  outline-offset: 2px;
+}
+
+.close-btn::-moz-focus-inner {
+  border: 0 !important;
+}
+
+.close-icon {
+  color: #228B22;
+  font-size: 1.6rem;
+  line-height: 1;
+  font-weight: 400;
+  transition: color 0.3s ease;
+}
+
+.close-btn:hover .close-icon {
+  color: #FFFFFF;
+}
+
+.side-menu-items {
+  list-style: none;
+  margin: 0;
+  padding: 2rem 0;
+}
+
+.side-menu-item {
+  margin: 0;
+}
+
+.side-menu-link {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 2rem;
+  text-decoration: none;
+  color: #228B22;
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: all 0.4s ease;
+  border-right: 4px solid transparent;
+  position: relative;
+}
+
+.side-menu-link::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(135deg, #90EE90, #98FB98);
+  transition: width 0.4s ease;
+  z-index: -1;
+}
+
+.side-menu-link:hover {
+  border-right-color: #32CD32;
+  color: #32CD32;
+  padding-right: 2.5rem;
+  background: rgba(144, 238, 144, 0.1);
+  transform: translateX(-5px);
+}
+
+.side-menu-link:hover::before {
+  width: 100%;
+}
+
+.side-menu-link:hover {
+  color: #FFFFFF;
+}
+
+.side-menu-icon {
+  font-size: 1.5rem;
+  width: 30px;
+  text-align: center;
+  transition: transform 0.3s ease;
+  display: none;
+}
+
+/* Mostrar solo el icono de patita en Animales */
+/* Removed specific styles for animals */
+
+
+.side-menu-link:hover .side-menu-icon {
+  transform: scale(1.3) rotate(10deg);
+}
+
+.side-menu-separator {
+  border: none;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(144, 238, 144, 0.5), transparent);
+  margin: 1.5rem 2rem;
+  border-radius: 2px;
+}
+
+/* Estilos específicos para botones de autenticación en el menú lateral */
+
+/* Removed authentication button styles */

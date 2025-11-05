@@ -1,3 +1,241 @@
+
+# --- IMPORTS ---
+from django.db import models
+from django.conf import settings
+from django.contrib.auth.models import AbstractUser
+
+class Refugio(models.Model):
+    id_refugio = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100)
+    direccion = models.CharField(max_length=150, blank=True, null=True)
+    correo_contacto = models.EmailField(max_length=100, blank=True, null=True)
+    telefono = models.CharField(max_length=20, blank=True, null=True)
+    descripcion = models.TextField(blank=True, null=True)
+    latitud = models.DecimalField(max_digits=10, decimal_places=8, blank=True, null=True)
+    longitud = models.DecimalField(max_digits=11, decimal_places=8, blank=True, null=True)
+    direccion_completa = models.CharField(max_length=255, blank=True, null=True)
+    comuna = models.CharField(max_length=100, blank=True, null=True)
+    REGIONES_CHILE = [
+        ("Arica y Parinacota", "Arica y Parinacota"),
+        ("Tarapacá", "Tarapacá"),
+        ("Antofagasta", "Antofagasta"),
+        ("Atacama", "Atacama"),
+        ("Coquimbo", "Coquimbo"),
+        ("Valparaíso", "Valparaíso"),
+        ("Metropolitana", "Metropolitana"),
+        ("O'Higgins", "O'Higgins"),
+        ("Maule", "Maule"),
+        ("Ñuble", "Ñuble"),
+        ("Biobío", "Biobío"),
+        ("La Araucanía", "La Araucanía"),
+        ("Los Ríos", "Los Ríos"),
+        ("Los Lagos", "Los Lagos"),
+        ("Aysén", "Aysén"),
+        ("Magallanes", "Magallanes")
+    ]
+    region = models.CharField(max_length=80, choices=REGIONES_CHILE, blank=True, null=True)
+    logo = models.ImageField(upload_to='refugios_logos/', blank=True, null=True)
+    sitio_web = models.URLField(blank=True, null=True)
+    redes_sociales = models.JSONField(default=list, blank=True, help_text="Lista de enlaces y redes sociales")
+    horario_atencion = models.CharField(max_length=100, blank=True, null=True)
+    servicios_ofrecidos = models.TextField(blank=True, null=True)
+    ano_fundacion = models.CharField(max_length=10, blank=True, null=True)
+    personalidad_juridica = models.BooleanField(default=False)
+    estado = models.CharField(max_length=20, default='activo')
+
+    def __str__(self):
+        return self.nombre
+
+# --- Solicitud de Adopción ---
+class SolicitudAdopcion(models.Model):
+    ESTADO_OPCIONES = [
+        ('pendiente', 'Pendiente'),
+        ('aceptada', 'Aceptada'),
+        ('rechazada', 'Rechazada'),
+    ]
+
+    id_solicitud = models.AutoField(primary_key=True)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='solicitudes_adopcion')
+    animal = models.ForeignKey('Animal', on_delete=models.CASCADE, related_name='solicitudes_adopcion')
+    nombre = models.CharField(max_length=120)
+    direccion = models.CharField(max_length=200)
+    fecha_nacimiento = models.DateField()
+    telefono = models.CharField(max_length=30)
+    email = models.EmailField()
+    rol_familia = models.CharField(max_length=100)
+    respuestas = models.JSONField(default=list, blank=True, help_text="Respuestas del formulario de adopción")
+    estado = models.CharField(max_length=20, choices=ESTADO_OPCIONES, default='pendiente')
+    fecha_solicitud = models.DateTimeField(auto_now_add=True)
+    anotaciones = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"SolicitudAdopcion {self.id_solicitud} - {self.usuario} - {self.animal}" 
+
+    class Meta:
+        db_table = 'solicitudes_adopcion'
+        verbose_name_plural = 'Solicitudes de Adopción'
+
+class Animal(models.Model):
+
+    class Meta:
+        db_table = 'alergia_condicion'
+        verbose_name_plural = 'Alergias y Condiciones Crónicas'
+    class Estado(models.TextChoices):
+        DISPONIBLE = "disponible", "Disponible"
+        ADOPTADO = "adoptado", "Adoptado"
+        HOGAR_TEMPORAL = "en_hogar_temporal", "En hogar temporal"
+        BUSCANDO_NUEVO_HOGAR_TEMPORAL = "buscando_nuevo_hogar_temporal", "Buscando nuevo hogar temporal"
+
+    class Sexo(models.TextChoices):
+        MACHO = "Macho", "Macho"
+        HEMBRA = "Hembra", "Hembra"
+
+    class Tamano(models.TextChoices):
+        PEQUENO = "Pequeño", "Pequeño"
+        PEQUENO_GRANDE = "Pequeño-Grande", "Pequeño-Grande"
+        MEDIA = "Media", "Media"
+        MEDIANO = "Mediano", "Mediano"
+        MEDIANO_GRANDE = "Mediano-Grande", "Mediano-Grande"
+        GRANDE = "Grande", "Grande"
+        GIGANTE = "Gigante", "Gigante"
+
+    id_animal = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100)
+    especie = models.CharField(max_length=50)
+    edad = models.IntegerField(blank=True, null=True)
+    sexo = models.CharField(max_length=10, choices=Sexo.choices, blank=True, null=True)
+    tamano = models.CharField(max_length=20, choices=Tamano.choices, blank=True, null=True)
+    estado = models.CharField(max_length=30, choices=Estado.choices, default=Estado.DISPONIBLE)
+    refugio = models.ForeignKey(Refugio, on_delete=models.CASCADE, db_column="id_refugio", related_name="animales")
+    busca_hogar_temporal = models.BooleanField(default=False)
+    motivo_hogar_temporal = models.TextField(blank=True, null=True, help_text="Descripción si busca hogar temporal")
+    vacunas = models.JSONField(default=list, blank=True, help_text="Lista de vacunas del animal")
+    motivo_cambio_hogar_temporal = models.TextField(blank=True, null=True, help_text="Motivo por el que el animal necesita cambiar de hogar temporal")
+    duracion_estimada_hogar = models.CharField(max_length=50, blank=True, null=True)
+    fotos = models.JSONField(default=list, blank=True, help_text="Lista de hasta 3 URLs de fotos del animal")
+    fecha_ingreso = models.DateField(blank=True, null=True, help_text="Fecha de ingreso al refugio")
+    fecha_cumpleanos = models.DateField(blank=True, null=True, help_text="Fecha de cumpleaños del animal (opcional)")
+    UBICACION_CHOICES = [
+        ("refugio", "Refugio"),
+        ("hogar_temporal", "Hogar temporal"),
+    ]
+    ubicacion_actual = models.CharField(max_length=20, choices=UBICACION_CHOICES, default="refugio", help_text="Ubicación actual del animal")
+
+    def __str__(self):
+        return f"{self.nombre} ({self.especie})"
+
+
+# --- Modelo Cirugia ---
+class Cirugia(models.Model):
+    PAGO_ESTADO_OPCIONES = [
+        ('pagada', 'Pagada'),
+        ('no_pagada', 'No pagada'),
+        ('parcial', 'Parcialmente pagada'),
+    ]
+
+    id_cirugia = models.AutoField(primary_key=True)
+    id_animal = models.ForeignKey('Animal', on_delete=models.CASCADE, related_name='cirugias')
+    tipo = models.CharField(max_length=100)
+    otro_nombre = models.CharField(max_length=100, blank=True, null=True)
+    motivo = models.TextField(blank=True, null=True)
+    fecha = models.DateField()
+    costo = models.DecimalField(max_digits=10, decimal_places=2)
+    veterinario = models.CharField(max_length=100, blank=True, null=True)
+    observaciones = models.TextField(blank=True, null=True)
+    pago_estado = models.CharField(max_length=15, choices=PAGO_ESTADO_OPCIONES, default='no_pagada')
+    monto_pagado = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    adjunto = models.FileField(upload_to='cirugias_adjuntos/', blank=True, null=True)
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Cirugía {self.tipo} ({self.fecha}) - Animal {self.id_animal_id}"
+
+    class Meta:
+        db_table = 'cirugias'
+        verbose_name_plural = 'Cirugías'
+    # --- Modelo Tratamiento ---
+    # ...existing code...
+
+# --- Modelo Tratamiento ---
+class Tratamiento(models.Model):
+    ESTADO_OPCIONES = [
+        ('en_curso', 'En curso'),
+        ('finalizado', 'Finalizado'),
+        ('suspendido', 'Suspendido'),
+        ('pendiente', 'Pendiente'),
+    ]
+
+    id_tratamiento = models.AutoField(primary_key=True)
+    id_animal = models.ForeignKey('Animal', on_delete=models.CASCADE, related_name='tratamientos')
+    tipo = models.CharField(max_length=100)
+    nombre = models.CharField(max_length=100)
+    motivo = models.TextField(blank=True, null=True)
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateField(blank=True, null=True)
+    duracion_dias = models.IntegerField(blank=True, null=True)
+    dosis = models.CharField(max_length=100)
+    via_administracion = models.CharField(max_length=50)
+    veterinario = models.CharField(max_length=100, blank=True, null=True)
+    estado = models.CharField(max_length=15, choices=ESTADO_OPCIONES, default='en_curso')
+    costo = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    ESTADO_PAGO_OPCIONES = [
+        ('no_pagado', 'No pagado'),
+        ('parcialmente_pagado', 'Parcialmente pagado'),
+        ('pagado', 'Pagado'),
+    ]
+    estado_pago = models.CharField(max_length=22, choices=ESTADO_PAGO_OPCIONES, default='no_pagado')
+    monto_pagado = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    observaciones = models.TextField(blank=True, null=True)
+    adjunto = models.FileField(upload_to='tratamientos_adjuntos/', blank=True, null=True)
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Tratamiento {self.nombre} ({self.fecha_inicio}) - Animal {self.id_animal_id}"
+
+    class Meta:
+        db_table = 'tratamientos'
+        verbose_name_plural = 'Tratamientos'
+# --- Postulación de Refugio ---
+class PostulacionRefugio(models.Model):
+    nombre = models.CharField(max_length=120)
+    persona_contacto = models.CharField(max_length=120)
+    email = models.EmailField()
+    telefono = models.CharField(max_length=30)
+    direccion = models.CharField(max_length=200)
+    comuna = models.CharField(max_length=80)
+    REGIONES_CHILE = [
+        ("Arica y Parinacota", "Arica y Parinacota"),
+        ("Tarapacá", "Tarapacá"),
+        ("Antofagasta", "Antofagasta"),
+        ("Atacama", "Atacama"),
+        ("Coquimbo", "Coquimbo"),
+        ("Valparaíso", "Valparaíso"),
+        ("Metropolitana", "Metropolitana"),
+        ("O'Higgins", "O'Higgins"),
+        ("Maule", "Maule"),
+        ("Ñuble", "Ñuble"),
+        ("Biobío", "Biobío"),
+        ("La Araucanía", "La Araucanía"),
+        ("Los Ríos", "Los Ríos"),
+        ("Los Lagos", "Los Lagos"),
+        ("Aysén", "Aysén"),
+        ("Magallanes", "Magallanes")
+    ]
+    region = models.CharField(max_length=80, choices=REGIONES_CHILE)
+    cantidad_animales = models.PositiveIntegerField(default=0)
+    tipos_animales = models.CharField(max_length=120)  # Ej: "Perros, Gatos, Otros"
+    descripcion = models.TextField()
+    ano_fundacion = models.CharField(max_length=10, blank=True)
+    sitios_web = models.JSONField(default=list, blank=True, help_text="Lista de enlaces y redes sociales del refugio")
+    personalidad_juridica = models.BooleanField(default=False)
+    organizaciones_previas = models.TextField(blank=True)
+    necesidades_actuales = models.TextField(blank=True)
+    estado = models.CharField(max_length=20, default='pendiente')  # pendiente, aceptada, rechazada
+    fecha_postulacion = models.DateTimeField(auto_now_add=True)
+    observaciones = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.nombre} ({self.comuna}, {self.region})"
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -41,51 +279,19 @@ class Usuario(AbstractUser):
     def __str__(self):
         return f"{self.username} ({self.tipo_usuario})"
 
-class Refugio(models.Model):
-    id_refugio = models.AutoField(primary_key=True)
+# Modelo para alergias y condiciones crónicas
+class AlergiaCondicion(models.Model):
+    TIPO_OPCIONES = [
+        ('alergia', 'Alergia'),
+        ('condicion_cronica', 'Condición Crónica'),
+    ]
+
+    id = models.AutoField(primary_key=True)
+    animal = models.ForeignKey('Animal', on_delete=models.CASCADE, related_name='alergias_condiciones')
+    tipo = models.CharField(max_length=20, choices=TIPO_OPCIONES)
     nombre = models.CharField(max_length=100)
-    direccion = models.CharField(max_length=150, blank=True, null=True)
-    correo_contacto = models.EmailField(max_length=100, blank=True, null=True)
-    telefono = models.CharField(max_length=20, blank=True, null=True)
     descripcion = models.TextField(blank=True, null=True)
-    latitud = models.DecimalField(max_digits=10, decimal_places=8, blank=True, null=True)
-    longitud = models.DecimalField(max_digits=11, decimal_places=8, blank=True, null=True)
-    direccion_completa = models.CharField(max_length=255, blank=True, null=True)
-    comuna = models.CharField(max_length=100, blank=True, null=True)
-    region = models.CharField(max_length=100, blank=True, null=True)
-
-    # Datos para transferencias/donaciones
-    banco = models.CharField(max_length=100, blank=True, null=True)
-    tipo_cuenta = models.CharField(max_length=50, blank=True, null=True)
-    numero_cuenta = models.CharField(max_length=50, blank=True, null=True)
-    nombre_titular = models.CharField(max_length=100, blank=True, null=True)
-    rut_titular = models.CharField(max_length=12, blank=True, null=True)
-    correo_donacion = models.EmailField(max_length=100, blank=True, null=True)
-
-    def __str__(self):
-        return self.nombre
-
-class Animal(models.Model):
-    class Estado(models.TextChoices):
-        DISPONIBLE = "disponible", "Disponible"
-        ADOPTADO = "adoptado", "Adoptado"
-        HOGAR_TEMPORAL = "en_hogar_temporal", "En hogar temporal"
-        BUSCANDO_NUEVO_HOGAR_TEMPORAL = "buscando_nuevo_hogar_temporal", "Buscando nuevo hogar temporal"
-
-    id_animal = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=100)
-    especie = models.CharField(max_length=50)
-    edad = models.IntegerField(blank=True, null=True)
-    estado = models.CharField(max_length=30, choices=Estado.choices, default=Estado.DISPONIBLE)
-    refugio = models.ForeignKey(Refugio, on_delete=models.CASCADE, db_column="id_refugio", related_name="animales")
-    busca_hogar_temporal = models.BooleanField(default=False)
-    motivo_hogar_temporal = models.TextField(blank=True, null=True)
-    motivo_cambio_hogar_temporal = models.TextField(blank=True, null=True, help_text="Motivo por el que el animal necesita cambiar de hogar temporal")
-    duracion_estimada_hogar = models.CharField(max_length=50, blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.nombre} ({self.especie})"
-    
+    fecha_diagnostico = models.DateField(blank=True, null=True)
 class HogaresTemporales(models.Model):
     ESTADO_OPCIONES = [
         ('en_proceso', 'En Proceso'),

@@ -29,6 +29,11 @@ env = environ.Env(
     DEBUG=(bool, True)  # valor por defecto si no hay variable DEBUG
 )
 
+# Leer archivo .env si existe
+env_file = os.path.join(BASE_DIR, '..', '.env')
+if os.path.exists(env_file):
+    environ.Env.read_env(env_file)
+
 # -----------------------------------
 # SECURITY / DEBUG
 # -----------------------------------
@@ -64,8 +69,10 @@ REST_FRAMEWORK = {
 }
 
 
-
-CORS_ALLOWED_ORIGINS = env.list('DJANGO_CORS_ALLOWED_ORIGINS')
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Frontend Vite/React
+]
+CORS_ALLOW_ALL_ORIGINS = True  # Solo para pruebas, no usar en producción
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -162,3 +169,32 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CUSTOM USER MODEL
 # -----------------------------------
 AUTH_USER_MODEL = 'registry.Usuario'
+
+# -----------------------------------
+# LOGGING
+# -----------------------------------
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG' if DEBUG else 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': True,
+        },
+        'registry': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}

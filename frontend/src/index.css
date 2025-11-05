@@ -26,11 +26,17 @@ body {
   z-index: 0; /* Asegurar que el body esté en un nivel bajo */
 }
 
+.app-main-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 #root {
   min-height: 100vh;
   width: 100%;
-  position: relative;
-  z-index: 0; /* Asegurar que todo el contenido principal esté en un nivel bajo */
+  display: flex;
+  flex-direction: column;
 }
 
 a {
@@ -86,9 +92,6 @@ button:focus-visible {
 
 .app {
   text-align: center;
-  padding: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
 }
 
 .app h1 {

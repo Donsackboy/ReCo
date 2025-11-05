@@ -2,25 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { animales } from '../Animales/animalesData';
 
-const regiones = [
-  'Arica y Parinacota',
-  'Tarapacá',
-  'Antofagasta',
-  'Atacama',
-  'Coquimbo',
-  'Valparaíso',
-  'Metropolitana',
-  'O’Higgins',
-  'Maule',
-  'Ñuble',
-  'Biobío',
-  'Araucanía',
-  'Los Ríos',
-  'Los Lagos',
-  'Aysén',
-  'Magallanes',
-];
-const regionesConTodas = ['Todas', ...regiones];
+import { regionesChile, regionesComunasChile as comunasPorRegion } from '../../../../utils/regionesComunasChile';
+const regionesConTodas = ['Todas', ...regionesChile];
 
 const especies = ['Perro', 'Gato', 'Conejo', 'Ave', 'Otro'];
 

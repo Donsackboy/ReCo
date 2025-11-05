@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 interface AnimalCardProps {
   animal: {
@@ -41,16 +42,16 @@ const AnimalCard: React.FC<AnimalCardProps> = ({ animal }) => (
   {animal.diasEnRefugio} días en el refugio
     </div>
     <img /*Imagen animal*/
-      src={animal.imagenes[0]} 
-      alt={animal.nombre + ' portada'} 
-      style={{  width: '170px', 
-                top: '0px', 
-                height: '200px', 
-                objectFit: 'cover', 
-                borderRadius: '14px', 
-                marginTop: '32px', 
-                marginBottom: '0px', 
-                boxShadow: '0 2px 8px rgba(44, 151, 69, 0.57)' }} />
+      src={animal.imagenes && animal.imagenes.length > 0 && animal.imagenes[0] ? animal.imagenes[0] : '/Images/animales/placeholder.png'}
+      alt={animal.nombre + ' portada'}
+  style={{  width: '260px', 
+        top: '0px', 
+        height: '300px', 
+        objectFit: 'cover', 
+        borderRadius: '18px', 
+        marginTop: '16px', 
+        marginBottom: '0px', 
+        boxShadow: '0 4px 18px rgba(44, 151, 69, 0.57)' }} />
     <h3 style={{  fontSize: '1.2rem', 
                   color: '#3e1452ff', 
                   margin: '8px 0 0px' }}>{animal.nombre}</h3>
@@ -65,37 +66,58 @@ const AnimalCard: React.FC<AnimalCardProps> = ({ animal }) => (
                   WebkitLineClamp: 3, 
                   WebkitBoxOrient: 'vertical', 
                   overflow: 'hidden' }}>{animal.resena}</div>
-        <a 
-          href={`/animales/${animal.id}`} 
-          style={{  marginTop: 'auto', 
-                    background: '#43ea6b', 
-                    color: '#fff', 
-                    border: 'none', 
-                    borderRadius: '8px', 
-                    padding: '8px 18px', 
-                    fontWeight: 600, 
-                    cursor: 'pointer', 
-                    textDecoration: 'none', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center', 
-                    width: '40%', 
-                    textAlign: 'center' }}>
-          <span style={{ width: '100%', textAlign: 'center', display: 'block' }}>Ver más</span>
-          <svg 
-            width="16" 
-            height="16" 
-            viewBox="0 0 22 22" 
-            fill="none" 
-            xmlns="http://www.w3.org/2000/svg">
-            <path 
-              d="M9 6l5 5-5 5" 
-              stroke="#43ea6b" 
-              strokeWidth="2.5" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"/>
-          </svg>
-        </a>
+        {animal.id !== undefined && animal.id !== null ? (
+          <Link 
+            to={`/animales/${animal.id}`}
+            style={{  marginTop: 'auto', 
+                      background: '#43ea6b', 
+                      color: '#fff', 
+                      border: 'none', 
+                      borderRadius: '8px', 
+                      padding: '8px 18px', 
+                      fontWeight: 600, 
+                      cursor: 'pointer', 
+                      textDecoration: 'none', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      width: '40%', 
+                      textAlign: 'center' }}>
+            <span style={{ width: '100%', textAlign: 'center', display: 'block', whiteSpace: 'nowrap' }}>Ver perfil</span>
+            <svg 
+              width="16" 
+              height="16" 
+              viewBox="0 0 22 22" 
+              fill="none" 
+              xmlns="http://www.w3.org/2000/svg">
+              <path 
+                d="M9 6l5 5-5 5" 
+                stroke="#43ea6b" 
+                strokeWidth="2.5" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"/>
+            </svg>
+          </Link>
+        ) : (
+          <button 
+            disabled
+            style={{  marginTop: 'auto', 
+                      background: '#ccc', 
+                      color: '#fff', 
+                      border: 'none', 
+                      borderRadius: '8px', 
+                      padding: '8px 18px', 
+                      fontWeight: 600, 
+                      cursor: 'not-allowed', 
+                      textDecoration: 'none', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      width: '40%', 
+                      textAlign: 'center' }}>
+            <span style={{ width: '100%', textAlign: 'center', display: 'block' }}>Sin perfil</span>
+          </button>
+        )}
   </div>
 );
 
