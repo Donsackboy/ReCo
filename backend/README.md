@@ -35,4 +35,11 @@ TODO: me da paja
 - **Admin Django**: http://localhost:8000/admin
 
 
-# DANJO
+# DANJO y Tablas de mierda
+Para aplciar cambios de los modelos usar esto, se añaden los cambios al registry
+
+sudo docker compose exec backend python manage.py makemigrations registry
+
+Luego se aplican los cambios migrando
+
+sudo docker compose exec backend python manage.py migrate

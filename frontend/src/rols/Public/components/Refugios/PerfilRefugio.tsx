@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import AnimalCard from '../Animales/AnimalCard';
+import './PerfilRefugio.css';
 
 // Animal type is now imported from AnimalCard props
 
@@ -17,7 +18,13 @@ interface Refugio {
   region: string;
   imagen: string;
   eventos: Evento[];
-   animales: any[]; // Updated to use any[] since Animal interface is removed
+  animales: any[];
+  banco?: string;
+  tipo_cuenta?: string;
+  numero_cuenta?: string;
+  nombre_titular?: string;
+  rut_titular?: string;
+  correo_donacion?: string;
 }
 
 interface PerfilRefugioProps {
@@ -25,35 +32,67 @@ interface PerfilRefugioProps {
 }
 
 const PerfilRefugio: React.FC<PerfilRefugioProps> = ({ refugio }) => {
+  const [showModal, setShowModal] = useState(false);
+  const datosDonacion = [
+    { label: 'Banco', value: refugio.banco },
+    { label: 'Tipo de cuenta', value: refugio.tipo_cuenta },
+    { label: 'Número de cuenta', value: refugio.numero_cuenta },
+    { label: 'Nombre titular', value: refugio.nombre_titular },
+    { label: 'RUT titular', value: refugio.rut_titular },
+    { label: 'Correo para donación', value: refugio.correo_donacion },
+  ];
+  const tieneDatosDonacion = datosDonacion.some(d => d.value);
+
   return (
-    <div style={{ maxWidth: '1500px', margin: '40px auto', background: '#f0fff4', borderRadius: '24px', boxShadow: '0 4px 18px #43ea6b22', padding: '40px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '32px', marginBottom: '32px' }}>
-        <img src={refugio.imagen} alt={refugio.nombre} style={{ width: '120px', height: '120px', borderRadius: '18px', objectFit: 'cover', boxShadow: '0 2px 8px #43ea6b22' }} />
-        <div>
-          <h2 style={{ color: '#145214', fontSize: '2rem', marginBottom: '8px' }}>{refugio.nombre}</h2>
-          <div style={{ color: '#228B22', fontSize: '1.08rem', marginBottom: '8px' }}>{refugio.region}</div>
-          <p style={{ color: '#145214', fontSize: '1.08rem', marginBottom: '8px' }}>{refugio.descripcion}</p>
-          <button style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22', marginTop: '8px' }}>
-            Donar al refugio
-          </button>
+    <div className="perfil-refugio-container">
+      <div className="perfil-refugio-header">
+        <img className="perfil-refugio-img" src={refugio.imagen} alt={refugio.nombre} />
+        <div className="perfil-refugio-info">
+          <h2 className="perfil-refugio-nombre">{refugio.nombre}</h2>
+          <div className="perfil-refugi o-region">{refugio.region}</div>
+          <p className="perfil-refugio-descripcion">{refugio.descripcion}</p>
+          <button className="perfil-refugio-donar" onClick={() => setShowModal(true)}>Donar al refugio</button>
         </div>
       </div>
-      <h3 style={{ color: '#145214', marginBottom: '10px' }}>Eventos activos</h3>
-      <ul style={{ color: '#228B22', fontSize: '1.08rem', marginBottom: '18px' }}>
+      {showModal && (
+        <div className="perfil-refugio-modal-bg" onClick={() => setShowModal(false)}>
+          <div className="perfil-refugio-modal" onClick={e => e.stopPropagation()}>
+            <h3 className="perfil-refugio-modal-titulo">Datos para donar por transferencia</h3>
+            {tieneDatosDonacion ? (
+              <ul className="perfil-refugio-modal-lista">
+                {datosDonacion.map((dato, idx) => (
+                  dato.value ? (
+                    <li key={idx} className="perfil-refugio-modal-item">
+                      <strong>{dato.label}:</strong> {dato.value}
+                    </li>
+                  ) : null
+                ))}
+              </ul>
+            ) : (
+              <div className="perfil-refugio-modal-placeholder" style={{ color: '#888', fontSize: '1.08rem', marginBottom: '16px', textAlign: 'center' }}>
+                El refugio aún no ha ingresado sus datos para donaciones por transferencia.
+              </div>
+            )}
+            <button className="perfil-refugio-modal-cerrar" onClick={() => setShowModal(false)}>Cerrar</button>
+          </div>
+        </div>
+      )}
+      <h3 className="perfil-refugio-eventos-titulo">Eventos activos</h3>
+      <ul className="perfil-refugio-eventos-lista">
         {(refugio.eventos ?? []).map(ev => (
           <li key={ev.id}>{ev.nombre} - {ev.fecha}</li>
         ))}
       </ul>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-        <h3 style={{ color: '#145214', marginBottom: 0 }}>Animales del refugio</h3>
+      <div className="perfil-refugio-animales-header">
+        <h3 className="perfil-refugio-animales-titulo">Animales del refugio</h3>
         <Link
           to={`/animales?refugio=${encodeURIComponent(refugio.nombre)}`}
-          style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '8px 18px', fontWeight: 700, fontSize: '1rem', textDecoration: 'none', boxShadow: '0 2px 8px #43ea6b22' }}
+          className="perfil-refugio-ver-todos"
         >
           Ver todos
         </Link>
       </div>
-      <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', marginBottom: '18px' }}>
+      <div className="perfil-refugio-animales-lista">
         {(refugio.animales ?? []).slice(0, 10).map(animal => (
           <AnimalCard key={animal.id} animal={{
             id: animal.id,

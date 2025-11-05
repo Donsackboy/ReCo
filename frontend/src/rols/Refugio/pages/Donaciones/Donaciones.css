@@ -1,0 +1,50 @@
+.donaciones-container {
+  max-width: 600px;
+  margin: 80px auto 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  padding: 32px 24px;
+  position: relative;
+  z-index: 1;
+}
+.donaciones-container h1 {
+  margin-bottom: 24px;
+  font-size: 2rem;
+  text-align: center;
+}
+.donaciones-container h2 {
+  margin-top: 24px;
+  font-size: 1.2rem;
+}
+.donaciones-container ul {
+  margin-bottom: 16px;
+}
+.donaciones-container button {
+  margin-top: 12px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  background: #4caf50;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 500;
+}
+.donaciones-container button[type="button"] {
+  background: #ccc;
+  color: #333;
+}
+.donaciones-container form {
+  margin-top: 16px;
+}
+.donaciones-container input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+.donaciones-container p {
+  margin-top: 8px;
+}
