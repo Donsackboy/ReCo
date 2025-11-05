@@ -32,9 +32,34 @@ class RefugioSerializer(serializers.ModelSerializer):
     region = serializers.ChoiceField(choices=[
         "Arica y Parinacota", "Tarapacá", "Antofagasta", "Atacama", "Coquimbo", "Valparaíso", "Metropolitana", "O'Higgins", "Maule", "Ñuble", "Biobío", "La Araucanía", "Los Ríos", "Los Lagos", "Aysén", "Magallanes"
     ], required=False, allow_null=True)
+    logo = serializers.SerializerMethodField()
+
+    def get_logo(self, obj):
+        if obj.logo:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.logo.url)
+            return obj.logo.url
+        return None
+    usuario = serializers.SerializerMethodField()
+
+    def get_usuario(self, obj):
+        # Buscar el usuario asociado al refugio
+        usuario = getattr(obj, 'usuario', None)
+        if usuario:
+            return {
+                'id': usuario.id,
+                'username': usuario.username,
+                'email': usuario.email,
+                'telefono': usuario.telefono,
+                'tipo_usuario': usuario.tipo_usuario,
+            }
+        return None
+
     class Meta:
         model = Refugio
         fields = '__all__'
+        extra_fields = ['usuario']
 
 class UserSerializer(serializers.ModelSerializer):
     refugio = RefugioSerializer(read_only=True)

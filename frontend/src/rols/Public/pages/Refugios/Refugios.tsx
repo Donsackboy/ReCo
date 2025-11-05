@@ -25,28 +25,34 @@ const Refugios: React.FC = () => {
   const [region, setRegion] = useState('');
   const [refugios, setRefugios] = useState<any[]>([]);
   const [animales, setAnimales] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('token');
-        let refugiosUrl = import.meta.env.VITE_API_BASE + '/public/refugios/';
-        let animalesUrl = import.meta.env.VITE_API_BASE + '/public/animales/';
-        let options: RequestInit = {};
-        if (token) {
-          refugiosUrl = import.meta.env.VITE_API_BASE + '/admin/refugios/';
-          animalesUrl = import.meta.env.VITE_API_BASE + '/animales/';
-          options = { headers: { 'Authorization': `Token ${token}` } };
-        }
+        // SIEMPRE usar endpoints públicos en esta página
+        const refugiosUrl = import.meta.env.VITE_API_BASE + '/public/refugios/';
+        const animalesUrl = import.meta.env.VITE_API_BASE + '/public/animales/';
+        const options: RequestInit = {};
         const refugiosRes = await fetch(refugiosUrl, options);
+        if (refugiosRes.status === 403) {
+          setError('No tienes permisos para ver los refugios.');
+          setRefugios([]);
+          return;
+        }
         const refugiosData = await refugiosRes.json();
-        setRefugios(refugiosData);
+        if (!Array.isArray(refugiosData)) {
+          setError('Error al cargar los refugios.');
+          setRefugios([]);
+        } else {
+          setRefugios(refugiosData);
+        }
         const animalesRes = await fetch(animalesUrl, options);
         let animalesData = await animalesRes.json();
-        // Mapear id_animal a id para compatibilidad con componentes
-        animalesData = animalesData.map((a: any) => ({ ...a, id: a.id_animal }));
+        animalesData = Array.isArray(animalesData) ? animalesData.map((a: any) => ({ ...a, id: a.id_animal })) : [];
         setAnimales(animalesData);
       } catch (err) {
+        setError('Error de conexión al cargar los refugios.');
         setRefugios([]);
         setAnimales([]);
       }
@@ -76,6 +82,11 @@ const Refugios: React.FC = () => {
 
   return (
     <div className="refugios-container">
+      {error && (
+        <div style={{ color: 'red', background: '#fff0f0', borderRadius: '12px', padding: '16px', marginBottom: '24px', textAlign: 'center', fontWeight: 600 }}>
+          {error}
+        </div>
+      )}
       {/* Filtros de búsqueda y región */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', maxWidth: '350px', marginBottom: '8px', background: '#eaffea', borderRadius: '18px', boxShadow: '0 2px 12px #43ea6b22', padding: '18px 18px 12px 18px' }}>
         <div style={{ width: '100%', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>

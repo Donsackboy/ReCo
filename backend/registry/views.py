@@ -1,8 +1,10 @@
-
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Endpoint para obtener el historial de solicitudes de adopción aceptadas y rechazadas asociadas al refugio logeado
 @api_view(['GET'])
@@ -425,3 +427,58 @@ class TratamientoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView
     queryset = Tratamiento.objects.all()
     serializer_class = TratamientoSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+@api_view(['GET', 'PATCH', 'PUT'])
+@permission_classes([IsAuthenticated])
+def refugio_me(request):
+    user = request.user
+    debug_info = {
+        'user_id': getattr(user, 'id', None),
+        'user_email': getattr(user, 'email', None),
+        'has_refugio': hasattr(user, 'refugio'),
+        'refugio_id': getattr(getattr(user, 'refugio', None), 'id_refugio', None)
+    }
+    if not hasattr(user, 'refugio') or not user.refugio:
+        debug_info['error'] = 'El usuario no tiene refugio asociado.'
+        return Response(debug_info, status=status.HTTP_404_NOT_FOUND)
+    refugio = user.refugio
+    if request.method == 'GET':
+        try:
+            serializer = RefugioSerializer(refugio, context={'request': request})
+            debug_info['serializer_data'] = serializer.data
+            return Response(serializer.data)
+        except Exception as e:
+            debug_info['error'] = str(e)
+            return Response(debug_info, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    elif request.method in ['PATCH', 'PUT']:
+        partial = request.method == 'PATCH'
+        serializer = RefugioSerializer(refugio, data=request.data, partial=partial, context={'request': request})
+        user = request.user
+        # Actualizar datos del usuario asociado si se envían
+        usuario_fields = ['usuario_nombre', 'usuario_email', 'usuario_telefono']
+        updated = False
+        for field in usuario_fields:
+            value = request.data.get(field)
+            if value is not None:
+                if field == 'usuario_nombre':
+                    user.username = value
+                elif field == 'usuario_email':
+                    user.email = value
+                elif field == 'usuario_telefono':
+                    user.telefono = value
+                updated = True
+        # Cambiar contraseña si se envía y coincide la confirmación
+        password = request.data.get('usuario_password')
+        password_confirm = request.data.get('usuario_password_confirm')
+        if password:
+            if password == password_confirm:
+                user.set_password(password)
+                updated = True
+            else:
+                return Response({'error': 'Las contraseñas no coinciden.'}, status=status.HTTP_400_BAD_REQUEST)
+        if serializer.is_valid():
+            serializer.save()
+            if updated:
+                user.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -16,6 +16,7 @@ const Animales = () => {
   const [search, setSearch] = useState('');
 
   const [animales, setAnimales] = useState<any[]>([]);
+  const [refugios, setRefugios] = useState<any[]>([]);
   // Si hay un filtro de refugio en la URL, aplicarlo automáticamente al cargar y obtener animales reales
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -23,22 +24,25 @@ const Animales = () => {
     if (refugioParam) {
       setFiltros(f => ({ ...f, refugio: refugioParam }));
     }
-    async function fetchAnimales() {
+    async function fetchAnimalesYRefugios() {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_BASE}/public/animales/`);
-        let data = await res.json();
-        // Mapear id_animal a id y fotos a imagenes para compatibilidad
-        data = data.map((a: any) => ({
+        const resAnimales = await fetch(`${import.meta.env.VITE_API_BASE}/public/animales/`);
+        let dataAnimales = await resAnimales.json();
+        dataAnimales = dataAnimales.map((a: any) => ({
           ...a,
           id: a.id_animal,
           imagenes: a.imagenes || a.fotos || []
         }));
-        setAnimales(data);
+        setAnimales(dataAnimales);
+        const resRefugios = await fetch(`${import.meta.env.VITE_API_BASE}/public/refugios/`);
+        let dataRefugios = await resRefugios.json();
+        setRefugios(Array.isArray(dataRefugios) ? dataRefugios : []);
       } catch {
         setAnimales([]);
+        setRefugios([]);
       }
     }
-    fetchAnimales();
+    fetchAnimalesYRefugios();
   }, [location.search]);
 
   // Filtrado de animales
@@ -102,8 +106,9 @@ const Animales = () => {
           <label style={{ fontWeight: 600, color: '#145214', marginBottom: '2px' }} htmlFor="filtro-refugio">Refugio</label>
           <select id="filtro-refugio" value={filtros.refugio} onChange={e => setFiltros({ ...filtros, refugio: e.target.value })} style={{ width: '100%', padding: '7px 10px', borderRadius: '8px', border: '1.5px solid #43ea6b', background: '#fff', fontSize: '1rem' }}>
             <option value="">Todos</option>
-            <option value="Refugio Esperanza">Refugio Esperanza</option>
-            <option value="Refugio Patitas">Refugio Patitas</option>
+            {refugios.map(ref => (
+              <option key={ref.id_refugio} value={ref.id_refugio}>{ref.nombre}</option>
+            ))}
           </select>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>

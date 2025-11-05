@@ -33,4 +33,5 @@ urlpatterns = [
     path('refugio/adopciones-pendientes/', views.adopciones_pendientes_refugio, name='adopciones_pendientes_refugio'),
     path('adopciones/', views.SolicitudAdopcionListCreateView.as_view(), name='solicitud_adopcion_list_create'),
     path('animales/<int:animal_id>/alergias-condiciones/', views.AlergiaCondicionListCreateView.as_view(), name='alergia_condicion_list_create'),
+    path('refugio/me', views.refugio_me, name='refugio_me'),
 ]

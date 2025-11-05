@@ -34,6 +34,14 @@ class Refugio(models.Model):
         ("Magallanes", "Magallanes")
     ]
     region = models.CharField(max_length=80, choices=REGIONES_CHILE, blank=True, null=True)
+    logo = models.ImageField(upload_to='refugios_logos/', blank=True, null=True)
+    sitio_web = models.URLField(blank=True, null=True)
+    redes_sociales = models.JSONField(default=list, blank=True, help_text="Lista de enlaces y redes sociales")
+    horario_atencion = models.CharField(max_length=100, blank=True, null=True)
+    servicios_ofrecidos = models.TextField(blank=True, null=True)
+    ano_fundacion = models.CharField(max_length=10, blank=True, null=True)
+    personalidad_juridica = models.BooleanField(default=False)
+    estado = models.CharField(max_length=20, default='activo')
 
     def __str__(self):
         return self.nombre
@@ -279,7 +287,7 @@ class AlergiaCondicion(models.Model):
     ]
 
     id = models.AutoField(primary_key=True)
-    animal = models.ForeignKey(Animal, on_delete=models.CASCADE, related_name='alergias_condiciones')
+    animal = models.ForeignKey('Animal', on_delete=models.CASCADE, related_name='alergias_condiciones')
     tipo = models.CharField(max_length=20, choices=TIPO_OPCIONES)
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField(blank=True, null=True)

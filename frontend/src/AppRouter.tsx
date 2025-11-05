@@ -46,6 +46,7 @@ import GestionAdopciones from './rols/Refugio/pages/Adopciones/GestionAdopciones
 import MisEventos from './rols/Refugio/pages/MisEventos';
 import Donaciones from './rols/Refugio/pages/Donaciones';
 import HistorialMedico from './rols/Refugio/pages/HistorialMedico';
+import ConfiguracionRefugio from './rols/Refugio/pages/Configuracion';
 
 
 
@@ -144,6 +145,7 @@ export default function AppRouter() {
         <Route path="/refugio/voluntarios" element={isRefugio ? (<Voluntarios />) : (<Navigate to="/" replace />)} />
         <Route path="/refugio/inscritos-evento" element={isRefugio ? (<InscritosEvento />) : (<Navigate to="/" replace />)} />
         <Route path="/refugio/necesidades" element={isRefugio ? (<Necesidades />) : (<Navigate to="/" replace />)} />
+        <Route path="/refugio/configuracion" element={isRefugio ? (<ConfiguracionRefugio />) : (<Navigate to="/" replace />)} />
       </Routes>
     </main>
 
