@@ -445,6 +445,12 @@ def refugio_me(request):
         try:
             serializer = RefugioSerializer(refugio, context={'request': request})
             debug_info['serializer_data'] = serializer.data
+            # Logging explícito para depuración
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning(f"[refugio_me] Datos serializados: {serializer.data}")
+            if 'nombre' not in serializer.data:
+                logger.error(f"[refugio_me] El campo 'nombre' no está presente en la respuesta del serializer: {serializer.data}")
             return Response(serializer.data)
         except Exception as e:
             debug_info['error'] = str(e)

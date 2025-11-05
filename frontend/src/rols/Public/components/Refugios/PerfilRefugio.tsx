@@ -17,6 +17,7 @@ interface Refugio {
   descripcion: string;
   region: string;
   imagen: string;
+  logo?: string;
   eventos: Evento[];
   animales: any[];
   banco?: string;
@@ -43,10 +44,12 @@ const PerfilRefugio: React.FC<PerfilRefugioProps> = ({ refugio }) => {
   ];
   const tieneDatosDonacion = datosDonacion.some(d => d.value);
 
+  // Usar logo si existe, si no mostrar imagen por defecto
+  const logoUrl = refugio.logo || refugio.imagen || '/default-logo.png';
   return (
     <div className="perfil-refugio-container">
       <div className="perfil-refugio-header">
-        <img className="perfil-refugio-img" src={refugio.imagen} alt={refugio.nombre} />
+        <img className="perfil-refugio-img" src={logoUrl} alt={refugio.nombre} onError={e => { (e.target as HTMLImageElement).src = '/default-logo.png'; }} />
         <div className="perfil-refugio-info">
           <h2 className="perfil-refugio-nombre">{refugio.nombre}</h2>
           <div className="perfil-refugi o-region">{refugio.region}</div>

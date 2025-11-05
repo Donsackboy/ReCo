@@ -44,7 +44,7 @@ import Dashboard from './rols/Refugio/pages/Dashboard/index';
 import MisAnimales from './rols/Refugio/pages/MisAnimales';
 import GestionAdopciones from './rols/Refugio/pages/Adopciones/GestionAdopciones.tsx';
 import MisEventos from './rols/Refugio/pages/MisEventos';
-import Donaciones from './rols/Refugio/pages/Donaciones';
+import Donaciones from './rols/Refugio/pages/Donaciones/Donaciones.tsx';
 import HistorialMedico from './rols/Refugio/pages/HistorialMedico';
 import ConfiguracionRefugio from './rols/Refugio/pages/Configuracion';
 
