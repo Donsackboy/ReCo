@@ -61,6 +61,13 @@ export interface TratamientoFormProps {
 }
 
 const TratamientoForm: React.FC<TratamientoFormProps> = ({ idAnimal }) => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 700);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 700);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const requiredMark = <span style={{ color: 'red', marginLeft: 4 }}>*</span>;
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<Tratamiento>({
@@ -228,10 +235,24 @@ const TratamientoForm: React.FC<TratamientoFormProps> = ({ idAnimal }) => {
 
   const handleDelete = () => {
     if (deleteIdx !== null) {
-      setTratamientos(prev => prev.filter((_, i) => i !== deleteIdx));
-      setEditIdx(null);
-      setEditTratamiento(null);
-      setDeleteIdx(null);
+      const tratamiento = tratamientos[deleteIdx];
+      if (tratamiento && tratamiento.id_tratamiento) {
+        const token = localStorage.getItem('token');
+        fetch(`${import.meta.env.VITE_API_BASE}/tratamientos/${tratamiento.id_tratamiento}/`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Token ${token}` }
+        }).then(() => {
+          setTratamientos(prev => prev.filter((_, i) => i !== deleteIdx));
+          setEditIdx(null);
+          setEditTratamiento(null);
+          setDeleteIdx(null);
+        });
+      } else {
+        setTratamientos(prev => prev.filter((_, i) => i !== deleteIdx));
+        setEditIdx(null);
+        setEditTratamiento(null);
+        setDeleteIdx(null);
+      }
     }
   };
 
@@ -246,18 +267,10 @@ const TratamientoForm: React.FC<TratamientoFormProps> = ({ idAnimal }) => {
         </div>
       )}
       {showForm && (
-        <div
-          style={{
-            display: window.innerWidth < 700 ? 'flex' : 'grid',
-            flexDirection: window.innerWidth < 700 ? 'column' : undefined,
-            gridTemplateColumns: window.innerWidth < 700 ? undefined : '1fr 1fr',
-            gap: 18,
-            marginBottom: 18,
-          }}
-        >
-          {window.innerWidth < 700 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <label style={{ fontWeight: 500 }}>Tipo de tratamiento: {requiredMark}
+  <div style={{ border: '2px solid #90caf9', borderRadius: 16, background: '#f5fbff', boxShadow: '0 2px 12px #90caf922', padding: 24, marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {/* Aquí va el formulario vertical, todos los <label> y <input> deben estar dentro de este div */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <label style={{ fontWeight: 500, marginBottom: 2 }}>Tipo de tratamiento: {requiredMark}
                 <select name="tipo" value={form.tipo} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }}>
                   <option value="">Selecciona tipo...</option>
                   {tipoTratamientoOpciones.map(tipo => (
@@ -265,25 +278,29 @@ const TratamientoForm: React.FC<TratamientoFormProps> = ({ idAnimal }) => {
                   ))}
                 </select>
               </label>
-              <label style={{ fontWeight: 500 }}>Nombre del tratamiento / medicamento: {requiredMark}
+              <label style={{ fontWeight: 500, marginBottom: 2 }}>Nombre del tratamiento: {requiredMark}
                 <input name="nombre" value={form.nombre} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
               </label>
-              <label style={{ fontWeight: 500 }}>Motivo del tratamiento: {requiredMark}
-                <textarea name="motivo" value={form.motivo} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, minHeight: 40, background: '#fff' }} />
+              <label style={{ fontWeight: 500, marginBottom: 2 }}>Motivo del tratamiento: {requiredMark}
+                <input name="motivo" value={form.motivo} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
               </label>
-              <label style={{ fontWeight: 500 }}>Fecha de inicio: {requiredMark}
-                <input name="fecha_inicio" type="date" value={form.fecha_inicio} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
-              </label>
-              <label style={{ fontWeight: 500 }}>Fecha de finalización:
-                <input name="fecha_fin" type="date" value={form.fecha_fin || ''} onChange={handleChange} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
-              </label>
-              <label style={{ fontWeight: 500 }}>Duración estimada (días):
+              <div style={{ display: 'flex', gap: 8 }}>
+                <label style={{ flex: 1, fontWeight: 500 }}>
+                  Fecha de inicio: {requiredMark}
+                  <input name="fecha_inicio" type="date" value={form.fecha_inicio || ''} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
+                </label>
+                <label style={{ flex: 1, fontWeight: 500 }}>
+                  Fecha de fin:
+                  <input name="fecha_fin" type="date" value={form.fecha_fin || ''} onChange={handleChange} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
+                </label>
+              </div>
+              <label style={{ fontWeight: 500, marginBottom: 2 }}>Duración estimada (días):
                 <input name="duracion_dias" type="number" value={form.duracion_dias || ''} onChange={handleChange} min={1} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
               </label>
-              <label style={{ fontWeight: 500 }}>Dosis y frecuencia: {requiredMark}
+              <label style={{ fontWeight: 500, marginBottom: 2 }}>Dosis y frecuencia: {requiredMark}
                 <input name="dosis" value={form.dosis} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
               </label>
-              <label style={{ fontWeight: 500 }}>Vía de administración: {requiredMark}
+              <label style={{ fontWeight: 500, marginBottom: 2 }}>Vía de administración: {requiredMark}
                 <select name="via_administracion" value={form.via_administracion} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }}>
                   <option value="">Selecciona vía...</option>
                   {viaAdministracionOpciones.map(via => (
@@ -291,10 +308,10 @@ const TratamientoForm: React.FC<TratamientoFormProps> = ({ idAnimal }) => {
                   ))}
                 </select>
               </label>
-              <label style={{ fontWeight: 500 }}>Responsable / Veterinario:
+              <label style={{ fontWeight: 500, marginBottom: 2 }}>Responsable / Veterinario:
                 <input name="veterinario" value={form.veterinario || ''} onChange={handleChange} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
               </label>
-              <label style={{ fontWeight: 500 }}>Estado del tratamiento: {requiredMark}
+              <label style={{ fontWeight: 500, marginBottom: 2 }}>Estado de tratamiento: {requiredMark}
                 <select name="estado" value={form.estado} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }}>
                   {estadoOpciones.map(e => (
                     <option key={e.value} value={e.value}>{e.label}</option>
@@ -302,18 +319,11 @@ const TratamientoForm: React.FC<TratamientoFormProps> = ({ idAnimal }) => {
                 </select>
                 <span style={{ marginLeft: 8, fontWeight: 700, color: estadoOpciones.find(e => e.value === form.estado)?.color }}>{estadoOpciones.find(e => e.value === form.estado)?.label}</span>
               </label>
-              <label style={{ fontWeight: 500 }}>Costo ($):
+              <label style={{ fontWeight: 500, marginBottom: 2 }}>Costo ($):
                 <input name="costo" type="number" value={form.costo || ''} onChange={handleChange} min={0} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
               </label>
-              <label style={{ fontWeight: 500 }}>Estado de pago:
-                <select name="estado_pago" value={form.estado_pago} onChange={handleChange} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }}>
-                  {estadoPagoOpciones.map(e => (
-                    <option key={e.value} value={e.value}>{e.label}</option>
-                  ))}
-                </select>
-              </label>
               {form.estado_pago === 'parcialmente_pagado' && (
-                <label style={{ fontWeight: 500 }}>Monto pagado ($):
+                <label style={{ fontWeight: 500, marginBottom: 2 }}>Monto pagado ($):
                   <input name="monto_pagado" type="number" value={form.monto_pagado || ''} onChange={handleChange} min={0} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
                   <div style={{ color: '#e74c3c', fontWeight: 600, marginTop: 4 }}>
                     {form.costo && form.monto_pagado !== undefined && form.monto_pagado !== null
@@ -322,10 +332,10 @@ const TratamientoForm: React.FC<TratamientoFormProps> = ({ idAnimal }) => {
                   </div>
                 </label>
               )}
-              <label style={{ fontWeight: 500 }}>Observaciones / evolución:
+              <label style={{ fontWeight: 500, marginBottom: 2 }}>Observaciones / evolución:
                 <textarea name="observaciones" value={form.observaciones || ''} onChange={handleChange} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, minHeight: 40, background: '#fff' }} />
               </label>
-              <label style={{ fontWeight: 500 }}>Archivo adjunto:
+              <label style={{ fontWeight: 500, marginBottom: 2 }}>Archivo adjunto:
                 <input name="adjunto" type="file" onChange={handleFile} style={{ marginTop: 4, background: '#fff' }} />
               </label>
               <div style={{ textAlign: 'center', marginTop: 18 }}>
@@ -333,343 +343,131 @@ const TratamientoForm: React.FC<TratamientoFormProps> = ({ idAnimal }) => {
                 <button type="button" style={{ marginLeft: 16, background: '#eee', color: '#1976d2', border: 'none', borderRadius: '10px', padding: '12px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer' }} onClick={() => { setShowForm(false); setForm({ tipo: '', nombre: '', motivo: '', fecha_inicio: '', fecha_fin: '', duracion_dias: undefined, dosis: '', via_administracion: '', veterinario: '', estado: 'pendiente', costo: undefined, estado_pago: 'no_pagado', monto_pagado: undefined, observaciones: '', adjunto: null }); }}>Cancelar</button>
               </div>
             </div>
-          ) : (
-            // ...existing code for desktop form...
-            <>
-              <div style={{ gridColumn: '1/2' }}>
-                {/* ...existing code... */}
-              </div>
-              <div style={{ gridColumn: '2/3' }}>
-                {/* ...existing code... */}
-              </div>
-              <div style={{ gridColumn: '1/3', textAlign: 'center', marginTop: 18 }}>
-                {/* ...existing code... */}
-              </div>
-            </>
+        </div>
+      )}
+      {editIdx !== null && editTratamiento && (
+  <div style={{ background: '#fff', border: '2px solid #1976d2', borderRadius: 16, padding: 18, boxShadow: '0 2px 12px #1976d233', display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 14 }}>
+          <div style={{ fontWeight: 700, color: '#1976d2', fontSize: 18, marginBottom: 8 }}>Editar tratamiento</div>
+          <label style={{ fontWeight: 500, marginBottom: 2 }}>Tipo de tratamiento:
+            <input name="tipo" value={editTratamiento?.tipo || ''} onChange={handleEditChange} placeholder="Ej: Desparasitación" style={{ width: '100%', marginTop: 4 }} />
+          </label>
+          <label style={{ fontWeight: 500, marginBottom: 2 }}>Nombre:
+            <input name="nombre" value={editTratamiento?.nombre || ''} onChange={handleEditChange} placeholder="Ej: Ivermectina" style={{ width: '100%', marginTop: 4 }} />
+          </label>
+          <label style={{ fontWeight: 500, marginBottom: 2 }}>Motivo:
+            <input name="motivo" value={editTratamiento?.motivo || ''} onChange={handleEditChange} placeholder="Motivo del tratamiento" style={{ width: '100%', marginTop: 4 }} />
+          </label>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <label style={{ flex: 1, fontWeight: 500 }}>
+              Fecha de inicio:
+              <input name="fecha_inicio" type="date" value={editTratamiento?.fecha_inicio || ''} onChange={handleEditChange} style={{ width: '100%', marginTop: 4 }} />
+            </label>
+            <label style={{ flex: 1, fontWeight: 500 }}>
+              Fecha de fin:
+              <input name="fecha_fin" type="date" value={editTratamiento?.fecha_fin || ''} onChange={handleEditChange} style={{ width: '100%', marginTop: 4 }} />
+            </label>
+          </div>
+          <label style={{ fontWeight: 500, marginBottom: 2 }}>Duración (días):
+            <input name="duracion_dias" type="number" value={editTratamiento?.duracion_dias || ''} onChange={handleEditChange} style={{ width: '100%', marginTop: 4 }} />
+          </label>
+          <label style={{ fontWeight: 500, marginBottom: 2 }}>Dosis:
+            <input name="dosis" value={editTratamiento?.dosis || ''} onChange={handleEditChange} placeholder="Ej: 1 ml cada 12h" style={{ width: '100%', marginTop: 4 }} />
+          </label>
+          <label style={{ fontWeight: 500, marginBottom: 2 }}>Vía de administración:
+            <input name="via_administracion" value={editTratamiento?.via_administracion || ''} onChange={handleEditChange} placeholder="Ej: Oral" style={{ width: '100%', marginTop: 4 }} />
+          </label>
+          <label style={{ fontWeight: 500, marginBottom: 2 }}>Veterinario:
+            <input name="veterinario" value={editTratamiento?.veterinario || ''} onChange={handleEditChange} placeholder="Nombre del veterinario" style={{ width: '100%', marginTop: 4 }} />
+          </label>
+          <label style={{ fontWeight: 500, marginBottom: 2 }}>Estado de tratamiento:
+            <select name="estado" value={editTratamiento?.estado || ''} onChange={handleEditChange} style={{ width: '100%', marginTop: 4 }}>
+              {estadoOpciones.map(e => (
+                <option key={e.value} value={e.value}>{e.label}</option>
+              ))}
+            </select>
+          </label>
+          <label style={{ fontWeight: 500, marginBottom: 2 }}>Costo (CLP):
+            <input name="costo" type="number" value={editTratamiento?.costo || ''} onChange={handleEditChange} placeholder="Ej: 5000" style={{ width: '100%', marginTop: 4 }} />
+          </label>
+          <label style={{ fontWeight: 500, marginBottom: 2 }}>Estado de pago:
+            <select name="estado_pago" value={editTratamiento?.estado_pago || ''} onChange={handleEditChange} style={{ width: '100%', marginTop: 4 }}>
+              {estadoPagoOpciones.map(e => (
+                <option key={e.value} value={e.value}>{e.label}</option>
+              ))}
+            </select>
+          </label>
+          {editTratamiento?.estado_pago === 'parcialmente_pagado' && (
+            <label style={{ fontWeight: 500, marginBottom: 2 }}>Monto pagado (CLP):
+              <input name="monto_pagado" type="number" value={editTratamiento?.monto_pagado || ''} onChange={handleEditChange} style={{ width: '100%', marginTop: 4 }} />
+              <span style={{ color: '#e74c3c', fontWeight: 600, marginLeft: 8 }}>
+                {editTratamiento?.costo && editTratamiento?.monto_pagado !== undefined && editTratamiento?.monto_pagado !== null
+                  ? `Falta por pagar: $${Math.max(0, Number(editTratamiento.costo) - Number(editTratamiento.monto_pagado))}`
+                  : ''}
+              </span>
+            </label>
           )}
+          <label style={{ fontWeight: 500, marginBottom: 2 }}>Observaciones:
+            <input name="observaciones" value={editTratamiento?.observaciones || ''} onChange={handleEditChange} placeholder="Observaciones o evolución" style={{ width: '100%', marginTop: 4 }} />
+          </label>
+          <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+            <button type="button" style={{ background: '#43a047', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600 }} onClick={handleEditSave}>Guardar</button>
+            <button type="button" style={{ background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600 }} onClick={() => { setEditIdx(null); setEditTratamiento(null); }}>Cancelar</button>
+          </div>
         </div>
       )}
       {tratamientos.length > 0 && (
-        <div style={{ marginTop: 32 }}>
-          <h4 style={{ color: '#1976d2', fontWeight: 700 }}>Historial de tratamientos</h4>
-          {window.innerWidth >= 700 ? (
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 8, boxShadow: '0 2px 12px #1976d233', borderRadius: 12, overflow: 'hidden', background: '#fff' }}>
-              <thead>
-                <tr style={{ background: 'linear-gradient(90deg, #1976d2 60%, #64b5f6 100%)', color: '#fff' }}>
-                  <th style={{ padding: 8, border: '1px solid #1976d2' }}>#</th>
-                  <th style={{ padding: 8, border: '1px solid #1976d2' }}>Tipo de Tratamiento</th>
-                  <th style={{ padding: 8, border: '1px solid #1976d2' }}>Nombre</th>
-                  <th style={{ padding: 8, border: '1px solid #1976d2' }}>Motivo</th>
-                  <th style={{ padding: 8, border: '1px solid #1976d2' }}>Inicio</th>
-                  <th style={{ padding: 8, border: '1px solid #1976d2' }}>Fin</th>
-                  <th style={{ padding: 8, border: '1px solid #1976d2' }}>Duración</th>
-                  <th style={{ padding: 8, border: '1px solid #1976d2' }}>Dosis</th>
-                  <th style={{ padding: 8, border: '1px solid #1976d2' }}>Vía</th>
-                  <th style={{ padding: 8, border: '1px solid #1976d2' }}>Veterinario</th>
-                  <th style={{ padding: 8, border: '1px solid #1976d2' }}>Estado</th>
-                  <th style={{ padding: 8, border: '1px solid #1976d2' }}>Costo</th>
-                  <th style={{ padding: 8, border: '1px solid #1976d2' }}>Estado de pago</th>
-                  <th style={{ padding: 8, border: '1px solid #1976d2' }}>Observaciones</th>
-                  <th style={{ padding: 8, border: '1px solid #1976d2' }}>Editar</th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* ...existing code for table rows... */}
-                {tratamientos.map((t, idx) => (
-                  editIdx === idx ? (
-                    <tr key={idx} style={{ background: idx % 2 === 0 ? '#e3f2fd' : '#e0f7fa', transition: 'background 0.2s' }}>
-                      <td colSpan={16} style={{ padding: 8, border: '1px solid #1976d2' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <span style={{ minWidth: 120, fontWeight: 500 }}>Tipo de tratamiento:</span>
-                            <input name="tipo de tratamiento" value={editTratamiento?.tipo || ''} onChange={handleEditChange} placeholder="Ej: Desparasitación" style={{ flex: 1 }} />
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <span style={{ minWidth: 120, fontWeight: 500 }}>Nombre:</span>
-                            <input name="nombre" value={editTratamiento?.nombre || ''} onChange={handleEditChange} placeholder="Ej: Ivermectina" style={{ flex: 1 }} />
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <span style={{ minWidth: 120, fontWeight: 500 }}>Motivo:</span>
-                            <input name="motivo" value={editTratamiento?.motivo || ''} onChange={handleEditChange} placeholder="Motivo del tratamiento" style={{ flex: 1 }} />
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <span style={{ minWidth: 120, fontWeight: 500 }}>Fecha de inicio:</span>
-                            <input name="fecha_inicio" type="date" value={editTratamiento?.fecha_inicio || ''} onChange={handleEditChange} style={{ flex: 1 }} />
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <span style={{ minWidth: 120, fontWeight: 500 }}>Fecha de fin:</span>
-                            <input name="fecha_fin" type="date" value={editTratamiento?.fecha_fin || ''} onChange={handleEditChange} style={{ flex: 1 }} />
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <span style={{ minWidth: 120, fontWeight: 500 }}>Duración (días):</span>
-                            <input name="duracion_dias" type="number" value={editTratamiento?.duracion_dias || ''} onChange={handleEditChange} style={{ flex: 1 }} />
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <span style={{ minWidth: 120, fontWeight: 500 }}>Dosis:</span>
-                            <input name="dosis" value={editTratamiento?.dosis || ''} onChange={handleEditChange} placeholder="Ej: 1 ml cada 12h" style={{ flex: 1 }} />
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <span style={{ minWidth: 120, fontWeight: 500 }}>Vía de administración:</span>
-                            <input name="via_administracion" value={editTratamiento?.via_administracion || ''} onChange={handleEditChange} placeholder="Ej: Oral" style={{ flex: 1 }} />
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <span style={{ minWidth: 120, fontWeight: 500 }}>Veterinario:</span>
-                            <input name="veterinario" value={editTratamiento?.veterinario || ''} onChange={handleEditChange} placeholder="Nombre del veterinario" style={{ flex: 1 }} />
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <span style={{ minWidth: 120, fontWeight: 500 }}>Estado:</span>
-                            <select name="estado" value={editTratamiento?.estado || ''} onChange={handleEditChange} style={{ flex: 1 }}>
-                              {estadoOpciones.map(e => (
-                                <option key={e.value} value={e.value}>{e.label}</option>
-                              ))}
-                            </select>
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <span style={{ minWidth: 120, fontWeight: 500 }}>Estado de pago:</span>
-                            <select name="estado_pago" value={editTratamiento?.estado_pago || ''} onChange={handleEditChange} style={{ flex: 1 }}>
-                              {estadoPagoOpciones.map(e => (
-                                <option key={e.value} value={e.value}>{e.label}</option>
-                              ))}
-                            </select>
-                          </div>
-                          {editTratamiento?.estado_pago === 'parcialmente_pagado' && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                              <span style={{ minWidth: 120, fontWeight: 500 }}>Monto pagado ($):</span>
-                              <input name="monto_pagado" type="number" value={editTratamiento?.monto_pagado || ''} onChange={handleEditChange} style={{ flex: 1 }} />
-                              <span style={{ color: '#e74c3c', fontWeight: 600, marginLeft: 8 }}>
-                                {editTratamiento?.costo && editTratamiento?.monto_pagado !== undefined && editTratamiento?.monto_pagado !== null
-                                  ? `Falta por pagar: $${Math.max(0, Number(editTratamiento.costo) - Number(editTratamiento.monto_pagado))}`
-                                  : ''}
-                              </span>
-                            </div>
-                          )}
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <span style={{ minWidth: 120, fontWeight: 500 }}>Costo ($):</span>
-                            <input name="costo" type="number" value={editTratamiento?.costo || ''} onChange={handleEditChange} placeholder="Ej: 5000" style={{ flex: 1 }} />
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <span style={{ minWidth: 120, fontWeight: 500 }}>Estado de pago:</span>
-                            <select name="estado_pago" value={editTratamiento?.estado_pago || ''} onChange={handleEditChange} style={{ flex: 1 }}>
-                              {estadoPagoOpciones.map(e => (
-                                <option key={e.value} value={e.value}>{e.label}</option>
-                              ))}
-                            </select>
-                          </div>
-                          {editTratamiento?.estado_pago === 'parcialmente_pagado' && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                              <span style={{ minWidth: 120, fontWeight: 500 }}>Monto pagado ($):</span>
-                              <input name="monto_pagado" type="number" value={editTratamiento?.monto_pagado || ''} onChange={handleEditChange} style={{ flex: 1 }} />
-                              <span style={{ color: '#e74c3c', fontWeight: 600, marginLeft: 8 }}>
-                                {editTratamiento?.costo && editTratamiento?.monto_pagado !== undefined && editTratamiento?.monto_pagado !== null
-                                  ? `Falta por pagar: $${Math.max(0, Number(editTratamiento.costo) - Number(editTratamiento.monto_pagado))}`
-                                  : ''}
-                              </span>
-                            </div>
-                          )}
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <span style={{ minWidth: 120, fontWeight: 500 }}>Observaciones:</span>
-                            <input name="observaciones" value={editTratamiento?.observaciones || ''} onChange={handleEditChange} placeholder="Observaciones o evolución" style={{ flex: 1 }} />
-                          </div>
-                          <input name="tipo de tratamiento" value={editTratamiento?.tipo || ''} onChange={handleEditChange} placeholder="Tipo" style={{ flex: 1, minWidth: 120 }} />
-                          <input name="nombre" value={editTratamiento?.nombre || ''} onChange={handleEditChange} placeholder="Nombre" style={{ flex: 1, minWidth: 120 }} />
-                          <input name="motivo" value={editTratamiento?.motivo || ''} onChange={handleEditChange} placeholder="Motivo" style={{ flex: 1, minWidth: 120 }} />
-                          <input name="fecha_inicio" type="date" value={editTratamiento?.fecha_inicio || ''} onChange={handleEditChange} style={{ flex: 1, minWidth: 120 }} />
-                          <input name="fecha_fin" type="date" value={editTratamiento?.fecha_fin || ''} onChange={handleEditChange} style={{ flex: 1, minWidth: 120 }} />
-                          <input name="duracion_dias" type="number" value={editTratamiento?.duracion_dias || ''} onChange={handleEditChange} style={{ flex: 1, minWidth: 80 }} />
-                          <label style={{ flex: 1, minWidth: 120 }}>
-                            Dosis:
-                            <input name="dosis" value={editTratamiento?.dosis || ''} onChange={handleEditChange} placeholder="Ej: 1 ml cada 12h" style={{ width: '100%' }} />
-                          </label>
-                          <label style={{ flex: 1, minWidth: 120 }}>
-                            Vía de administración:
-                            <input name="via_administracion" value={editTratamiento?.via_administracion || ''} onChange={handleEditChange} placeholder="Ej: Oral" style={{ width: '100%' }} />
-                          </label>
-                          <label style={{ flex: 1, minWidth: 120 }}>
-                            Veterinario:
-                            <input name="veterinario" value={editTratamiento?.veterinario || ''} onChange={handleEditChange} placeholder="Nombre del veterinario" style={{ width: '100%' }} />
-                          </label>
-                          <label style={{ flex: 1, minWidth: 120 }}>
-                            Estado:
-                            <select name="estado" value={editTratamiento?.estado || ''} onChange={handleEditChange} style={{ width: '100%' }}>
-                              {estadoOpciones.map(e => (
-                                <option key={e.value} value={e.value}>{e.label}</option>
-                              ))}
-                            </select>
-                          </label>
-                          <label style={{ flex: 1, minWidth: 80 }}>
-                            Costo ($):
-                            <input name="costo" type="number" value={editTratamiento?.costo || ''} onChange={handleEditChange} placeholder="Ej: 5000" style={{ width: '100%' }} />
-                          </label>
-                          {/* pagado eliminado, ahora estado_pago y monto_pagado */}
-                          <label style={{ flex: 2, minWidth: 120 }}>
-                            Observaciones:
-                            <input name="observaciones" value={editTratamiento?.observaciones || ''} onChange={handleEditChange} placeholder="Observaciones o evolución" style={{ width: '100%' }} />
-                          </label>
-                          <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                            <button style={{ background: '#43a047', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600 }} onClick={handleEditSave}>Guardar</button>
-                            <button style={{ background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600 }} onClick={() => { setEditIdx(null); setEditTratamiento(null); }}>Cancelar</button>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  ) : (
-                    <tr key={idx} style={{ background: idx % 2 === 0 ? '#e3f2fd' : '#bbdefb' }}>
-                      <td style={{ padding: 8, border: '1px solid #1976d2' }}>{idx + 1}</td>
-                      <td style={{ padding: 8, border: '1px solid #1976d2' }}>{t.tipo}</td>
-                      <td style={{ padding: 8, border: '1px solid #1976d2' }}>{t.nombre}</td>
-                      <td style={{ padding: 8, border: '1px solid #1976d2' }}>{t.motivo}</td>
-                      <td style={{ padding: 8, border: '1px solid #1976d2' }}>{t.fecha_inicio}</td>
-                      <td style={{ padding: 8, border: '1px solid #1976d2' }}>{t.fecha_fin || '-'}</td>
-                      <td style={{ padding: 8, border: '1px solid #1976d2' }}>{t.duracion_dias || '-'}</td>
-                      <td style={{ padding: 8, border: '1px solid #1976d2' }}>{t.dosis}</td>
-                      <td style={{ padding: 8, border: '1px solid #1976d2' }}>{t.via_administracion}</td>
-                      <td style={{ padding: 8, border: '1px solid #1976d2' }}>{t.veterinario || '-'}</td>
-                      <td style={{ padding: 8, border: '1px solid #1976d2' }}>{t.estado}</td>
-                      <td style={{ padding: 8, border: '1px solid #1976d2' }}>{t.costo !== undefined && t.costo !== null ? `$${t.costo}` : '-'}</td>
-                      <td style={{ padding: 8, border: '1px solid #1976d2' }}>
-                        <span style={{ fontWeight: 600, fontSize: 14, background: estadoPagoOpciones.find(e => e.value === t.estado_pago)?.color || '#bbb', color: '#fff', borderRadius: 8, padding: '2px 12px', boxShadow: '0 2px 8px #1976d233' }}>
-                          {estadoPagoOpciones.find(e => e.value === t.estado_pago)?.label || t.estado_pago}
-                        </span>
-                        {t.estado_pago === 'parcialmente_pagado' && t.costo !== undefined && t.monto_pagado !== undefined && (
-                          <span style={{ marginLeft: 8, color: '#e74c3c', fontWeight: 500 }}>
-                            Pagado: ${t.monto_pagado} <br />Falta: ${Math.max(0, Number(t.costo) - Number(t.monto_pagado))}
-                          </span>
-                        )}
-                        {t.estado_pago === 'pagado' && t.costo !== undefined && (
-                          <span style={{ marginLeft: 8, color: '#43a047', fontWeight: 500 }}>
-                            Pagado: ${t.costo}
-                          </span>
-                        )}
-                      </td>
-                      <td style={{ padding: 8, border: '1px solid #1976d2' }}>{t.observaciones || '-'}</td>
-                      <td style={{ padding: 8, border: '1px solid #1976d2', textAlign: 'center' }}>
-                        <button style={{ background: '#64b5f6', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 14px', marginRight: 6, cursor: 'pointer', fontWeight: 600 }} onClick={() => { setEditIdx(idx); setEditTratamiento(t); }}>Editar</button>
-                        <button style={{ background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 14px', cursor: 'pointer', fontWeight: 600 }} onClick={() => setDeleteIdx(idx)}>Eliminar</button>
-                      </td>
-                    </tr>
-                  )
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 8 }}>
-              {tratamientos.map((t, idx) => (
-                editIdx === idx && editTratamiento ? (
-                  <div key={idx} style={{ background: '#fff', border: '2px solid #1976d2', borderRadius: 16, padding: 18, boxShadow: '0 2px 12px #1976d233', display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    <div style={{ fontWeight: 700, color: '#1976d2', fontSize: 18, marginBottom: 8 }}>Editar tratamiento</div>
-                    <label style={{ fontWeight: 500, marginBottom: 6 }}>Tipo de tratamiento:
-                      <input name="tipo" value={editTratamiento?.tipo || ''} onChange={handleEditChange} placeholder="Ej: Desparasitación" style={{ width: '100%', marginTop: 4 }} />
-                    </label>
-                    <label style={{ fontWeight: 500, marginBottom: 6 }}>Nombre:
-                      <input name="nombre" value={editTratamiento?.nombre || ''} onChange={handleEditChange} placeholder="Ej: Ivermectina" style={{ width: '100%', marginTop: 4 }} />
-                    </label>
-                    <label style={{ fontWeight: 500, marginBottom: 6 }}>Motivo:
-                      <input name="motivo" value={editTratamiento?.motivo || ''} onChange={handleEditChange} placeholder="Motivo del tratamiento" style={{ width: '100%', marginTop: 4 }} />
-                    </label>
-                    <label style={{ fontWeight: 500, marginBottom: 6 }}>Fecha de inicio:
-                      <input name="fecha_inicio" type="date" value={editTratamiento?.fecha_inicio || ''} onChange={handleEditChange} style={{ width: '100%', marginTop: 4 }} />
-                    </label>
-                    <label style={{ fontWeight: 500, marginBottom: 6 }}>Fecha de fin:
-                      <input name="fecha_fin" type="date" value={editTratamiento?.fecha_fin || ''} onChange={handleEditChange} style={{ width: '100%', marginTop: 4 }} />
-                    </label>
-                    <label style={{ fontWeight: 500, marginBottom: 6 }}>Duración (días):
-                      <input name="duracion_dias" type="number" value={editTratamiento?.duracion_dias || ''} onChange={handleEditChange} style={{ width: '100%', marginTop: 4 }} />
-                    </label>
-                    <label style={{ fontWeight: 500, marginBottom: 6 }}>Dosis:
-                      <input name="dosis" value={editTratamiento?.dosis || ''} onChange={handleEditChange} placeholder="Ej: 1 ml cada 12h" style={{ width: '100%', marginTop: 4 }} />
-                    </label>
-                    <label style={{ fontWeight: 500, marginBottom: 6 }}>Vía de administración:
-                      <input name="via_administracion" value={editTratamiento?.via_administracion || ''} onChange={handleEditChange} placeholder="Ej: Oral" style={{ width: '100%', marginTop: 4 }} />
-                    </label>
-                    <label style={{ fontWeight: 500, marginBottom: 6 }}>Veterinario:
-                      <input name="veterinario" value={editTratamiento?.veterinario || ''} onChange={handleEditChange} placeholder="Nombre del veterinario" style={{ width: '100%', marginTop: 4 }} />
-                    </label>
-                    <label style={{ fontWeight: 500, marginBottom: 6 }}>Estado:
-                      <select name="estado" value={editTratamiento?.estado || ''} onChange={handleEditChange} style={{ width: '100%', marginTop: 4 }}>
-                        {estadoOpciones.map(e => (
-                          <option key={e.value} value={e.value}>{e.label}</option>
-                        ))}
-                      </select>
-                    </label>
-                    <label style={{ fontWeight: 500, marginBottom: 6 }}>Costo (CLP):
-                      <input name="costo" type="number" value={editTratamiento?.costo || ''} onChange={handleEditChange} placeholder="Ej: 5000" style={{ width: '100%', marginTop: 4 }} />
-                    </label>
-                    <label style={{ fontWeight: 500, marginBottom: 6 }}>Estado de pago:
-                      <select name="estado_pago" value={editTratamiento?.estado_pago || ''} onChange={handleEditChange} style={{ width: '100%', marginTop: 4 }}>
-                        {estadoPagoOpciones.map(e => (
-                          <option key={e.value} value={e.value}>{e.label}</option>
-                        ))}
-                      </select>
-                    </label>
-                    {editTratamiento?.estado_pago === 'parcialmente_pagado' && (
-                      <label style={{ fontWeight: 500, marginBottom: 6 }}>Monto pagado (CLP):
-                        <input name="monto_pagado" type="number" value={editTratamiento?.monto_pagado || ''} onChange={handleEditChange} style={{ width: '100%', marginTop: 4 }} />
-                        <span style={{ color: '#e74c3c', fontWeight: 600, marginLeft: 8 }}>
-                          {editTratamiento?.costo && editTratamiento?.monto_pagado !== undefined && editTratamiento?.monto_pagado !== null
-                            ? `Falta por pagar: $${Math.max(0, Number(editTratamiento.costo) - Number(editTratamiento.monto_pagado))}`
-                            : ''}
-                        </span>
-                      </label>
-                    )}
-                    <label style={{ fontWeight: 500, marginBottom: 6 }}>Observaciones:
-                      <input name="observaciones" value={editTratamiento?.observaciones || ''} onChange={handleEditChange} placeholder="Observaciones o evolución" style={{ width: '100%', marginTop: 4 }} />
-                    </label>
-                    <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                      <button style={{ background: '#43a047', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600 }} type="button" onClick={handleEditSave}>Guardar</button>
-                      <button style={{ background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600 }} onClick={() => { setEditIdx(null); setEditTratamiento(null); }}>Cancelar</button>
-                    </div>
-                  </div>
-                ) : (
-                  <div key={idx} style={{ background: 'linear-gradient(120deg, #e3f2fd 60%, #fff 100%)', border: '1.5px solid #90caf9', borderRadius: 18, padding: 20, boxShadow: '0 4px 18px #1976d233', marginBottom: 14, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <div style={{ position: 'absolute', top: 12, left: 12, fontSize: 22, color: '#1976d2', opacity: 0.18 }}>
-                      <span role="img" aria-label="med">💊</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 8 }}>
-                      <button style={{ background: '#64b5f6', color: '#fff', border: 'none', borderRadius: 8, padding: '7px 16px', fontWeight: 600, boxShadow: '0 2px 8px #64b5f633', fontSize: 15 }} onClick={() => { setEditIdx(idx); setEditTratamiento(t); }}>Editar</button>
-                      <button style={{ background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 8, padding: '7px 16px', fontWeight: 600, boxShadow: '0 2px 8px #e74c3c33', fontSize: 15 }} onClick={() => setDeleteIdx(idx)}>Eliminar</button>
-                    </div>
-                    <div style={{ marginBottom: 2 }}>
-                      <span style={{ fontWeight: 700, color: '#1976d2', fontSize: 16 }}>Tipo:</span> <span style={{ fontWeight: 700, color: '#1976d2', fontSize: 18, marginLeft: 4 }}>{t.tipo || 'No ingresado'}</span>
-                    </div>
-                    <div style={{ marginBottom: 2 }}>
-                      <span style={{ fontWeight: 700, color: '#1976d2', fontSize: 16 }}>Nombre:</span> <span style={{ background: '#fff', color: '#1976d2', borderRadius: 8, padding: '2px 10px', fontWeight: 600, fontSize: 15, border: '1px solid #90caf9', marginLeft: 4 }}>{t.nombre || 'No ingresado'}</span>
-                    </div>
-                    <div style={{ color: '#333', fontWeight: 700, fontSize: 15, marginBottom: 2 }}>
-                      Descripción: <span style={{ fontWeight: 400 }}>{t.motivo || 'No ingresado'}</span>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginBottom: 2 }}>
-                      <span style={{ color: '#1976d2', fontWeight: 500 }}><span role="img" aria-label="inicio">🗓️</span> <b>Inicio:</b> {t.fecha_inicio || 'No ingresado'}</span>
-                      <span style={{ color: '#1976d2', fontWeight: 500 }}><span role="img" aria-label="fin">⏰</span> <b>Fin:</b> {t.fecha_fin || 'No ingresado'}</span>
-                      <span style={{ color: '#1976d2', fontWeight: 500 }}><span role="img" aria-label="duracion">📅</span> <b>Duración:</b> {t.duracion_dias !== undefined && t.duracion_dias !== null ? t.duracion_dias : 'No ingresado'} días</span>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginBottom: 2 }}>
-                      <span style={{ color: '#333', fontWeight: 500 }}><span role="img" aria-label="dosis">🧪</span> <b>Dosis:</b> {t.dosis || 'No ingresado'}</span>
-                      <span style={{ color: '#333', fontWeight: 500 }}><span role="img" aria-label="via">🚩</span> <b>Vía:</b> {t.via_administracion || 'No ingresado'}</span>
-                      <span style={{ color: '#333', fontWeight: 500 }}><span role="img" aria-label="vet">👩‍⚕️</span> <b>Veterinario:</b> {t.veterinario || 'No ingresado'}</span>
-                    </div>
-                    <div style={{ display: 'flex', gap: 10, marginBottom: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-                      <span style={{ fontWeight: 600, fontSize: 14, background: estadoOpciones.find(e => e.value === t.estado)?.color || '#bbb', color: '#fff', borderRadius: 8, padding: '2px 12px', boxShadow: '0 2px 8px #1976d233' }}>{estadoOpciones.find(e => e.value === t.estado)?.label || t.estado}</span>
-                      <span style={{ color: '#333', fontWeight: 500 }}><span role="img" aria-label="costo">💲</span> <b>Costo:</b> {t.costo !== undefined && t.costo !== null ? `$${t.costo}` : 'No ingresado'}</span>
-                      <span style={{ fontWeight: 600, fontSize: 14, background: estadoPagoOpciones.find(e => e.value === t.estado_pago)?.color || '#bbb', color: '#fff', borderRadius: 8, padding: '2px 12px', marginLeft: 8 }}>
-                        {estadoPagoOpciones.find(e => e.value === t.estado_pago)?.label || t.estado_pago}
-                      </span>
-                      {t.estado_pago === 'parcialmente_pagado' && t.costo !== undefined && t.monto_pagado !== undefined && (
-                        <span style={{ marginLeft: 8, color: '#e74c3c', fontWeight: 500 }}>
-                          Pagado: ${t.monto_pagado} | Falta: ${Math.max(0, Number(t.costo) - Number(t.monto_pagado))}
-                        </span>
-                      )}
-                      {t.estado_pago === 'pagado' && t.costo !== undefined && (
-                        <span style={{ marginLeft: 8, color: '#43a047', fontWeight: 500 }}>
-                          Pagado: ${t.costo}
-                        </span>
-                      )}
-                    </div>
-                    <div style={{ marginTop: 4, color: '#333', fontWeight: 500, fontSize: 14 }}><span role="img" aria-label="obs">📝</span> <b>Observaciones:</b> <span style={{ fontWeight: 400 }}>{t.observaciones || 'No ingresado'}</span></div>
-                  </div>
-                )
-              ))}
-            </div>
-          )}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 8 }}>
+          {tratamientos.map((t, idx) => {
+            if (editIdx === idx) return null;
+            return (
+              <div key={idx} style={{ background: 'linear-gradient(120deg, #e3f2fd 60%, #fff 100%)', border: '1.5px solid #90caf9', borderRadius: 18, padding: 20, boxShadow: '0 4px 18px #1976d233', marginBottom: 14, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <div style={{ position: 'absolute', top: 12, left: 12, fontSize: 22, color: '#1976d2', opacity: 0.18 }}>
+                  <span role="img" aria-label="med">💊</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 8 }}>
+                  <button type="button" style={{ background: '#64b5f6', color: '#fff', border: 'none', borderRadius: 8, padding: '7px 16px', fontWeight: 600, boxShadow: '0 2px 8px #64b5f633', fontSize: 15 }} onClick={(e) => { e.preventDefault(); setEditIdx(idx); setEditTratamiento(t); }}>Editar</button>
+                  <button type="button" style={{ background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 8, padding: '7px 16px', fontWeight: 600, boxShadow: '0 2px 8px #e74c3c33', fontSize: 15 }} onClick={() => setDeleteIdx(idx)}>Eliminar</button>
+                </div>
+                <div style={{ marginBottom: 2 }}>
+                  <span style={{ fontWeight: 700, color: '#1976d2', fontSize: 16 }}>Tipo:</span> <span style={{ fontWeight: 700, color: '#1976d2', fontSize: 18, marginLeft: 4 }}>{t.tipo || 'No ingresado'}</span>
+                </div>
+                <div style={{ marginBottom: 2 }}>
+                  <span style={{ fontWeight: 700, color: '#1976d2', fontSize: 16 }}>Nombre:</span> <span style={{ background: '#fff', color: '#1976d2', borderRadius: 8, padding: '2px 10px', fontWeight: 600, fontSize: 15, border: '1px solid #90caf9', marginLeft: 4 }}>{t.nombre || 'No ingresado'}</span>
+                </div>
+                <div style={{ color: '#333', fontWeight: 700, fontSize: 15, marginBottom: 2 }}>
+                  Descripción: <span style={{ fontWeight: 400 }}>{t.motivo || 'No ingresado'}</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginBottom: 2 }}>
+                  <span style={{ color: '#1976d2', fontWeight: 500 }}><span role="img" aria-label="inicio">🗓️</span> <b>Inicio:</b> {t.fecha_inicio || 'No ingresado'}</span>
+                  <span style={{ color: '#1976d2', fontWeight: 500 }}><span role="img" aria-label="fin">⏰</span> <b>Fin:</b> {t.fecha_fin || 'No ingresado'}</span>
+                  <span style={{ color: '#1976d2', fontWeight: 500 }}><span role="img" aria-label="duracion">📅</span> <b>Duración:</b> {t.duracion_dias !== undefined && t.duracion_dias !== null ? t.duracion_dias : 'No ingresado'} días</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginBottom: 2 }}>
+                  <span style={{ color: '#333', fontWeight: 500 }}><span role="img" aria-label="dosis">🧪</span> <b>Dosis:</b> {t.dosis || 'No ingresado'}</span>
+                  <span style={{ color: '#333', fontWeight: 500 }}><span role="img" aria-label="via">🚩</span> <b>Vía:</b> {t.via_administracion || 'No ingresado'}</span>
+                  <span style={{ color: '#333', fontWeight: 500 }}><span role="img" aria-label="vet">👩‍⚕️</span> <b>Veterinario:</b> {t.veterinario || 'No ingresado'}</span>
+                </div>
+                <div style={{ display: 'flex', gap: 10, marginBottom: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+                  <span style={{ fontWeight: 600, fontSize: 14, background: estadoOpciones.find(e => e.value === t.estado)?.color || '#bbb', color: '#fff', borderRadius: 8, padding: '2px 12px', boxShadow: '0 2px 8px #1976d233' }}>{estadoOpciones.find(e => e.value === t.estado)?.label || t.estado}</span>
+                  <span style={{ color: '#333', fontWeight: 500 }}><span role="img" aria-label="costo">💲</span> <b>Costo:</b> {t.costo !== undefined && t.costo !== null ? `$${t.costo}` : 'No ingresado'}</span>
+                  <span style={{ fontWeight: 600, fontSize: 14, background: estadoPagoOpciones.find(e => e.value === t.estado_pago)?.color || '#bbb', color: '#fff', borderRadius: 8, padding: '2px 12px', marginLeft: 8 }}>
+                    {estadoPagoOpciones.find(e => e.value === t.estado_pago)?.label || t.estado_pago}
+                  </span>
+                  {t.estado_pago === 'parcialmente_pagado' && t.costo !== undefined && t.monto_pagado !== undefined && (
+                    <span style={{ marginLeft: 8, color: '#e74c3c', fontWeight: 500 }}>
+                      Pagado: ${t.monto_pagado} | Falta: ${Math.max(0, Number(t.costo) - Number(t.monto_pagado))}
+                    </span>
+                  )}
+                  {t.estado_pago === 'pagado' && t.costo !== undefined && (
+                    <span style={{ marginLeft: 8, color: '#43a047', fontWeight: 500 }}>
+                      Pagado: ${t.costo}
+                    </span>
+                  )}
+                </div>
+                <div style={{ marginTop: 4, color: '#333', fontWeight: 500, fontSize: 14 }}><span role="img" aria-label="obs">📝</span> <b>Observaciones:</b> <span style={{ fontWeight: 400 }}>{t.observaciones || 'No ingresado'}</span></div>
+              </div>
+            );
+    })}
         </div>
       )}
       {/* Modal de confirmación para eliminar */}
@@ -677,8 +475,8 @@ const TratamientoForm: React.FC<TratamientoFormProps> = ({ idAnimal }) => {
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(33, 150, 243, 0.18)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 4px 24px #1976d233', padding: 32, minWidth: 320, textAlign: 'center', border: '2px solid #1976d2' }}>
             <h3 style={{ color: '#1976d2', fontWeight: 700, marginBottom: 18 }}>¿Eliminar tratamiento?</h3>
-            <div style={{ color: '#333', marginBottom: 18 }}>
-              ¿Estás seguro que deseas eliminar este tratamiento?<br />Esta acción no se puede deshacer.
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 8 }}>
+              <span>¿Estás seguro que deseas eliminar este tratamiento?<br />Esta acción no se puede deshacer.</span>
             </div>
             <button type="button" style={{ background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 28px', fontWeight: 700, fontSize: '1.08rem', marginRight: 12, cursor: 'pointer' }} onClick={handleDelete}>Eliminar</button>
             <button type="button" style={{ background: '#1976d2', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 28px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer' }} onClick={() => setDeleteIdx(null)}>Cancelar</button>

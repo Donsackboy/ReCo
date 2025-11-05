@@ -1,5 +1,17 @@
+# Imports primero
 from django.contrib import admin
-from .models import PostulacionRefugio, Usuario, Refugio, Animal, HogaresTemporales, Donaciones, Suscripciones, Eventos, InscripcionesEventos, HistorialMedico, CatalogoServicios, DonacionesEspecificas, ComprobantesServicio, NecesidadesRefugio, PerfilAdoptante, Cirugia, Tratamiento, SolicitudAdopcion
+from .models import PostulacionRefugio, Usuario, Refugio, Animal, HogaresTemporales, Donaciones, Suscripciones, Eventos, InscripcionesEventos, CatalogoServicios, DonacionesEspecificas, ComprobantesServicio, NecesidadesRefugio, PerfilAdoptante, Cirugia, Tratamiento, SolicitudAdopcion, AlergiaCondicion, FichaMedica
+
+@admin.register(AlergiaCondicion)
+class AlergiaCondicionAdmin(admin.ModelAdmin):
+    list_display = ("id", "animal", "tipo", "nombre", "descripcion", "fecha_diagnostico")
+    list_filter = ("tipo", "fecha_diagnostico")
+    search_fields = ("nombre", "descripcion")
+# Registrar FichaMedica en el admin
+@admin.register(FichaMedica)
+class FichaMedicaAdmin(admin.ModelAdmin):
+    list_display = ("id_ficha", "animal", "estado_salud", "peso_actual", "fecha_ultimo_control", "veterinario_responsable", "clinica")
+    search_fields = ("animal__nombre", "clinica", "veterinario_responsable")
 
 # Postulación de Refugio
 @admin.register(PostulacionRefugio)
@@ -20,9 +32,9 @@ class RefugioAdmin(admin.ModelAdmin):
 
 @admin.register(Animal)
 class AnimalAdmin(admin.ModelAdmin):
-    list_display = ("id_animal", "nombre", "especie", "estado", "refugio", "busca_hogar_temporal")
-    list_filter = ("estado", "especie", "busca_hogar_temporal")
-    search_fields = ("nombre",)
+    list_display = ("id_animal", "nombre", "especie", "sexo", "fecha_cumpleanos", "estado")
+    list_filter = ("estado", "especie", "sexo")
+    search_fields = ("nombre", "especie", "estado")
 
 @admin.register(HogaresTemporales)
 class HogaresTemporalesAdmin(admin.ModelAdmin):
@@ -54,11 +66,6 @@ class InscripcionesEventosAdmin(admin.ModelAdmin):
     list_filter = ("asistencia",)
     search_fields = ("id_usuario__nombre", "id_evento__nombre")
 
-@admin.register(HistorialMedico)
-class HistorialMedicoAdmin(admin.ModelAdmin):
-    list_display = ("id_historial", "id_animal", "tipo_atencion", "veterinario", "fecha", "costo")
-    list_filter = ("tipo_atencion", "fecha")
-    search_fields = ("veterinario", "clinica")
 
 @admin.register(CatalogoServicios)
 class CatalogoServiciosAdmin(admin.ModelAdmin):

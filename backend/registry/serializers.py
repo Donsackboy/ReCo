@@ -1,7 +1,12 @@
 from rest_framework import serializers
-# --- Solicitud de Adopción ---
-from .models import SolicitudAdopcion
+from django.conf import settings
+from django.contrib.auth import authenticate
+from .models import (
+    SolicitudAdopcion, PostulacionRefugio, Usuario, HogaresTemporales, Refugio, Animal,
+    Cirugia, Tratamiento, AlergiaCondicion, FichaMedica
+)
 
+# --- Solicitud de Adopción ---
 class SolicitudAdopcionSerializer(serializers.ModelSerializer):
     def get_animal_nombre(self, obj):
         try:
@@ -15,9 +20,12 @@ class SolicitudAdopcionSerializer(serializers.ModelSerializer):
         model = SolicitudAdopcion
         fields = '__all__'
         extra_fields = ['animal_nombre']
-from .models import PostulacionRefugio, Usuario, HogaresTemporales, Refugio, Animal, HistorialMedico, Cirugia, Tratamiento, AlergiaCondicion
-from django.conf import settings
-from django.contrib.auth import authenticate
+
+# --- Ficha Médica ---
+class FichaMedicaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FichaMedica
+        fields = '__all__'
 
 # --- Postulación de Refugio ---
 class PostulacionRefugioSerializer(serializers.ModelSerializer):
@@ -105,11 +113,6 @@ class AnimalSerializer(serializers.ModelSerializer):
         model = Animal
         fields = '__all__'
 
-# Serializer para Historial Médico
-class HistorialMedicoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = HistorialMedico
-        fields = '__all__'
 
 # Serializer para Cirugia
 class CirugiaSerializer(serializers.ModelSerializer):

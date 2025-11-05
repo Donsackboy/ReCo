@@ -140,7 +140,7 @@ const CirugiaForm: React.FC<CirugiaFormProps> = ({ onAdd, onUpdate, historial = 
 			newValue = (e.target as HTMLInputElement).checked;
 		}
 		if (type === 'number') {
-			newValue = Math.max(0, Math.min(Number(newValue), editCirugia.costo));
+			newValue = Math.max(0, Number(newValue)); // Permite cualquier valor positivo
 		}
 		setEditCirugia({ ...editCirugia, [name]: newValue });
 	};
@@ -162,11 +162,26 @@ const CirugiaForm: React.FC<CirugiaFormProps> = ({ onAdd, onUpdate, historial = 
 
 	const handleDelete = () => {
 		if (deleteIdx !== null) {
-			const updated = historial.filter((_, i) => i !== deleteIdx);
-			onUpdate(updated);
-			setEditIdx(null);
-			setEditCirugia(null);
-			setDeleteIdx(null);
+			const cirugia = historial[deleteIdx];
+			if (cirugia && cirugia.id_cirugia) {
+				const token = localStorage.getItem('token');
+				fetch(`${import.meta.env.VITE_API_BASE}/cirugias/${cirugia.id_cirugia}/`, {
+					method: 'DELETE',
+					headers: { 'Authorization': `Token ${token}` }
+				}).then(() => {
+					const updated = historial.filter((_, i) => i !== deleteIdx);
+					onUpdate(updated);
+					setEditIdx(null);
+					setEditCirugia(null);
+					setDeleteIdx(null);
+				});
+			} else {
+				const updated = historial.filter((_, i) => i !== deleteIdx);
+				onUpdate(updated);
+				setEditIdx(null);
+				setEditCirugia(null);
+				setDeleteIdx(null);
+			}
 		}
 	};
 
@@ -226,64 +241,71 @@ const CirugiaForm: React.FC<CirugiaFormProps> = ({ onAdd, onUpdate, historial = 
 						</div>
 					)}
 					{showForm && (
-						<div className="cirugia-form-grid" style={{ marginBottom: 18 }}>
-					<div style={{ gridColumn: '1/2' }}>
-						<label style={{ fontWeight: 500 }}>Tipo de cirugía:
-							<select name="tipo" value={form.tipo} onChange={handleTipoChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }}>
-								<option value="">Selecciona tipo...</option>
-								{cirugiasPorAnimal[animalTipo]?.map(cat => (
-									<optgroup key={cat.categoria} label={cat.categoria}>
-										{cat.items.map(item => (
-											<option key={item.tipo} value={item.tipo}>{item.tipo}</option>
-										))}
-									</optgroup>
-								))}
-							</select>
-						</label>
-						<label style={{ fontWeight: 500, marginTop: 8 }}>Fecha de cirugía:
-							<input name="fecha" type="date" value={form.fecha} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
-						</label>
-						{form.tipo === 'Otra' && (
-							<>
-								<label style={{ fontWeight: 500, marginTop: 8 }}>Nombre personalizado:
-									<input name="otro_nombre" value={form.otro_nombre} onChange={handleChange} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
+						<div style={{ marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 0, border: '2px solid #1976d2', borderRadius: 16, background: '#e3f2fd', padding: 24, boxShadow: '0 2px 12px #1976d233' }}>
+							<label style={{ fontWeight: 500, marginBottom: 8 }}>Tipo de cirugía: <span style={{ color: 'red', fontWeight: 700 }}>*</span>
+								<select name="tipo" value={form.tipo} onChange={handleTipoChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }}>
+									<option value="">Selecciona tipo...</option>
+									{cirugiasPorAnimal[animalTipo]?.map(cat => (
+										<optgroup key={cat.categoria} label={cat.categoria}>
+											{cat.items.map(item => (
+												<option key={item.tipo} value={item.tipo}>{item.tipo}</option>
+											))}
+										</optgroup>
+									))}
+								</select>
+							</label>
+							<label style={{ fontWeight: 500, marginBottom: 8 }}>Fecha de cirugía: <span style={{ color: 'red', fontWeight: 700 }}>*</span>
+								<input name="fecha" type="date" value={form.fecha} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
+							</label>
+							{form.tipo === 'Otra' && (
+								<>
+									<label style={{ fontWeight: 500, marginBottom: 8 }}>Nombre personalizado:
+										<input name="otro_nombre" value={form.otro_nombre} onChange={handleChange} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
+									</label>
+									<label style={{ fontWeight: 500, marginBottom: 8 }}>Descripción:
+										<textarea name="motivo" value={form.motivo} onChange={handleChange} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, minHeight: 40, background: '#fff' }} />
+									</label>
+									<label style={{ fontWeight: 500, marginBottom: 8 }}>Costo ($): <span style={{ color: 'red', fontWeight: 700 }}>*</span>
+										<input name="costo" type="number" value={form.costo} onChange={handleChange} min={0} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
+									</label>
+								</>
+							)}
+							{form.tipo !== 'Otra' && (
+								<>
+									<label style={{ fontWeight: 500, marginBottom: 8 }}>Motivo / descripción:
+										<textarea name="motivo" value={form.motivo} onChange={handleChange} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, minHeight: 40, background: '#fff' }} />
+									</label>
+									<label style={{ fontWeight: 500, marginBottom: 8 }}>Costo ($):
+										<input name="costo" type="number" value={form.costo} onChange={handleChange} min={0} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
+									</label>
+								</>
+							)}
+							<label style={{ fontWeight: 500, marginBottom: 8 }}>Veterinario / clínica:
+								<input name="veterinario" value={form.veterinario} onChange={handleChange} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
+							</label>
+							<label style={{ fontWeight: 500, marginBottom: 8 }}>Estado de pago: <span style={{ color: 'red', fontWeight: 700 }}>*</span>
+								<select name="pagoEstado" value={form.pagoEstado} onChange={handleChange} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }}>
+									<option value="pagada">Pagada</option>
+									<option value="no_pagada">No pagada</option>
+									<option value="parcial">Parcialmente pagada</option>
+								</select>
+							</label>
+							{form.pagoEstado === 'parcial' && (
+								<label style={{ fontWeight: 500, marginBottom: 8 }}>Monto pagado:
+									<input name="montoPagado" type="number" value={form.montoPagado || 0} onChange={handleChange} min={0} max={form.costo || 0} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
 								</label>
-								<label style={{ fontWeight: 500, marginTop: 8 }}>Descripción:
-									<textarea name="motivo" value={form.motivo} onChange={handleChange} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, minHeight: 40, background: '#fff' }} />
-								</label>
-								<label style={{ fontWeight: 500, marginTop: 8 }}>Costo ($):
-									<input name="costo" type="number" value={form.costo} onChange={handleChange} min={0} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
-								</label>
-							</>
-						)}
-					</div>
-					<div style={{ gridColumn: '2/3' }}>
-						{form.tipo !== 'Otra' && (
-							<>
-								<label style={{ fontWeight: 500 }}>Motivo / descripción:
-									<textarea name="motivo" value={form.motivo} onChange={handleChange} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, minHeight: 40, background: '#fff' }} />
-								</label>
-								<label style={{ fontWeight: 500 }}>Costo ($):
-									<input name="costo" type="number" value={form.costo} onChange={handleChange} min={0} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
-								</label>
-							</>
-						)}
-						<label style={{ fontWeight: 500 }}>Veterinario / clínica:
-							<input name="veterinario" value={form.veterinario} onChange={handleChange} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
-						</label>
-						<label style={{ fontWeight: 500 }}>Observaciones:
-							<textarea name="observaciones" value={form.observaciones} onChange={handleChange} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, minHeight: 40, background: '#fff' }} />
-						</label>
-						<label style={{ fontWeight: 500 }}>Documento adjunto:
-							<input name="adjunto" type="file" onChange={handleFile} style={{ marginTop: 4, background: '#fff' }} />
-						</label>
-						{/* Campo pagada eliminado, ahora se usa pagoEstado y montoPagado */}
-					</div>
-					<div style={{ gridColumn: '1/3', textAlign: 'center', marginTop: 18 }}>
-						<button type="button" onClick={handleSubmit} style={{ background: '#1976d2', color: '#fff', border: 'none', borderRadius: '10px', padding: '12px 38px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 12px #1976d233' }}>Guardar cirugía</button>
-						<button type="button" style={{ marginLeft: 16, background: '#eee', color: '#1976d2', border: 'none', borderRadius: '10px', padding: '12px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer' }} onClick={() => { setShowForm(false); setForm({ tipo: '', otro_nombre: '', motivo: '', fecha: '', costo: 0, veterinario: '', observaciones: '', pagoEstado: 'no_pagada', montoPagado: 0, adjunto: null }); setShowOtro(false); }}>Cancelar</button>
-					</div>
-				</div>
+							)}
+							<label style={{ fontWeight: 500, marginBottom: 8 }}>Observaciones:
+								<textarea name="observaciones" value={form.observaciones} onChange={handleChange} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, minHeight: 40, background: '#fff' }} />
+							</label>
+							<label style={{ fontWeight: 500, marginBottom: 8 }}>Documento adjunto:
+								<input name="adjunto" type="file" onChange={handleFile} style={{ marginTop: 4, background: '#fff' }} />
+							</label>
+							<div style={{ textAlign: 'center', marginTop: 18 }}>
+								<button type="button" onClick={handleSubmit} style={{ background: '#1976d2', color: '#fff', border: 'none', borderRadius: '10px', padding: '12px 38px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 12px #1976d233' }}>Guardar cirugía</button>
+								<button type="button" style={{ marginLeft: 16, background: '#eee', color: '#1976d2', border: 'none', borderRadius: '10px', padding: '12px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer' }} onClick={() => { setShowForm(false); setForm({ tipo: '', otro_nombre: '', motivo: '', fecha: '', costo: 0, veterinario: '', observaciones: '', pagoEstado: 'no_pagada', montoPagado: 0, adjunto: null }); setShowOtro(false); }}>Cancelar</button>
+							</div>
+						</div>
 			)}
 					{historial.length > 0 && (
 						<div style={{ marginTop: 32 }}>
@@ -331,16 +353,32 @@ const CirugiaForm: React.FC<CirugiaFormProps> = ({ onAdd, onUpdate, historial = 
 									))}
 								</div>
 							<div style={{ marginTop: 12, fontWeight: 600, color: '#0d47a1' }}>
-								Total gastado: ${historial.reduce((acc, c) => acc + (c.costo || 0), 0).toLocaleString()}
-								<span style={{ marginLeft: 24, color: '#1976d2' }}>
-									Pagado: ${historial.filter(c => c.pagoEstado === 'pagada').reduce((acc, c) => acc + (c.costo || 0), 0).toLocaleString()}
-								</span>
-								<span style={{ marginLeft: 24, color: '#ffa726' }}>
-									Parcial: ${historial.filter(c => c.pagoEstado === 'parcial').reduce((acc, c) => acc + (c.montoPagado || 0), 0).toLocaleString()}
-								</span>
-								<span style={{ marginLeft: 24, color: '#e74c3c' }}>
-									Pendiente: ${historial.filter(c => c.pagoEstado === 'no_pagada').reduce((acc, c) => acc + (c.costo || 0), 0).toLocaleString()}
-								</span>
+								{(() => {
+									const totalGastado = historial.reduce((acc, c) => acc + (c.costo || 0), 0);
+									const pagado = historial.reduce((acc, c) => {
+										if (c.pagoEstado === 'pagada') return acc + (c.costo || 0);
+										if (c.pagoEstado === 'parcial') return acc + (c.montoPagado || 0);
+										return acc;
+									}, 0);
+									const parcial = historial.filter(c => c.pagoEstado === 'parcial').reduce((acc, c) => acc + (c.montoPagado || 0), 0);
+									const pendiente = historial.reduce((acc, c) => {
+										if (c.pagoEstado === 'no_pagada') return acc + (c.costo || 0);
+										if (c.pagoEstado === 'parcial') return acc + Math.max(0, (c.costo || 0) - (c.montoPagado || 0));
+										return acc;
+									}, 0);
+									return <>
+										Total gastado: ${totalGastado.toLocaleString()}
+										<span style={{ marginLeft: 24, color: '#1976d2' }}>
+											Pagado: ${pagado.toLocaleString()}
+										</span>
+										<span style={{ marginLeft: 24, color: '#ffa726' }}>
+											Parcial: ${parcial.toLocaleString()}
+										</span>
+										<span style={{ marginLeft: 24, color: '#e74c3c' }}>
+											Pendiente: ${pendiente.toLocaleString()}
+										</span>
+									</>;
+								})()}
 							</div>
 						</div>
 					)}

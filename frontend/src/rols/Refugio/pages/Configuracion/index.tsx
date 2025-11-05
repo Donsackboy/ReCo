@@ -34,11 +34,18 @@ const ConfiguracionRefugio: React.FC = () => {
     setError('');
     const token = localStorage.getItem('token');
     const formData = new FormData();
+    // Si se seleccionó un nuevo logo, eliminar el anterior y guardar el nuevo
+    if (form.logo && form.logo instanceof File) {
+      formData.append('logo', form.logo);
+      formData.append('eliminar_logo', 'true'); // Bandera para que el backend elimine el logo anterior
+    } else if (form.logo === null) {
+      formData.append('logo', ''); // Eliminar logo si se eliminó
+      formData.append('eliminar_logo', 'true');
+    }
     Object.entries(form).forEach(([key, value]) => {
+      if (key === 'logo') return; // Ya procesado arriba
       if (value !== undefined && value !== null) {
-        if (key === 'logo' && value instanceof File) {
-          formData.append(key, value);
-        } else if (key === 'redes_sociales') {
+        if (key === 'redes_sociales') {
           // Convertir string separada por comas a lista JSON
           const redes = typeof value === 'string' ? value.split(',').map(r => r.trim()).filter(Boolean) : value;
           formData.append(key, JSON.stringify(redes));

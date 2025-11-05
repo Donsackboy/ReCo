@@ -90,12 +90,14 @@ const PostulacionRefugio: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    // Aquí iría el endpoint real para enviar la postulación
+    // Transformar sitios_web en string de redes_sociales para guardar automáticamente
+    const redes_sociales = form.sitios_web.map(s => s.url).join(', ');
+    const payload = { ...form, redes_sociales };
     try {
       const res = await fetch(`${import.meta.env.VITE_API_BASE}/public/postulacion-refugio/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+        body: JSON.stringify(payload)
       });
       if (res.ok) {
         setEnviado(true);

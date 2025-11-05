@@ -305,7 +305,19 @@ const FichaMedicaModal = ({ open, onClose, ficha = initialFicha, onSave, animalE
                   if (!token) return;
                   try {
                     // Agregar id_animal al objeto cirugía
-                    const cirugiaData = { ...cirugia, id_animal: animalId };
+                    const cirugiaData = {
+                      id_animal: animalId,
+                      tipo: cirugia.tipo,
+                      otro_nombre: cirugia.otro_nombre,
+                      motivo: cirugia.motivo,
+                      fecha: cirugia.fecha,
+                      costo: cirugia.costo,
+                      veterinario: cirugia.veterinario,
+                      observaciones: cirugia.observaciones,
+                      pago_estado: cirugia.pagoEstado,
+                      monto_pagado: cirugia.montoPagado,
+                      adjunto: cirugia.adjunto
+                    };
                     const nuevaCirugia = await createCirugia(cirugiaData, token);
                     setForm(f => {
                       const updated = { ...f, cirugias: [...f.cirugias, nuevaCirugia] };

@@ -1,9 +1,7 @@
-
 import { useState, useEffect } from 'react';
 import FichaMedicaModal from './FichaMedicaModal';
 import type { FichaMedica } from './FichaMedicaModal';
-import { updateAnimal } from '../../../../../../src/api.js';
-import { getCirugias } from '../../../../../../src/api.js';
+import { updateAnimal, getCirugias } from '../../../../../../src/api.js';
 import type { Vacuna } from './AnimalList';
 
 // Tipos mínimos para evitar errores
@@ -106,6 +104,11 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
     desparasitado: animal.desparasitado || false,
     vacunas: (animal.vacunas as Vacuna[]) || [],
     fotos: Array.isArray((animal as any).fotos) ? (animal as any).fotos : [],
+    // Campos generales de ficha médica
+    estadoSalud: fichaMedica.general.estadoSalud || '',
+    peso: fichaMedica.general.peso || '',
+    ultimoControl: fichaMedica.general.ultimoControl || '',
+    veterinario: fichaMedica.general.veterinario || '',
   });
 
   // Estado para la foto actual
@@ -218,6 +221,11 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
         ...form,
         fecha_ingreso: form.fecha_ingreso ? form.fecha_ingreso : null,
         fecha_cumpleanos: form.fecha_cumpleanos ? form.fecha_cumpleanos : null,
+        // Agregar los datos generales de ficha médica
+        estadoSalud: form.estadoSalud,
+        peso: form.peso,
+        ultimoControl: form.ultimoControl,
+        veterinario: form.veterinario,
       };
       await updateAnimal(animal.id_animal, dataToSend, token);
       setSuccess(true);
@@ -226,6 +234,35 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
       setError('Error al guardar cambios');
     }
     setLoading(false);
+  };
+
+  // Estado para mostrar el modal de confirmación
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  // Eliminar animal con confirmación visual
+  const handleDeleteAnimal = async () => {
+    setShowDeleteModal(true);
+  };
+  const confirmDeleteAnimal = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const token = localStorage.getItem('token');
+      await fetch(`/api/animales/${animal.id_animal}/`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Token ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      setSuccess(true);
+      if (onSave) onSave();
+      onClose();
+    } catch (err) {
+      setError('Error al eliminar el animal');
+    }
+    setLoading(false);
+    setShowDeleteModal(false);
   };
 
   return (
@@ -339,9 +376,13 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
           setForm(f => ({
             ...f,
             vacunas: ficha.vacunas as Vacuna[],
+            estadoSalud: ficha.general.estadoSalud,
+            peso: ficha.general.peso,
+            ultimoControl: ficha.general.ultimoControl,
+            veterinario: ficha.general.veterinario,
           }));
         }}
-  animalId={animal.id_animal ?? ''}
+        animalId={animal.id_animal ?? ''}
         animalEspecie={animal.especie}
       />
             </div>
@@ -498,8 +539,69 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
         {error && <div style={{ color: 'red', marginTop: 14, textAlign: 'center', fontWeight: 600 }}>{error}</div>}
         {success && <div style={{ color: 'green', marginTop: 14, textAlign: 'center', fontWeight: 600 }}>¡Cambios guardados correctamente!</div>}
       </form>
-    </div>
+      {/* Modal de confirmación de eliminación */}
+      {showDeleteModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(34,139,34,0.18)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 10001
+        }}>
+          <div style={{
+            background: '#fff',
+            borderRadius: 18,
+            boxShadow: '0 8px 40px #228b2233',
+            padding: '38px 48px',
+            minWidth: 380,
+            maxWidth: 480,
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 18
+          }}>
+            <h2 style={{ color: '#e74c3c', fontWeight: 800, marginBottom: 12 }}>¿Eliminar animal?</h2>
+            <p style={{ color: '#145214', fontSize: '1.1rem', marginBottom: 18 }}>
+              Esta acción eliminará el animal y <b>toda su información asociada</b>:
+            </p>
+            <ul style={{ textAlign: 'left', margin: '12px auto', color: '#145214', fontSize: '1rem' }}>
+              <li>Ficha médica</li>
+              <li>Cirugías</li>
+              <li>Vacunas</li>
+              <li>Alergias y condiciones crónicas</li>
+            </ul>
+            <span style={{ color: '#e74c3c', fontWeight: 700 }}>Esta acción no se puede deshacer.</span>
+            <div style={{ display: 'flex', gap: 24, justifyContent: 'center', marginTop: 12 }}>
+              <button
+                type="button"
+                onClick={confirmDeleteAnimal}
+                style={{ background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 28px', fontWeight: 700, fontSize: '1.1rem', cursor: 'pointer', boxShadow: '0 2px 8px #e74c3c22' }}
+              >Eliminar</button>
+              <button
+                type="button"
+                onClick={() => setShowDeleteModal(false)}
+                style={{ background: '#90EE90', color: '#145214', border: 'none', borderRadius: 8, padding: '10px 28px', fontWeight: 700, fontSize: '1.1rem', cursor: 'pointer', boxShadow: '0 2px 8px #90EE9022' }}
+              >Cancelar</button>
+            </div>
+          </div>
         </div>
+      )}
+      {/* Botón para eliminar animal */}
+      <button
+        type="button"
+        onClick={handleDeleteAnimal}
+        style={{ background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 18px', fontWeight: 700, cursor: 'pointer', marginTop: 18 }}
+      >
+        Eliminar animal
+      </button>
     </div>
+  </div>
+  </div>
   );
 }

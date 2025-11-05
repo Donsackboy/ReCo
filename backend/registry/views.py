@@ -98,13 +98,25 @@ from rest_framework.views import APIView
 from .permissions import IsRefugioOrAdmin, IsAdmin, IsRefugio
 from .serializers import (
     AnimalSerializer, PostulacionRefugioSerializer, UserSerializer, LoginSerializer,
-    HogarTemporalSerializer, RefugioSerializer, HistorialMedicoSerializer,
-    CirugiaSerializer, TratamientoSerializer, AlergiaCondicionSerializer
+    HogarTemporalSerializer, RefugioSerializer,
+    CirugiaSerializer, TratamientoSerializer, AlergiaCondicionSerializer, FichaMedicaSerializer
 )
 from .models import (
-    Animal, PostulacionRefugio, Usuario, HogaresTemporales, Refugio, HistorialMedico,
-    Cirugia, Tratamiento, AlergiaCondicion
+    Animal, PostulacionRefugio, Usuario, HogaresTemporales, Refugio,
+    Cirugia, Tratamiento, AlergiaCondicion, FichaMedica
 )
+# Endpoint para listar y crear fichas médicas
+from rest_framework import generics, permissions
+class FichaMedicaListCreateView(generics.ListCreateAPIView):
+    serializer_class = FichaMedicaSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = FichaMedica.objects.all()
+        animal_id = self.kwargs.get('animal_id')
+        if animal_id:
+            queryset = queryset.filter(animal_id=animal_id)
+        return queryset
 
 # Endpoint para listar y crear alergias/condiciones crónicas de un animal
 from rest_framework import generics, permissions
@@ -151,6 +163,17 @@ class AnimalPublicCarouselView(APIView):
         return Response(data)
 
 class AnimalDetailView(generics.RetrieveUpdateDestroyAPIView):
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        from .models import SolicitudAdopcion
+        # Buscar solicitudes pendientes asociadas a este animal
+        solicitudes_pendientes = SolicitudAdopcion.objects.filter(animal=instance, estado='pendiente')
+        for solicitud in solicitudes_pendientes:
+            solicitud.estado = 'rechazada'
+            solicitud.anotaciones = (solicitud.anotaciones or '') + '\nRechazada automáticamente: el animal fue eliminado de la base de datos o ya no está disponible.'
+            solicitud.save()
+        # Ahora sí eliminar el animal
+        return super().destroy(request, *args, **kwargs)
     queryset = Animal.objects.all()
     serializer_class = AnimalSerializer
     permission_classes = [IsRefugioOrAdmin]
@@ -303,9 +326,14 @@ class AnimalListCreateView(generics.ListCreateAPIView):
         # Asignar refugio automáticamente si el usuario es refugio
         user = self.request.user
         if hasattr(user, 'refugio') and user.refugio:
-            serializer.save(refugio=user.refugio)
+            animal = serializer.save(refugio=user.refugio)
         else:
-            serializer.save()
+            animal = serializer.save()
+        # Crear ficha médica asociada automáticamente si no existe
+        from .models import FichaMedica
+        if not hasattr(animal, 'ficha_medica'):
+            FichaMedica.objects.create(animal=animal)
+
 class UserListAdminView(generics.ListCreateAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UserSerializer
@@ -385,17 +413,6 @@ def crear_hogar_temporal(request):
         hogar = serializer.save()
         return Response(HogarTemporalSerializer(hogar).data, status=201)
     return Response(serializer.errors, status=400)
-from .models import HistorialMedico
-from .serializers import HistorialMedicoSerializer
-from rest_framework import generics
-
-class HistorialMedicoAnimalListView(generics.ListAPIView):
-    serializer_class = HistorialMedicoSerializer
-    permission_classes = [permissions.AllowAny]
-
-    def get_queryset(self):
-        animal_id = self.kwargs.get('animal_id')
-        return HistorialMedico.objects.filter(id_animal=animal_id)
 
 class CirugiaListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
@@ -452,6 +469,17 @@ def refugio_me(request):
             return Response(debug_info, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     elif request.method in ['PATCH', 'PUT']:
         partial = request.method == 'PATCH'
+        eliminar_logo = request.data.get('eliminar_logo')
+        nuevo_logo = request.FILES.get('logo')
+        # Eliminar logo si se solicita
+        if eliminar_logo == 'true' and refugio.logo:
+            refugio.logo.delete(save=False)  # Elimina el archivo físico
+            refugio.logo = None
+        # Reemplazar logo si se sube uno nuevo
+        if nuevo_logo:
+            if refugio.logo:
+                refugio.logo.delete(save=False)
+            refugio.logo = nuevo_logo
         serializer = RefugioSerializer(refugio, data=request.data, partial=partial, context={'request': request})
         user = request.user
         # Actualizar datos del usuario asociado si se envían
