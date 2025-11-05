@@ -19,9 +19,9 @@ const MisAdopciones: React.FC = () => {
       navigate("/login");
       return;
     }
-    fetch("/api/adopciones/mias/", {
+    fetch("/api/adopciones/", {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Token ${token}`,
       },
     })
       .then((res) => res.json())

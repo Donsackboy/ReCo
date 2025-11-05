@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Logo from '../../../Public/components/Header/shared/Logo';
-import './UserProfile.css';
-import './NavMenu.css';
-import '../../../Public/components/Header/HeaderLayout.css';
-import './HamburgerMenu.css';
 
 interface HeaderUsuarioProps {
   onNavigateHome?: () => void;
@@ -36,27 +33,15 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
           <nav className="center-nav">
             <ul className="nav-menu">
               <li className="nav-item">
-                <a href="#adoptar" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">❤️</span>
-                  <span className="nav-text">Adoptar</span>
-                </a>
+                <Link to="/animales" className="nav-link" onClick={closeMenu}>
+                  <span className="nav-icon">🐶</span>
+                  <span className="nav-text">Animales</span>
+                </Link>
               </li>
               <li className="nav-item">
                 <a href="#hogar-temporal" className="nav-link" onClick={closeMenu}>
                   <span className="nav-icon">🏠</span>
                   <span className="nav-text">Hogar Temporal</span>
-                </a>
-              </li>
-              <li className="nav-item">
-                <a href="#mis-postulaciones" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">📋</span>
-                  <span className="nav-text">Mis Postulaciones</span>
-                </a>
-              </li>
-              <li className="nav-item">
-                <a href="/mis-adopciones" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">📄</span>
-                  <span className="nav-text">Mis Adopciones</span>
                 </a>
               </li>
               <li className="nav-item">
@@ -110,73 +95,61 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
           </div>
           <ul className="side-menu-items">
             <li className="side-menu-item">
-              <a href="#adoptar" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">❤️</span>
-                Adoptar Mascota
-              </a>
+              <Link to="/animales" className="side-menu-link" onClick={closeMenu}>
+                <span className="side-menu-icon">🐶</span>
+                Animales
+              </Link>
             </li>
             <li className="side-menu-item">
-              <a href="#hogar-temporal" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">🏠</span>
-                Ser Hogar Temporal
-              </a>
-            </li>
-            <li className="side-menu-item">
-              <a href="#mis-postulaciones" className="side-menu-link" onClick={closeMenu}>
+              <Link to="/mis-solicitudes-adopcion" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">📋</span>
-                Mis Postulaciones
-              </a>
+                Mis Solicitudes de Adopción
+              </Link>
             </li>
             <li className="side-menu-item">
-              <a href="/mis-adopciones" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">📄</span>
-                Mis Adopciones
-              </a>
-            </li>
-            <li className="side-menu-item">
-              <a href="#mis-adopciones" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">🐾</span>
+              <Link to="/mis-adopciones" className="side-menu-link" onClick={closeMenu}>
+                <span className="side-menu-icon">�🐾</span>
                 Mis Mascotas
-              </a>
+              </Link>
             </li>
             <li className="side-menu-item">
-              <a href="#eventos" className="side-menu-link" onClick={closeMenu}>
+              <Link to="/eventos" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">🎪</span>
                 Eventos
-              </a>
+              </Link>
             </li>
             <li className="side-menu-item">
-              <a href="#donar" className="side-menu-link" onClick={closeMenu}>
+              <Link to="/donar" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">💝</span>
                 Hacer Donación
-              </a>
+              </Link>
             </li>
             <li className="side-menu-item">
-              <a href="#mis-donaciones" className="side-menu-link" onClick={closeMenu}>
+              <Link to="/mis-donaciones" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">💰</span>
                 Mis Donaciones
-              </a>
+              </Link>
             </li>
             <li className="side-menu-item">
-              <a href="#voluntariado" className="side-menu-link" onClick={closeMenu}>
+              <Link to="/mis-voluntariados" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">🤝</span>
-                Ser Voluntario
-              </a>
+                Mis Voluntariados
+              </Link>
             </li>
             {/* Separador */}
             <hr className="side-menu-separator" />
             {/* Configuración y salir */}
             <li className="side-menu-item">
-              <a href="#mi-perfil" className="side-menu-link" onClick={closeMenu}>
+              <Link to="/mi-perfil" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">⚙️</span>
                 Mi Perfil
-              </a>
+              </Link>
             </li>
             <li className="side-menu-item">
-              <a href="#configuracion" className="side-menu-link" onClick={closeMenu}>
+              <Link to="/configuracion" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">🔧</span>
                 Configuración
-              </a>
+              </Link>
             </li>
             <li className="side-menu-item">
               <button

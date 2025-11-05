@@ -16,170 +16,159 @@ interface HeaderRefugioProps {
 }
 
 const HeaderRefugio: React.FC<HeaderRefugioProps> = ({ 
-  onNavigateHome, 
-  refugioNombre = "Mi Refugio",
-  onLogout 
-}) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
-
-  return (
-    <header className="header header-layout">
       <nav className="navbar">
         <div className="nav-container">
           {/* Logo */}
           <Logo onClick={onNavigateHome} />
           {/* Navegación central - Usuario REFUGIO */}
-          <nav className="center-nav">
+          <div className="center-nav">
             <ul className="nav-menu">
               <li className="nav-item">
                 <Link to="/refugio/dashboard" className="nav-link" onClick={closeMenu}>
                   <span className="nav-icon">📊</span>
                   <span className="nav-text">Dashboard</span>
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
                 <Link to="/refugio/mis-animales" className="nav-link" onClick={closeMenu}>
                   <span className="nav-icon">🐕</span>
                   <span className="nav-text">Mis Animales</span>
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
-                  <Link to="/refugio/dashboard" className="nav-link" onClick={closeMenu}>
-                    <span className="nav-icon">�</span>
-                    <span className="nav-text">Dashboard</span>
-                  </Link>
+                <Link to="/refugio/adopciones" className="nav-link" onClick={closeMenu}>
+                  <span className="nav-icon">📋</span>
+                  <span className="nav-text">Adopciones</span>
+                </Link>
               </li>
               <li className="nav-item">
-                  <Link to="/refugio/mis-animales" className="nav-link" onClick={closeMenu}>
-                    <span className="nav-icon">🐕</span>
-                    <span className="nav-text">Mis Animales</span>
-                  </Link>
+                <Link to="/refugio/mis-eventos" className="nav-link" onClick={closeMenu}>
+                  <span className="nav-icon">📅</span>
+                  <span className="nav-text">Mis Eventos</span>
+                </Link>
               </li>
               <li className="nav-item">
-                  <Link to="/refugio/adopciones" className="nav-link" onClick={closeMenu}>
-                    <span className="nav-icon">�</span>
-                    <span className="nav-text">Adopciones</span>
-                  </Link>
+                <Link to="/refugio/donaciones" className="nav-link" onClick={closeMenu}>
+                  <span className="nav-icon">💰</span>
+                  <span className="nav-text">Donaciones</span>
+                </Link>
               </li>
               <li className="nav-item">
-                  <Link to="/refugio/mis-eventos" className="nav-link" onClick={closeMenu}>
-                    <span className="nav-icon">�</span>
-                    <span className="nav-text">Mis Eventos</span>
-                  </Link>
+                <Link to="/refugio/historial-medico" className="nav-link" onClick={closeMenu}>
+                  <span className="nav-icon">🏥</span>
+                  <span className="nav-text">Historial Médico</span>
+                </Link>
               </li>
             </ul>
-                  <Link to="/refugio/donaciones" className="nav-link" onClick={closeMenu}>
-                    <span className="nav-icon">💰</span>
-                    <span className="nav-text">Donaciones</span>
-                  </Link>
-              <button className="user-profile" onClick={() => window.location.href = '/refugio/configuracion'}>
-                <span className="user-icon">🏠</span>
-                  <Link to="/refugio/historial-medico" className="nav-link" onClick={closeMenu}>
-                    <span className="nav-icon">🏥</span>
-                    <span className="nav-text">Historial Médico</span>
-                  </Link>
-                <span className="auth-text">Cerrar Sesión</span>
-              </button>
-            </div>
-            <button className="hamburger-btn" onClick={toggleMenu}>
-              <span className="hamburger-line"></span>
-              <span className="hamburger-line"></span>
-              <span className="hamburger-line"></span>
+            <button className="user-profile" onClick={() => window.location.href = '/refugio/configuracion'}>
+              <span className="user-icon">🏠</span>
+              <span className="auth-text">Mi Perfil</span>
+            </button>
+            <button className="auth-text logout-btn" onClick={onLogout}>
+              Cerrar Sesión
             </button>
           </div>
+          <button className="hamburger-btn" onClick={toggleMenu}>
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+          </button>
         </div>
+      </nav>
+              {/* Overlay para cerrar menú */}
+              {isMenuOpen && <div className="menu-overlay" onClick={closeMenu}></div>}
 
-        {/* Overlay para cerrar menú */}
-        {isMenuOpen && <div className="menu-overlay" onClick={closeMenu}></div>}
-
-        {/* Menú lateral */}
-        <div className={`side-menu ${isMenuOpen ? 'side-menu-open' : ''}`}>
-          <div className="side-menu-header">
-            <div className="side-menu-logo">
-              <img src="/Images/reco-logo.png" alt="ReCo" className="side-logo" />
-              <div className="user-info">
-                <span className="side-logo-text">🏠 {refugioNombre}</span>
-                <span className="user-role">Refugio</span>
+              {/* Menú lateral */}
+              <div className={`side-menu ${isMenuOpen ? 'side-menu-open' : ''}`}>
+                <div className="side-menu-header">
+                  <div className="side-menu-logo">
+                    <img src="/Images/reco-logo.png" alt="ReCo" className="side-logo" />
+                    <div className="user-info">
+                      <span className="side-logo-text">🏠 {refugioNombre}</span>
+                      <span className="user-role">Refugio</span>
+                    </div>
+                  </div>
+                  <button className="close-btn" onClick={closeMenu}>
+                    <span className="close-icon">×</span>
+                  </button>
+                </div>
+                <ul className="side-menu-items">
+                  <li className="side-menu-item">
+                    <Link to="/refugio/dashboard" className="side-menu-link" onClick={closeMenu}>
+                      <span className="side-menu-icon">📊</span>
+                      Dashboard
+                    </Link>
+                  </li>
+                  <li className="side-menu-item">
+                    <Link to="/refugio/mis-animales" className="side-menu-link" onClick={closeMenu}>
+                      <span className="side-menu-icon">🐕</span>
+                      Mis Animales
+                    </Link>
+                  </li>
+                  <li className="side-menu-item">
+                    <Link to="/refugio/adopciones" className="side-menu-link" onClick={closeMenu}>
+                      <span className="side-menu-icon">📋</span>
+                      Adopciones
+                    </Link>
+                  </li>
+                  <li className="side-menu-item">
+                    <Link to="/refugio/mis-eventos" className="side-menu-link" onClick={closeMenu}>
+                      <span className="side-menu-icon">📅</span>
+                      Mis Eventos
+                    </Link>
+                  </li>
+                  <li className="side-menu-item">
+                    <Link to="/refugio/donaciones" className="side-menu-link" onClick={closeMenu}>
+                      <span className="side-menu-icon">💰</span>
+                      Donaciones
+                    </Link>
+                  </li>
+                  <li className="side-menu-item">
+                    <Link to="/refugio/historial-medico" className="side-menu-link" onClick={closeMenu}>
+                      <span className="side-menu-icon">🏥</span>
+                      Historial Médico
+                    </Link>
+                  </li>
+                  <li className="side-menu-item">
+                    <Link to="/refugio/voluntarios" className="side-menu-link" onClick={closeMenu}>
+                      <span className="side-menu-icon">🤝</span>
+                      Mis Voluntarios
+                    </Link>
+                  </li>
+                  <li className="side-menu-item">
+                    <Link to="/refugio/inscritos-evento" className="side-menu-link" onClick={closeMenu}>
+                      <span className="side-menu-icon">📋</span>
+                      Inscritos Evento
+                    </Link>
+                  </li>
+                  <li className="side-menu-item">
+                    <Link to="/refugio/necesidades" className="side-menu-link" onClick={closeMenu}>
+                      <span className="side-menu-icon">📝</span>
+                      Necesidades
+                    </Link>
+                  </li>
+                  <li className="side-menu-item">
+                    <Link to="/refugio/configuracion" className="side-menu-link" onClick={closeMenu}>
+                      <span className="side-menu-icon">⚙️</span>
+                      Mi Perfil
+                    </Link>
+                  </li>
+                  <li className="side-menu-item">
+                    <button
+                      onClick={() => {
+                        closeMenu();
+                        setTimeout(() => { onLogout?.(); }, 100);
+                      }}
+                      className="side-menu-link logout-btn"
+                    >
+                      Cerrar Sesión
+                    </button>
+                  </li>
+                </ul>
               </div>
-            </div>
-            <button className="close-btn" onClick={closeMenu}>
-              <span className="close-icon">×</span>
-            </button>
-          </div>
-          <ul className="side-menu-items">
-            <li className="side-menu-item">
-              <Link to="/refugio/dashboard" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">📊</span>
-                Dashboard
-              </a>
+                Mi Perfil
+              </Link>
             </li>
-            <li className="side-menu-item">
-              <Link to="/refugio/mis-animales" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">🐕</span>
-                Mis Animales
-              </a>
-            </li>
-            <li className="side-menu-item">
-                <Link to="/refugio/dashboard" className="side-menu-link" onClick={closeMenu}>
-                  <span className="side-menu-icon">�</span>
-                  Dashboard
-                </Link>
-            </li>
-            <li className="side-menu-item">
-                <Link to="/refugio/mis-animales" className="side-menu-link" onClick={closeMenu}>
-                  <span className="side-menu-icon">🐕</span>
-                  Mis Animales
-                </Link>
-            </li>
-            <li className="side-menu-item">
-                <Link to="/refugio/adopciones" className="side-menu-link" onClick={closeMenu}>
-                  <span className="side-menu-icon">�</span>
-                  Adopciones
-                </Link>
-            </li>
-            <li className="side-menu-item">
-                <Link to="/refugio/mis-eventos" className="side-menu-link" onClick={closeMenu}>
-                  <span className="side-menu-icon">�</span>
-                  Mis Eventos
-                </Link>
-            </li>
-            <li className="side-menu-item">
-                <Link to="/refugio/donaciones" className="side-menu-link" onClick={closeMenu}>
-                  <span className="side-menu-icon">💰</span>
-                  Donaciones
-                </Link>
-            </li>
-              <li className="side-menu-item">
-                <Link to="/refugio/historial-medico" className="side-menu-link" onClick={closeMenu}>
-                  <span className="side-menu-icon">🏥</span>
-                  Historial Médico
-                </Link>
-              </li>
-            <li className="side-menu-item">
-                <Link to="/refugio/voluntarios" className="side-menu-link" onClick={closeMenu}>
-                  <span className="side-menu-icon">🤝</span>
-                    Mis Voluntarios
-                </Link>
-            </li>
-            
-                  <Link to="/refugio/inscritos-evento" className="side-menu-link" onClick={closeMenu}>
-                    <span className="side-menu-icon">📋</span>
-                    Inscritos Evento
-                  </Link>
-            <li className="side-menu-item">
-              <Link to="/refugio/configuracion" className="side-menu-link" onClick={closeMenu}>
-                <Link to="/refugio/necesidades" className="side-menu-link" onClick={closeMenu}>
-                  <span className="side-menu-icon">📝</span>
-                  Necesidades
-                </Link>
             <li className="side-menu-item">
               <button
                 onClick={() => {
@@ -187,10 +176,9 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
                   setTimeout(() => { onLogout?.(); }, 100);
                 }}
                 className="side-menu-link logout-btn"
-                <Link to="/refugio/configuracion" className="side-menu-link" onClick={closeMenu}>
-                  <span className="side-menu-icon">⚙️</span>
-                  Mi Perfil
-                </Link>
+              >
+                Cerrar Sesión
+              </button>
             </li>
           </ul>
         </div>

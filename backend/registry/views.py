@@ -1,3 +1,72 @@
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+
+# Endpoint para obtener el historial de solicitudes de adopción aceptadas y rechazadas asociadas al refugio logeado
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def historial_solicitudes_adopcion_refugio(request):
+    user = request.user
+    if not hasattr(user, 'refugio') or not user.refugio:
+        return Response([])
+    refugio = user.refugio
+    from .models import SolicitudAdopcion, Animal
+    from .serializers import SolicitudAdopcionSerializer
+    animales_refugio = Animal.objects.filter(refugio=refugio)
+    solicitudes = SolicitudAdopcion.objects.filter(animal__in=animales_refugio, estado__in=['aceptada', 'rechazada'])
+    serializer = SolicitudAdopcionSerializer(solicitudes, many=True)
+    return Response(serializer.data)
+
+# PATCH /refugio/solicitud-adopcion/<id>/
+@api_view(["PATCH"])
+@permission_classes([IsAuthenticated])
+def actualizar_solicitud_adopcion(request, pk):
+    try:
+        solicitud = SolicitudAdopcion.objects.get(pk=pk)
+    except SolicitudAdopcion.DoesNotExist:
+        return Response({"error": "Solicitud no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+    estado = request.data.get("estado")
+    anotaciones = request.data.get("anotaciones")
+    if estado:
+        solicitud.estado = estado
+    if anotaciones is not None:
+        solicitud.anotaciones = anotaciones
+    solicitud.save()
+    from .serializers import SolicitudAdopcionSerializer
+    return Response(SolicitudAdopcionSerializer(solicitud).data)
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+# Endpoint para obtener las solicitudes de adopción pendientes asociadas al refugio logeado
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def solicitudes_adopcion_pendientes_refugio(request):
+    user = request.user
+    if not hasattr(user, 'refugio') or not user.refugio:
+        return Response([])
+    refugio = user.refugio
+    from .models import SolicitudAdopcion, Animal
+    from .serializers import SolicitudAdopcionSerializer
+    animales_refugio = Animal.objects.filter(refugio=refugio)
+    solicitudes = SolicitudAdopcion.objects.filter(animal__in=animales_refugio, estado='pendiente')
+    serializer = SolicitudAdopcionSerializer(solicitudes, many=True)
+    return Response(serializer.data)
+# Importar decoradores y permisos al inicio del archivo
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+# Endpoint para cantidad de adopciones pendientes de un refugio
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def adopciones_pendientes_refugio(request):
+    user = request.user
+    if not hasattr(user, 'refugio') or not user.refugio:
+        return Response({'count': 0})
+    refugio = user.refugio
+    from .models import SolicitudAdopcion, Animal
+    animales_refugio = Animal.objects.filter(refugio=refugio)
+    count = SolicitudAdopcion.objects.filter(animal__in=animales_refugio, estado='pendiente').count()
+    return Response({'count': count})
 from rest_framework import generics, permissions, status
 from .serializers import SolicitudAdopcionSerializer
 from .models import SolicitudAdopcion
@@ -6,13 +75,18 @@ class SolicitudAdopcionListCreateView(generics.ListCreateAPIView):
     serializer_class = SolicitudAdopcionSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+
     def get_queryset(self):
-        # Solo mostrar solicitudes del usuario autenticado
-        return SolicitudAdopcion.objects.filter(usuario=self.request.user)
+        user = self.request.user
+        if not user or not user.is_authenticated:
+            return SolicitudAdopcion.objects.none()
+        return SolicitudAdopcion.objects.filter(usuario=user)
 
     def perform_create(self, serializer):
-        # Asociar la solicitud al usuario autenticado
-        serializer.save(usuario=self.request.user)
+        user = self.request.user
+        if not user or not user.is_authenticated:
+            raise Exception("Usuario no autenticado")
+        serializer.save(usuario=user)
 from django.db.models import F
 import random
 from rest_framework.decorators import api_view, permission_classes
@@ -23,12 +97,25 @@ from .permissions import IsRefugioOrAdmin, IsAdmin, IsRefugio
 from .serializers import (
     AnimalSerializer, PostulacionRefugioSerializer, UserSerializer, LoginSerializer,
     HogarTemporalSerializer, RefugioSerializer, HistorialMedicoSerializer,
-    CirugiaSerializer, TratamientoSerializer
+    CirugiaSerializer, TratamientoSerializer, AlergiaCondicionSerializer
 )
 from .models import (
     Animal, PostulacionRefugio, Usuario, HogaresTemporales, Refugio, HistorialMedico,
-    Cirugia, Tratamiento
+    Cirugia, Tratamiento, AlergiaCondicion
 )
+
+# Endpoint para listar y crear alergias/condiciones crónicas de un animal
+from rest_framework import generics, permissions
+class AlergiaCondicionListCreateView(generics.ListCreateAPIView):
+    serializer_class = AlergiaCondicionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = AlergiaCondicion.objects.all()
+        animal_id = self.kwargs.get('animal_id')
+        if animal_id:
+            queryset = queryset.filter(animal_id=animal_id)
+        return queryset
 
 # Endpoint público para 5 animales random con foto principal
 class AnimalPublicCarouselView(APIView):

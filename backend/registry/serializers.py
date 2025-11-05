@@ -3,10 +3,19 @@ from rest_framework import serializers
 from .models import SolicitudAdopcion
 
 class SolicitudAdopcionSerializer(serializers.ModelSerializer):
+    def get_animal_nombre(self, obj):
+        try:
+            return obj.animal.nombre if obj.animal else None
+        except Exception:
+            return None
+
+    animal_nombre = serializers.SerializerMethodField()
+
     class Meta:
         model = SolicitudAdopcion
         fields = '__all__'
-from .models import PostulacionRefugio, Usuario, HogaresTemporales, Refugio, Animal, HistorialMedico, Cirugia, Tratamiento
+        extra_fields = ['animal_nombre']
+from .models import PostulacionRefugio, Usuario, HogaresTemporales, Refugio, Animal, HistorialMedico, Cirugia, Tratamiento, AlergiaCondicion
 from django.conf import settings
 from django.contrib.auth import authenticate
 
@@ -87,4 +96,10 @@ class CirugiaSerializer(serializers.ModelSerializer):
 class TratamientoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tratamiento
+        fields = '__all__'
+
+# Serializer para AlergiaCondicion
+class AlergiaCondicionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AlergiaCondicion
         fields = '__all__'

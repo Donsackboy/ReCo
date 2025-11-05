@@ -185,3 +185,15 @@ export async function deleteTratamiento(id, token) {
   if (!response.ok) throw new Error('Error al eliminar tratamiento');
   return true;
 }
+
+// Obtener cantidad de adopciones pendientes del refugio
+export async function getAdopcionesPendientesRefugio(token) {
+  const response = await fetch(`${API_BASE}/refugio/adopciones-pendientes/`, {
+    headers: {
+      'Authorization': `Token ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error('Error al obtener adopciones pendientes del refugio');
+  const data = await response.json();
+  return data.count;
+}

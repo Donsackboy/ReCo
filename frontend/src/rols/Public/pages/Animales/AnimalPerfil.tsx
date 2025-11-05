@@ -5,7 +5,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
-import { animales } from './animalesData';
 
 export default function AnimalPerfil() {
   const { id } = useParams();
@@ -158,7 +157,7 @@ export default function AnimalPerfil() {
       </ul>
       <h3 style={{ color: '#145214', marginBottom: '10px' }}>Vacunas</h3>
       <ul style={{ fontSize: '1.08rem', color: '#228B22', marginBottom: '18px' }}>
-        {animal.vacunas && animal.vacunas.length > 0 ? animal.vacunas.map((v, idx) => (
+  {animal.vacunas && animal.vacunas.length > 0 ? animal.vacunas.map((v: any, idx: number) => (
           <li key={idx} style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
               <strong>{v.tipo}</strong> {v.unica ? '(única aplicación)' : ''}<br />

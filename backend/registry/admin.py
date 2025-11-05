@@ -98,8 +98,8 @@ class CirugiaAdmin(admin.ModelAdmin):
 
 @admin.register(Tratamiento)
 class TratamientoAdmin(admin.ModelAdmin):
-    list_display = ("id_tratamiento", "id_animal", "tipo", "nombre", "fecha_inicio", "estado", "pagado")
-    list_filter = ("estado", "tipo", "pagado")
+    list_display = ("id_tratamiento", "id_animal", "tipo", "nombre", "fecha_inicio", "estado", "estado_pago", "monto_pagado")
+    list_filter = ("estado", "tipo", "estado_pago")
     search_fields = ("nombre", "motivo", "veterinario")
 
 @admin.register(SolicitudAdopcion)

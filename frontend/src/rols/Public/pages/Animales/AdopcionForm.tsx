@@ -133,7 +133,7 @@ const AdopcionForm = () => {
       setErrorMsg('No se ha seleccionado un animal válido para la adopción.');
       return;
     }
-    // Construir el payload para el backend
+    // Construir el payload para el backend (incluyendo usuario)
     const payload = {
       nombre: form.nombre,
       direccion: form.direccion,
@@ -143,6 +143,7 @@ const AdopcionForm = () => {
       rol_familia: form.rolFamilia,
       respuestas: form.respuestas,
       animal: Number(animalId), // aseguramos que sea un número
+      usuario: user?.id // <-- Agregado el id del usuario
     };
     console.log('Payload enviado:', payload);
     try {
@@ -158,7 +159,12 @@ const AdopcionForm = () => {
         setEnviado(true);
       } else {
         const data = await res.json();
-        setErrorMsg(data?.detail || 'Error al enviar la solicitud.');
+        // Show full error object for debugging
+        setErrorMsg(
+          typeof data === 'string' ? data :
+          data?.detail ? data.detail :
+          JSON.stringify(data, null, 2)
+        );
       }
     } catch (err) {
       setErrorMsg('Error de conexión al enviar la solicitud.');

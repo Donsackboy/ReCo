@@ -35,6 +35,7 @@ import DonarServicio from './rols/Public/pages/Donaciones/DonarServicio.tsx';
 import RefugioPerfil from './rols/Public/pages/Refugios/RefugioPerfil.tsx';
 
 import MisAdopciones from './rols/Public/pages/MisAdopciones';
+import MisSolicitudesAdopcion from './rols/Usuario/pages/MisSolicitudesAdopcion';
 
 
 //refugio
@@ -108,6 +109,7 @@ export default function AppRouter() {
 
   {/* Ruta para Mis Adopciones */}
   <Route path="/mis-adopciones" element={<MisAdopciones />} />
+  <Route path="/mis-solicitudes-adopcion" element={<MisSolicitudesAdopcion />} />
 
   {/* Ruta para Mis Adopciones */}
 

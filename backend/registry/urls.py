@@ -1,7 +1,11 @@
 from django.urls import path
 from . import views
+from django.urls import path
+from . import views
 
 urlpatterns = [
+    path('refugio/historial-solicitudes-adopcion/', views.historial_solicitudes_adopcion_refugio, name='historial_solicitudes_adopcion_refugio'),
+    path('refugio/solicitud-adopcion/<int:pk>/', views.actualizar_solicitud_adopcion, name='actualizar_solicitud_adopcion'),
     path('auth/login/', views.login, name='login'),
     path('auth/register/', views.register, name='register'),
     path('auth/profile/', views.user_profile, name='profile'),
@@ -25,5 +29,8 @@ urlpatterns = [
     path('cirugias/<int:pk>/', views.CirugiaRetrieveUpdateDestroyView.as_view(), name='cirugia_detail'),
     path('tratamientos/', views.TratamientoListCreateView.as_view(), name='tratamiento_list_create'),
     path('tratamientos/<int:pk>/', views.TratamientoRetrieveUpdateDestroyView.as_view(), name='tratamiento_detail'),
+    path('refugio/solicitudes-adopcion-pendientes/', views.solicitudes_adopcion_pendientes_refugio, name='solicitudes_adopcion_pendientes_refugio'),
+    path('refugio/adopciones-pendientes/', views.adopciones_pendientes_refugio, name='adopciones_pendientes_refugio'),
     path('adopciones/', views.SolicitudAdopcionListCreateView.as_view(), name='solicitud_adopcion_list_create'),
+    path('animales/<int:animal_id>/alergias-condiciones/', views.AlergiaCondicionListCreateView.as_view(), name='alergia_condicion_list_create'),
 ]

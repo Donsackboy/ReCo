@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import AlergiasCondicionesCronicas from '../../../../../components/AlergiasCondicionesCronicas';
 import CirugiaForm from '../../../../../components/CirugiaForm';
-import { createCirugia, getTratamientos, createTratamiento, updateTratamiento } from '../../../../../api.js';
+
 import TratamientoForm from '../../../../../components/TratamientoForm';
 import type { Cirugia } from '../../../../../components/CirugiaForm';
 import type { Tratamiento } from '../../../../../components/TratamientoForm';
@@ -8,14 +9,7 @@ import { vacunasPorEspecie } from '../../../../../utils/vacunasEspecies';
 import type { VacunaInfo } from '../../../../../utils/vacunasEspecies';
 
 // Estructura inicial para la ficha médica con pestañas
-const tabs = [
-  { key: 'general', label: 'General' },
-  { key: 'vacunas', label: 'Vacunas' },
-  { key: 'cirugias', label: 'Cirugías' },
-  { key: 'tratamientos', label: 'Tratamientos' },
-  { key: 'alergias', label: 'Alergias' },
-  { key: 'archivos', label: 'Archivos' },
-];
+
 
 const initialFicha = {
   general: {
@@ -158,7 +152,7 @@ const FichaMedicaModal = ({ open, onClose, ficha = initialFicha, onSave, animalE
                 <div style={{ background: '#e3f2fd', borderRadius: 8, padding: 12, marginTop: 8, width: '100%' }}>
                   <h4 style={{ color: '#1976d2', fontWeight: 700, marginBottom: 10 }}>Información de algunas vacunas comunes</h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                    {vacunasRecomendadas.map((v, idx) => {
+                    {vacunasRecomendadas.map((v) => {
                       // Buscar si ya está registrada
                       const yaRegistrada = form.vacunas.some(vac => vac.tipo === v.nombre);
                       if (yaRegistrada) return null;
@@ -203,7 +197,7 @@ const FichaMedicaModal = ({ open, onClose, ficha = initialFicha, onSave, animalE
                     }}
                     style={{ marginLeft: 8, padding: 6, borderRadius: 6, border: '1.5px solid #90caf9', background: '#e3f2fd', fontSize: 15 }}
                   >
-                    {vacunasRecomendadas.map((v, i) => (
+                    {vacunasRecomendadas.map((v) => (
                       <option key={v.nombre} value={v.nombre}>{v.nombre}</option>
                     ))}
                     <option value="Otra">Otra</option>
@@ -375,33 +369,7 @@ const FichaMedicaModal = ({ open, onClose, ficha = initialFicha, onSave, animalE
             }}
           />
           {/* Alergias */}
-          <div style={{ background: '#e3f2fd', border: '2px solid #90caf9', borderRadius: 14, padding: 18, marginBottom: 8 }}>
-            <h3 style={{ marginBottom: 8, color: '#1976d2', fontWeight: 700 }}>Alergias y condiciones crónicas</h3>
-            {form.alergias.length === 0 && <div style={{ color: '#888' }}>No hay alergias registradas.</div>}
-            {form.alergias.map((alergia, idx) => (
-              <div key={idx} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6 }}>
-                <input
-                  type="text"
-                  placeholder="Alergia o condición crónica"
-                  value={alergia.nombre || ''}
-                  onChange={e => {
-                    const alergias = [...form.alergias];
-                    alergias[idx] = { ...alergias[idx], nombre: e.target.value };
-                    setForm(f => ({ ...f, alergias }));
-                  }}
-                  style={{ flex: 1, padding: 6, borderRadius: 6, border: '1.5px solid #90caf9', background: '#fff' }}
-                />
-                <button type="button" style={{ background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', fontWeight: 600, cursor: 'pointer' }} onClick={e => {
-                  e.preventDefault();
-                  setForm(f => ({ ...f, alergias: f.alergias.filter((_, i) => i !== idx) }));
-                }}>Eliminar</button>
-              </div>
-            ))}
-            <button type="button" style={{ background: '#1976d2', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 600, marginTop: 8, alignSelf: 'flex-start' }} onClick={e => {
-              e.preventDefault();
-              setForm(f => ({ ...f, alergias: [...f.alergias, { nombre: '' }] }));
-            }}>Agregar alergia/condición</button>
-          </div>
+            <AlergiasCondicionesCronicas animalId={typeof animalId === 'string' ? Number(animalId) : animalId} />
           {/* Archivos */}
           <div style={{ background: '#e3f2fd', border: '2px solid #90caf9', borderRadius: 14, padding: 18, marginBottom: 8 }}>
             <h3 style={{ marginBottom: 8, color: '#1976d2', fontWeight: 700 }}>Archivos adjuntos</h3>

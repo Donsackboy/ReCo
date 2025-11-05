@@ -18,9 +18,9 @@ const GestionRefugioMenu: React.FC<GestionRefugioMenuProps> = ({ nombreRefugio }
   };
 
   // Simulación de contadores (en producción, obtén estos datos de la API)
-  const [animalesCount, setAnimalesCount] = React.useState(12);
-  const [adopcionesPendientes, setAdopcionesPendientes] = React.useState(3);
-  const [hogarTemporalPendientes, setHogarTemporalPendientes] = React.useState(2);
+  const [animalesCount] = React.useState(12);
+  const [adopcionesPendientes] = React.useState(3);
+  const [hogarTemporalPendientes] = React.useState(2);
 
   return (
     <div className="gestion-refugio-card menu-card">
