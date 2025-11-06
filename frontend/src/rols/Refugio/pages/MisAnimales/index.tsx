@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import AnimalList from './components/AnimalList';
 import AnimalForm from './components/AnimalForm';
-import AnimalProfile from './components/AnimalProfile';
-import AnimalPhotos from './components/AnimalPhotos';
 
 const MisAnimales: React.FC = () => {
   const [showModal, setShowModal] = useState(false);

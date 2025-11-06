@@ -58,14 +58,25 @@ const AnimalCard: React.FC<AnimalCardProps> = ({ animal }) => (
     <div style={{ color: '#228B22', 
                   fontSize: '1rem', 
                   marginBottom: '8px' }}>{animal.sexo} • {animal.edad} años • {animal.tamano}</div>
-    <div style={{ color: '#1a421a', 
-                  fontSize: '0.98rem', 
-                  marginBottom: '8px', 
-                  textAlign: 'center', 
-                  display: '-webkit-box', 
-                  WebkitLineClamp: 3, 
-                  WebkitBoxOrient: 'vertical', 
-                  overflow: 'hidden' }}>{animal.resena}</div>
+    <div
+      style={{
+        color: '#1a421a',
+        fontSize: '0.98rem',
+        marginBottom: '8px',
+        textAlign: 'center',
+        display: '-webkit-box',
+        WebkitLineClamp: 3,           // Limita a 3 líneas visibles
+        WebkitBoxOrient: 'vertical',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',     // Agrega los "..."
+        lineHeight: '1.5em',
+        whiteSpace: 'normal',
+        maxHeight: '4.5em',           // 3 líneas * 1.5em
+      }}
+      title={animal.descripcion || 'Sin descripción disponible.'}
+    >
+      {animal.descripcion || 'Sin descripción disponible.'}
+    </div>
         {animal.id !== undefined && animal.id !== null ? (
           <Link 
             to={`/animales/${animal.id}`}

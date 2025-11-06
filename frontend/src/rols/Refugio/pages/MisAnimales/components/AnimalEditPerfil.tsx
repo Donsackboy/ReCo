@@ -1,3 +1,4 @@
+import './AnimalEditPerfil.css';
 import { useState, useEffect } from 'react';
 import FichaMedicaModal from './FichaMedicaModal';
 import type { FichaMedica } from './FichaMedicaModal';
@@ -9,6 +10,7 @@ type Animal = {
   id_animal?: number;
   nombre?: string;
   edad?: string | number;
+  tipo_edad?: string;
   especie?: string;
   descripcion?: string;
   estado?: string;
@@ -90,6 +92,7 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
   const [form, setForm] = useState({
     nombre: animal.nombre || '',
     edad: animal.edad || '',
+  tipo_edad: animal.tipo_edad || 'anios',
     especie: animal.especie || '',
     descripcion: animal.descripcion || '',
     estado: animal.estado || 'disponible',
@@ -221,6 +224,7 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
         ...form,
         fecha_ingreso: form.fecha_ingreso ? form.fecha_ingreso : null,
         fecha_cumpleanos: form.fecha_cumpleanos ? form.fecha_cumpleanos : null,
+        tipo_edad: form.tipo_edad,
         // Agregar los datos generales de ficha médica
         estadoSalud: form.estadoSalud,
         peso: form.peso,
@@ -276,32 +280,8 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      width: '100vw',
-      height: '100vh',
-      background: 'rgba(34,139,34,0.08)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 9999
-    }}>
-      <div style={{
-        maxWidth: 1100,
-        minWidth: 700,
-        width: '90vw',
-        minHeight: 700,
-        background: '#f6fff6',
-        borderRadius: 28,
-        boxShadow: '0 8px 40px #228b2233',
-        padding: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        position: 'relative'
-      }}>
+    <div className="animal-edit-modal-overlay">
+      <div className="animal-edit-modal-card">
         {/* Botón X de cerrar/cancelar arriba a la derecha */}
         <button
           type="button"
@@ -321,11 +301,11 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
           }}
           aria-label="Cerrar edición"
         >×</button>
-        <div style={{ flex: 1, overflowY: 'auto', padding: 48 }}>
+  <div className="animal-edit-modal-content">
           <h2 style={{ color: '#145214', marginBottom: 18, textAlign: 'center', fontWeight: 800, letterSpacing: 1.5, fontSize: '2.2rem' }}>Editar Perfil de {form.nombre}</h2>
           <form onSubmit={handleSubmit} style={{ overflowY: 'auto', maxHeight: '70vh' }}>
             {/* FORMULARIO PRINCIPAL */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 18, marginBottom: 10 }}>
+            <div className="animal-edit-form-grid">
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Ubicación actual:</label>
                 <select name="ubicacion_actual" value={form.ubicacion_actual} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', background: '#fff' }}>
@@ -339,7 +319,13 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Edad:</label>
-                <input name="edad" value={form.edad} onChange={handleChange} type="number" min="0" style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', boxShadow: '0 1px 6px #90EE9022' }} />
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <input name="edad" value={form.edad} onChange={handleChange} type="number" min="0" style={{ width: '60%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', boxShadow: '0 1px 6px #90EE9022' }} />
+                  <select name="tipo_edad" value={form.tipo_edad} onChange={handleChange} style={{ width: '40%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', marginTop: 0 }}>
+                    <option value="anios">Años</option>
+                    <option value="meses">Meses</option>
+                  </select>
+                </div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Tamaño:</label>
@@ -347,7 +333,6 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
                   <option value="">Selecciona tamaño</option>
                   <option value="Pequeño">Pequeño</option>
                   <option value="Pequeño-Grande">Pequeño-Grande</option>
-                  <option value="Media">Media</option>
                   <option value="Mediano">Mediano</option>
                   <option value="Mediano-Grande">Mediano-Grande</option>
                   <option value="Grande">Grande</option>
@@ -563,7 +548,7 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
           justifyContent: 'center',
           zIndex: 10001
         }}>
-          <div style={{
+          <div className="confirm-delete-modal" style={{
             background: '#fff',
             borderRadius: 22,
             boxShadow: '0 12px 48px #228b2244',

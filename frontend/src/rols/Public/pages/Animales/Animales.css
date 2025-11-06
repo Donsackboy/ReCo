@@ -10,6 +10,6 @@
 }
 
 .animal-card {
-  flex: 1 1 320px;
-  margin-bottom: 24px;
+  flex: 0 1 90%;
+  margin: 0 auto;
 }

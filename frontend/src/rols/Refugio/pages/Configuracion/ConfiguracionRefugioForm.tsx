@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { regionesComunasChile, regionesChile } from '../../../../utils/regionesComunasChile';
 
 interface RefugioFormProps {
   refugio: any;
@@ -21,6 +22,7 @@ interface FormData {
   ano_fundacion?: string;
   personalidad_juridica?: boolean;
   estado?: string;
+  descripcion?: string;
   // Usuario asociado
   usuario_nombre?: string;
   usuario_email?: string;
@@ -29,9 +31,6 @@ interface FormData {
   usuario_password_confirm?: string;
 }
 
-const regionesChile = [
-  "Arica y Parinacota", "Tarapacá", "Antofagasta", "Atacama", "Coquimbo", "Valparaíso", "Metropolitana", "O'Higgins", "Maule", "Ñuble", "Biobío", "La Araucanía", "Los Ríos", "Los Lagos", "Aysén", "Magallanes"
-];
 
 const ConfiguracionRefugioForm: React.FC<RefugioFormProps> = ({ refugio, onSave }) => {
   const [showFileInput, setShowFileInput] = useState(false);
@@ -51,14 +50,18 @@ const ConfiguracionRefugioForm: React.FC<RefugioFormProps> = ({ refugio, onSave 
     ano_fundacion: refugio?.ano_fundacion || '',
     personalidad_juridica: refugio?.personalidad_juridica || false,
     estado: refugio?.estado || '',
-  usuario_nombre: refugio?.usuario?.username || refugio?.usuario_nombre || '',
-  usuario_email: refugio?.usuario?.email || refugio?.usuario_email || '',
-  usuario_telefono: refugio?.usuario?.telefono || refugio?.usuario_telefono || '',
-  usuario_password: '',
-  usuario_password_confirm: '',
+    descripcion: refugio?.descripcion || '',
+    usuario_nombre: refugio?.usuario?.username || refugio?.usuario_nombre || '',
+    usuario_email: refugio?.usuario?.email || refugio?.usuario_email || '',
+    usuario_telefono: refugio?.usuario?.telefono || refugio?.usuario_telefono || '',
+    usuario_password: '',
+    usuario_password_confirm: '',
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  // Comunas dependientes de la región seleccionada
+  const comunas = form.region && regionesComunasChile[form.region] ? regionesComunasChile[form.region] : [];
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
   };
@@ -86,10 +89,11 @@ const ConfiguracionRefugioForm: React.FC<RefugioFormProps> = ({ refugio, onSave 
 
     const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
-  // Si el usuario eliminó el logo, enviar logo: null para que se elimine en la BD
-  const payload = logoEliminado ? { ...form, logo: null } : form;
-  onSave(payload);
+    e.preventDefault();
+    // Si el usuario eliminó el logo, enviar logo: null para que se elimine en la BD
+    const payload = logoEliminado ? { ...form, logo: null } : form;
+    onSave(payload);
+    setLogoEliminado(false); // Reiniciar estado tras guardar
   };
 
   return (
@@ -130,16 +134,38 @@ const ConfiguracionRefugioForm: React.FC<RefugioFormProps> = ({ refugio, onSave 
             <input name="direccion" value={form.direccion} onChange={handleChange} style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #2196f3', marginTop: 4, background: '#fff', boxShadow: '0 2px 8px #2196f322' }} />
           </label>
           <label style={{ fontWeight: 500, color: '#1976d2' }}>Región
-            <select name="region" value={form.region} onChange={handleChange} required style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #2196f3', marginTop: 4, background: '#fff', boxShadow: '0 2px 8px #2196f322' }}>
+            <select
+              name="region"
+              value={form.region}
+              onChange={e => {
+                handleChange(e);
+                setForm(prev => ({ ...prev, comuna: '' })); // Limpiar comuna al cambiar región
+              }}
+              required
+              style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #2196f3', marginTop: 4, background: '#fff', boxShadow: '0 2px 8px #2196f322' }}
+            >
               <option value="">Selecciona región</option>
               {regionesChile.map(r => <option key={r} value={r}>{r}</option>)}
             </select>
           </label>
           <label style={{ fontWeight: 500, color: '#1976d2' }}>Comuna
-            <input name="comuna" value={form.comuna} onChange={handleChange} style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #2196f3', marginTop: 4, background: '#fff', boxShadow: '0 2px 8px #2196f322' }} />
+            <select
+              name="comuna"
+              value={form.comuna}
+              onChange={handleChange}
+              required
+              style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #2196f3', marginTop: 4, background: '#fff', boxShadow: '0 2px 8px #2196f322' }}
+              disabled={!form.region}
+            >
+              <option value="">{form.region ? 'Selecciona comuna' : 'Primero selecciona región'}</option>
+              {comunas.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
           </label>
           <label style={{ fontWeight: 500, color: '#1976d2' }}>Teléfono
             <input name="telefono" value={form.telefono} onChange={handleChange} style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #2196f3', marginTop: 4, background: '#fff', boxShadow: '0 2px 8px #2196f322' }} />
+          </label>
+          <label style={{ fontWeight: 500, color: '#1976d2' }}>Descripción
+            <textarea name="descripcion" value={form.descripcion || ''} onChange={handleChange} rows={3} style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #2196f3', marginTop: 4, background: '#fff', boxShadow: '0 2px 8px #2196f322', resize: 'vertical' }} placeholder="Describe brevemente el refugio" />
           </label>
         </div>
         <div style={{ marginBottom: 18 }}>
@@ -165,7 +191,7 @@ const ConfiguracionRefugioForm: React.FC<RefugioFormProps> = ({ refugio, onSave 
             </div>
           )}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18, display: 'flex' }}>
+  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
           <label style={{ fontWeight: 500, color: '#1976d2', width: '100%' }}>Sitio web
             <input name="sitio_web" value={form.sitio_web} onChange={handleChange} style={{ width: '100%', minWidth: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #2196f3', marginTop: 4, background: '#fff', boxShadow: '0 2px 8px #2196f322' }} />
@@ -186,7 +212,17 @@ const ConfiguracionRefugioForm: React.FC<RefugioFormProps> = ({ refugio, onSave 
             <input name="personalidad_juridica" type="checkbox" checked={form.personalidad_juridica} onChange={e => setForm(prev => ({ ...prev, personalidad_juridica: e.target.checked }))} style={{ marginLeft: 8 }} />
           </label>
           <label style={{ fontWeight: 500, color: '#1976d2', width: '100%' }}>Estado
-            <input name="estado" value={form.estado} onChange={handleChange} style={{ width: '100%', minWidth: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #2196f3', marginTop: 4, background: '#fff', boxShadow: '0 2px 8px #2196f322' }} />
+            <select
+              name="estado"
+              value={form.estado}
+              onChange={handleChange}
+              required
+              style={{ width: '100%', minWidth: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #2196f3', marginTop: 4, background: '#fff', boxShadow: '0 2px 8px #2196f322' }}
+            >
+              <option value="">Selecciona estado</option>
+              <option value="activo">Activo</option>
+              <option value="inactivo">Inactivo</option>
+            </select>
           </label>
         </div>
         </div>

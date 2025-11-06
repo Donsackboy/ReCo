@@ -39,23 +39,25 @@ const AnimalList: React.FC = () => {
   const [editAnimal, setEditAnimal] = useState<Animal | null>(null);
   const [fullscreenImg, setFullscreenImg] = useState<string | null>(null);
 
+  // Función reutilizable para cargar animales
+  const fetchAnimales = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const token = localStorage.getItem('token');
+      const userStr = localStorage.getItem('user');
+      const userObj = userStr ? JSON.parse(userStr) : null;
+      const refugioId = userObj?.refugio?.id_refugio;
+      const data = await getAnimales(token);
+      const animalesRefugio = data.filter((a: Animal) => a.refugio === refugioId);
+      setAnimales(animalesRefugio);
+    } catch (err) {
+      setError('Error al cargar animales');
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchAnimales = async () => {
-      setLoading(true);
-      setError('');
-      try {
-        const token = localStorage.getItem('token');
-        const userStr = localStorage.getItem('user');
-        const userObj = userStr ? JSON.parse(userStr) : null;
-        const refugioId = userObj?.refugio?.id_refugio;
-        const data = await getAnimales(token);
-        const animalesRefugio = data.filter((a: Animal) => a.refugio === refugioId);
-        setAnimales(animalesRefugio);
-      } catch (err) {
-        setError('Error al cargar animales');
-      }
-      setLoading(false);
-    };
     fetchAnimales();
   }, []);
 
@@ -144,7 +146,7 @@ const AnimalList: React.FC = () => {
           <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 18px #228b2233', padding: 32, minWidth: 500, maxWidth: 700, position: 'relative', maxHeight: '80vh', overflowY: 'auto' }}>
             <button onClick={() => setShowCreate(false)} style={{ position: 'absolute', top: 12, right: 18, color: '#e74c3c', fontWeight: 700, fontSize: '1.2rem', background: 'none', border: 'none', cursor: 'pointer' }}>×</button>
             {/* AnimalForm con diseño integrado */}
-            <AnimalForm onCreated={() => setShowCreate(false)} onCancel={() => setShowCreate(false)} />
+            <AnimalForm onCreated={async () => { await fetchAnimales(); setShowCreate(false); }} onCancel={() => setShowCreate(false)} />
           </div>
         </div>
       )}

@@ -101,8 +101,8 @@ class SolicitudAdopcion(models.Model):
 class Animal(models.Model):
 
     class Meta:
-        db_table = 'alergia_condicion'
-        verbose_name_plural = 'Alergias y Condiciones Crónicas'
+        db_table = 'animales'
+        verbose_name_plural = 'Animales'
     class Estado(models.TextChoices):
         DISPONIBLE = "disponible", "Disponible"
         ADOPTADO = "adoptado", "Adoptado"
@@ -125,7 +125,20 @@ class Animal(models.Model):
     id_animal = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
     especie = models.CharField(max_length=50)
-    edad = models.IntegerField(blank=True, null=True)
+    TIPO_EDAD_CHOICES = [
+        ("anios", "Años"),
+        ("meses", "Meses"),
+    ]
+    tipo_edad = models.CharField(max_length=10, choices=TIPO_EDAD_CHOICES, default="anios")
+    edad = models.IntegerField(blank=True, null=True, help_text="Edad en años o meses según tipo_edad")
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.tipo_edad == "meses":
+            if self.edad is not None and (self.edad < 0 or self.edad > 11):
+                raise ValidationError({"edad": "Si el tipo de edad es 'meses', debe ser entre 0 y 11."})
+        elif self.tipo_edad == "anios":
+            if self.edad is not None and self.edad < 0:
+                raise ValidationError({"edad": "La edad en años debe ser un entero no negativo."})
     sexo = models.CharField(max_length=10, choices=Sexo.choices, blank=True, null=True)
     tamano = models.CharField(max_length=20, choices=Tamano.choices, blank=True, null=True)
     estado = models.CharField(max_length=30, choices=Estado.choices, default=Estado.DISPONIBLE)

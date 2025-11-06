@@ -96,17 +96,30 @@ const ConfiguracionRefugio: React.FC = () => {
       {!editMode ? (
         <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px rgba(0,0,0,0.08)', padding: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
           {refugio.logo && (
-            <img src={refugio.logo} alt="Logo" style={{ width: 120, height: 120, objectFit: 'cover', borderRadius: '50%', marginBottom: 18, border: '2px solid #eee', background: '#fafafa' }} />
+            <img src={refugio.logo} alt="Logo" style={{ width: 220, height: 220, objectFit: 'cover', borderRadius: '50%', marginBottom: 24, border: '3.5px solid #eee', background: '#fafafa', boxShadow: '0 4px 32px #228b2244' }} />
           )}
           <div style={{ width: '100%' }}>
             <p style={{ fontSize: 20, fontWeight: 600, marginBottom: 8 }}>
               <span role="img" aria-label="refugio" style={{ marginRight: 8 }}>🏠</span>{refugio.nombre}
             </p>
-            <p style={{ margin: '6px 0' }}><span role="img" aria-label="email">📧</span> <strong>Email:</strong> {refugio.correo_contacto}</p>
-            <p style={{ margin: '6px 0' }}><span role="img" aria-label="direccion">📍</span> <strong>Dirección:</strong> {refugio.direccion}</p>
-            <p style={{ margin: '6px 0' }}><span role="img" aria-label="region">🗺️</span> <strong>Región:</strong> {refugio.region}</p>
-            <p style={{ margin: '6px 0' }}><span role="img" aria-label="comuna">🏢</span> <strong>Comuna:</strong> {refugio.comuna}</p>
-            <p style={{ margin: '6px 0' }}><span role="img" aria-label="telefono">📞</span> <strong>Teléfono:</strong> {refugio.telefono}</p>
+            <ul style={{ listStyle: 'none', padding: 0, fontSize: '1.08rem', margin: 0 }}>
+              <li><b>Email:</b> {refugio.correo_contacto || refugio.email || '-'}</li>
+              <li><b>Dirección:</b> {refugio.direccion || '-'}</li>
+              <li><b>Región:</b> {refugio.region || '-'}</li>
+              <li><b>Comuna:</b> {refugio.comuna || '-'}</li>
+              <li><b>Teléfono:</b> {refugio.telefono || '-'}</li>
+              <li><b>Fecha de fundación:</b> {refugio.ano_fundacion || '-'}</li>
+              <li><b>Estado:</b> {refugio.estado || '-'}</li>
+              <li><b>Descripción:</b> {refugio.descripcion || '-'}</li>
+              <li><b>Redes sociales:</b> {Array.isArray(refugio.redes_sociales) ? refugio.redes_sociales.join(', ') : (refugio.redes_sociales || '-')}</li>
+            </ul>
+            <hr style={{ margin: '18px 0', border: 'none', borderTop: '1.5px solid #e0e0e0' }} />
+            <h4 style={{ color: '#228B22', marginBottom: 8, marginTop: 0 }}>Usuario asociado</h4>
+            <ul style={{ listStyle: 'none', padding: 0, fontSize: '1.08rem', margin: 0 }}>
+              <li><b>Nombre de usuario:</b> {refugio.usuario?.username || '-'}</li>
+              <li><b>Email usuario:</b> {refugio.usuario?.email || '-'}</li>
+              <li><b>Teléfono usuario:</b> {refugio.usuario?.telefono || '-'}</li>
+            </ul>
           </div>
           <button onClick={() => setEditMode(true)} style={{ marginTop: 18, padding: '10px 32px', background: 'linear-gradient(90deg,#2196f3,#21cbf3)', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 16, boxShadow: '0 1px 6px rgba(33,150,243,0.12)', cursor: 'pointer', transition: 'background 0.2s' }}>Editar Refugio</button>
         </div>

@@ -1,3 +1,70 @@
+.animal-edit-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(34,139,34,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.animal-edit-modal-card {
+  max-width: 1100px;
+  min-width: 700px;
+  width: 90vw;
+  min-height: 700px;
+  background: #f6fff6;
+  border-radius: 28px;
+  box-shadow: 0 8px 40px #228b2233;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.animal-edit-modal-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 48px;
+}
+
+.animal-edit-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 750px) {
+  .animal-edit-modal-card {
+    min-width: unset;
+    max-width: 95vw;
+    min-height: unset;
+    width: 95vw;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px #228b2233;
+  }
+  .animal-edit-modal-content {
+    padding: 10px;
+  }
+  .animal-edit-form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .confirm-delete-modal {
+    max-width: 90vw;
+    width: 90vw;
+    min-width: unset;
+    padding: 12px 8px;
+    border-radius: 10px;
+    font-size: 0.98rem;
+  }
+}
 @media (max-width: 700px) {
   .animal-edit-form-grid {
     grid-template-columns: 1fr;
