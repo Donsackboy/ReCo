@@ -72,6 +72,7 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
           <div className="hamburger-container">
             <div className="auth-buttons desktop-auth">
               <div className="user-profile">
+                
                 <span className="user-icon">👤</span>
                 <span className="user-name">{userName}</span>
               </div>
@@ -93,10 +94,10 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
         <div className={`side-menu ${isMenuOpen ? 'side-menu-open' : ''}`}>
           <div className="side-menu-header">
             <div className="side-menu-logo">
-              <Logo className="side-logo" />
               <div className="user-info">
+                <img src="/Images/reco-logo.png" alt="ReCo" className="side-logo" />
                 <span className="side-logo-text">👤 {userName}</span>
-                <span className="user-role">Usuario</span>
+
               </div>
             </div>
             <button className="close-btn" onClick={closeMenu}>

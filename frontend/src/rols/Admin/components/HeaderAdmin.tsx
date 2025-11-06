@@ -155,7 +155,6 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
                 <Logo className="side-logo" />
               <div className="user-info">
                 <span className="side-logo-text">⚡ {adminName}</span>
-                <span className="user-role admin-role">Administrador</span>
               </div>
             </div>
             <button className="close-btn" onClick={closeMenu}>

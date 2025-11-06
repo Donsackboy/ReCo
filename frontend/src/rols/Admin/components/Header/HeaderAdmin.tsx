@@ -161,7 +161,7 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
                 }}
                 aria-label={isAdminMode ? 'Cambiar a modo público' : 'Cambiar a modo admin'}
               >
-                <span className="switch-indicator" style={{background: isAdminMode ? '#00bf63' : '#bbb', boxShadow: isAdminMode ? '0 0 12px 2px #00bf63' : 'none'}}></span>
+                <span className="switch-indicator" style={{background: isAdminMode ? '#af9b34ff' : '#c24545ff', boxShadow: isAdminMode ? '0 0 12px 2px #da2a21ff' : 'none'}}></span>
                 <span className="user-icon">⚡</span>
                 <span className="user-name">{adminName}</span>
                 <span className="admin-badge">Admin</span>
@@ -186,10 +186,10 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
         <div className={`side-menu ${isMenuOpen ? 'side-menu-open' : ''}`}>
           <div className="side-menu-header admin-header">
             <div className="side-menu-logo">
-                <Logo className="side-logo" />
+
               <div className="user-info">
-                <span className="side-logo-text">⚡ {adminName}</span>
-                <span className="user-role admin-role">Administrador</span>
+                <img src="/Images/reco-logo.png" alt="ReCo" className="side-logo" />
+                <span className="side-logo-text">  {adminName} ⚡</span>
               </div>
             </div>
             <button className="close-btn" onClick={closeMenu}>

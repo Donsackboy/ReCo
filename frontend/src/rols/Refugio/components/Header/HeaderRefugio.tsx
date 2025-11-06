@@ -104,7 +104,6 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
               <img src="/Images/reco-logo.png" alt="ReCo" className="side-logo" />
               <div className="user-info">
                 <span className="side-logo-text">🏠 {refugioNombre}</span>
-                <span className="user-role">Refugio</span>
               </div>
             </div>
             <button className="close-btn" onClick={closeMenu}>
