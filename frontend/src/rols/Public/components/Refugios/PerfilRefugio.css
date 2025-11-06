@@ -1,3 +1,5 @@
+
+/* --- Perfil refugio contenedor --- */
 .perfil-refugio {
   max-width: 1500px;
   margin: 40px auto;
@@ -12,7 +14,7 @@
 .refugio-header {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center; /* centrado horizontal */
   gap: 40px;
   margin-bottom: 32px;
   flex-wrap: nowrap;
@@ -27,7 +29,10 @@
   background: #eaffea;
   border: 3px solid #43ea6b;
   padding: 6px;
-  display: block;
+
+  display: flex;
+  align-items: center;
+  justify-content: center; /* centrado real dentro del header */
   margin: 0 auto;
 }
 
@@ -68,6 +73,7 @@
   margin-bottom: 12px;
 }
 
+/* --- Botón donar --- */
 .boton-donar {
   background: #43ea6b;
   color: #fff;
@@ -171,11 +177,11 @@
 }
 
 /* --- Responsividad --- */
-
 @media (max-width: 900px) {
   .perfil-refugio {
     padding: 28px;
   }
+
   .refugio-logo {
     width: 200px;
     height: 200px;
@@ -185,7 +191,6 @@
 /* ✅ Nueva versión mejorada para pantallas menores a 700px */
 @media (max-width: 700px) {
   .refugio-header {
-    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -197,8 +202,10 @@
   .refugio-logo {
     width: 160px;
     height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin: 0 auto;
-    display: block;
   }
 
   .refugio-info {
