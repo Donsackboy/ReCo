@@ -28,7 +28,17 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
       <nav className="navbar">
         <div className="nav-container">
           {/* Logo a la izquierda */}
-          <Logo onClick={onNavigateHome} className="nav-logo" />
+              <div className="nav-logo" onClick={onNavigateHome}>
+                <a href="/" className="logo-link">
+                  <div className="logo-container">
+                    <img src="/Images/reco-logo.png" alt="ReCo Logo" className="logo-image" />
+                    <div className="logo-text-container">
+                      <div className="logo-text-styled">ReCo</div>
+                      <div className="logo-subtitle">REFUGIO CONECTADO</div>
+                    </div>
+                  </div>
+                </a>
+              </div>
           {/* Navegación central - Usuario NORMAL */}
           <nav className="center-nav">
             <ul className="nav-menu">

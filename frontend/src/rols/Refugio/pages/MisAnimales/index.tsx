@@ -7,12 +7,37 @@ const MisAnimales: React.FC = () => {
 
   return (
     <div>
-      <h1>Mis Animales</h1>
       <AnimalList />
       {showModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: '#0008', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 18px #228b2233', padding: 32, minWidth: 350, maxWidth: 420, position: 'relative' }}>
-            <button onClick={() => setShowModal(false)} style={{ position: 'absolute', top: 12, right: 18, color: '#e74c3c', fontWeight: 700, fontSize: '1.2rem', background: 'none', border: 'none', cursor: 'pointer' }}>×</button>
+        <div style={{ position: 'fixed', 
+                      top: 0, 
+                      left: 0, 
+                      width: '100vw', 
+                      height: '100vh', 
+                      background: '#0008', 
+                      zIndex: 9999, 
+                      display: 'flex', 
+                      alignItems: 'flex-start', 
+                      justifyContent: 'center',
+                      paddingTop: '85px' }}>
+          <div 
+            style={{  background: '#fff', 
+                      borderRadius: 16, 
+                      boxShadow: '0 2px 18px #228b2233', 
+                      padding: 32, 
+                      minWidth: 350, 
+                      maxWidth: 420, 
+                      position: 'relative' }}>
+            <button 
+              onClick={() => setShowModal(false)} style={{  position: 'absolute', 
+                                                            top: 12, 
+                                                            right: 18, 
+                                                            color: '#e74c3c', 
+                                                            fontWeight: 700, 
+                                                            fontSize: '1.2rem', 
+                                                            background: 'none', 
+                                                            border: 'none', 
+                                                            cursor: 'pointer' }}>×</button>
             <AnimalForm />
           </div>
         </div>

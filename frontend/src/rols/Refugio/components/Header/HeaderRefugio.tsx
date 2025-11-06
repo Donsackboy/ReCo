@@ -33,7 +33,17 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
     <header className="header header-layout">
       <nav className="navbar">
         <div className="nav-container">
-          <Logo onClick={onNavigateHome} />
+          <div className="nav-logo" onClick={onNavigateHome}>
+            <a href="/" className="logo-link">
+              <div className="logo-container">
+                <img src="/Images/reco-logo.png" alt="ReCo Logo" className="logo-image" />
+                <div className="logo-text-container">
+                  <div className="logo-text-styled">ReCo</div>
+                  <div className="logo-subtitle">REFUGIO CONECTADO</div>
+                </div>
+              </div>
+            </a>
+          </div>
           <div className="center-nav">
             <ul className="nav-menu">
               <li className="nav-item">
@@ -67,21 +77,9 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/refugio/inscritos-evento" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">📋</span>
-                  <span className="nav-text">Inscritos Evento</span>
-                </Link>
-              </li>
-              <li className="nav-item">
                 <Link to="/refugio/donaciones" className="nav-link" onClick={closeMenu}>
                   <span className="nav-icon">💰</span>
                   <span className="nav-text">Donaciones</span>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/refugio/necesidades" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">📝</span>
-                  <span className="nav-text">Necesidades</span>
                 </Link>
               </li>
             </ul>

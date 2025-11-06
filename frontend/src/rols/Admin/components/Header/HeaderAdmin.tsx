@@ -42,7 +42,17 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
     <header className="header">
       <nav className="navbar">
         <div className="nav-container">
-          <Logo onClick={handleLogoClick} className="nav-logo" />
+          <div className="nav-logo" onClick={handleLogoClick}>
+            <a href="/" className="logo-link">
+              <div className="logo-container">
+                <img src="/Images/reco-logo.png" alt="ReCo Logo" className="logo-image" />
+                <div className="logo-text-container">
+                  <div className="logo-text-styled">ReCo</div>
+                  <div className="logo-subtitle">REFUGIO CONECTADO</div>
+                </div>
+              </div>
+            </a>
+          </div>
           <nav className="center-nav">
             <ul className="nav-menu">
               {isAdminMode ? (
