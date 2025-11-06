@@ -12,9 +12,10 @@
 .refugio-header {
   display: flex;
   align-items: center;
-  gap: 32px;
+  justify-content: flex-start;
+  gap: 40px;
   margin-bottom: 32px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .refugio-logo {
@@ -26,6 +27,18 @@
   background: #eaffea;
   border: 3px solid #43ea6b;
   padding: 6px;
+  display: block;
+  margin: 0 auto;
+}
+
+.refugio-info {
+  flex: 1 1 0;
+  text-align: left;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 .refugio-info h2 {
@@ -47,16 +60,6 @@
 
 .refugio-info .comuna {
   color: #228B22;
-}
-
-.refugio-info .descripcion {
-  color: #145214;
-  font-size: 1.08rem;
-  margin-bottom: 12px;
-  text-align: right;
-  color: #228B22;
-  font-size: 1.08rem;
-  margin-bottom: 8px;
 }
 
 .refugio-info .descripcion {
@@ -108,36 +111,25 @@
 .animales-header h3 {
   color: #145214;
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 }
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 100%;
 
 .boton-ver-todos {
-  .refugio-info .region-comuna {
-    color: #228B22;
-    font-size: 1.08rem;
-    margin-bottom: 8px;
-    text-align: left;
-  }
-  .refugio-info .comuna {
-    color: #228B22;
-  }
   background: #43ea6b;
   color: #fff;
-    text-align: left;
-    align-items: flex-start;
-    display: flex;
-    flex-direction: column;
   border-radius: 10px;
   padding: 8px 18px;
   font-weight: 700;
   font-size: 1rem;
   text-decoration: none;
   box-shadow: 0 2px 8px #43ea6b22;
-    text-align: left;
   transition: background 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .boton-ver-todos:hover {
@@ -146,7 +138,7 @@
 
 /* --- Cards de animales --- */
 .animales-grid {
-  text-align: left; /* Updated to align left in mobile view */
+  text-align: left;
   padding-bottom: 10px;
   scrollbar-width: thin;
   scrollbar-color: #43ea6b #eaffea;
@@ -165,6 +157,7 @@
 .animales-grid::-webkit-scrollbar-track {
   background: #eaffea;
 }
+
 /* --- Sin eventos --- */
 .sin-eventos {
   color: #228B22;
@@ -178,38 +171,51 @@
 }
 
 /* --- Responsividad --- */
+
 @media (max-width: 900px) {
   .perfil-refugio {
     padding: 28px;
   }
-
-  .refugio-info h2 {
-    font-size: 1.rem;
-  }
-
   .refugio-logo {
     width: 200px;
     height: 200px;
   }
 }
 
-@media (max-width: 600px) {
+/* ✅ Nueva versión mejorada para pantallas menores a 700px */
+@media (max-width: 700px) {
   .refugio-header {
+    display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     text-align: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .refugio-logo {
+    width: 160px;
+    height: 160px;
+    margin: 0 auto;
+    display: block;
   }
 
   .refugio-info {
-    text-align: center;
-  }
-
-  .boton-donar {
     width: 100%;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
   }
 
-  .animales-grid {
-    flex-direction: column;
-    align-items: center;
+  .refugio-info h2 {
+    font-size: 1.4rem;
+  }
+
+  .refugio-info .region-comuna,
+  .refugio-info .descripcion {
+    text-align: center;
   }
 }

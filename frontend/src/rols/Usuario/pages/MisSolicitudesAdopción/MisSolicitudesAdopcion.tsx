@@ -30,7 +30,7 @@ const MisSolicitudesAdopcion: React.FC = () => {
       navigate('/login');
       return;
     }
-      fetch('/api/adopciones/', {
+  fetch('/adopciones/', {
         headers: {
           Authorization: `Token ${token}`,
         },

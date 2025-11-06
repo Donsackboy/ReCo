@@ -49,7 +49,7 @@ const AnimalList: React.FC = () => {
       const userObj = userStr ? JSON.parse(userStr) : null;
       const refugioId = userObj?.refugio?.id_refugio;
       const data = await getAnimales(token);
-  const animalesRefugio = data.filter((a: Animal) => a.refugio?.id === refugioId);
+      const animalesRefugio = data.filter((a: Animal) => a.refugio?.id_refugio === refugioId);
       setAnimales(animalesRefugio);
     } catch (err) {
       setError('Error al cargar animales');

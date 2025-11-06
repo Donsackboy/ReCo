@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Logo from '../../../Public/components/Header/shared/Logo';
 import "./HamburgerMenu.css";
 import '../../../Public/components/Header/HeaderLayout.css';
 import "./NavMenu.css";
@@ -213,13 +212,13 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
               <span className="category-title">🏛️ GESTIÓN</span>
             </li>
             <li className="side-menu-item">
-              <a href="#gestionar-refugios" className="side-menu-link" onClick={closeMenu}>
+              <a href="#gestionar-refugios" className="side-menu-link" onClick={e => {e.preventDefault();navigate('/admin/gestionar-refugios')}}>
                 <span className="side-menu-icon">🏛️</span>
                 Gestionar Refugios
               </a>
             </li>
             <li className="side-menu-item">
-              <a href="#usuarios" className="side-menu-link" onClick={closeMenu}>
+              <a href="#usuarios" className="side-menu-link" onClick={e => {e.preventDefault();navigate('/admin/gestionar-usuarios')}}>
                 <span className="side-menu-icon">👥</span>
                 Gestionar Usuarios
               </a>
@@ -236,13 +235,7 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
               <span className="category-title">✅ VERIFICACIONES</span>
             </li>
             <li className="side-menu-item">
-              <a href="#verificar-comprobantes" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">✅</span>
-                Verificar Comprobantes
-              </a>
-            </li>
-            <li className="side-menu-item">
-              <a href="#aprobar-refugios" className="side-menu-link" onClick={closeMenu}>
+              <a href="#aprobar-refugios" className="side-menu-link" onClick={e => {e.preventDefault();navigate('/admin/verificaciones')}}>
                 <span className="side-menu-icon">🏠</span>
                 Aprobar Refugios
               </a>
