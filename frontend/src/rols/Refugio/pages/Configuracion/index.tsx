@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ConfiguracionRefugioForm from './ConfiguracionRefugioForm';
+import './perfilRefugioResponsive.css';
 
 const ConfiguracionRefugio: React.FC = () => {
   const [refugio, setRefugio] = useState<any>(null);
@@ -34,16 +35,16 @@ const ConfiguracionRefugio: React.FC = () => {
     setError('');
     const token = localStorage.getItem('token');
     const formData = new FormData();
-    // Si se seleccionó un nuevo logo, eliminar el anterior y guardar el nuevo
+    // Solo eliminar el logo si viene la bandera explicita desde el form
     if (form.logo && form.logo instanceof File) {
       formData.append('logo', form.logo);
-      formData.append('eliminar_logo', 'true'); // Bandera para que el backend elimine el logo anterior
-    } else if (form.logo === null) {
+      // No enviar eliminar_logo aquí, el backend reemplazará el archivo
+    } else if (form.eliminar_logo === true) {
       formData.append('logo', ''); // Eliminar logo si se eliminó
       formData.append('eliminar_logo', 'true');
     }
     Object.entries(form).forEach(([key, value]) => {
-      if (key === 'logo') return; // Ya procesado arriba
+      if (key === 'logo' || key === 'eliminar_logo') return; // Ya procesado arriba
       if (value !== undefined && value !== null) {
         if (key === 'redes_sociales') {
           // Convertir string separada por comas a lista JSON
@@ -91,18 +92,20 @@ const ConfiguracionRefugio: React.FC = () => {
   if (!refugio) return <div>Cargando...</div>;
 
   return (
-    <div style={{ padding: 32, maxWidth: 500, margin: '0 auto' }}>
-      <h2 style={{ textAlign: 'center', fontWeight: 700, fontSize: 28, marginBottom: 24 }}>Mi Refugio</h2>
+    <div className="perfil-refugio-responsive-container">
+      <h2 className="perfil-refugio-title">Mi Refugio</h2>
       {!editMode ? (
-        <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px rgba(0,0,0,0.08)', padding: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+        <div className="perfil-refugio-card">
           {refugio.logo && (
-            <img src={refugio.logo} alt="Logo" style={{ width: 220, height: 220, objectFit: 'cover', borderRadius: '50%', marginBottom: 24, border: '3.5px solid #eee', background: '#fafafa', boxShadow: '0 4px 32px #228b2244' }} />
+            <div className="perfil-refugio-logo-container">
+              <img src={refugio.logo} alt="Logo" className="perfil-refugio-logo" />
+            </div>
           )}
-          <div style={{ width: '100%' }}>
-            <p style={{ fontSize: 20, fontWeight: 600, marginBottom: 8 }}>
+          <div className="perfil-refugio-info">
+            <p className="perfil-refugio-nombre">
               <span role="img" aria-label="refugio" style={{ marginRight: 8 }}>🏠</span>{refugio.nombre}
             </p>
-            <ul style={{ listStyle: 'none', padding: 0, fontSize: '1.08rem', margin: 0 }}>
+            <ul className="perfil-refugio-lista">
               <li><b>Email:</b> {refugio.correo_contacto || refugio.email || '-'}</li>
               <li><b>Dirección:</b> {refugio.direccion || '-'}</li>
               <li><b>Región:</b> {refugio.region || '-'}</li>
@@ -113,21 +116,22 @@ const ConfiguracionRefugio: React.FC = () => {
               <li><b>Descripción:</b> {refugio.descripcion || '-'}</li>
               <li><b>Redes sociales:</b> {Array.isArray(refugio.redes_sociales) ? refugio.redes_sociales.join(', ') : (refugio.redes_sociales || '-')}</li>
             </ul>
-            <hr style={{ margin: '18px 0', border: 'none', borderTop: '1.5px solid #e0e0e0' }} />
-            <h4 style={{ color: '#228B22', marginBottom: 8, marginTop: 0 }}>Usuario asociado</h4>
-            <ul style={{ listStyle: 'none', padding: 0, fontSize: '1.08rem', margin: 0 }}>
+            <hr className="perfil-refugio-separador" />
+            <h4 className="perfil-refugio-usuario-titulo">Usuario asociado</h4>
+            <ul className="perfil-refugio-lista">
               <li><b>Nombre de usuario:</b> {refugio.usuario?.username || '-'}</li>
               <li><b>Email usuario:</b> {refugio.usuario?.email || '-'}</li>
               <li><b>Teléfono usuario:</b> {refugio.usuario?.telefono || '-'}</li>
             </ul>
           </div>
-          <button onClick={() => setEditMode(true)} style={{ marginTop: 18, padding: '10px 32px', background: 'linear-gradient(90deg,#2196f3,#21cbf3)', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 16, boxShadow: '0 1px 6px rgba(33,150,243,0.12)', cursor: 'pointer', transition: 'background 0.2s' }}>Editar Refugio</button>
+          <button className="perfil-refugio-editar-btn" onClick={() => setEditMode(true)}>Editar Refugio</button>
         </div>
       ) : (
         <ConfiguracionRefugioForm refugio={refugio} onSave={handleSave} />
       )}
-      {loading && <div style={{ marginTop: 18, textAlign: 'center', color: '#2196f3', fontWeight: 500 }}>Guardando cambios...</div>}
+      {loading && <div className="perfil-refugio-guardando">Guardando cambios...</div>}
     </div>
+// ...existing code...
   );
 };
 

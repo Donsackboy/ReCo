@@ -231,9 +231,17 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
         ultimoControl: form.ultimoControl,
         veterinario: form.veterinario,
       };
-      await updateAnimal(animal.id_animal, dataToSend, token);
-      setSuccess(true);
-      if (onSave) onSave();
+  await updateAnimal(animal.id_animal, dataToSend, token);
+  setSuccess(true);
+      if (onSave && typeof animal.id_animal === 'number') {
+        onSave({
+          ...form,
+          ...dataToSend,
+          id_animal: animal.id_animal,
+          fecha_ingreso: dataToSend.fecha_ingreso ?? undefined,
+          fecha_cumpleanos: dataToSend.fecha_cumpleanos ?? undefined,
+        });
+      }
     } catch (err) {
       setError('Error al guardar cambios');
     }
@@ -306,6 +314,7 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
           <form onSubmit={handleSubmit} style={{ overflowY: 'auto', maxHeight: '70vh' }}>
             {/* FORMULARIO PRINCIPAL */}
             <div className="animal-edit-form-grid">
+              {/* Primera fila: Ubicación actual, Nombre, Edad y tipo de edad */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Ubicación actual:</label>
                 <select name="ubicacion_actual" value={form.ubicacion_actual} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', background: '#fff' }}>
@@ -317,16 +326,20 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
                 <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Nombre:</label>
                 <input name="nombre" value={form.nombre} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', boxShadow: '0 1px 6px #90EE9022' }} />
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Edad:</label>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <input name="edad" value={form.edad} onChange={handleChange} type="number" min="0" style={{ width: '60%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', boxShadow: '0 1px 6px #90EE9022' }} />
-                  <select name="tipo_edad" value={form.tipo_edad} onChange={handleChange} style={{ width: '40%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', marginTop: 0 }}>
+              <div style={{ display: 'flex', flexDirection: 'row', gap: 6 }}>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Edad:</label>
+                  <input name="edad" value={form.edad} onChange={handleChange} type="number" min="0" style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', boxShadow: '0 1px 6px #90EE9022' }} />
+                </div>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Tipo de edad:</label>
+                  <select name="tipo_edad" value={form.tipo_edad} onChange={handleChange} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', marginTop: 0 }}>
                     <option value="anios">Años</option>
                     <option value="meses">Meses</option>
                   </select>
                 </div>
               </div>
+              {/* Segunda fila: Tamaño, Fecha ingreso, Fecha cumpleaños */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Tamaño:</label>
                 <select name="tamano" value={form.tamano} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', background: '#fff' }}>
@@ -347,19 +360,35 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
                 <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Fecha de cumpleaños (opcional):</label>
                 <input name="fecha_cumpleanos" value={form.fecha_cumpleanos} onChange={handleChange} type="date" style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', boxShadow: '0 1px 6px #90EE9022' }} />
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
+              {/* Salud, esterilizado, desparasitado y botón ficha médica */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, gridColumn: '1 / span 3' }}>
                 <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Salud:</label>
-                <div style={{ display: 'flex', gap: 18, alignItems: 'center', flexWrap: 'nowrap' }}>
+                <div style={{ display: 'flex', gap: 18, alignItems: 'center', flexWrap: 'nowrap', marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, color: '#145214', display: 'flex', alignItems: 'center', gap: 6 }}>
                     Esterilizado <input type="checkbox" name="esterilizado" checked={!!form.esterilizado} onChange={handleChange} />
                   </label>
                   <label style={{ fontWeight: 500, color: '#145214', display: 'flex', alignItems: 'center', gap: 6 }}>
                     Desparasitado <input type="checkbox" name="desparasitado" checked={!!form.desparasitado} onChange={handleChange} />
                   </label>
-                  <button type="button" style={{ marginLeft: 18, background: '#43a047', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 18px', fontWeight: 700, cursor: 'pointer' }} onClick={() => setFichaModalOpen(true)}>
-                    Editar ficha médica
-                  </button>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setFichaModalOpen(true)}
+                  style={{
+                    background: 'linear-gradient(90deg, #6dd5ed 0%, #2193b0 100%)',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: 10,
+                    padding: '10px 24px',
+                    fontWeight: 700,
+                    fontSize: '1.08rem',
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 8px #2193b022',
+                    marginTop: 0,
+                    marginBottom: 10,
+                    alignSelf: 'flex-start',
+                  }}
+                >Editar ficha médica</button>
               </div>
       {/* Modal de ficha médica */}
       <FichaMedicaModal

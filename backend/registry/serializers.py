@@ -101,14 +101,26 @@ class HogarTemporalSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 # Serializer para Animal
+
 class AnimalSerializer(serializers.ModelSerializer):
-    refugio = serializers.PrimaryKeyRelatedField(queryset=Refugio.objects.all())
+    refugio = serializers.SerializerMethodField()
     sexo = serializers.ChoiceField(choices=[
         "Macho", "Hembra"
     ], required=False, allow_null=True)
     tamano = serializers.ChoiceField(choices=[
         "Pequeño", "Pequeño-Grande", "Media", "Mediano", "Mediano-Grande", "Grande", "Gigante"
     ], required=False, allow_null=True)
+
+    def get_refugio(self, obj):
+        if obj.refugio:
+            return {
+                "id": obj.refugio.id_refugio,
+                "nombre": obj.refugio.nombre,
+                "descripcion": obj.refugio.descripcion,
+                "region": obj.refugio.region,
+            }
+        return None
+
     class Meta:
         model = Animal
         fields = '__all__'

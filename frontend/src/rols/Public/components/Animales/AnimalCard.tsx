@@ -6,21 +6,37 @@ interface AnimalCardProps {
     id: number;
     nombre: string;
     sexo: string;
-    edad: number;
+    edad: number | string;
+    tipo_edad?: string;
     tamano: string;
     refugio: string;
     region: string;
     diasEnRefugio: number;
     imagenes: string[];
     resena: string;
+    descripcion?: string;
   };
+}
+
+function formatEdad(edad: number | string, tipo_edad?: string): string {
+  if (typeof edad === 'string') {
+    const match = edad.match(/(\d+)/);
+    if (match) {
+      const valor = parseInt(match[1], 10);
+      if (tipo_edad === 'meses') return valor === 1 ? '1 mes' : `${valor} meses`;
+      return valor === 1 ? '1 año' : `${valor} años`;
+    }
+    return edad;
+  }
+  if (tipo_edad === 'meses') return edad === 1 ? '1 mes' : `${edad} meses`;
+  return edad === 1 ? '1 año' : `${edad} años`;
 }
 
 const AnimalCard: React.FC<AnimalCardProps> = ({ animal }) => (
   <div className="animal-card" style={{ background: '#fff', 
                                         borderRadius: '18px', 
                                         boxShadow: '0 2px 12px #43ea6b22', 
-                                        padding: '16px', 
+                                        padding: '10px', 
                                         display: 'flex', 
                                         flexDirection: 'column', 
                                         alignItems: 'center', 
@@ -30,34 +46,36 @@ const AnimalCard: React.FC<AnimalCardProps> = ({ animal }) => (
                                         minWidth: '250px', 
                                         position: 'relative', 
                                         overflow: 'hidden' }}>
-    <div style={{ position: 'absolute',      /**/
-                  top: '8px',               /**/
-                  right: '18px',             /**/
-                  background: '#eaffea',   /* Corresponde a la tarjeta de cada animal*/
-                  color: '#228B22',        /**/
-                  borderRadius: '10px',      /**/
-                  padding: '6px 12px',       /**/
-                  fontWeight: 600,           /**/
-                  fontSize: '0.95rem' }}>    
-  {animal.diasEnRefugio} días en el refugio
+    <div style={{ position: 'absolute',
+                  top: '8px',
+                  right: '18px',
+                  background: '#eaffea',
+                  color: '#228B22',
+                  borderRadius: '10px',
+                  padding: '6px 12px',
+                  fontWeight: 600,
+                  fontSize: '0.95rem' }}>
+      {animal.diasEnRefugio} días en el refugio
     </div>
-    <img /*Imagen animal*/
+    <img
       src={animal.imagenes && animal.imagenes.length > 0 && animal.imagenes[0] ? animal.imagenes[0] : '/Images/animales/placeholder.png'}
       alt={animal.nombre + ' portada'}
-  style={{  width: '260px', 
-        top: '0px', 
-        height: '300px', 
-        objectFit: 'cover', 
-        borderRadius: '18px', 
-        marginTop: '16px', 
-        marginBottom: '0px', 
+      style={{ width: '260px',
+        top: '0px',
+        height: '300px',
+        objectFit: 'cover',
+        borderRadius: '18px',
+        marginTop: '16px',
+        marginBottom: '0px',
         boxShadow: '0 4px 18px rgba(44, 151, 69, 0.57)' }} />
-    <h3 style={{  fontSize: '1.2rem', 
-                  color: '#3e1452ff', 
-                  margin: '8px 0 0px' }}>{animal.nombre}</h3>
-    <div style={{ color: '#228B22', 
-                  fontSize: '1rem', 
-                  marginBottom: '8px' }}>{animal.sexo} • {animal.edad} años • {animal.tamano}</div>
+    <h3 style={{ fontSize: '1.2rem',
+                color: '#3e1452ff',
+                margin: '8px 0 0px' }}>{animal.nombre}</h3>
+    <div style={{ color: '#228B22',
+                  fontSize: '1rem',
+                  marginBottom: '8px' }}>
+      {animal.sexo} • {formatEdad(animal.edad, animal.tipo_edad)} • {animal.tamano}
+    </div>
     <div
       style={{
         color: '#1a421a',

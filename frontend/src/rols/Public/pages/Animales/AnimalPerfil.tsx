@@ -118,7 +118,21 @@ export default function AnimalPerfil() {
           >×</button>
         </div>
       )}
-      <div style={{ color: '#228B22', fontSize: '1.1rem', marginBottom: '10px' }}>{animal.sexo} • {animal.edad} años • {animal.tamano}</div>
+  <div style={{ color: '#228B22', fontSize: '1.1rem', marginBottom: animal.descripcion ? '0' : '18px', textAlign: 'center' }}>{animal.sexo} • {animal.edad} años • {animal.tamano}</div>
+      {animal.descripcion && (
+        <div style={{
+          background: '#eaffea',
+          borderRadius: '12px',
+          padding: '14px 18px',
+          color: '#145214',
+          fontSize: '1.08rem',
+          margin: '12px 0 18px 0',
+          boxShadow: '0 2px 8px #43ea6b22',
+          fontWeight: 500
+        }}>
+          {animal.descripcion}
+        </div>
+      )}
       <div style={{ color: '#1a421a', fontSize: '1.05rem', marginBottom: '18px' }}>{animal.resena}</div>
       <div style={{ marginBottom: '18px', fontWeight: 600 }}>
         <span style={{ color: '#43ea6b' }}>Días en refugio:</span> {
@@ -128,7 +142,7 @@ export default function AnimalPerfil() {
         }
       </div>
       <div style={{ marginBottom: '18px', fontWeight: 600 }}>
-        <span style={{ color: '#43ea6b' }}>Refugio:</span> {animal.refugio} <span style={{ color: '#228B22', marginLeft: '8px' }}>({animal.region})</span>
+        <span style={{ color: '#43ea6b' }}>Refugio:</span> {animal.refugio?.nombre || 'No disponible'}
       </div>
       {animal.fecha_cumpleanos && (
         <div style={{ marginBottom: '18px', fontWeight: 600 }}>

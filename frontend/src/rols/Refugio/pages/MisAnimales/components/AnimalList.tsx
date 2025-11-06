@@ -49,7 +49,7 @@ const AnimalList: React.FC = () => {
       const userObj = userStr ? JSON.parse(userStr) : null;
       const refugioId = userObj?.refugio?.id_refugio;
       const data = await getAnimales(token);
-      const animalesRefugio = data.filter((a: Animal) => a.refugio === refugioId);
+  const animalesRefugio = data.filter((a: Animal) => a.refugio?.id === refugioId);
       setAnimales(animalesRefugio);
     } catch (err) {
       setError('Error al cargar animales');
@@ -159,23 +159,10 @@ const AnimalList: React.FC = () => {
             <AnimalEditPerfil
               animal={editAnimal as any}
               onClose={() => setEditAnimal(null)}
-              onSave={async () => {
+              onSave={(updatedAnimal) => {
                 setEditAnimal(null);
-                // Refresca la lista de animales después de editar
-                setLoading(true);
-                setError('');
-                try {
-                  const token = localStorage.getItem('token');
-                  const userStr = localStorage.getItem('user');
-                  const userObj = userStr ? JSON.parse(userStr) : null;
-                  const refugioId = userObj?.refugio?.id_refugio;
-                  const data = await getAnimales(token);
-                  const animalesRefugio = data.filter((a: Animal) => a.refugio === refugioId);
-                  setAnimales(animalesRefugio);
-                } catch (err) {
-                  setError('Error al cargar animales');
-                }
-                setLoading(false);
+                if (!updatedAnimal) return;
+                setAnimales(prev => prev.map(a => a.id_animal === updatedAnimal.id_animal ? { ...a, ...updatedAnimal } : a));
               }}
             />
           </div>

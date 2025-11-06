@@ -192,8 +192,6 @@ class Cirugia(models.Model):
     class Meta:
         db_table = 'cirugias'
         verbose_name_plural = 'Cirugías'
-    # --- Modelo Tratamiento ---
-    # ...existing code...
 
 # --- Modelo Tratamiento ---
 class Tratamiento(models.Model):
@@ -331,7 +329,10 @@ class AlergiaCondicion(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField(blank=True, null=True)
     fecha_diagnostico = models.DateField(blank=True, null=True)
+
+
 class HogaresTemporales(models.Model):
+    comuna = models.CharField(max_length=100, blank=True, null=True, help_text="Comuna del hogar temporal")
     ESTADO_OPCIONES = [
         ('en_proceso', 'En Proceso'),
         ('aprobado', 'Aprobado'),
@@ -348,7 +349,7 @@ class HogaresTemporales(models.Model):
 
     id_hogar = models.AutoField(primary_key=True)
     id_usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    id_animal = models.ForeignKey('Animal', on_delete=models.CASCADE)  # Asumiendo modelo Animal
+    id_animal = models.ForeignKey('Animal', on_delete=models.CASCADE, blank=True, null=True)  # Puede ser null para postulaciones generales
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
     estado = models.CharField(max_length=20, choices=ESTADO_OPCIONES, default='en_proceso')

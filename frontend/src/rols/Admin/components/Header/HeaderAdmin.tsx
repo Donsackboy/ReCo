@@ -89,12 +89,6 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
                       </a>
                     </li>
                   )}
-                   <li className="nav-item">
-                     <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/animales')}}>
-                       <span className="nav-icon">🐾</span>
-                       <span className="nav-text">Animales</span>
-                     </a>
-                   </li>
                   {window.innerWidth > 1300 && (
                     <li className="nav-item">
                       <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/animales')}}>
@@ -288,16 +282,18 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
               </a>
             </li>
             <li className="side-menu-item">
-              <button
-                onClick={() => {
+              <a
+                href="#cerrar-sesion"
+                className="side-menu-link"
+                onClick={e => {
+                  e.preventDefault();
                   closeMenu();
                   setTimeout(() => { onLogout?.(); }, 100);
                 }}
-                className="btn-logout"
               >
                 <span className="side-menu-icon">🚪</span>
                 Cerrar Sesión
-              </button>
+              </a>
             </li>
           </ul>
         </div>

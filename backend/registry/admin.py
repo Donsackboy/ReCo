@@ -1,6 +1,9 @@
 # Imports primero
 from django.contrib import admin
 from .models import PostulacionRefugio, Usuario, Refugio, Animal, HogaresTemporales, Donaciones, Suscripciones, Eventos, InscripcionesEventos, CatalogoServicios, DonacionesEspecificas, ComprobantesServicio, NecesidadesRefugio, PerfilAdoptante, Cirugia, Tratamiento, SolicitudAdopcion, AlergiaCondicion, FichaMedica
+# Imports primero
+from django.contrib import admin
+from .models import PostulacionRefugio, Usuario, Refugio, Animal, HogaresTemporales, Donaciones, Suscripciones, Eventos, InscripcionesEventos, CatalogoServicios, DonacionesEspecificas, ComprobantesServicio, NecesidadesRefugio, PerfilAdoptante, Cirugia, Tratamiento, SolicitudAdopcion, AlergiaCondicion, FichaMedica
 
 @admin.register(AlergiaCondicion)
 class AlergiaCondicionAdmin(admin.ModelAdmin):

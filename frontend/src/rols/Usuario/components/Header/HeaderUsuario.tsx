@@ -105,12 +105,7 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
             </button>
           </div>
           <ul className="side-menu-items">
-            <li className="side-menu-item">
-              <Link to="/animales" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">🐶</span>
-                Animales
-              </Link>
-            </li>
+            {/* Botones principales de usuario */}
             <li className="side-menu-item">
               <Link to="/mis-solicitudes-adopcion" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">📋</span>
@@ -119,7 +114,7 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
             </li>
             <li className="side-menu-item">
               <Link to="/mis-adopciones" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">�🐾</span>
+                <span className="side-menu-icon">🐾</span>
                 Mis Mascotas
               </Link>
             </li>
@@ -147,19 +142,42 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
                 Mis Voluntariados
               </Link>
             </li>
-            {/* Separador */}
+            {/* Sección pública */}
+            <hr className="side-menu-separator" style={{ borderColor: '#2ecc40', borderWidth: 2 }} />
+
+            <li className="side-menu-category">
+              <span className="category-title">🌐 ACCESO PÚBLICO</span>
+            </li>
+            <li className="side-menu-item">
+              <Link to="/refugios" className="side-menu-link" onClick={closeMenu}>
+                <span className="side-menu-icon">🏠</span>
+                Refugios
+              </Link>
+            </li>
+            <li className="side-menu-item">
+              <Link to="/animales" className="side-menu-link" onClick={closeMenu}>
+                <span className="side-menu-icon">🐾</span>
+                Animales
+              </Link>
+            </li>
+            <li className="side-menu-item">
+              <Link to="/hogares-temporales" className="side-menu-link" onClick={closeMenu}>
+                <span className="side-menu-icon">🏡</span>
+                Hogares Temporales
+              </Link>
+            </li>
+            <li className="side-menu-item">
+              <Link to="/eventos" className="side-menu-link" onClick={closeMenu}>
+                <span className="side-menu-icon">🎪</span>
+                Eventos
+              </Link>
+            </li>
             <hr className="side-menu-separator" />
             {/* Configuración y salir */}
             <li className="side-menu-item">
               <Link to="/mi-perfil" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">⚙️</span>
                 Mi Perfil
-              </Link>
-            </li>
-            <li className="side-menu-item">
-              <Link to="/configuracion" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">🔧</span>
-                Configuración
               </Link>
             </li>
             <li className="side-menu-item">
