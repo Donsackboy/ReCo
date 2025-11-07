@@ -143,12 +143,33 @@
 }
 
 /* --- Cards de animales --- */
+
+
 .animales-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 28px 15px;
   text-align: left;
   padding-bottom: 10px;
   scrollbar-width: thin;
   scrollbar-color: #43ea6b #eaffea;
   margin-bottom: 18px;
+  justify-items: start;
+}
+
+@media (max-width: 900px) {
+  .animales-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px 15px;
+  }
+}
+
+@media (max-width: 700px) {
+  .animales-grid {
+    grid-template-columns: 1fr;
+    gap: 14px 0;
+    justify-items: stretch;
+  }
 }
 
 .animales-grid::-webkit-scrollbar {

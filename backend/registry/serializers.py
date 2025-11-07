@@ -114,7 +114,7 @@ class AnimalSerializer(serializers.ModelSerializer):
     def get_refugio(self, obj):
         if obj.refugio:
             return {
-                "id": obj.refugio.id_refugio,
+                "id_refugio": obj.refugio.id_refugio,
                 "nombre": obj.refugio.nombre,
                 "descripcion": obj.refugio.descripcion,
                 "region": obj.refugio.region,
@@ -124,6 +124,8 @@ class AnimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Animal
         fields = '__all__'
+        # Asegura que tipo_edad y edad estén incluidos explícitamente
+        extra_fields = ['tipo_edad', 'edad']
 
 
 # Serializer para Cirugia

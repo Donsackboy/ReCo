@@ -1,9 +1,9 @@
-from django.urls import path
-from . import views
+
 from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('fichamedica/<int:animal_id>/', views.FichaMedicaRetrieveUpdateView.as_view(), name='ficha_medica_retrieve_update'),
     path('refugio/historial-solicitudes-adopcion/', views.historial_solicitudes_adopcion_refugio, name='historial_solicitudes_adopcion_refugio'),
     path('refugio/solicitud-adopcion/<int:pk>/', views.actualizar_solicitud_adopcion, name='actualizar_solicitud_adopcion'),
     path('auth/login/', views.login, name='login'),

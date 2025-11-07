@@ -108,10 +108,10 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
     vacunas: (animal.vacunas as Vacuna[]) || [],
     fotos: Array.isArray((animal as any).fotos) ? (animal as any).fotos : [],
     // Campos generales de ficha médica
-    estadoSalud: fichaMedica.general.estadoSalud || '',
-    peso: fichaMedica.general.peso || '',
-    ultimoControl: fichaMedica.general.ultimoControl || '',
-    veterinario: fichaMedica.general.veterinario || '',
+  estadoSalud: fichaMedica.general?.estadoSalud || '',
+  peso: fichaMedica.general?.peso || '',
+  ultimoControl: fichaMedica.general?.ultimoControl || '',
+  veterinario: fichaMedica.general?.veterinario || '',
   });
 
   // Estado para la foto actual
@@ -399,11 +399,11 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
           setFichaMedica(ficha);
           setForm(f => ({
             ...f,
-            vacunas: ficha.vacunas as Vacuna[],
-            estadoSalud: ficha.general.estadoSalud,
-            peso: ficha.general.peso,
-            ultimoControl: ficha.general.ultimoControl,
-            veterinario: ficha.general.veterinario,
+            vacunas: ficha?.vacunas as Vacuna[] ?? [],
+            estadoSalud: ficha?.general?.estadoSalud ?? '',
+            peso: ficha?.general?.peso ?? '',
+            ultimoControl: ficha?.general?.ultimoControl ?? '',
+            veterinario: ficha?.general?.veterinario ?? '',
           }));
         }}
         animalId={animal.id_animal ?? ''}
@@ -457,7 +457,7 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
             <button type="button" onClick={handleAddVacuna} style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '8px', padding: '8px 18px', fontWeight: 700, fontSize: '1.05rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22', transition: 'box-shadow 0.2s' }}>Agregar</button>
           </div>
           <ul style={{ marginTop: 8 }}>
-            {form.vacunas.length === 0 ? (
+            {!form.vacunas || form.vacunas.length === 0 ? (
               <li style={{ color: '#888' }}>No hay vacunas registradas.</li>
             ) : (
               form.vacunas.map((v: Vacuna, idx: number) => (
@@ -474,7 +474,7 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
         <div style={{ marginBottom: 18 }}>
           <h3 style={{ color: '#145214', fontWeight: 700, marginBottom: 10, fontSize: '1.3rem' }}>Fotos del animal</h3>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, marginBottom: 12, width: '100%' }}>
-            {form.fotos.length === 0 ? (
+            {!form.fotos || form.fotos.length === 0 ? (
               <div style={{ color: '#888', fontSize: 15 }}>No hay fotos registradas.</div>
             ) : (
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

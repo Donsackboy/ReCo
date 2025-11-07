@@ -248,7 +248,7 @@ const AdopcionForm = () => {
                 {animal.sexo} • {animal.edad} años • {animal.tamano}
               </div>
               <div style={{ color: '#145214', fontSize: '1rem' }}>
-                Refugio: {animal.refugio} ({animal.region})
+                Refugio: {animal.refugio?.nombre || ''} ({animal.refugio?.region || animal.region || ''})
               </div>
             </div>
           </div>

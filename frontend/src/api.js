@@ -197,3 +197,28 @@ export async function getAdopcionesPendientesRefugio(token) {
   const data = await response.json();
   return data.count;
 }
+
+// Obtener ficha médica de un animal
+export async function getFichaMedica(token, animalId) {
+  const response = await fetch(`${API_BASE}/fichamedica/${animalId}/`, {
+    headers: {
+      'Authorization': `Token ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error('Error al obtener ficha médica');
+  return response.json();
+}
+
+// Actualizar ficha médica de un animal
+export async function updateFichaMedica(token, animalId, data) {
+  const response = await fetch(`${API_BASE}/fichamedica/${animalId}/`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Error al actualizar ficha médica');
+  return response.json();
+}

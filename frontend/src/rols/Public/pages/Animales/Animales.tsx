@@ -69,8 +69,9 @@ const Animales = () => {
     let sexoMatch = filtros.sexo ? animal.sexo === filtros.sexo : true;
     // Filtrar por tamaño
     let tamanoMatch = filtros.tamano ? animal.tamano === filtros.tamano : true;
-    // Filtrar por refugio (usar id, asegurando tipo string/int)
-    let refugioMatch = filtros.refugio ? String(animal.refugio) === String(filtros.refugio) : true;
+  // Filtrar por refugio (usar id_refugio si existe, si no, intentar animal.refugio.id o animal.refugio)
+  let refugioId = animal.id_refugio || (animal.refugio && animal.refugio.id) || animal.refugio;
+  let refugioMatch = filtros.refugio ? String(refugioId) === String(filtros.refugio) : true;
     // Filtrar por región
     let regionMatch = filtros.region ? animal.region === filtros.region : true;
     // Filtrar por nombre

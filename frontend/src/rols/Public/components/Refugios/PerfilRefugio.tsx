@@ -127,7 +127,7 @@ const PerfilRefugio: React.FC<PerfilRefugioProps> = ({ refugio }) => {
       <div className="animales-header">
         <h3>Animales del refugio</h3>
         <Link
-          to={`/animales?refugio=${encodeURIComponent(refugio.nombre)}`}
+          to={`/animales?refugio=${refugio.id}`}
           className="boton-ver-todos"
         >
           Ver todos

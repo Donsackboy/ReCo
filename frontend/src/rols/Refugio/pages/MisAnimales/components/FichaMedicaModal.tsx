@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getFichaMedica, updateFichaMedica, getTratamientos, createCirugia, createTratamiento, updateTratamiento } from '../../../../../../src/api.js';
 import AlergiasCondicionesCronicas from '../../../../../components/AlergiasCondicionesCronicas';
 import CirugiaForm from '../../../../../components/CirugiaForm';
 
@@ -47,6 +48,7 @@ export type FichaMedica = {
   alergias: any[];
   condicionesCronicas: any[];
   recomendaciones: string;
+  observaciones?: string;
   archivos: any[];
 };
 
@@ -58,66 +60,151 @@ interface FichaMedicaModalProps {
   animalId: number | string;
 }
 
+
 const FichaMedicaModal = ({ open, onClose, ficha = initialFicha, onSave, animalEspecie, animalId }: FichaMedicaModalProps & { animalEspecie?: string }) => {
   const [mostrarInfoVacunas, setMostrarInfoVacunas] = useState(false);
-  const [form, setForm] = useState(ficha);
+  const [form, setForm] = useState({ ...ficha, observaciones: ficha.observaciones || '' });
+  const [loading, setLoading] = useState(false);
   const especie = animalEspecie?.toLowerCase() || 'perro';
   const vacunasRecomendadas: VacunaInfo[] = vacunasPorEspecie[especie] || [];
 
-  // Fetch tratamientos when modal opens
+  // Cargar ficha médica real del backend al abrir el modal
+
   React.useEffect(() => {
     if (!open || !animalId) return;
     const token = localStorage.getItem('token');
     if (!token) return;
+    setLoading(true);
     (async () => {
       try {
-        const tratamientos = await getTratamientos(token, animalId);
-        setForm(f => ({ ...f, tratamientos }));
+        const fichaReal = await getFichaMedica(token, animalId);
+        console.log('Datos recibidos del backend (ficha médica):', fichaReal);
+        // Mapear datos planos del backend a la estructura esperada por el frontend
+        // Normalizar estadoSalud para que coincida con las opciones del select
+        const normalizarEstado = (valor) => {
+          if (!valor) return '';
+          return valor.charAt(0).toUpperCase() + valor.slice(1).toLowerCase();
+        };
+        setForm({
+          ...fichaReal,
+          general: {
+            estadoSalud: normalizarEstado(fichaReal.estado_salud),
+            peso: fichaReal.peso_actual !== null && fichaReal.peso_actual !== undefined ? fichaReal.peso_actual.toString() : '',
+            ultimoControl: fichaReal.fecha_ultimo_control ?? '',
+            veterinario: fichaReal.veterinario_responsable ?? '',
+          },
+          observaciones: fichaReal.observaciones ?? '',
+        });
       } catch (err) {
-        // Optionally handle error
+        setForm({ ...initialFicha, observaciones: '' });
       }
+      setLoading(false);
     })();
   }, [open, animalId]);
 
-  // Sincronizar cirugías cuando cambian en ficha
-  React.useEffect(() => {
-    setForm(f => ({ ...f, cirugias: ficha.cirugias }));
-  }, [ficha.cirugias]);
+  // Guardar cambios en el backend
+  const handleSave = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    setLoading(true);
+    try {
+      // Limpiar y validar datos antes de enviar
+      let peso: number | null = null;
+      if (form.general?.peso !== '' && form.general?.peso !== undefined && !isNaN(Number(form.general?.peso))) {
+        peso = Number(form.general.peso);
+      }
+      let fecha_ultimo_control: string | null = null;
+      if (form.general?.ultimoControl !== '' && form.general?.ultimoControl !== undefined) {
+        fecha_ultimo_control = form.general.ultimoControl;
+      }
+      // Mapear la estructura del frontend a la estructura plana del backend
+      // Mapear el valor mostrado en el select a la clave que espera el backend
+      const estadoSaludMap: Record<string, string> = {
+        'Sano': 'sano',
+        'En tratamiento': 'en_tratamiento',
+        'En recuperación': 'en_recuperacion',
+        'Condición crónica': 'condicion_cronica',
+        'Fallecido': 'fallecido',
+      };
+      const estadoSaludBackend = estadoSaludMap[form.general?.estadoSalud || ''] || '';
+      const dataToSend: any = {
+        estado_salud: estadoSaludBackend,
+        peso_actual: peso,
+        fecha_ultimo_control,
+        veterinario_responsable: form.general?.veterinario || '',
+        observaciones: form.observaciones || '',
+      };
+      console.log('PATCH ficha médica: datos enviados al backend:', dataToSend);
+      if ('id_ficha' in form) {
+        dataToSend.id_ficha = (form as any).id_ficha;
+      }
+      // Eliminar campos que no existen en el modelo backend
+      delete dataToSend.general;
+      delete dataToSend.vacunas;
+      delete dataToSend.cirugias;
+      delete dataToSend.tratamientos;
+      delete dataToSend.alergias;
+      delete dataToSend.condicionesCronicas;
+      delete dataToSend.recomendaciones;
+      delete dataToSend.archivos;
+      // Imprimir en consola para depuración
+      console.log('Datos enviados al backend (PATCH ficha médica):', dataToSend);
+      const fichaActualizada = await updateFichaMedica(token, animalId, dataToSend);
+      onSave(fichaActualizada);
+      onClose();
+    } catch (err) {
+      alert('Error al guardar la ficha médica');
+    }
+    setLoading(false);
+  };
+
 
   if (!open) return null;
+  if (loading) return (
+    <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+      <div style={{ background: '#fff', padding: 32, borderRadius: 16, minWidth: 300, textAlign: 'center', fontSize: 22 }}>Cargando ficha médica...</div>
+    </div>
+  );
 
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-  <div style={{ background: '#fff', padding: 32, borderRadius: 16, minWidth: 500, maxWidth: 900, width: '80vw', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 8px 32px rgba(67,160,71,0.12)', position: 'relative' }}>
+      <div style={{ background: '#fff', padding: 32, borderRadius: 16, minWidth: 500, maxWidth: 900, width: '80vw', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 8px 32px rgba(67,160,71,0.12)', position: 'relative' }}>
         <h2 style={{ color: '#1976d2', background: '#e3f2fd', borderRadius: 12, fontWeight: 800, marginBottom: 18, textAlign: 'center', fontSize: 32, padding: '16px 0', letterSpacing: 1.5 }}>Editar Ficha Médica</h2>
         <div style={{ display: 'grid', gap: 24 }}>
           {/* General */}
           <div style={{ background: '#e3f2fd', border: '2px solid #90caf9', borderRadius: 14, padding: 18, marginBottom: 8 }}>
             <h3 style={{ marginBottom: 8, color: '#1976d2', fontWeight: 700 }}>General</h3>
             <label style={{ marginBottom: 8 }}>Estado general de salud:<br/>
-              <select value={form.general.estadoSalud} onChange={e => setForm(f => ({ ...f, general: { ...f.general, estadoSalud: e.target.value } }))} style={{ width: '100%', padding: 6, borderRadius: 6, border: '1.5px solid #90caf9', background: '#fff' }}>
+              <select value={form.general?.estadoSalud || ''} onChange={e => setForm(f => ({ ...f, general: { ...f.general, estadoSalud: e.target.value } }))} style={{ width: '100%', padding: 6, borderRadius: 6, border: '1.5px solid #90caf9', background: '#fff' }}>
                 <option value="">Selecciona estado</option>
                 <option value="Sano">Sano</option>
                 <option value="En tratamiento">En tratamiento</option>
                 <option value="En recuperación">En recuperación</option>
                 <option value="Condición crónica">Condición crónica</option>
-                <option value="Fallecido">Fallecido</option>
               </select>
             </label>
             <label style={{ marginBottom: 8 }}>Peso actual (kg):<br/>
-              <input type="number" value={form.general.peso} onChange={e => setForm(f => ({ ...f, general: { ...f.general, peso: e.target.value } }))} style={{ width: '100%', padding: 6, borderRadius: 6, border: '1.5px solid #90caf9', background: '#fff' }} />
+              <input type="number" value={form.general?.peso || ''} onChange={e => setForm(f => ({ ...f, general: { ...f.general, peso: e.target.value } }))} style={{ width: '100%', padding: 6, borderRadius: 6, border: '1.5px solid #90caf9', background: '#fff' }} />
             </label>
             <label style={{ marginBottom: 8 }}>Fecha último control veterinario:<br/>
-              <input type="date" value={form.general.ultimoControl} onChange={e => setForm(f => ({ ...f, general: { ...f.general, ultimoControl: e.target.value } }))} style={{ width: '100%', padding: 6, borderRadius: 6, border: '1.5px solid #90caf9', background: '#fff' }} />
+              <input type="date" value={form.general?.ultimoControl || ''} onChange={e => setForm(f => ({ ...f, general: { ...f.general, ultimoControl: e.target.value } }))} style={{ width: '100%', padding: 6, borderRadius: 6, border: '1.5px solid #90caf9', background: '#fff' }} />
             </label>
             <label style={{ marginBottom: 8 }}>Veterinario responsable / clínica:<br/>
-              <input type="text" value={form.general.veterinario} onChange={e => setForm(f => ({ ...f, general: { ...f.general, veterinario: e.target.value } }))} style={{ width: '100%', padding: 6, borderRadius: 6, border: '1.5px solid #90caf9', background: '#fff' }} />
+              <input type="text" value={form.general?.veterinario || ''} onChange={e => setForm(f => ({ ...f, general: { ...f.general, veterinario: e.target.value } }))} style={{ width: '100%', padding: 6, borderRadius: 6, border: '1.5px solid #90caf9', background: '#fff' }} />
             </label>
+              <label style={{ marginBottom: 8 }}>Observaciones:<br/>
+                <textarea
+                  value={form.observaciones || ''}
+                  onChange={e => setForm(f => ({ ...f, observaciones: e.target.value }))}
+                  style={{ width: '100%', minHeight: 60, padding: 8, borderRadius: 8, border: '1.5px solid #90caf9', background: '#fff', fontSize: 15 }}
+                  placeholder="Notas adicionales del veterinario o del refugio"
+                />
+              </label>
           </div>
           {/* Vacunas */}
           <div style={{ background: '#e3f2fd', border: '2px solid #90caf9', borderRadius: 14, padding: 18, marginBottom: 8 }}>
             <h3 style={{ marginBottom: 8, color: '#1976d2', fontWeight: 700 }}>Vacunas</h3>
-            {form.vacunas.length === 0 && <div style={{ color: '#888' }}>No hay vacunas registradas.</div>}
+            {(form.vacunas?.length ?? 0) === 0 && <div style={{ color: '#888' }}>No hay vacunas registradas.</div>}
             {/* Sugerir vacunas recomendadas por especie */}
             <div style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
               <button
@@ -155,21 +242,23 @@ const FichaMedicaModal = ({ open, onClose, ficha = initialFicha, onSave, animalE
                     {vacunasRecomendadas.map((v) => {
                       // Buscar si ya está registrada
                       const yaRegistrada = form.vacunas.some(vac => vac.tipo === v.nombre);
-                      if (yaRegistrada) return null;
-                      return (
-                        <div key={v.nombre} style={{ background: '#fff', border: '1.5px solid #90caf9', borderRadius: 10, padding: 12, boxShadow: '0 2px 8px rgba(144,202,249,0.08)' }}>
-                          <strong style={{ fontSize: 15, color: '#1976d2' }}>{v.nombre}</strong>
-                          <div style={{ color: '#1976d2', fontSize: 13, margin: '6px 0' }}>({v.descripcion})</div>
-                          <div style={{ fontSize: 12, color: '#1976d2' }}>Frecuencia: {v.frecuencia}</div>
-                        </div>
-                      );
+                      if (!yaRegistrada) {
+                        return (
+                          <div key={v.nombre} style={{ background: '#fff', border: '1.5px solid #90caf9', borderRadius: 10, padding: 12, boxShadow: '0 2px 8px rgba(144,202,249,0.08)' }}>
+                            <strong style={{ fontSize: 15, color: '#1976d2' }}>{v.nombre}</strong>
+                            <div style={{ color: '#1976d2', fontSize: 13, margin: '6px 0' }}>({v.descripcion})</div>
+                            <div style={{ fontSize: 12, color: '#1976d2' }}>Frecuencia: {v.frecuencia}</div>
+                          </div>
+                        );
+                      }
+                      return null;
                     })}
+                    {/* Aquí continúan los demás bloques: Cirugías, Tratamientos, Alergias, Archivos, Botones, etc. */}
                   </div>
                 </div>
               )}
-            </div>
             {/* Formulario para vacunas ya registradas y personalizadas */}
-            {form.vacunas.map((vacuna, idx) => (
+            {(form.vacunas ?? []).map((vacuna, idx) => (
               <div key={idx} style={{
                 background: '#fff',
                 border: '2px solid #90caf9',
@@ -293,7 +382,9 @@ const FichaMedicaModal = ({ open, onClose, ficha = initialFicha, onSave, animalE
                 <button type="button" style={{ background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', fontWeight: 600, cursor: 'pointer', alignSelf: 'flex-end', marginTop: 8 }} onClick={e => {
                   e.preventDefault();
                   setForm(f => ({ ...f, vacunas: f.vacunas.filter((_, i) => i !== idx) }));
-                }}>Eliminar</button>
+                }}>
+                  Eliminar
+                </button>
               </div>
             ))}
           </div>
@@ -388,12 +479,13 @@ const FichaMedicaModal = ({ open, onClose, ficha = initialFicha, onSave, animalE
             <div style={{ color: '#888' }}>(Funcionalidad de archivos pendiente)</div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginTop: 8 }}>
-            <button type="button" style={{ background: '#1976d2', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 36px', fontWeight: 800, fontSize: '18px', letterSpacing: '1px' }} onClick={() => { onSave(form as FichaMedica); onClose(); }}>Guardar cambios</button>
+            <button type="button" style={{ background: '#1976d2', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 36px', fontWeight: 800, fontSize: '18px', letterSpacing: '1px' }} onClick={handleSave}>Guardar cambios</button>
             <button type="button" style={{ background: '#eee', color: '#333', border: 'none', borderRadius: 8, padding: '10px 28px', fontWeight: 700 }} onClick={onClose}>Cancelar</button>
           </div>
         </div>
       </div>
     </div>
+  </div>
   );
 }
 

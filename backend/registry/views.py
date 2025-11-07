@@ -1,3 +1,40 @@
+
+# ...existing code...
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+import logging
+
+logger = logging.getLogger(__name__)
+
+# ...existing code...
+
+# Endpoint para obtener y actualizar la ficha médica de un animal por animal_id
+from rest_framework.generics import RetrieveUpdateAPIView
+from .models import FichaMedica
+from .serializers import FichaMedicaSerializer
+from rest_framework import permissions
+
+class FichaMedicaRetrieveUpdateView(RetrieveUpdateAPIView):
+    def update(self, request, *args, **kwargs):
+        print(f"PATCH ficha médica data: {request.data}")
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        if not serializer.is_valid():
+            print(f"Errores de validación PATCH ficha médica: {serializer.errors}")
+            return Response(serializer.errors, status=400)
+        self.perform_update(serializer)
+        print(f"PATCH ficha médica response: {serializer.data}")
+        return Response(serializer.data)
+    serializer_class = FichaMedicaSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        animal_id = self.kwargs.get('animal_id')
+        return FichaMedica.objects.get(animal_id=animal_id)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response

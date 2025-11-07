@@ -18,6 +18,7 @@ class FichaMedica(models.Model):
     veterinario_responsable = models.CharField(max_length=100, blank=True, null=True)
     clinica = models.CharField(max_length=100, blank=True, null=True)
     recomendaciones = models.TextField(blank=True, null=True)
+    observaciones = models.TextField(blank=True, null=True, help_text="Notas adicionales del veterinario o del refugio")
 
     def __str__(self):
         return f'Ficha médica de {self.animal.nombre}'
