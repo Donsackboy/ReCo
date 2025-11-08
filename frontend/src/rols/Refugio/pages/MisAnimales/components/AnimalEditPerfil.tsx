@@ -1,7 +1,7 @@
 import './AnimalEditPerfil.css';
 import { useState, useEffect } from 'react';
-import FichaMedicaModal from './FichaMedicaModal';
-import type { FichaMedica } from './FichaMedicaModal';
+import FichaMedicaModal from './FichaMedica/FichaMedicaModal.js';
+import type { FichaMedica } from './FichaMedica/FichaMedicaModal.js';
 import { updateAnimal, getCirugias, API_BASE } from '../../../../../../src/api.js';
 import type { Vacuna } from './AnimalList';
 
@@ -326,6 +326,17 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
                 <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Nombre:</label>
                 <input name="nombre" value={form.nombre} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', boxShadow: '0 1px 6px #90EE9022' }} />
               </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Especie:</label>
+                <select name="especie" value={form.especie} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', background: '#fff' }}>
+                  <option value="">Selecciona especie</option>
+                  <option value="perro">Perro</option>
+                  <option value="gato">Gato</option>
+                  <option value="conejo">Conejo</option>
+                  <option value="caballo">Caballo</option>
+                  <option value="ave">Ave</option>
+                </select>
+              </div>
               <div style={{ display: 'flex', flexDirection: 'row', gap: 6 }}>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Edad:</label>
@@ -390,25 +401,14 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
                   }}
                 >Editar ficha médica</button>
               </div>
-      {/* Modal de ficha médica */}
-      <FichaMedicaModal
-        open={fichaModalOpen}
-        onClose={() => setFichaModalOpen(false)}
-        ficha={fichaMedica}
-        onSave={ficha => {
-          setFichaMedica(ficha);
-          setForm(f => ({
-            ...f,
-            vacunas: ficha?.vacunas as Vacuna[] ?? [],
-            estadoSalud: ficha?.general?.estadoSalud ?? '',
-            peso: ficha?.general?.peso ?? '',
-            ultimoControl: ficha?.general?.ultimoControl ?? '',
-            veterinario: ficha?.general?.veterinario ?? '',
-          }));
-        }}
-        animalId={animal.id_animal ?? ''}
-        animalEspecie={animal.especie}
-      />
+      {/* Modal de ficha médica solo si fichaModalOpen es true */}
+      {fichaModalOpen && (
+        <FichaMedicaModal
+          animalId={animal.id_animal ?? ''}
+          onClose={() => setFichaModalOpen(false)}
+          especie={form.especie}
+        />
+      )}
             </div>
             {/* ...existing code... */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18, marginBottom: 10 }}>

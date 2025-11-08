@@ -14,12 +14,22 @@ class SolicitudAdopcionSerializer(serializers.ModelSerializer):
         except Exception:
             return None
 
+    def get_foto_principal(self, obj):
+        try:
+            fotos = getattr(obj.animal, 'fotos', None)
+            if fotos and isinstance(fotos, list) and len(fotos) > 0:
+                return fotos[0]
+        except Exception:
+            pass
+        return None
+
     animal_nombre = serializers.SerializerMethodField()
+    foto_principal = serializers.SerializerMethodField()
 
     class Meta:
         model = SolicitudAdopcion
         fields = '__all__'
-        extra_fields = ['animal_nombre']
+        extra_fields = ['animal_nombre', 'foto_principal']
 
 # --- Ficha Médica ---
 class FichaMedicaSerializer(serializers.ModelSerializer):

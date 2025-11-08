@@ -27,6 +27,7 @@ interface HogarTemporalFormProps {
   handleAnimalesHogarChange: (index: number, field: string, value: string) => void;
   handleAddAnimalHogar: () => void;
   handleRemoveAnimalHogar: (index: number) => void;
+  ocultarSeleccion?: boolean;
 }
 
 const HogarTemporalForm: React.FC<HogarTemporalFormProps> = ({
@@ -40,8 +41,9 @@ const HogarTemporalForm: React.FC<HogarTemporalFormProps> = ({
   handleAnimalesHogarChange,
   handleAddAnimalHogar,
   handleRemoveAnimalHogar,
+  ocultarSeleccion = false,
 }) => {
-  const regionesConTodas = ['Todas', ...regiones];
+  const regionesConTodas = ['Todas', ...(regiones || [])];
   const tiposAnimales = ['Perro', 'Gato', 'Conejo', 'Ave', 'Otro'];
   const tamañosPerro = ['Grande', 'Mediano', 'Chico'];
 
@@ -55,50 +57,54 @@ const HogarTemporalForm: React.FC<HogarTemporalFormProps> = ({
         <label style={{ color: '#145214', fontWeight: 600, fontSize: '1.08rem', letterSpacing: 0.5 }}>Email de contacto:</label><br />
         <input type="email" name="email" value={form.email} onChange={handleFormChange} required style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #43ea6b', marginTop: 6, fontSize: '1rem', background: '#fff' }} />
       </div>
-      <div style={{ marginBottom: 22 }}>
-        <label style={{ color: '#145214', fontWeight: 600, fontSize: '1.08rem', letterSpacing: 0.5 }}>Regiones de donde aceptas animales:</label><br />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 8, maxHeight: 320, overflowY: 'auto' }}>
-          {regionesConTodas.map(r => (
-            <label key={r} style={{ color: r === 'Todas' ? '#43ea6b' : '#228B22', fontWeight: r === 'Todas' ? 700 : 400, fontSize: r === 'Todas' ? '1.05rem' : '1rem', background: r === 'Todas' ? '#eaffea' : 'none', borderRadius: 6, padding: r === 'Todas' ? '2px 8px' : '0', display: 'flex', alignItems: 'center' }}>
-              <input
-                type="checkbox"
-                checked={r === 'Todas'
-                  ? form.regiones.length === regiones.length
-                  : form.regiones.includes(r)}
-                onChange={() => {
-                  if (r === 'Todas') {
-                    if (form.regiones.length === regiones.length) {
-                      handleFormChange({ target: { name: 'regiones', value: [] } } as any);
-                    } else {
-                      handleFormChange({ target: { name: 'regiones', value: [...regiones] } } as any);
-                    }
-                  } else {
-                    handleRegionChange(r);
-                  }
-                }}
-                style={{ marginRight: 8 }}
-              />
-              {r}
-            </label>
-          ))}
-        </div>
-      </div>
-      <div style={{ marginBottom: 22 }}>
-        <label style={{ color: '#145214', fontWeight: 600, fontSize: '1.08rem', letterSpacing: 0.5 }}>Tipo de animales que aceptas:</label><br />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
-          {especies.map(e => (
-            <label key={e} style={{ color: '#228B22', fontWeight: 400, fontSize: '1rem', display: 'flex', alignItems: 'center' }}>
-              <input
-                type="checkbox"
-                checked={form.especies.includes(e)}
-                onChange={() => handleEspecieChange(e)}
-                style={{ marginRight: 8 }}
-              />
-              {e}
-            </label>
-          ))}
-        </div>
-      </div>
+      {!ocultarSeleccion && (
+        <>
+          <div style={{ marginBottom: 22 }}>
+            <label style={{ color: '#145214', fontWeight: 600, fontSize: '1.08rem', letterSpacing: 0.5 }}>Regiones de donde aceptas animales:</label><br />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 8, maxHeight: 320, overflowY: 'auto' }}>
+              {regionesConTodas.map(r => (
+                <label key={r} style={{ color: r === 'Todas' ? '#43ea6b' : '#228B22', fontWeight: r === 'Todas' ? 700 : 400, fontSize: r === 'Todas' ? '1.05rem' : '1rem', background: r === 'Todas' ? '#eaffea' : 'none', borderRadius: 6, padding: r === 'Todas' ? '2px 8px' : '0', display: 'flex', alignItems: 'center' }}>
+                  <input
+                    type="checkbox"
+                    checked={r === 'Todas'
+                      ? form.regiones.length === regiones.length
+                      : form.regiones.includes(r)}
+                    onChange={() => {
+                      if (r === 'Todas') {
+                        if (form.regiones.length === regiones.length) {
+                          handleFormChange({ target: { name: 'regiones', value: [] } } as any);
+                        } else {
+                          handleFormChange({ target: { name: 'regiones', value: [...regiones] } } as any);
+                        }
+                      } else {
+                        handleRegionChange(r);
+                      }
+                    }}
+                    style={{ marginRight: 8 }}
+                  />
+                  {r}
+                </label>
+              ))}
+            </div>
+          </div>
+          <div style={{ marginBottom: 22 }}>
+            <label style={{ color: '#145214', fontWeight: 600, fontSize: '1.08rem', letterSpacing: 0.5 }}>Tipo de animales que aceptas:</label><br />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
+              {especies.map(e => (
+                <label key={e} style={{ color: '#228B22', fontWeight: 400, fontSize: '1rem', display: 'flex', alignItems: 'center' }}>
+                  <input
+                    type="checkbox"
+                    checked={form.especies.includes(e)}
+                    onChange={() => handleEspecieChange(e)}
+                    style={{ marginRight: 8 }}
+                  />
+                  {e}
+                </label>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
       <div style={{ marginBottom: 22 }}>
         <label style={{ color: '#145214', fontWeight: 600, fontSize: '1.08rem', letterSpacing: 0.5 }}>Detalles (opcional):</label><br />
         <textarea name="detalles" value={form.detalles} onChange={handleFormChange} rows={3} style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #43ea6b', marginTop: 6, fontSize: '1rem', background: '#fff', resize: 'vertical' }} />

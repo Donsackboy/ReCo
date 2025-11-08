@@ -116,8 +116,7 @@ class Animal(models.Model):
 
     class Tamano(models.TextChoices):
         PEQUENO = "Pequeño", "Pequeño"
-        PEQUENO_GRANDE = "Pequeño-Grande", "Pequeño-Grande"
-        MEDIA = "Media", "Media"
+        PEQUENO_MEDIANO = "Pequeño-Mediano", "Pequeño-Mediano"
         MEDIANO = "Mediano", "Mediano"
         MEDIANO_GRANDE = "Mediano-Grande", "Mediano-Grande"
         GRANDE = "Grande", "Grande"

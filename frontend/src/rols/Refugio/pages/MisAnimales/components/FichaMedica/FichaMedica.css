@@ -1,0 +1,105 @@
+.ficha-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.ficha-modal {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 850px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  padding: 20px;
+  overflow-y: auto;
+  max-height: 90vh;
+}
+
+.ficha-medica-content {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.ficha-title {
+  text-align: center;
+  color: #1976d2;
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.section-card {
+  background: #e3f2fd;
+  border: 2px solid #90caf9;
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.section-title {
+  margin-bottom: 8px;
+  color: #1976d2;
+  font-weight: 700;
+}
+
+.empty-state {
+  background: #fff;
+  border: 1.5px solid #90caf9;
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 10px;
+  text-align: center;
+  color: #1976d2;
+  font-weight: 600;
+  font-size: 1.05rem;
+  box-shadow: 0 2px 8px rgba(144,202,249,0.08);
+}
+
+.emoji {
+  font-size: 1.5rem;
+  margin-right: 8px;
+}
+
+.actions-row {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.button-primary {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 36px;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.button-secondary {
+  background: #eee;
+  color: #333;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 28px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.button-primary:hover {
+  background: #1565c0;
+}
+
+.button-secondary:hover {
+  background: #e0e0e0;
+}

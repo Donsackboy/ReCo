@@ -9,6 +9,12 @@ export type VacunaInfo = {
 export const vacunasPorEspecie: Record<string, VacunaInfo[]> = {
   perro: [
     {
+      nombre: 'Séxtuple canina',
+      descripcion: 'Protege contra moquillo, hepatitis, parvovirus, parainfluenza, leptospirosis y coronavirus.',
+      frecuencia: 'Serie inicial + refuerzo anual',
+      obligatoria: true,
+    },
+    {
       nombre: 'Antirrábica',
       descripcion: 'Protege contra la rabia, virus mortal y zoonótico.',
       frecuencia: '1 dosis anual (según normativa local)',

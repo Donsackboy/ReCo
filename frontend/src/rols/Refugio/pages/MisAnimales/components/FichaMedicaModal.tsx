@@ -6,8 +6,8 @@ import CirugiaForm from '../../../../../components/CirugiaForm';
 import TratamientoForm from '../../../../../components/TratamientoForm';
 import type { Cirugia } from '../../../../../components/CirugiaForm';
 import type { Tratamiento } from '../../../../../components/TratamientoForm';
-import { vacunasPorEspecie } from '../../../../../utils/vacunasEspecies';
-import type { VacunaInfo } from '../../../../../utils/vacunasEspecies';
+import { vacunasPorEspecie } from './FichaMedica/Utils/vacunasEspecies.js';
+import type { VacunaInfo } from './FichaMedica/Utils/vacunasEspecies.js';
 
 // Estructura inicial para la ficha médica con pestañas
 
@@ -204,7 +204,6 @@ const FichaMedicaModal = ({ open, onClose, ficha = initialFicha, onSave, animalE
           {/* Vacunas */}
           <div style={{ background: '#e3f2fd', border: '2px solid #90caf9', borderRadius: 14, padding: 18, marginBottom: 8 }}>
             <h3 style={{ marginBottom: 8, color: '#1976d2', fontWeight: 700 }}>Vacunas</h3>
-            {(form.vacunas?.length ?? 0) === 0 && <div style={{ color: '#888' }}>No hay vacunas registradas.</div>}
             {/* Sugerir vacunas recomendadas por especie */}
             <div style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
               <button
@@ -222,7 +221,7 @@ const FichaMedicaModal = ({ open, onClose, ficha = initialFicha, onSave, animalE
                   setForm(f => ({
                     ...f,
                     vacunas: [
-                      ...f.vacunas,
+                      ...(f.vacunas ?? []),
                       {
                         tipo: '',
                         fecha: '',
@@ -235,28 +234,46 @@ const FichaMedicaModal = ({ open, onClose, ficha = initialFicha, onSave, animalE
                   }));
                 }}
               >Agregar vacuna</button>
-              {mostrarInfoVacunas && (
-                <div style={{ background: '#e3f2fd', borderRadius: 8, padding: 12, marginTop: 8, width: '100%' }}>
-                  <h4 style={{ color: '#1976d2', fontWeight: 700, marginBottom: 10 }}>Información de algunas vacunas comunes</h4>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                    {vacunasRecomendadas.map((v) => {
-                      // Buscar si ya está registrada
-                      const yaRegistrada = form.vacunas.some(vac => vac.tipo === v.nombre);
-                      if (!yaRegistrada) {
-                        return (
-                          <div key={v.nombre} style={{ background: '#fff', border: '1.5px solid #90caf9', borderRadius: 10, padding: 12, boxShadow: '0 2px 8px rgba(144,202,249,0.08)' }}>
-                            <strong style={{ fontSize: 15, color: '#1976d2' }}>{v.nombre}</strong>
-                            <div style={{ color: '#1976d2', fontSize: 13, margin: '6px 0' }}>({v.descripcion})</div>
-                            <div style={{ fontSize: 12, color: '#1976d2' }}>Frecuencia: {v.frecuencia}</div>
-                          </div>
-                        );
-                      }
-                      return null;
-                    })}
-                    {/* Aquí continúan los demás bloques: Cirugías, Tratamientos, Alergias, Archivos, Botones, etc. */}
-                  </div>
+            </div>
+            {/* Mensaje bonito si no hay vacunas */}
+            {(form.vacunas?.length ?? 0) === 0 && (
+              <div style={{
+                background: '#fff',
+                border: '1.5px solid #90caf9',
+                borderRadius: 10,
+                padding: '16px 0',
+                margin: '16px 0',
+                textAlign: 'center',
+                color: '#1976d2',
+                fontWeight: 600,
+                fontSize: '1.08rem',
+                boxShadow: '0 2px 8px rgba(144,202,249,0.08)'
+              }}>
+                <span role="img" aria-label="vacuna" style={{ fontSize: '1.5rem', marginRight: 8 }}>💉</span>
+                No hay vacunas registradas
+              </div>
+            )}
+            {mostrarInfoVacunas && (
+              <div style={{ background: '#e3f2fd', borderRadius: 8, padding: 12, marginTop: 8, width: '100%' }}>
+                <h4 style={{ color: '#1976d2', fontWeight: 700, marginBottom: 10 }}>Información de algunas vacunas comunes</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  {vacunasRecomendadas.map((v) => {
+                    // Buscar si ya está registrada
+                    const yaRegistrada = (form.vacunas ?? []).some(vac => vac.tipo === v.nombre);
+                    if (!yaRegistrada) {
+                      return (
+                        <div key={v.nombre} style={{ background: '#fff', border: '1.5px solid #90caf9', borderRadius: 10, padding: 12, boxShadow: '0 2px 8px rgba(144,202,249,0.08)' }}>
+                          <strong style={{ fontSize: 15, color: '#1976d2' }}>{v.nombre}</strong>
+                          <div style={{ color: '#1976d2', fontSize: 13, margin: '6px 0' }}>({v.descripcion})</div>
+                          <div style={{ fontSize: 12, color: '#1976d2' }}>Frecuencia: {v.frecuencia}</div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })}
                 </div>
-              )}
+              </div>
+            )}
             {/* Formulario para vacunas ya registradas y personalizadas */}
             {(form.vacunas ?? []).map((vacuna, idx) => (
               <div key={idx} style={{
@@ -389,9 +406,28 @@ const FichaMedicaModal = ({ open, onClose, ficha = initialFicha, onSave, animalE
             ))}
           </div>
           {/* Cirugías */}
-              <CirugiaForm
-                historial={form.cirugias}
-                onAdd={async (cirugia: Cirugia) => {
+          <div style={{ background: '#e3f2fd', border: '2px solid #90caf9', borderRadius: 14, padding: 18, marginBottom: 8 }}>
+            <h3 style={{ marginBottom: 8, color: '#1976d2', fontWeight: 700 }}>Cirugías</h3>
+            {(form.cirugias?.length ?? 0) === 0 && (
+              <div style={{
+                background: '#fff',
+                border: '1.5px solid #90caf9',
+                borderRadius: 10,
+                padding: '16px 0',
+                margin: '16px 0',
+                textAlign: 'center',
+                color: '#1976d2',
+                fontWeight: 600,
+                fontSize: '1.08rem',
+                boxShadow: '0 2px 8px rgba(144,202,249,0.08)'
+              }}>
+                <span role="img" aria-label="cirugia" style={{ fontSize: '1.5rem', marginRight: 8 }}>🩺</span>
+                No hay cirugías registradas
+              </div>
+            )}
+            <CirugiaForm
+              historial={form.cirugias}
+              onAdd={async (cirugia: Cirugia) => {
                   const token = localStorage.getItem('token');
                   if (!token) return;
                   try {
@@ -435,10 +471,29 @@ const FichaMedicaModal = ({ open, onClose, ficha = initialFicha, onSave, animalE
                 }
               />
           {/* Tratamientos */}
-          <TratamientoForm
-            historial={form.tratamientos}
-            idAnimal={animalId}
-            onAdd={async (tratamiento: Tratamiento) => {
+          <div style={{ background: '#e3f2fd', border: '2px solid #90caf9', borderRadius: 14, padding: 18, marginBottom: 8 }}>
+            <h3 style={{ marginBottom: 8, color: '#1976d2', fontWeight: 700 }}>Tratamientos</h3>
+            {(form.tratamientos?.length ?? 0) === 0 && (
+              <div style={{
+                background: '#fff',
+                border: '1.5px solid #90caf9',
+                borderRadius: 10,
+                padding: '16px 0',
+                margin: '16px 0',
+                textAlign: 'center',
+                color: '#1976d2',
+                fontWeight: 600,
+                fontSize: '1.08rem',
+                boxShadow: '0 2px 8px rgba(144,202,249,0.08)'
+              }}>
+                <span role="img" aria-label="tratamiento" style={{ fontSize: '1.5rem', marginRight: 8 }}>💊</span>
+                No hay tratamientos registrados
+              </div>
+            )}
+            <TratamientoForm
+              historial={form.tratamientos}
+              idAnimal={animalId}
+              onAdd={async (tratamiento: Tratamiento) => {
               const token = localStorage.getItem('token');
               if (!token) return;
               try {
@@ -471,11 +526,48 @@ const FichaMedicaModal = ({ open, onClose, ficha = initialFicha, onSave, animalE
               }
             }}
           />
-          {/* Alergias */}
+          {/* Alergias y condiciones crónicas */}
+          <div style={{ background: '#e3f2fd', border: '2px solid #90caf9', borderRadius: 14, padding: 18, marginBottom: 8 }}>
+            <h3 style={{ marginBottom: 8, color: '#1976d2', fontWeight: 700 }}>Alergias y condiciones crónicas</h3>
+            {(form.alergias?.length ?? 0) === 0 && (form.condicionesCronicas?.length ?? 0) === 0 && (
+              <div style={{
+                background: '#fff',
+                border: '1.5px solid #90caf9',
+                borderRadius: 10,
+                padding: '16px 0',
+                margin: '16px 0',
+                textAlign: 'center',
+                color: '#1976d2',
+                fontWeight: 600,
+                fontSize: '1.08rem',
+                boxShadow: '0 2px 8px rgba(144,202,249,0.08)'
+              }}>
+                <span role="img" aria-label="alergia" style={{ fontSize: '1.5rem', marginRight: 8 }}>🌿</span>
+                No hay alergias ni condiciones crónicas registradas
+              </div>
+            )}
             <AlergiasCondicionesCronicas animalId={typeof animalId === 'string' ? Number(animalId) : animalId} />
-          {/* Archivos */}
+          </div>
+          {/* Archivos adjuntos */}
           <div style={{ background: '#e3f2fd', border: '2px solid #90caf9', borderRadius: 14, padding: 18, marginBottom: 8 }}>
             <h3 style={{ marginBottom: 8, color: '#1976d2', fontWeight: 700 }}>Archivos adjuntos</h3>
+            {(form.archivos?.length ?? 0) === 0 && (
+              <div style={{
+                background: '#fff',
+                border: '1.5px solid #90caf9',
+                borderRadius: 10,
+                padding: '16px 0',
+                margin: '16px 0',
+                textAlign: 'center',
+                color: '#1976d2',
+                fontWeight: 600,
+                fontSize: '1.08rem',
+                boxShadow: '0 2px 8px rgba(144,202,249,0.08)'
+              }}>
+                <span role="img" aria-label="archivo" style={{ fontSize: '1.5rem', marginRight: 8 }}>📎</span>
+                No hay archivos adjuntos
+              </div>
+            )}
             <div style={{ color: '#888' }}>(Funcionalidad de archivos pendiente)</div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginTop: 8 }}>
@@ -485,7 +577,7 @@ const FichaMedicaModal = ({ open, onClose, ficha = initialFicha, onSave, animalE
         </div>
       </div>
     </div>
-  </div>
+    </div>
   );
 }
 
