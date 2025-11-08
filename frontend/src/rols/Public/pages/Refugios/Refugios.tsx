@@ -71,10 +71,22 @@ const Refugios: React.FC = () => {
         return a.refugio.id === refugio.id_refugio;
       }
       return a.refugio === refugio.id_refugio;
-    }).map(animal => ({
-      ...animal,
-      imagen: (animal.imagenes && animal.imagenes.length > 0) ? animal.imagenes[0] : (animal.fotos && animal.fotos.length > 0 ? animal.fotos[0] : '')
-    }))
+    }).map(animal => {
+      let imagen = '';
+      if (animal.imagenes && animal.imagenes.length > 0) {
+        imagen = animal.imagenes[0];
+      } else if (animal.fotos && animal.fotos.length > 0) {
+        imagen = animal.fotos[0];
+      }
+      // Si la imagen es base64, asegúrate que empiece con 'data:image/'
+      if (imagen && imagen.startsWith('/9j/')) {
+        imagen = 'data:image/jpeg;base64,' + imagen;
+      }
+      return {
+        ...animal,
+        imagen,
+      };
+    })
   }));
 
   const refugiosFiltrados = refugiosConAnimales.filter(refugio => {
