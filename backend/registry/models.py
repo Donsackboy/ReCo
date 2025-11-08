@@ -57,6 +57,15 @@ class Refugio(models.Model):
     rut_titular = models.CharField(max_length=12, blank=True, null=True)
     correo_donacion = models.EmailField(max_length=100, blank=True, null=True)
 
+    # Mercado Pago / Este no, tiene que ser marketplace
+    # // TODO: 
+    # mp_access_token = models.CharField(
+    #     max_length=255, 
+    #     blank=True, 
+    #     null=True, 
+    #     help_text="Access Token de Producción de Mercado Pago del refugio."
+    # )
+
     def __str__(self):
         return self.nombre
 
