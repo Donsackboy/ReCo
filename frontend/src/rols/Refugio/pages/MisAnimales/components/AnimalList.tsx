@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { getAnimales } from '../../../../../../src/api.js';
 import AnimalEditPerfil from './AnimalEditPerfil';
 import AnimalForm from './AnimalForm';
@@ -31,6 +32,7 @@ export type Animal = {
 };
 
 const AnimalList: React.FC = () => {
+  const location = useLocation();
   const [animales, setAnimales] = useState<Animal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -64,9 +66,26 @@ const AnimalList: React.FC = () => {
     setLoading(false);
   };
 
+
   useEffect(() => {
     fetchAnimales();
   }, []);
+
+  // Abrir automáticamente el modal de edición si la URL tiene ?id=...&editarPerfil=true
+  useEffect(() => {
+    if (!loading && animales.length > 0) {
+      const params = new URLSearchParams(location.search);
+      const idParam = params.get('id');
+      const editarPerfil = params.get('editarPerfil');
+      if (idParam && editarPerfil === 'true') {
+        const idNum = Number(idParam);
+        const animal = animales.find(a => a.id_animal === idNum);
+        if (animal) {
+          setEditAnimal(animal);
+        }
+      }
+    }
+  }, [loading, animales, location.search]);
 
   if (loading) return <div>Cargando animales...</div>;
   if (error) return <div style={{ color: 'red' }}>{error}</div>;
