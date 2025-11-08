@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './DonarMonetariaOpciones.css';
 
-const DonarMonetaria: React.FC = () => {
+const DonarMonetariaOpciones: React.FC = () => {
   const navigate = useNavigate();
 
   const goTransferencia = () => {
@@ -35,4 +35,4 @@ const DonarMonetaria: React.FC = () => {
   );
 };
 
-export default DonarMonetaria;
+export default DonarMonetariaOpciones;

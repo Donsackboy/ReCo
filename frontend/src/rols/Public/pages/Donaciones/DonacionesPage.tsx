@@ -2,11 +2,22 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
-const DonacionesPage = () => {
+export const DonacionesPage = () => {
   const navigate = useNavigate();
   return (
     <div style={{ maxWidth: '900px', margin: '40px auto', background: '#f0fff4', borderRadius: '18px', boxShadow: '0 2px 12px #43ea6b22', padding: '32px' }}>
-      <h1 style={{ fontSize: '2.6rem', color: '#219150', marginBottom: '18px', textAlign: 'center', fontWeight: 800, letterSpacing: '1px' }}>¡Escoge como quieres donar!</h1>
+      <h2 style={{ color: '#145214', marginBottom: '18px' }}>Donaciones</h2>
+      <div style={{ background: '#d6f5e6', borderRadius: '12px', padding: '20px 24px', marginBottom: '32px', boxShadow: '0 1px 8px #43ea6b22' }}>
+        <h3 style={{ color: '#145214', marginBottom: '10px', fontSize: '1.15rem' }}>¿Por qué donar?</h3>
+        <ul style={{ color: '#228B22', fontSize: '1.05rem', marginLeft: '18px', marginBottom: '0' }}>
+          <li>Tu aporte ayuda a alimentar, cuidar y salvar animales en situación vulnerable.</li>
+          <li>Las donaciones monetarias permiten financiar campañas, tratamientos y emergencias.</li>
+          <li>Los insumos y servicios donados mejoran la calidad de vida de los animales y el funcionamiento del refugio.</li>
+        </ul>
+        <div style={{ color: '#145214', marginTop: '12px', fontSize: '0.98rem' }}>
+          <b>¡Gracias por tu generosidad!</b>
+        </div>
+      </div>
       <div style={{ marginBottom: '18px', color: '#228B22', fontSize: '1.08rem', textAlign: 'center' }}>
         Elige el tipo de donación que quieres realizar:
       </div>
@@ -33,17 +44,7 @@ const DonacionesPage = () => {
           </div>
         </Link>
       </div>
-      <div style={{ background: '#d6f5e6', borderRadius: '12px', padding: '20px 24px', marginTop: '32px', boxShadow: '0 1px 8px #43ea6b22' }}>
-        <h3 style={{ color: '#145214', marginBottom: '10px', fontSize: '1.15rem' }}>¿Por qué donar?</h3>
-        <ul style={{ color: '#228B22', fontSize: '1.05rem', marginLeft: '18px', marginBottom: '0' }}>
-          <li>Tu aporte ayuda a alimentar, cuidar y salvar animales en situación vulnerable.</li>
-          <li>Las donaciones monetarias permiten financiar campañas, tratamientos y emergencias.</li>
-          <li>Los insumos y servicios donados mejoran la calidad de vida de los animales y el funcionamiento del refugio.</li>
-        </ul>
-        <div style={{ color: '#145214', marginTop: '12px', fontSize: '0.98rem' }}>
-          <b>¡Gracias por tu generosidad!</b>
-        </div>
-      </div>
+      
     </div>
   );
 };

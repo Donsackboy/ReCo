@@ -30,6 +30,8 @@ import VoluntariadoPage from './rols/Public/pages/Voluntariado/Voluntariado.tsx'
 import AdopcionForm from './rols/Public/pages/Animales/AdopcionForm.tsx';
 import DonarVacuna from './rols/Public/pages/Animales/DonarVacuna.tsx';
 import DonarMonetaria from './rols/Public/pages/Donaciones/DonarMonetaria.tsx';
+import DonarMonetariaOpciones from './rols/Public/pages/Donaciones/DonarMonetariaOpciones';
+import DonarTransferencia from './rols/Public/pages/Donaciones/DonarTransferencia';
 import DonarInsumo from './rols/Public/pages/Donaciones/DonarInsumo.tsx';
 import DonarServicio from './rols/Public/pages/Donaciones/DonarServicio.tsx';
 import RefugioPerfil from './rols/Public/pages/Refugios/RefugioPerfil.tsx';
@@ -105,6 +107,8 @@ export default function AppRouter() {
         <Route path="/adopcion" element={<AdopcionForm />} />
         <Route path="/donar-vacuna" element={<DonarVacuna />} />
         <Route path="/donar-monetaria" element={<DonarMonetaria />} />
+  <Route path="/donar-monetaria/opciones" element={<DonarMonetariaOpciones />} />
+  <Route path="/donar-monetaria/transferencia" element={<DonarTransferencia />} />
         <Route path="/donar-insumo" element={<DonarInsumo />} />
         <Route path="/donar-servicio" element={<DonarServicio />} />
 
