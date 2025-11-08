@@ -97,7 +97,7 @@ const EstructuraPDF: React.FC<Props> = ({ animal, onClose }) => {
   return (
     <div className="modal-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.3)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div className="modal-content" style={{ background: '#fff', borderRadius: 10, padding: '2rem', position: 'relative', minWidth: 350, maxWidth: 600, width: '90vw', boxShadow: '0 2px 16px rgba(0,0,0,0.15)' }}>
-        <button onClick={onClose} style={{ position: 'absolute', top: 10, right: 10, fontSize: 22, background: 'none', border: 'none', cursor: 'pointer' }}>×</button>
+        <button onClick={onClose} style={{ position: 'absolute', top: 10, right: -160, fontSize: '2.2rem', fontWeight: 900, background: 'none', border: 'none', color: '#145214', cursor: 'pointer', zIndex: 10001, lineHeight: 1 }} aria-label="Cerrar previsualización">×</button>
         <h2 style={{ marginBottom: '1rem' }}>Previsualización PDF: {animal.nombre}</h2>
         <div style={{ minHeight: 200, marginBottom: '2rem', background: '#f7fbfc', borderRadius: 8, padding: '1rem', overflowY: 'auto' }}>
           <p><strong>Nombre:</strong> {animal.nombre}</p>

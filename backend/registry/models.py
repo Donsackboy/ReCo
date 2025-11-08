@@ -3,6 +3,110 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 
+# --- Modelo NecesidadRefugio ---
+class NecesidadRefugio(models.Model):
+    TIPO_CHOICES = [
+        ('alimento', 'Alimento'),
+        ('medicamento', 'Medicamento'),
+        ('servicio', 'Servicio'),
+        ('articulo', 'Artículo'),
+        ('otro', 'Otro'),
+    ]
+    PRIORIDAD_CHOICES = [
+        ('baja', 'Baja'),
+        ('media', 'Media'),
+        ('alta', 'Alta'),
+        ('urgente', 'Urgente'),
+    ]
+    ESTADO_CHOICES = [
+        ('activa', 'Activa'),
+        ('cumplida', 'Cumplida'),
+        ('cancelada', 'Cancelada'),
+    ]
+    id = models.AutoField(primary_key=True)
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
+    descripcion = models.TextField()
+    monto_necesario = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    monto_recaudado = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    prioridad = models.CharField(max_length=10, choices=PRIORIDAD_CHOICES, default='media')
+    estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='activa')
+    fecha_limite = models.DateField(blank=True, null=True)
+    imagen_url = models.URLField(blank=True, null=True)
+    refugio = models.ForeignKey('Refugio', on_delete=models.CASCADE, related_name='necesidades')
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.tipo} - {self.descripcion[:30]}..."
+
+# --- Modelo NecesidadRefugio ---
+class NecesidadRefugio(models.Model):
+    TIPO_CHOICES = [
+        ('alimento', 'Alimento'),
+        ('medicamento', 'Medicamento'),
+        ('servicio', 'Servicio'),
+        ('articulo', 'Artículo'),
+        ('otro', 'Otro'),
+    ]
+    PRIORIDAD_CHOICES = [
+        ('baja', 'Baja'),
+        ('media', 'Media'),
+        ('alta', 'Alta'),
+        ('urgente', 'Urgente'),
+    ]
+    ESTADO_CHOICES = [
+        ('activa', 'Activa'),
+        ('cumplida', 'Cumplida'),
+        ('cancelada', 'Cancelada'),
+    ]
+    id = models.AutoField(primary_key=True)
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
+    descripcion = models.TextField()
+    monto_necesario = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    monto_recaudado = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    prioridad = models.CharField(max_length=10, choices=PRIORIDAD_CHOICES, default='media')
+    estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='activa')
+    fecha_limite = models.DateField(blank=True, null=True)
+    imagen_url = models.URLField(blank=True, null=True)
+    refugio = models.ForeignKey('Refugio', on_delete=models.CASCADE, related_name='necesidades')
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.tipo} - {self.descripcion[:30]}..."
+
+# --- Modelo NecesidadRefugio ---
+class NecesidadRefugio(models.Model):
+    TIPO_CHOICES = [
+        ('alimento', 'Alimento'),
+        ('medicamento', 'Medicamento'),
+        ('servicio', 'Servicio'),
+        ('articulo', 'Artículo'),
+        ('otro', 'Otro'),
+    ]
+    PRIORIDAD_CHOICES = [
+        ('baja', 'Baja'),
+        ('media', 'Media'),
+        ('alta', 'Alta'),
+        ('urgente', 'Urgente'),
+    ]
+    ESTADO_CHOICES = [
+        ('activa', 'Activa'),
+        ('cumplida', 'Cumplida'),
+        ('cancelada', 'Cancelada'),
+    ]
+    id = models.AutoField(primary_key=True)
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
+    descripcion = models.TextField()
+    monto_necesario = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    monto_recaudado = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    prioridad = models.CharField(max_length=10, choices=PRIORIDAD_CHOICES, default='media')
+    estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='activa')
+    fecha_limite = models.DateField(blank=True, null=True)
+    imagen_url = models.URLField(blank=True, null=True)
+    refugio = models.ForeignKey('Refugio', on_delete=models.CASCADE, related_name='necesidades')
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.tipo} - {self.descripcion[:30]}..."
 # --- Modelo Ficha Médica ---
 class FichaMedica(models.Model):
     id_ficha = models.AutoField(primary_key=True)

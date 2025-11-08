@@ -40,9 +40,15 @@ const EstructuraPDF: React.FC<Props> = ({ animal, onClose }) => {
     doc.setFontSize(12);
     doc.text(`Especie: ${animal.especie}`, 15, 30);
     doc.text(`Edad: ${editEdad}`, 15, 37);
-    doc.text(`Estado de Salud: ${editEstado}`, 15, 44);
-    doc.text(`Vacunas aplicadas: ${vacunasAplicadas.length}`, 15, 51);
-    doc.text(`Vacunas pendientes: ${vacunasPendientes.length > 0 ? vacunasPendientes.join(', ') : 'Ninguna'}`, 15, 58);
+    doc.text(`Vacunas aplicadas: ${vacunasAplicadas.length}`, 15, 44);
+    doc.text('Vacunas pendientes:', 15, 51);
+    if (vacunasPendientes.length > 0) {
+      vacunasPendientes.forEach((vac, idx) => {
+        doc.text(`- ${vac}`, 20, 58 + idx * 7);
+      });
+    } else {
+      doc.text('Ninguna', 20, 58);
+    }
     if (editHistorial.length > 0) {
       // @ts-ignore
       doc.autoTable({
@@ -75,10 +81,14 @@ const EstructuraPDF: React.FC<Props> = ({ animal, onClose }) => {
           <br />
           <label><strong>Edad:</strong> <input value={editEdad} onChange={e => setEditEdad(e.target.value)} style={{ marginLeft: 8 }} /></label>
           <br />
-          <label><strong>Estado de Salud:</strong> <input value={editEstado} onChange={e => setEditEstado(e.target.value)} style={{ marginLeft: 8 }} /></label>
-          <br />
+          {/* Estado de salud removido de la previsualización */}
           <p><strong>Vacunas aplicadas:</strong> {vacunasAplicadas.length}</p>
-          <p><strong>Vacunas pendientes:</strong> {vacunasPendientes.length > 0 ? vacunasPendientes.join(', ') : 'Ninguna'}</p>
+          <p><strong>Vacunas pendientes:</strong></p>
+          <ul>
+            {vacunasPendientes.length > 0 ? vacunasPendientes.map((vac, idx) => (
+              <li key={idx}>{vac}</li>
+            )) : <li>Ninguna</li>}
+          </ul>
           <ul style={{ marginTop: '1rem' }}>
             {editHistorial.map((item, idx) => (
               <li key={idx}><strong>{item.fecha}:</strong> {item.descripcion}</li>

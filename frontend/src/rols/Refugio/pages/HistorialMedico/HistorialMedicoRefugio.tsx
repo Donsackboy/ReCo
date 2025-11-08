@@ -312,8 +312,6 @@ const HistorialMedicoRefugio: React.FC = () => {
                   <h3>{animal.nombre}</h3>
                   <p><strong>Edad:</strong> {animal.edad || 'No disponible'}</p>
                   <p><strong>Estado de Salud:</strong> {animal.estado_salud || 'No disponible'}</p>
-                  <p><strong>Cantidad de Vacunas aplicadas:</strong> {vacunasAplicadas.length}</p>
-                  <p><strong>Vacunas pendientes:</strong> {vacunasPendientes.length > 0 ? vacunasPendientes.join(', ') : 'Ninguna'}</p>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '1rem' }}>
                   <img src={animal.foto_url || '/default-animal.png'} alt={animal.nombre} style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: 10, marginBottom: '1rem' }} />

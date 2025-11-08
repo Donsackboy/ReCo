@@ -1,6 +1,6 @@
 import Voluntarios from './rols/Refugio/pages/Voluntarios';
 import InscritosEvento from './rols/Refugio/pages/InscritosEvento';
-import Necesidades from './rols/Refugio/pages/Necesidades';
+import Necesidades from './rols/Refugio/pages/Necesidades/NecesidadesRefugio';
 // Enrutador principal para las páginas
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HeaderPublic from './rols/Public/components/Header/HeaderPublic';

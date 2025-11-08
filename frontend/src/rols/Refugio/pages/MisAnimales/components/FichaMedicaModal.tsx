@@ -1,3 +1,5 @@
+import CirugiasSection from './Cirugias/CirugiasSection';
+import './Cirugias/CirugiasSection.css';
 import React, { useState } from 'react';
 import { getFichaMedica, updateFichaMedica, getTratamientos, createCirugia, createTratamiento, updateTratamiento } from '../../../../../../src/api.js';
 import AlergiasCondicionesCronicas from '../../../../../components/AlergiasCondicionesCronicas';
@@ -406,70 +408,7 @@ const FichaMedicaModal = ({ open, onClose, ficha = initialFicha, onSave, animalE
             ))}
           </div>
           {/* Cirugías */}
-          <div style={{ background: '#e3f2fd', border: '2px solid #90caf9', borderRadius: 14, padding: 18, marginBottom: 8 }}>
-            <h3 style={{ marginBottom: 8, color: '#1976d2', fontWeight: 700 }}>Cirugías</h3>
-            {(form.cirugias?.length ?? 0) === 0 && (
-              <div style={{
-                background: '#fff',
-                border: '1.5px solid #90caf9',
-                borderRadius: 10,
-                padding: '16px 0',
-                margin: '16px 0',
-                textAlign: 'center',
-                color: '#1976d2',
-                fontWeight: 600,
-                fontSize: '1.08rem',
-                boxShadow: '0 2px 8px rgba(144,202,249,0.08)'
-              }}>
-                <span role="img" aria-label="cirugia" style={{ fontSize: '1.5rem', marginRight: 8 }}>🩺</span>
-                No hay cirugías registradas
-              </div>
-            )}
-            <CirugiaForm
-              historial={form.cirugias}
-              onAdd={async (cirugia: Cirugia) => {
-                  const token = localStorage.getItem('token');
-                  if (!token) return;
-                  try {
-                    // Agregar id_animal al objeto cirugía
-                    const cirugiaData = {
-                      id_animal: animalId,
-                      tipo: cirugia.tipo,
-                      otro_nombre: cirugia.otro_nombre,
-                      motivo: cirugia.motivo,
-                      fecha: cirugia.fecha,
-                      costo: cirugia.costo,
-                      veterinario: cirugia.veterinario,
-                      observaciones: cirugia.observaciones,
-                      pago_estado: cirugia.pagoEstado,
-                      monto_pagado: cirugia.montoPagado,
-                      adjunto: cirugia.adjunto
-                    };
-                    const nuevaCirugia = await createCirugia(cirugiaData, token);
-                    setForm(f => {
-                      const updated = { ...f, cirugias: [...f.cirugias, nuevaCirugia] };
-                      onSave(updated);
-                      return updated;
-                    });
-                  } catch (error) {
-                    alert('Error al registrar cirugía');
-                  }
-                }}
-                onUpdate={(cirugiasActualizadas: Cirugia[]) => {
-                  setForm(f => {
-                    const updated = { ...f, cirugias: cirugiasActualizadas };
-                    onSave(updated);
-                    return updated;
-                  });
-                }}
-                animalTipo={
-                  animalEspecie?.toLowerCase().includes('perro') || animalEspecie?.toLowerCase().includes('gato') ? 'Perro/Gato'
-                  : animalEspecie?.toLowerCase().includes('conejo') || animalEspecie?.toLowerCase().includes('roedor') ? 'Conejo/Roedor'
-                  : animalEspecie?.toLowerCase().includes('ave') ? 'Ave'
-                  : animalEspecie?.toLowerCase().includes('reptil') ? 'Reptil'
-                  : 'Perro/Gato'
-                }
-              />
+          <CirugiasSection animalId={animalId} token={localStorage.getItem('token') || ''} />
           {/* Tratamientos */}
           <div style={{ background: '#e3f2fd', border: '2px solid #90caf9', borderRadius: 14, padding: 18, marginBottom: 8 }}>
             <h3 style={{ marginBottom: 8, color: '#1976d2', fontWeight: 700 }}>Tratamientos</h3>

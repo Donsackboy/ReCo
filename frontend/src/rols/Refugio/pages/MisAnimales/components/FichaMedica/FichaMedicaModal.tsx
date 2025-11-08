@@ -65,8 +65,8 @@ const FichaMedicaModal: React.FC<FichaMedicaModalProps> = ({ animalId, onClose, 
           />
 
           <CirugiasSection
-            cirugias={form.cirugias}
-            setForm={setForm}
+            animalId={Number(animalId)}
+            token={localStorage.getItem('token') || ''}
           />
 
           <TratamientosSection

@@ -1,0 +1,458 @@
+/* Previsualización de imagen cuadrada y centrada */
+.imagen-preview {
+  display: block;
+  margin: 18px auto 0 auto;
+  width: 180px;
+  height: 180px;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px #43ea6b44;
+  background: linear-gradient(135deg, #eaffea 60%, #f7fbfc 100%);
+  border: 2.5px solid #43ea6b;
+  transition: box-shadow 0.3s, border 0.3s;
+  animation: fadeInImg 0.5s;
+}
+
+@keyframes fadeInImg {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Contenedor principal */
+.necesidades-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  background: #eaffea;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px #43ea6b33;
+  padding: 2.2rem 2rem;
+}
+
+@media (max-width: 700px) {
+  .necesidades-container {
+    max-width: 98vw;
+    padding: 1.2rem 0.5rem;
+    border-radius: 10px;
+  }
+  .necesidad-form {
+    padding: 1rem 0.3rem;
+    border-radius: 10px;
+  }
+  .necesidad-item {
+    padding: 1rem 0.5rem;
+    border-radius: 10px;
+  }
+  .imagen-preview {
+    width: 98vw;
+    max-width: 320px;
+    height: auto;
+  }
+}
+
+/* Formulario de necesidad */
+.necesidad-form {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  background: linear-gradient(135deg, #eaffea 60%, #f7fbfc 100%);
+  border-radius: 14px;
+  padding: 1.5rem 1.2rem;
+  border: 2px solid #43ea6b;
+  box-shadow: 0 2px 12px #43ea6b22;
+}
+.necesidad-form label {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #145214;
+}
+.necesidad-form input,
+.necesidad-form select,
+.necesidad-form textarea {
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: 1.5px solid #43ea6b;
+  font-size: 1.05rem;
+  margin-top: 0.3rem;
+  width: 100%;
+  box-sizing: border-box;
+  background: #eaffea;
+  transition: border 0.2s;
+}
+.necesidad-form input:focus,
+.necesidad-form select:focus,
+.necesidad-form textarea:focus {
+  border: 2px solid #145214;
+  outline: none;
+}
+
+.agregar-btn {
+  background: #43ea6b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.7rem 1.5rem;
+  font-weight: 600;
+  font-size: 1.08rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #43ea6b22;
+}
+.cancelar-btn {
+  background: #ccc;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  padding: 0.7rem 1.5rem;
+  font-weight: 500;
+  font-size: 1.08rem;
+  cursor: pointer;
+}
+
+.lista-title {
+  color: #145214;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+.no-necesidades {
+  color: #888;
+  text-align: center;
+  margin-top: 2rem;
+}
+.necesidades-list {
+  list-style: none;
+  padding: 0;
+}
+
+/* Tarjeta de necesidad */
+.necesidad-item {
+  background: linear-gradient(135deg, #eaffea 60%, #f7fbfc 100%);
+  border: 2px solid #43ea6b;
+  border-radius: 12px;
+  margin-bottom: 1.2rem;
+  padding: 1.2rem 1.5rem;
+  box-shadow: 0 2px 8px #43ea6b22;
+  position: relative;
+  min-height: 120px;
+}
+.necesidad-tags {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.tag {
+  border-radius: 5px;
+  padding: 2px 10px;
+  font-size: 0.98rem;
+  font-weight: 500;
+}
+.tipo {
+  background: #eaffea;
+  color: #228b22;
+}
+.prioridad {
+  background: #43ea6b;
+  color: #fff;
+  font-weight: 700;
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  box-shadow: 0 1px 8px #43ea6b44;
+  border: 2px solid #145214;
+  padding: 4px 16px;
+  font-size: 1.08rem;
+  z-index: 2;
+  border-radius: 18px;
+  letter-spacing: 1px;
+}
+.estado {
+  background: #eaf6ff;
+  color: #2980b9;
+}
+.fecha {
+  background: #fffbe6;
+  color: #b8860b;
+}
+.necesidad-desc {
+  font-size: 1.08rem;
+  margin-top: 8px;
+  display: block;
+  font-weight: 600;
+  color: #222;
+}
+.necesidad-montos {
+  margin-top: 8px;
+  color: #555;
+  font-size: 0.98rem;
+  display: flex;
+  gap: 16px;
+}
+.necesidad-img {
+  max-width: 120px;
+  margin-top: 8px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px #43ea6b22;
+}
+.necesidad-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.editar-btn {
+  background: #2980b9;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+.eliminar-btn {
+  background: #c0392b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+.imagen-preview {
+  display: block;
+  margin: 18px auto 0 auto;
+  width: 180px;
+  height: 180px;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px #2980b944;
+  background: linear-gradient(135deg, #eaf6ff 60%, #f7fbfc 100%);
+  border: 2.5px solid #2980b9;
+  transition: box-shadow 0.3s, border 0.3s;
+  animation: fadeInImg 0.5s;
+}
+
+@keyframes fadeInImg {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Mejoras visuales para la página de necesidades del refugio */
+.necesidades-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px #2980b933;
+  padding: 2.2rem 2rem;
+}
+
+.necesidades-title {
+  color: #1ca120;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.crear-btn {
+  background: linear-gradient(90deg, #ff9800 70%, #ffc107 100%);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 0.8rem 1.7rem;
+  font-weight: 600;
+  font-size: 1.08rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #ff980022;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.crear-btn::before {
+  content: '+';
+  font-size: 1.3em;
+  font-weight: bold;
+  margin-right: 4px;
+}
+
+.necesidad-form {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  background: linear-gradient(135deg, #eaf6ff 60%, #f7fbfc 100%);
+  border-radius: 14px;
+  padding: 1.5rem 1.2rem;
+  border: 2px solid #b2d7ef;
+  box-shadow: 0 2px 12px #2980b922;
+}
+
+
+  /* Cada campo ocupa todo el ancho disponible */
+  .necesidad-form label {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+  
+.necesidad-form label {
+  font-weight: 500;
+  color: #2980b9;
+}
+
+.necesidad-form input,
+.necesidad-form select,
+.necesidad-form textarea {
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: 1.5px solid #b2d7ef;
+  font-size: 1.05rem;
+  margin-top: 0.3rem;
+  width: 100%;
+  box-sizing: border-box;
+  background: #f7fbfc;
+  transition: border 0.2s;
+.necesidad-form input:focus,
+.necesidad-form select:focus,
+.necesidad-form textarea:focus {
+  border: 2px solid #2980b9;
+  outline: none;
+}
+
+
+.agregar-btn {
+  background: #43ea6b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.7rem 1.5rem;
+  font-weight: 600;
+  font-size: 1.08rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #2980b922;
+}
+
+.cancelar-btn {
+  background: #ccc;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  padding: 0.7rem 1.5rem;
+  font-weight: 500;
+  font-size: 1.08rem;
+  cursor: pointer;
+}
+
+.lista-title {
+  color: #145214;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.no-necesidades {
+  color: #888;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.necesidades-list {
+  list-style: none;
+  padding: 0;
+}
+
+.necesidad-item {
+  background: #f7fbfc;
+  border: 1px solid #b2d7ef;
+  border-radius: 10px;
+  margin-bottom: 1.2rem;
+  padding: 1.2rem 1.5rem;
+  box-shadow: 0 1px 4px #2980b911;
+}
+
+.necesidad-tags {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.tag {
+  border-radius: 5px;
+  padding: 2px 10px;
+  font-size: 0.98rem;
+  font-weight: 500;
+}
+.tipo {
+  background: #eaffea;
+  color: #228b22;
+}
+.prioridad {
+  background: #ffe6e6;
+  color: #c0392b;
+}
+.estado {
+  background: #eaf6ff;
+  color: #2980b9;
+}
+.fecha {
+  background: #fffbe6;
+  color: #b8860b;
+}
+
+.necesidad-desc {
+  font-size: 1.08rem;
+  margin-top: 8px;
+  display: block;
+  font-weight: 600;
+  color: #222;
+}
+
+.necesidad-montos {
+  margin-top: 8px;
+  color: #555;
+  font-size: 0.98rem;
+  display: flex;
+  gap: 16px;
+}
+
+.necesidad-img {
+  max-width: 120px;
+  margin-top: 8px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px #2980b922;
+}
+
+.necesidad-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.editar-btn {
+  background: #2980b9;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.eliminar-btn {
+  background: #c0392b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 500;
+  cursor: pointer;
+}

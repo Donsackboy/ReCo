@@ -1,3 +1,124 @@
+/* Grid de dos columnas para los campos principales */
+.animal-edit-form-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 10px;
+}
+@media (max-width: 700px) {
+  .animal-edit-form-main-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+@media (max-width: 600px) {
+  .animal-edit-modal-card {
+    min-width: unset;
+    max-width: 99vw;
+    width: 99vw;
+    min-height: unset;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px #228b2233;
+    padding: 0;
+  }
+  .animal-edit-modal-content {
+    padding: 8px 4px;
+  }
+  .animal-edit-form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .animal-edit-modal-overlay {
+    align-items: flex-start;
+    padding-top: 12vw;
+  }
+  .confirm-delete-modal {
+    max-width: 98vw;
+    width: 98vw;
+    min-width: unset;
+    padding: 10px 4px;
+    border-radius: 8px;
+    font-size: 0.97rem;
+  }
+  .animal-edit-modal-card button[aria-label="Cerrar edición"] {
+    top: 10px;
+    right: 10px;
+    font-size: 2rem;
+  }
+  .animal-edit-modal-content h2 {
+    font-size: 1.3rem !important;
+    margin-bottom: 10px !important;
+  }
+  .animal-edit-modal-content h3 {
+    font-size: 1.08rem !important;
+    margin-bottom: 6px !important;
+  }
+  .animal-edit-modal-content label,
+  .animal-edit-modal-content input,
+  .animal-edit-modal-content select,
+  .animal-edit-modal-content textarea {
+    font-size: 0.98rem !important;
+    padding: 6px !important;
+  }
+  .animal-edit-modal-content textarea {
+    min-height: 60px;
+  }
+  .animal-edit-modal-content .animal-edit-form-grid > div {
+    margin-bottom: 4px;
+  }
+  .animal-edit-modal-content .animal-edit-form-grid {
+    gap: 8px;
+  }
+  .animal-edit-modal-content .animal-edit-form-grid input[type="date"] {
+    font-size: 0.95rem !important;
+    padding: 5px !important;
+  }
+  .animal-edit-modal-content .animal-edit-form-grid input,
+  .animal-edit-modal-content .animal-edit-form-grid select {
+    min-width: 0;
+    width: 100%;
+  }
+  .animal-edit-modal-content .animal-edit-form-grid .react-datepicker-wrapper {
+    width: 100%;
+  }
+  .animal-edit-modal-content .animal-edit-form-grid .react-datepicker__input-container input {
+    width: 100%;
+  }
+  .animal-edit-modal-content .animal-edit-form-grid .react-datepicker {
+    font-size: 0.95rem;
+  }
+  .animal-edit-modal-content .animal-edit-form-grid .react-datepicker__month-container {
+    width: 100%;
+  }
+  .animal-edit-modal-content .animal-edit-form-grid .react-datepicker__header {
+    font-size: 0.95rem;
+  }
+  .animal-edit-modal-content .animal-edit-form-grid .react-datepicker__day {
+    font-size: 0.95rem;
+  }
+  .animal-edit-modal-content .animal-edit-form-grid .react-datepicker__day--selected {
+    background: #90EE90;
+  }
+  .animal-edit-modal-content .animal-edit-form-grid .react-datepicker__day--keyboard-selected {
+    background: #90EE90;
+  }
+  .animal-edit-modal-content .animal-edit-form-grid .react-datepicker__day--today {
+    border-color: #90EE90;
+  }
+  .animal-edit-modal-content .animal-edit-form-grid .react-datepicker__triangle {
+    display: none;
+  }
+  .animal-edit-modal-content .animal-edit-form-grid .react-datepicker__month {
+    margin: 0;
+  }
+  .animal-edit-modal-content .animal-edit-form-grid .react-datepicker__week {
+    margin: 0;
+  }
+  .animal-edit-modal-content .animal-edit-form-grid .react-datepicker__day {
+    margin: 0 2px;
+  }
+}
 .animal-edit-modal-overlay {
   position: fixed;
   top: 0;

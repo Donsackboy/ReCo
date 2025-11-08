@@ -1,3 +1,32 @@
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
+from django.core.files.storage import default_storage
+from django.conf import settings
+import os
+
+class UploadImageView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request):
+        image = request.FILES.get('file')
+        if not image:
+            return Response({'error': 'No file provided'}, status=400)
+        # Crear carpeta si no existe
+        folder = os.path.join(settings.MEDIA_ROOT, 'refugios_logos')
+        os.makedirs(folder, exist_ok=True)
+        try:
+            file_path = os.path.join('refugios_logos', image.name)
+            full_path = os.path.join(settings.MEDIA_ROOT, file_path)
+            with open(full_path, 'wb+') as destination:
+                for chunk in image.chunks():
+                    destination.write(chunk)
+            url = request.build_absolute_uri(os.path.join(settings.MEDIA_URL, file_path))
+            return Response({'url': url})
+        except Exception as e:
+            return Response({'error': f'Error saving image: {str(e)}'}, status=500)
 # ...existing code...
 
 from rest_framework.decorators import api_view, permission_classes
@@ -575,3 +604,25 @@ class VacunaViewSet(viewsets.ModelViewSet):
         if animal_id:
             queryset = queryset.filter(animal_id=animal_id)
         return queryset
+
+from .models import NecesidadRefugio
+from .serializers import NecesidadRefugioSerializer
+from rest_framework import generics, permissions
+
+class NecesidadRefugioListCreateView(generics.ListCreateAPIView):
+    serializer_class = NecesidadRefugioSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    def get_queryset(self):
+        user = self.request.user
+        if hasattr(user, 'refugio') and user.refugio:
+            return NecesidadRefugio.objects.filter(refugio=user.refugio)
+        return NecesidadRefugio.objects.none()
+    def perform_create(self, serializer):
+        user = self.request.user
+        if hasattr(user, 'refugio') and user.refugio:
+            serializer.save(refugio=user.refugio)
+
+class NecesidadRefugioDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = NecesidadRefugioSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = NecesidadRefugio.objects.all()

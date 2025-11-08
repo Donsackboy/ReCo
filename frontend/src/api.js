@@ -1,3 +1,50 @@
+// Necesidades del Refugio
+export async function getNecesidadesRefugio(token) {
+  const response = await fetch(`${API_BASE}/necesidades-refugio/`, {
+    headers: {
+      'Authorization': `Token ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error('Error al obtener necesidades del refugio');
+  return response.json();
+}
+
+export async function createNecesidadRefugio(data, token) {
+  const response = await fetch(`${API_BASE}/necesidades-refugio/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Error al crear necesidad');
+  return response.json();
+}
+
+export async function updateNecesidadRefugio(id, data, token) {
+  const response = await fetch(`${API_BASE}/necesidades-refugio/${id}/`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Error al editar necesidad');
+  return response.json();
+}
+
+export async function deleteNecesidadRefugio(id, token) {
+  const response = await fetch(`${API_BASE}/necesidades-refugio/${id}/`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Token ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error('Error al eliminar necesidad');
+  return true;
+}
 // Obtener 5 animales random con foto principal (público)
 export async function getAnimalesCarousel() {
   const response = await fetch(`${API_BASE}/public/animales/carousel/`);

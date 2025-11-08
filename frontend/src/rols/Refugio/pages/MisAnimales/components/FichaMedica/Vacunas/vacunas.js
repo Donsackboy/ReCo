@@ -1,4 +1,5 @@
-const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:8000/api';
+
+const API_BASE = 'http://localhost:8000/api';
 
 // Obtener vacunas de un animal
 export async function getVacunas(token, animalId) {
@@ -39,8 +40,8 @@ export async function deleteVacuna(token, animalId, vacunaId) {
   if (!response.ok) throw new Error('Error al eliminar vacuna');
   return true;
 }
-import { API_BASE } from '../api';
 
+// Actualizar vacuna
 export async function updateVacuna(token, animalId, vacunaId, data) {
   const response = await fetch(`${API_BASE}/animales/${animalId}/vacunas/${vacunaId}/`, {
     method: 'PATCH',
