@@ -45,7 +45,7 @@ import MisAnimales from './rols/Refugio/pages/MisAnimales';
 import GestionAdopciones from './rols/Refugio/pages/Adopciones/GestionAdopciones.tsx';
 import MisEventos from './rols/Refugio/pages/MisEventos';
 import Donaciones from './rols/Refugio/pages/Donaciones';
-import HistorialMedico from './rols/Refugio/pages/HistorialMedico';
+import HistorialMedicoRefugio from './rols/Refugio/pages/HistorialMedico/HistorialMedicoRefugio';
 import ConfiguracionRefugio from './rols/Refugio/pages/Configuracion';
 
 
@@ -140,7 +140,7 @@ export default function AppRouter() {
   <Route path="/refugio/adopciones" element={isRefugio ? (<GestionAdopciones />) : (<Navigate to="/" replace />)} />
         <Route path="/refugio/mis-eventos" element={isRefugio ? (<MisEventos />) : (<Navigate to="/" replace />)} />
         <Route path="/refugio/donaciones" element={isRefugio ? (<Donaciones />) : (<Navigate to="/" replace />)} />
-        <Route path="/refugio/historial-medico" element={isRefugio ? (<HistorialMedico />) : (<Navigate to="/" replace />)} />
+  <Route path="/refugio/historial-medico" element={isRefugio ? (<HistorialMedicoRefugio />) : (<Navigate to="/" replace />)} />
 
         <Route path="/refugio/voluntarios" element={isRefugio ? (<Voluntarios />) : (<Navigate to="/" replace />)} />
         <Route path="/refugio/inscritos-evento" element={isRefugio ? (<InscritosEvento />) : (<Navigate to="/" replace />)} />

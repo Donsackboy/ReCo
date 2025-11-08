@@ -7,6 +7,7 @@ COPY package*.json ./
 RUN npm install
 RUN npm install --save-dev @types/node
 RUN npm install react-icons
+RUN npm install jspdf
 
 COPY . .
 

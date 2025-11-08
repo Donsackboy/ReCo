@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate
 from .models import (
     SolicitudAdopcion, PostulacionRefugio, Usuario, HogaresTemporales, Refugio, Animal,
-    Cirugia, Tratamiento, AlergiaCondicion, FichaMedica
+    Cirugia, Tratamiento, AlergiaCondicion, FichaMedica, Vacuna
 )
 
 # --- Solicitud de Adopción ---
@@ -112,6 +112,11 @@ class HogarTemporalSerializer(serializers.ModelSerializer):
 
 # Serializer para Animal
 
+class VacunaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vacuna
+        fields = '__all__'
+
 class AnimalSerializer(serializers.ModelSerializer):
     refugio = serializers.SerializerMethodField()
     sexo = serializers.ChoiceField(choices=[
@@ -120,6 +125,7 @@ class AnimalSerializer(serializers.ModelSerializer):
     tamano = serializers.ChoiceField(choices=[
         "Pequeño", "Pequeño-Grande", "Media", "Mediano", "Mediano-Grande", "Grande", "Gigante"
     ], required=False, allow_null=True)
+    vacunas = VacunaSerializer(many=True, read_only=True)
 
     def get_refugio(self, obj):
         if obj.refugio:
@@ -135,7 +141,7 @@ class AnimalSerializer(serializers.ModelSerializer):
         model = Animal
         fields = '__all__'
         # Asegura que tipo_edad y edad estén incluidos explícitamente
-        extra_fields = ['tipo_edad', 'edad']
+        extra_fields = ['tipo_edad', 'edad', 'vacunas']
 
 
 # Serializer para Cirugia

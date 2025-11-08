@@ -1,6 +1,9 @@
-
 from django.urls import path
 from . import views
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'animales/(?P<animal_id>[^/.]+)/vacunas', views.VacunaViewSet, basename='vacuna-animal')
 
 urlpatterns = [
     path('fichamedica/<int:animal_id>/', views.FichaMedicaRetrieveUpdateView.as_view(), name='ficha_medica_retrieve_update'),
@@ -35,3 +38,5 @@ urlpatterns = [
     path('refugio/me', views.refugio_me, name='refugio_me'),
         path('animales/<int:animal_id>/ficha-medica/', views.FichaMedicaListCreateView.as_view(), name='ficha_medica_list_create'),
 ]
+
+urlpatterns += router.urls

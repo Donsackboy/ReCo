@@ -147,7 +147,6 @@ class Animal(models.Model):
     esterilizado = models.BooleanField(default=False)
     desparasitado = models.BooleanField(default=False)
     motivo_hogar_temporal = models.TextField(blank=True, null=True, help_text="Descripción si busca hogar temporal")
-    vacunas = models.JSONField(default=list, blank=True, help_text="Lista de vacunas del animal")
     motivo_cambio_hogar_temporal = models.TextField(blank=True, null=True, help_text="Motivo por el que el animal necesita cambiar de hogar temporal")
     duracion_estimada_hogar = models.CharField(max_length=50, blank=True, null=True)
     fotos = models.JSONField(default=list, blank=True, help_text="Lista de hasta 3 URLs de fotos del animal")
@@ -162,6 +161,23 @@ class Animal(models.Model):
 
     def __str__(self):
         return f"{self.nombre} ({self.especie})"
+
+# Modelo Vacuna separado
+class Vacuna(models.Model):
+    id = models.AutoField(primary_key=True)
+    animal = models.ForeignKey('Animal', on_delete=models.CASCADE, related_name='vacunas')
+    nombre = models.CharField(max_length=100, help_text="Nombre de la vacuna", default="Sin nombre")
+    TIPO_CHOICES = [
+        ('unica', 'Única'),
+        ('refuerzo', 'Refuerzo'),
+    ]
+    tipo = models.CharField(max_length=10, choices=TIPO_CHOICES)
+    fecha_aplicacion = models.DateField()
+    fecha_refuerzo = models.DateField(blank=True, null=True, help_text="Fecha de refuerzo si aplica")
+    observaciones = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Vacuna {self.nombre} ({self.get_tipo_display()}) para {self.animal}" 
 
 
 # --- Modelo Cirugia ---

@@ -222,3 +222,40 @@ export async function updateFichaMedica(token, animalId, data) {
   if (!response.ok) throw new Error('Error al actualizar ficha médica');
   return response.json();
 }
+
+// Obtener vacunas de un animal
+export async function getVacunas(token, animalId) {
+  const response = await fetch(`${API_BASE}/animales/${animalId}/vacunas/`, {
+    headers: {
+      'Authorization': `Token ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error('Error al obtener vacunas');
+  return response.json();
+}
+
+// Crear vacuna para un animal
+export async function createVacuna(token, animalId, data) {
+  const response = await fetch(`${API_BASE}/animales/${animalId}/vacunas/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Error al crear vacuna');
+  return response.json();
+}
+
+// Eliminar vacuna
+export async function deleteVacuna(token, animalId, vacunaId) {
+  const response = await fetch(`${API_BASE}/animales/${animalId}/vacunas/${vacunaId}/`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Token ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error('Error al eliminar vacuna');
+  return true;
+}

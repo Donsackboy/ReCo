@@ -1,6 +1,6 @@
 # Imports primero
 from django.contrib import admin
-from .models import PostulacionRefugio, Usuario, Refugio, Animal, HogaresTemporales, Donaciones, Suscripciones, Eventos, InscripcionesEventos, CatalogoServicios, DonacionesEspecificas, ComprobantesServicio, NecesidadesRefugio, PerfilAdoptante, Cirugia, Tratamiento, SolicitudAdopcion, AlergiaCondicion, FichaMedica
+from .models import PostulacionRefugio, Usuario, Refugio, Animal, HogaresTemporales, Donaciones, Suscripciones, Eventos, InscripcionesEventos, CatalogoServicios, DonacionesEspecificas, ComprobantesServicio, NecesidadesRefugio, PerfilAdoptante, Cirugia, Tratamiento, SolicitudAdopcion, AlergiaCondicion, FichaMedica, Vacuna
 # Imports primero
 from django.contrib import admin
 from .models import PostulacionRefugio, Usuario, Refugio, Animal, HogaresTemporales, Donaciones, Suscripciones, Eventos, InscripcionesEventos, CatalogoServicios, DonacionesEspecificas, ComprobantesServicio, NecesidadesRefugio, PerfilAdoptante, Cirugia, Tratamiento, SolicitudAdopcion, AlergiaCondicion, FichaMedica
@@ -116,4 +116,10 @@ class TratamientoAdmin(admin.ModelAdmin):
 class SolicitudAdopcionAdmin(admin.ModelAdmin):
     list_display = ("id_solicitud", "usuario", "animal", "estado", "fecha_solicitud")
     list_filter = ("estado",)
-    search_fields = ("usuario__username", "animal__nombre")
+
+    # Registrar el modelo Vacuna en el admin
+    @admin.register(Vacuna)
+    class VacunaAdmin(admin.ModelAdmin):
+        list_display = ("id", "animal", "nombre", "tipo", "fecha_aplicacion", "fecha_refuerzo", "observaciones")
+        list_filter = ("tipo", "fecha_aplicacion", "nombre")
+        search_fields = ("animal__nombre", "nombre", "tipo", "observaciones")

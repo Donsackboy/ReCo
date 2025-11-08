@@ -1,3 +1,95 @@
+.form-input {
+  padding: 8px;
+  border: 1.5px solid #90caf9;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  outline: none;
+  background: #fff;
+  margin-bottom: 4px;
+}
+
+.form-input:focus {
+  border-color: #1976d2;
+}
+.vacunas-comunes-tarjeta-externa {
+  background: #f5fafd;
+  border: 2px solid #90caf9;
+  border-radius: 16px;
+  padding: 18px 16px 12px 16px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 10px rgba(25, 118, 210, 0.07);
+}
+.vacunas-comunes-tarjetas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.vacuna-comun-tarjeta {
+  background: #fff;
+  border: 2px solid #90caf9;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(25, 118, 210, 0.08);
+  padding: 16px 18px 12px 18px;
+  min-width: 220px;
+  max-width: 320px;
+  flex: 1 1 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 1rem;
+  color: #1976d2;
+  position: relative;
+}
+
+.vacuna-comun-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 1.08rem;
+  margin-bottom: 2px;
+}
+
+.vacuna-comun-icono {
+  font-size: 1.3rem;
+  margin-right: 2px;
+}
+
+.vacuna-comun-nombre {
+  color: #1976d2;
+  font-weight: 700;
+  font-size: 1.08rem;
+}
+
+.vacuna-comun-desc {
+  color: #333;
+  font-size: 0.98rem;
+  margin-bottom: 2px;
+}
+
+.vacuna-comun-frec {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.97rem;
+}
+
+.vacuna-comun-frecuencia {
+  color: #1976d2;
+  font-weight: 600;
+}
+
+.vacuna-comun-obligatoria {
+  background: #e53935;
+  color: #fff;
+  border-radius: 8px;
+  padding: 2px 10px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  margin-left: 4px;
+}
 
 .vacunas-container {
   background: #e3f2fd;

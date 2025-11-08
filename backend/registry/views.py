@@ -1,4 +1,3 @@
-
 # ...existing code...
 
 from rest_framework.decorators import api_view, permission_classes
@@ -560,3 +559,19 @@ def refugio_me(request):
                 user.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# --- Vacunas ---
+from rest_framework import viewsets
+from .models import Vacuna
+from .serializers import VacunaSerializer
+
+class VacunaViewSet(viewsets.ModelViewSet):
+    serializer_class = VacunaSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = Vacuna.objects.all()
+        animal_id = self.kwargs.get('animal_id')
+        if animal_id:
+            queryset = queryset.filter(animal_id=animal_id)
+        return queryset
