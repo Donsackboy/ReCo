@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import './HistorialMedicoRefugio.css';
 // @ts-ignore
@@ -75,6 +76,10 @@ const imprimirHistorial = (animal: Animal) => {
 
 
 const HistorialMedicoRefugio: React.FC = () => {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const idParam = params.get('id');
+  const previewParam = params.get('preview');
   // Estados principales
   const [modalAnimal, setModalAnimal] = useState<Animal | null>(null);
   const [animales, setAnimales] = useState<Animal[]>([]);
@@ -103,7 +108,15 @@ const HistorialMedicoRefugio: React.FC = () => {
   // Modal de detalle
   const handleVerDetalles = (animal: Animal) => {
     setModalAnimal(animal);
-  };
+  } 
+
+  // Abrir modal automáticamente si hay id y preview=true
+  useEffect(() => {
+    if (idParam && previewParam === 'true' && animales.length > 0) {
+      const found = animales.find(a => String(a.id) === String(idParam));
+      if (found) setModalAnimal(found);
+    }
+  }, [idParam, previewParam, animales]);
   // ...estados y lógica principal...
   // Modal de detalle
 

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import LoginModal from '../../components/Header/LoginModal';
 import RegisterModal from '../../components/Header/RegisterModal';
-import { useLocation } from 'react-router-dom';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -103,7 +104,7 @@ const AdopcionForm = () => {
     setShowRegister(false);
     if (!localStorage.getItem('token')) {
       setRedirecting(true);
-      window.location.href = '/';
+      navigate('/');
     }
   };
   const switchToRegister = () => {
@@ -191,7 +192,7 @@ const AdopcionForm = () => {
         )}
         <p>Por favor, selecciona un animal desde la página de animales antes de iniciar el proceso de adopción.</p>
         <button style={{ marginTop: '28px', background: '#ea4343', color: '#fff', border: 'none', borderRadius: '10px', padding: '12px 32px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #ea434322' }}
-          onClick={() => window.location.href = '/animales'}>
+          onClick={() => navigate('/animales')}>
           Volver a Animales
         </button>
       </div>
@@ -226,7 +227,8 @@ const AdopcionForm = () => {
         <h2 style={{ color: '#228B22' }}>¡Solicitud enviada!</h2>
         <p>Tu solicitud de adopción ha sido enviada al refugio <strong>{refugio}</strong>.<br />Pronto te contactarán para continuar el proceso.</p>
         <button style={{ marginTop: '28px', background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '12px 32px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22' }}
-          onClick={() => window.location.href = '/'}>
+          onClick={() => navigate('/')}
+        >
           Volver al inicio
         </button>
       </div>

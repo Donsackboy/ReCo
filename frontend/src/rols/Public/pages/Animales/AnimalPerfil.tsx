@@ -4,6 +4,7 @@
 // =============================
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function AnimalPerfil() {
@@ -178,23 +179,23 @@ export default function AnimalPerfil() {
               Fecha: {v.fecha} {v.refuerzo ? <span>• Próximo refuerzo: {v.refuerzo}</span> : null}
             </div>
             <button style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '8px', padding: '7px 16px', fontWeight: 600, fontSize: '0.98rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22', marginLeft: '18px' }}
-              onClick={() => window.location.href = `/donar-vacuna?animalId=${animal.id}&refugio=${encodeURIComponent(animal.refugio)}&vacuna=${encodeURIComponent(v.tipo)}`}
+              onClick={() => navigate(`/donar-vacuna?animalId=${animal.id}&refugio=${encodeURIComponent(animal.refugio)}&vacuna=${encodeURIComponent(v.tipo)}`)}
             >Donar vacuna</button>
           </li>
         )) : (
           <li style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span>No hay vacunas registradas.</span>
             <button style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '8px', padding: '7px 16px', fontWeight: 600, fontSize: '0.98rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22', marginLeft: '18px' }}
-              onClick={() => window.location.href = `/donar-vacuna?animalId=${animal.id}&refugio=${encodeURIComponent(animal.refugio)}`}
+              onClick={() => navigate(`/donar-vacuna?animalId=${animal.id}&refugio=${encodeURIComponent(animal.refugio)}`)}
             >Donar vacuna</button>
           </li>
         )}
       </ul>
       <button style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22', marginRight: '16px' }}
-  onClick={() => window.location.href = `/adopcion?animalId=${animal.id_animal}&refugio=${encodeURIComponent(animal.refugio)}`}
+  onClick={() => navigate(`/adopcion?animalId=${animal.id_animal}&refugio=${encodeURIComponent(animal.refugio)}`)}
       >Adoptar</button>
       <button style={{ background: '#228B22', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22' }}
-        onClick={() => window.location.href = `/hogares-temporales/registro?animalId=${animal.id}`}
+  onClick={() => navigate(`/hogares-temporales/registro?animalId=${animal.id}`)}
       >Dar hogar temporal</button>
     </div>
   );

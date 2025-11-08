@@ -1,6 +1,8 @@
+import { useNavigate } from 'react-router-dom';
 import './AnimalEditPerfil.css';
 import { useState, useEffect } from 'react';
 import FichaMedicaModal from './FichaMedica/FichaMedicaModal.js';
+import EstructuraPDF from '../../HistorialMedico/EstructuraPDF';
 import type { FichaMedica } from './FichaMedica/FichaMedicaModal.js';
 import { updateAnimal, getCirugias, API_BASE } from '../../../../../../src/api.js';
 import type { Vacuna } from './AnimalList';
@@ -36,8 +38,10 @@ interface AnimalEditPerfilProps {
 
 
 export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEditPerfilProps) {
+  const navigate = useNavigate();
   // Estado para el modal de ficha médica
   const [fichaModalOpen, setFichaModalOpen] = useState(false);
+  const [showPreviewPDF, setShowPreviewPDF] = useState(false);
   const [fichaMedica, setFichaMedica] = useState<FichaMedica>({
     general: {
       estadoSalud: '',
@@ -382,24 +386,45 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
                     Desparasitado <input type="checkbox" name="desparasitado" checked={!!form.desparasitado} onChange={handleChange} />
                   </label>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setFichaModalOpen(true)}
-                  style={{
-                    background: 'linear-gradient(90deg, #6dd5ed 0%, #2193b0 100%)',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: 10,
-                    padding: '10px 24px',
-                    fontWeight: 700,
-                    fontSize: '1.08rem',
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 8px #2193b022',
-                    marginTop: 0,
-                    marginBottom: 10,
-                    alignSelf: 'flex-start',
-                  }}
-                >Editar ficha médica</button>
+                <div style={{ display: 'flex', gap: '12px', marginBottom: 10 }}>
+                  <button
+                    type="button"
+                    onClick={() => setFichaModalOpen(true)}
+                    style={{
+                      background: 'linear-gradient(90deg, #6dd5ed 0%, #2193b0 100%)',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 10,
+                      padding: '10px 24px',
+                      fontWeight: 700,
+                      fontSize: '1.08rem',
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 8px #2193b022',
+                      marginTop: 0,
+                      alignSelf: 'flex-start',
+                    }}
+                  >Editar ficha médica</button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const idAnimal = animal.id_animal ?? (animal as any).id;
+                      navigate(`/refugio/historial-medico?id=${encodeURIComponent(idAnimal)}&preview=true`);
+                    }}
+                    style={{
+                      background: 'linear-gradient(90deg, #43ea6b 0%, #2980b9 100%)',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 10,
+                      padding: '10px 24px',
+                      fontWeight: 700,
+                      fontSize: '1.08rem',
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 8px #2980b922',
+                      marginTop: 0,
+                      alignSelf: 'flex-start',
+                    }}
+                  >Ver previsualización ficha médica</button>
+                </div>
               </div>
       {/* Modal de ficha médica solo si fichaModalOpen es true */}
       {fichaModalOpen && (
@@ -408,6 +433,19 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
           onClose={() => setFichaModalOpen(false)}
           especie={form.especie}
         />
+      )}
+      {/* Modal de previsualización PDF ficha médica */}
+      {showPreviewPDF && (
+        <EstructuraPDF animal={{
+          id: animal.id_animal ?? animal.id,
+          id_animal: animal.id_animal,
+          nombre: form.nombre,
+          especie: form.especie,
+          edad: form.edad?.toString(),
+          estado_salud: form.estadoSalud,
+          historial: animal.historial ?? [],
+          foto_url: Array.isArray(form.fotos) && form.fotos.length > 0 ? form.fotos[0] : undefined,
+        }} onClose={() => setShowPreviewPDF(false)} />
       )}
             </div>
             {/* ...existing code... */}

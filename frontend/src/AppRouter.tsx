@@ -50,7 +50,7 @@ import ConfiguracionRefugio from './rols/Refugio/pages/Configuracion';
 
 
 
-export default function AppRouter() {
+function AppRouterContent() {
   // Intent: elegir el header según el tipo de usuario guardado en localStorage
   const user = (() => {
     try {
@@ -71,85 +71,88 @@ export default function AppRouter() {
   };
 
   return (
-  <BrowserRouter>
-    {/* AQUÍ VA LA LÓGICA DE SELECCIÓN DEL HEADER */}
-    {isAdmin ? (
-      // Si es Admin, muestra HeaderAdmin
-      <HeaderAdmin adminName={user?.username} onLogout={handleLogout} />
-    ) : isRefugio ? (
-      // Si no es Admin PERO es Refugio, muestra HeaderRefugio
-      <HeaderRefugio refugioNombre={user?.refugio_nombre || user?.username} onLogout={handleLogout} />
-    ) : isUsuario ? (
-      // Si no es Admin ni Refugio PERO es Usuario normal, muestra HeaderUsuario
-      <HeaderUsuario userName={user?.username} onLogout={handleLogout} />
-    ) : (
-  // Si no es ninguno de los anteriores (es público), muestra HeaderPublic
-  <HeaderPublic />
-    )}
-    {/* FIN DE LA LÓGICA DE SELECCIÓN DEL HEADER */}
+    <>
+      {/* AQUÍ VA LA LÓGICA DE SELECCIÓN DEL HEADER */}
+      {isAdmin ? (
+        <HeaderAdmin adminName={user?.username} onLogout={handleLogout} />
+      ) : isRefugio ? (
+        <HeaderRefugio refugioNombre={user?.refugio_nombre || user?.username} onLogout={handleLogout} />
+      ) : isUsuario ? (
+        <HeaderUsuario userName={user?.username} onLogout={handleLogout} />
+      ) : (
+        <HeaderPublic />
+      )}
+      {/* FIN DE LA LÓGICA DE SELECCIÓN DEL HEADER */}
 
-    <main style={{ flex: 1, paddingTop: '80px' }}> {/* Padding para que el contenido no quede debajo del header fijo */}
-      <Routes>
-        {/* --- Rutas Públicas y Usuario --- */}
-        <Route path="/" element={<Home />} />
-  <Route path="/refugios" element={<RefugiosList />} />
-  <Route path="/postulacion-refugio" element={<PostulacionRefugio />} />
-        <Route path="/refugio/:id" element={<RefugioPerfil />} />
-        <Route path="/animales" element={<Animales />} />
-        <Route path="/animales/:id" element={<AnimalPerfil />} />
-        <Route path="/hogares-temporales" element={<HogaresTemporales />} />
-        <Route path="/hogares-temporales/registro" element={<RegistroHogarTemporal />} />
-        <Route path="/donaciones" element={<DonacionesPage />} />
-        <Route path="/eventos" element={<EventosPage />} />
-        <Route path="/voluntariado" element={<VoluntariadoPage />} />
-        <Route path="/adopcion" element={<AdopcionForm />} />
-        <Route path="/donar-vacuna" element={<DonarVacuna />} />
-        <Route path="/donar-monetaria" element={<DonarMonetaria />} />
-        <Route path="/donar-insumo" element={<DonarInsumo />} />
-        <Route path="/donar-servicio" element={<DonarServicio />} />
+      <main style={{ flex: 1, paddingTop: '80px' }}>
+        <Routes>
+          {/* --- Rutas Públicas y Usuario --- */}
+          <Route path="/" element={<Home />} />
+          <Route path="/refugios" element={<RefugiosList />} />
+          <Route path="/postulacion-refugio" element={<PostulacionRefugio />} />
+          <Route path="/refugio/:id" element={<RefugioPerfil />} />
+          <Route path="/animales" element={<Animales />} />
+          <Route path="/mis-animales" element={<MisAnimales />} />
+          <Route path="/animales/:id" element={<AnimalPerfil />} />
+          <Route path="/hogares-temporales" element={<HogaresTemporales />} />
+          <Route path="/hogares-temporales/registro" element={<RegistroHogarTemporal />} />
+          <Route path="/donaciones" element={<DonacionesPage />} />
+          <Route path="/eventos" element={<EventosPage />} />
+          <Route path="/voluntariado" element={<VoluntariadoPage />} />
+          <Route path="/adopcion" element={<AdopcionForm />} />
+          <Route path="/donar-vacuna" element={<DonarVacuna />} />
+          <Route path="/donar-monetaria" element={<DonarMonetaria />} />
+          <Route path="/donar-insumo" element={<DonarInsumo />} />
+          <Route path="/donar-servicio" element={<DonarServicio />} />
 
-  {/* Ruta para Mis Adopciones */}
-  <Route path="/mis-adopciones" element={<MisAdopciones />} />
-  <Route path="/mis-solicitudes-adopcion" element={<MisSolicitudesAdopcion />} />
+          {/* Ruta para Mis Adopciones */}
+          <Route path="/mis-adopciones" element={<MisAdopciones />} />
+          <Route path="/mis-solicitudes-adopcion" element={<MisSolicitudesAdopcion />} />
 
-  {/* Ruta para Mis Adopciones */}
+          {/* --- Rutas Admin --- */}
+          <Route
+            path="/admin/*"
+            element={
+              isAdmin ? (
+                <Routes>
+                  <Route path="" element={<AdminDashboard />} />
+                  <Route path="gestionar-refugios" element={<GestionarRefugios />} />
+                  <Route path="gestionar-usuarios" element={<GestionarUsuarios />} />
+                  <Route path="verificaciones" element={<Verificaciones />} />
+                  <Route path="verificaciones/historial" element={<HistorialSolicitudes />} />
+                  <Route path="verificaciones/historial" element={<HistorialSolicitudes />} />
+                  <Route path="animales" element={<GestionarAnimalesAdmin />} />
+                </Routes>
+              ) : (
+                <Navigate to="/" replace />
+              )
+            }
+          />
 
-        {/* --- Rutas Admin --- */}
-        <Route
-          path="/admin/*"
-          element={
-            isAdmin ? (
-              <Routes> {/* Rutas anidadas para admin */}
-                <Route path="" element={<AdminDashboard />} />
-                <Route path="gestionar-refugios" element={<GestionarRefugios />} />
-                <Route path="gestionar-usuarios" element={<GestionarUsuarios />} />
-                <Route path="verificaciones" element={<Verificaciones />} />
-                <Route path="verificaciones/historial" element={<HistorialSolicitudes />} />
-                <Route path="verificaciones/historial" element={<HistorialSolicitudes />} />
-                <Route path="animales" element={<GestionarAnimalesAdmin />} />
-              </Routes>
-            ) : (
-              <Navigate to="/" replace />
-            )
-          }
-        />
+          {/* --- Rutas Refugio --- */}
+          <Route path="/refugio/dashboard" element={isRefugio ? (<Dashboard />) : (<Navigate to="/" replace />)} />
+          <Route path="/refugio/mis-animales" element={isRefugio ? (<MisAnimales />) : (<Navigate to="/" replace />)} />
+          <Route path="/refugio/adopciones" element={isRefugio ? (<GestionAdopciones />) : (<Navigate to="/" replace />)} />
+          <Route path="/refugio/mis-eventos" element={isRefugio ? (<MisEventos />) : (<Navigate to="/" replace />)} />
+          <Route path="/refugio/donaciones" element={isRefugio ? (<Donaciones />) : (<Navigate to="/" replace />)} />
+          <Route path="/refugio/historial-medico" element={isRefugio ? (<HistorialMedicoRefugio />) : (<Navigate to="/" replace />)} />
 
-        {/* --- Rutas Refugio --- */}
-        <Route path="/refugio/dashboard" element={isRefugio ? (<Dashboard />) : (<Navigate to="/" replace />)} />
-        <Route path="/refugio/mis-animales" element={isRefugio ? (<MisAnimales />) : (<Navigate to="/" replace />)} />
-  <Route path="/refugio/adopciones" element={isRefugio ? (<GestionAdopciones />) : (<Navigate to="/" replace />)} />
-        <Route path="/refugio/mis-eventos" element={isRefugio ? (<MisEventos />) : (<Navigate to="/" replace />)} />
-        <Route path="/refugio/donaciones" element={isRefugio ? (<Donaciones />) : (<Navigate to="/" replace />)} />
-  <Route path="/refugio/historial-medico" element={isRefugio ? (<HistorialMedicoRefugio />) : (<Navigate to="/" replace />)} />
+          <Route path="/refugio/voluntarios" element={isRefugio ? (<Voluntarios />) : (<Navigate to="/" replace />)} />
+          <Route path="/refugio/inscritos-evento" element={isRefugio ? (<InscritosEvento />) : (<Navigate to="/" replace />)} />
+          <Route path="/refugio/necesidades" element={isRefugio ? (<Necesidades />) : (<Navigate to="/" replace />)} />
+          <Route path="/refugio/configuracion" element={isRefugio ? (<ConfiguracionRefugio />) : (<Navigate to="/" replace />)} />
+        </Routes>
+      </main>
 
-        <Route path="/refugio/voluntarios" element={isRefugio ? (<Voluntarios />) : (<Navigate to="/" replace />)} />
-        <Route path="/refugio/inscritos-evento" element={isRefugio ? (<InscritosEvento />) : (<Navigate to="/" replace />)} />
-        <Route path="/refugio/necesidades" element={isRefugio ? (<Necesidades />) : (<Navigate to="/" replace />)} />
-        <Route path="/refugio/configuracion" element={isRefugio ? (<ConfiguracionRefugio />) : (<Navigate to="/" replace />)} />
-      </Routes>
-    </main>
+      <Footer />
+    </>
+  );
+}
 
-    <Footer />
-  </BrowserRouter>
-);
+export default function AppRouter() {
+  return (
+    <BrowserRouter>
+      <AppRouterContent />
+    </BrowserRouter>
+  );
 }

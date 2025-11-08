@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-
+import { useNavigate } from 'react-router-dom';
 import "./HeaderLayout.css";
 import "./Logo.css";
 import "./NavMenu.css";
@@ -15,12 +15,14 @@ import RegisterModal from "./RegisterModal";
 function HeaderPublic() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+
   const [showRegister, setShowRegister] = useState(false);
 
   const openLogin = () => {
     setShowLogin(true);
     closeMenu();
   };
+  const navigate = useNavigate();
 
   const openRegister = () => {
     setShowRegister(true);
@@ -109,7 +111,7 @@ function HeaderPublic() {
                     if (!token) {
                       setShowLogin(true);
                     } else {
-                      window.location.href = "/voluntariado";
+                      navigate("/voluntariado");
                     }
                   }}
                 >
@@ -198,7 +200,7 @@ function HeaderPublic() {
                   if (!token) {
                     setShowLogin(true);
                   } else {
-                    window.location.href = "/voluntariado";
+                    navigate("/voluntariado");
                   }
                 }}
               >

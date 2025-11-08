@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import { vacunasPorEspecie } from '../MisAnimales/components/FichaMedica/Utils/vacunasEspecies';
 
 export interface HistorialItem {
@@ -24,6 +26,7 @@ interface Props {
 }
 
 const EstructuraPDF: React.FC<Props> = ({ animal, onClose }) => {
+  const navigate = useNavigate();
   // Vacunas aplicadas y pendientes
   const vacunasAplicadas: string[] = animal.historial.filter(h => h.descripcion.startsWith('Vacuna: ')).map(h => h.descripcion.replace('Vacuna: ', ''));
   const obligatorias: string[] = (vacunasPorEspecie[animal.especie] || []).filter((v: any) => v.obligatoria).map((v: any) => v.nombre);
@@ -85,7 +88,7 @@ const EstructuraPDF: React.FC<Props> = ({ animal, onClose }) => {
     // Usar id_animal si existe, si no usar id
     const idAnimal = typeof animal.id_animal === 'number' ? animal.id_animal : animal.id;
     if (idAnimal !== undefined && idAnimal !== null) {
-      window.location.href = `/mis-animales?id=${encodeURIComponent(idAnimal)}&editarPerfil=true`;
+      navigate(`/refugio/mis-animales?id=${encodeURIComponent(idAnimal)}&editarPerfil=true`);
     } else {
       alert('No se encontró el ID del animal.');
     }

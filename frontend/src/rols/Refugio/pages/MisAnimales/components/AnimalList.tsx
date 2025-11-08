@@ -77,11 +77,15 @@ const AnimalList: React.FC = () => {
       const params = new URLSearchParams(location.search);
       const idParam = params.get('id');
       const editarPerfil = params.get('editarPerfil');
+      console.log('[AutoModal] URL params:', { idParam, editarPerfil });
       if (idParam && editarPerfil === 'true') {
         const idNum = Number(idParam);
         const animal = animales.find(a => a.id_animal === idNum);
+        console.log('[AutoModal] Animal encontrado:', animal);
         if (animal) {
           setEditAnimal(animal);
+        } else {
+          console.warn('[AutoModal] No se encontró animal con id:', idNum);
         }
       }
     }
@@ -182,6 +186,11 @@ const AnimalList: React.FC = () => {
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: '#0008', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 18px #228b2233', padding: 32, minWidth: 350, maxWidth: 600, position: 'relative' }}>
             <button onClick={() => setEditAnimal(null)} style={{ position: 'absolute', top: 12, right: 18, color: '#e74c3c', fontWeight: 700, fontSize: '1.2rem', background: 'none', border: 'none', cursor: 'pointer' }}>×</button>
+            <div style={{ marginBottom: 12, color: '#2980b9', fontWeight: 600, fontSize: '1.1rem' }}>
+              <span>Modal edición abierto automáticamente por URL</span>
+              <br />
+              <span>ID buscado: {new URLSearchParams(location.search).get('id')}</span>
+            </div>
             <AnimalEditPerfil
               animal={editAnimal as any}
               onClose={() => setEditAnimal(null)}

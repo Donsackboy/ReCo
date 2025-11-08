@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import '../../../Public/components/Header/Logo.css';
 import '../../../Public/components/Header/NavMenu.css';
 import '../../../Public/components/Header/UserProfile.css';
@@ -19,6 +20,7 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
   onLogout
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -82,7 +84,7 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
                 </Link>
               </li>
             </ul>
-            <button className="user-profile" onClick={() => window.location.href = '/refugio/configuracion'}>
+            <button className="user-profile" onClick={() => navigate('/refugio/configuracion')}>
               <span className="user-icon">🏠</span>
               <span className="auth-text">Mi Perfil</span>
             </button>

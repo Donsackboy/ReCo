@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
+import { useNavigate } from 'react-router-dom';
 import "../AuthModals.css";
 
 interface LoginModalProps {
@@ -49,7 +50,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
         console.log("[DEBUG] tipo_usuario:", user?.tipo_usuario);
         if (user?.tipo_usuario === "admin") {
           console.log("[DEBUG] Redirigiendo a /admin");
-          window.location.href = "/admin";
+          navigate("/admin");
         } else {
           console.log("[DEBUG] No es admin, recargando página normal");
           onClose();
