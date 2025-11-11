@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getAnimalesCount, getAnimalesCarousel } from '../../../../api.js';
+import { getAnimalesCount, getAnimalesCarousel } from '../../api/ApiPublic.js';
 import AnimalCard from '../../components/Animales/AnimalCard';
 import './Home.css';
 

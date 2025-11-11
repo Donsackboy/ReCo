@@ -1,6 +1,6 @@
 // ...existing code...
 import React, { useState, useEffect } from 'react';
-import { getTratamientos, createTratamiento, updateTratamiento } from '../api.js';
+import { getTratamientos, createTratamiento, updateTratamiento } from '../rols/Refugio/api/ApiRefugio';
 
 export type Tratamiento = {
   id_tratamiento?: number;
@@ -61,13 +61,7 @@ export interface TratamientoFormProps {
 }
 
 const TratamientoForm: React.FC<TratamientoFormProps> = ({ idAnimal }) => {
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 700);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 700);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  // Eliminado isMobile: no se usa
   const requiredMark = <span style={{ color: 'red', marginLeft: 4 }}>*</span>;
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<Tratamiento>({
@@ -119,7 +113,8 @@ const TratamientoForm: React.FC<TratamientoFormProps> = ({ idAnimal }) => {
     if (type === 'checkbox') {
       setForm(f => ({ ...f, [name]: (e.target as HTMLInputElement).checked }));
     } else if (type === 'number') {
-      setForm(f => ({ ...f, [name]: value === '' ? undefined : Number(value) }));
+      // Solo permitir números o undefined
+      setForm(f => ({ ...f, [name]: value === '' ? undefined : (!isNaN(Number(value)) ? Number(value) : undefined) }));
     } else {
       setForm(f => ({ ...f, [name]: value }));
     }
@@ -295,7 +290,7 @@ const TratamientoForm: React.FC<TratamientoFormProps> = ({ idAnimal }) => {
                 </label>
               </div>
               <label style={{ fontWeight: 500, marginBottom: 2 }}>Duración estimada (días):
-                <input name="duracion_dias" type="number" value={form.duracion_dias || ''} onChange={handleChange} min={1} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
+                <input name="duracion_dias" type="number" value={typeof form.duracion_dias === 'number' ? form.duracion_dias : ''} onChange={handleChange} min={1} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
               </label>
               <label style={{ fontWeight: 500, marginBottom: 2 }}>Dosis y frecuencia: {requiredMark}
                 <input name="dosis" value={form.dosis} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
@@ -320,11 +315,11 @@ const TratamientoForm: React.FC<TratamientoFormProps> = ({ idAnimal }) => {
                 <span style={{ marginLeft: 8, fontWeight: 700, color: estadoOpciones.find(e => e.value === form.estado)?.color }}>{estadoOpciones.find(e => e.value === form.estado)?.label}</span>
               </label>
               <label style={{ fontWeight: 500, marginBottom: 2 }}>Costo ($):
-                <input name="costo" type="number" value={form.costo || ''} onChange={handleChange} min={0} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
+                <input name="costo" type="number" value={typeof form.costo === 'number' ? form.costo : ''} onChange={handleChange} min={0} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
               </label>
               {form.estado_pago === 'parcialmente_pagado' && (
                 <label style={{ fontWeight: 500, marginBottom: 2 }}>Monto pagado ($):
-                  <input name="monto_pagado" type="number" value={form.monto_pagado || ''} onChange={handleChange} min={0} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
+                  <input name="monto_pagado" type="number" value={typeof form.monto_pagado === 'number' ? form.monto_pagado : ''} onChange={handleChange} min={0} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #1976d2', marginTop: 4, background: '#fff' }} />
                   <div style={{ color: '#e74c3c', fontWeight: 600, marginTop: 4 }}>
                     {form.costo && form.monto_pagado !== undefined && form.monto_pagado !== null
                       ? `Falta por pagar: $${Math.max(0, Number(form.costo) - Number(form.monto_pagado))}`
@@ -368,7 +363,7 @@ const TratamientoForm: React.FC<TratamientoFormProps> = ({ idAnimal }) => {
             </label>
           </div>
           <label style={{ fontWeight: 500, marginBottom: 2 }}>Duración (días):
-            <input name="duracion_dias" type="number" value={editTratamiento?.duracion_dias || ''} onChange={handleEditChange} style={{ width: '100%', marginTop: 4 }} />
+            <input name="duracion_dias" type="number" value={typeof editTratamiento?.duracion_dias === 'number' ? editTratamiento.duracion_dias : ''} onChange={handleEditChange} style={{ width: '100%', marginTop: 4 }} />
           </label>
           <label style={{ fontWeight: 500, marginBottom: 2 }}>Dosis:
             <input name="dosis" value={editTratamiento?.dosis || ''} onChange={handleEditChange} placeholder="Ej: 1 ml cada 12h" style={{ width: '100%', marginTop: 4 }} />
@@ -387,7 +382,7 @@ const TratamientoForm: React.FC<TratamientoFormProps> = ({ idAnimal }) => {
             </select>
           </label>
           <label style={{ fontWeight: 500, marginBottom: 2 }}>Costo (CLP):
-            <input name="costo" type="number" value={editTratamiento?.costo || ''} onChange={handleEditChange} placeholder="Ej: 5000" style={{ width: '100%', marginTop: 4 }} />
+            <input name="costo" type="number" value={typeof editTratamiento?.costo === 'number' ? editTratamiento.costo : ''} onChange={handleEditChange} placeholder="Ej: 5000" style={{ width: '100%', marginTop: 4 }} />
           </label>
           <label style={{ fontWeight: 500, marginBottom: 2 }}>Estado de pago:
             <select name="estado_pago" value={editTratamiento?.estado_pago || ''} onChange={handleEditChange} style={{ width: '100%', marginTop: 4 }}>
@@ -398,7 +393,7 @@ const TratamientoForm: React.FC<TratamientoFormProps> = ({ idAnimal }) => {
           </label>
           {editTratamiento?.estado_pago === 'parcialmente_pagado' && (
             <label style={{ fontWeight: 500, marginBottom: 2 }}>Monto pagado (CLP):
-              <input name="monto_pagado" type="number" value={editTratamiento?.monto_pagado || ''} onChange={handleEditChange} style={{ width: '100%', marginTop: 4 }} />
+              <input name="monto_pagado" type="number" value={typeof editTratamiento?.monto_pagado === 'number' ? editTratamiento.monto_pagado : ''} onChange={handleEditChange} style={{ width: '100%', marginTop: 4 }} />
               <span style={{ color: '#e74c3c', fontWeight: 600, marginLeft: 8 }}>
                 {editTratamiento?.costo && editTratamiento?.monto_pagado !== undefined && editTratamiento?.monto_pagado !== null
                   ? `Falta por pagar: $${Math.max(0, Number(editTratamiento.costo) - Number(editTratamiento.monto_pagado))}`

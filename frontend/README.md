@@ -1,5 +1,5 @@
 # Localhosts
-- **Frontend**: http://localhost:5173
+- **Frontend**: http://localhost:5174
 - **Backend API**: http://localhost:8000
 - **Admin Django**: http://localhost:8000/admin
 

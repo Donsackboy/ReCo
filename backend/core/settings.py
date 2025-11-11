@@ -83,7 +83,7 @@ REST_FRAMEWORK = {
 
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Frontend Vite/React
+    "http://localhost:5174",  # Frontend Vite/React
 ]
 CORS_ALLOW_ALL_ORIGINS = True  # Solo para pruebas, no usar en producción
 

@@ -1,15 +1,20 @@
 
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getAnimales } from '../../../../../../src/api.js';
+import { getAnimales } from '../../../api/ApiRefugio';
 import AnimalEditPerfil from './AnimalEditPerfil';
 import AnimalForm from './AnimalForm';
 
-export type Vacuna = {
-  tipo: string;
-  fecha: string;
-  unica: boolean;
-  refuerzo: boolean;
+type Vacuna = {
+  id?: number;
+  nombre?: string;
+  tipo?: string;
+  fecha?: string;
+  fecha_aplicacion?: string;
+  fecha_refuerzo?: string;
+  observaciones?: string;
+  unica?: boolean;
+  refuerzo?: boolean;
   proxima?: string;
   especificaciones?: string;
 };
@@ -46,18 +51,19 @@ const AnimalList: React.FC = () => {
     setLoading(true);
     setError('');
     try {
-      const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token') || '';
       const userStr = localStorage.getItem('user');
       const userObj = userStr ? JSON.parse(userStr) : null;
-      const refugioId = userObj?.refugio?.id_refugio;
+  const refugioId: string | number | undefined = userObj?.refugio?.id_refugio;
       const data = await getAnimales(token);
       const animalesRefugio = data.filter((a: Animal) => {
         // Soporta refugio como id (number/string) o como objeto { id_refugio }
-        let id = a.refugio;
+        let id: string | number | undefined = a.refugio;
         if (typeof id === 'object' && id !== null && 'id_refugio' in id) {
-          id = id.id_refugio;
+          // @ts-ignore
+          id = (id as any).id_refugio;
         }
-        return String(id) === String(refugioId);
+        return refugioId !== undefined && String(id) === String(refugioId);
       });
       setAnimales(animalesRefugio);
     } catch (err) {

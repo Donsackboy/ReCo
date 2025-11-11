@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getFichaMedica, updateFichaMedica } from 'src/api';
+import { getFichaMedica } from '../../../../../api/ApiRefugio';
 
 interface GeneralSectionProps {
   animalId: number;
@@ -15,7 +15,8 @@ const ESTADO_SALUD_OPCIONES = [
   { value: 'condicion_cronica', label: 'Condición crónica' },
 ];
 
-const GeneralSection: React.FC<GeneralSectionProps> = ({ animalId, token, ficha, setFicha }) => {
+
+const GeneralSection: React.FC<GeneralSectionProps> = ({ animalId, token, setFicha }) => {
   const [localFicha, setLocalFicha] = useState({
     estado_salud: '',
     peso_actual: '',
@@ -26,7 +27,6 @@ const GeneralSection: React.FC<GeneralSectionProps> = ({ animalId, token, ficha,
     observaciones: '',
   });
   const [loading, setLoading] = useState(false);
-  // Todos los campos son editables directamente
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -61,15 +61,15 @@ const GeneralSection: React.FC<GeneralSectionProps> = ({ animalId, token, ficha,
     if (animalId && token) fetchFicha();
   }, [animalId, token, setFicha]);
 
+  // Sincroniza el estado local con el estado del modal solo después de renderizar
+  useEffect(() => {
+    if (setFicha) setFicha(localFicha);
+  }, [localFicha, setFicha]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setLocalFicha(f => {
-      const updated = { ...f, [name]: value };
-      if (setFicha) setFicha(updated);
-      return updated;
-    });
+    setLocalFicha(f => ({ ...f, [name]: value }));
   };
-
 
   return (
     <div className="section-card">
@@ -78,7 +78,7 @@ const GeneralSection: React.FC<GeneralSectionProps> = ({ animalId, token, ficha,
       {loading ? (
         <div>Cargando...</div>
       ) : (
-  <div className="general-form">
+        <div className="general-form">
           <div style={{ display: 'flex', gap: '16px', marginBottom: 8 }}>
             <div style={{ flex: 1 }}>
               <label>Estado de salud</label>
@@ -149,6 +149,5 @@ const GeneralSection: React.FC<GeneralSectionProps> = ({ animalId, token, ficha,
       )}
     </div>
   );
-};
-
+}
 export default GeneralSection;

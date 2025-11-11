@@ -7,7 +7,7 @@
 // --- DATOS DE REFUGIOS ---
 // Puedes agregar, quitar o modificar refugios y animales aquí
 import React, { useState, useEffect } from 'react';
-import { getAnimales } from '../../../../api';
+import { getAnimales } from '../../api/ApiPublic.js';
 import RefugiosCard from '../../components/Refugios/Refugioscard';
 import './Refugios.css';
 

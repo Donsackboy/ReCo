@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './FichaMedica.css';
 import GeneralSection from './GeneralSection/GeneralSection';
-import { updateFichaMedica } from 'src/api';
+// Si necesitas el tipo FichaMedica, defínelo aquí o impórtalo de un archivo de tipos
+import { updateFichaMedica } from '../../../../api/ApiRefugio';
 import VacunasSection from './Vacunas/VacunasSection';
 import CirugiasSection from './Cirugias/CirugiasSection';
 import TratamientosSection from './Tratamientos/TratamientosSection';

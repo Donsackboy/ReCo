@@ -49,7 +49,7 @@ echo ================================
 echo    🎉 ¡RECO ESTÁ LISTO! 🎉
 echo ================================
 echo.
-echo 📱 Frontend (React):   http://localhost:5173
+echo 📱 Frontend (React):   http://localhost:5174
 echo 🔧 Backend API:        http://localhost:8000
 echo 👤 Admin Django:       http://localhost:8000/admin
 echo 🗃️  Base de datos:      localhost:5432
@@ -60,6 +60,6 @@ echo.
 
 REM Abrir automáticamente el navegador
 echo 🌐 Abriendo navegador...
-start http://localhost:5173
+start http://localhost:5174
 
 pause

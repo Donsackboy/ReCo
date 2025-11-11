@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './NecesidadesRefugio.css';
 import { useEffect } from 'react';
-import { getNecesidadesRefugio, createNecesidadRefugio, updateNecesidadRefugio, deleteNecesidadRefugio } from '../../../../api.js';
+import { getNecesidadesRefugio, createNecesidadRefugio, updateNecesidadRefugio, deleteNecesidadRefugio } from '../../api/ApiRefugio';
 
 type TipoNecesidad = 'alimento' | 'medicamento' | 'servicio' | 'articulo' | 'otro';
 type Prioridad = 'baja' | 'media' | 'alta' | 'urgente';
@@ -21,7 +21,7 @@ interface Necesidad {
 const NecesidadesRefugio: React.FC = () => {
   const [imagenPreview, setImagenPreview] = useState<string | null>(null);
   // Obtener token del usuario
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token') || '';
   const [lista, setLista] = useState<Necesidad[]>([]);
   // Cargar todas las necesidades altiro desde el backend
   useEffect(() => {

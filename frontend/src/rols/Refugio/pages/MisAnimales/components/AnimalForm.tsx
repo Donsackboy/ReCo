@@ -1,6 +1,6 @@
 // ...existing code...
-import React, { useState, useEffect } from 'react';
-import { createAnimal } from '../../../../../../src/api.js';
+import React, { useState } from 'react';
+import { createAnimal } from '../../../api/ApiRefugio';
 // importación ya agrupada arriba
 
 
@@ -101,7 +101,7 @@ const AnimalForm: React.FC<AnimalFormProps> = ({ onCreated, onCancel }) => {
   const [success, setSuccess] = useState(false);
 
   // Obtener token del localStorage (ajusta si usas otro método)
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token') || '';
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;

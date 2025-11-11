@@ -117,7 +117,7 @@ interface Vacuna {
 }
 
 import { useEffect } from 'react';
-import { getVacunas, createVacuna, deleteVacuna, updateVacuna } from './vacunas';
+import { getVacunas, createVacuna, deleteVacuna, updateVacuna } from '../../../../../api/ApiRefugio';
 
 interface VacunasProps {
   especie: string;
@@ -125,7 +125,15 @@ interface VacunasProps {
   token: string;
 }
 
+let mountCount = 0;
 const VacunasSection: React.FC<VacunasProps> = ({ especie, animalId, token }) => {
+  mountCount++;
+  useEffect(() => {
+    console.log(`[VacunasSection] MOUNT #${mountCount} - animalId:`, animalId, 'especie:', especie, 'token:', token);
+    return () => {
+      console.log(`[VacunasSection] UNMOUNT #${mountCount} - animalId:`, animalId);
+    };
+  }, []);
   const [mostrarComunes, setMostrarComunes] = useState(false);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [nuevaVacuna, setNuevaVacuna] = useState<Vacuna>({
@@ -141,22 +149,41 @@ const VacunasSection: React.FC<VacunasProps> = ({ especie, animalId, token }) =>
   const [vacunaSeleccionada, setVacunaSeleccionada] = useState<string>('');
   const [vacunas, setVacunas] = useState<Vacuna[]>([]);
   const [loading, setLoading] = useState(false);
-  const [modalEliminar, setModalEliminar] = useState<{ open: boolean; id?: number }>({ open: false });
+  const [modalEliminar, setModalEliminar] = useState<{ open: boolean; id?: number; error?: string }>({ open: false });
   const [editandoId, setEditandoId] = useState<number | null>(null);
+
+  // LOG: Estado inicial
+  console.log('[VacunasSection] Render', {
+    mostrarComunes,
+    mostrarFormulario,
+    nuevaVacuna,
+    vacunaSeleccionada,
+    vacunas,
+    loading,
+    modalEliminar,
+    editandoId
+  });
   // Obtener vacunas al montar el componente
+  // Solo consulta la BD si animalId cambia realmente (no si el token cambia)
+  // Consulta solo al montar y cuando cambia animalId
   useEffect(() => {
+    let isMounted = true;
     async function fetchVacunas() {
       setLoading(true);
       try {
         const data = await getVacunas(token, animalId);
-        setVacunas(data);
+        if (isMounted) {
+          setVacunas(data);
+          console.log('[VacunasSection] Vacunas cargadas', data);
+        }
       } catch (err) {
-        // Puedes mostrar un error aquí
+        if (isMounted) console.log('[VacunasSection] Error al cargar vacunas', err);
       }
-      setLoading(false);
+      if (isMounted) setLoading(false);
     }
-    if (animalId && token) fetchVacunas();
-  }, [animalId, token]);
+    fetchVacunas();
+    return () => { isMounted = false; };
+  }, []); // Solo al montar
 
   // Normaliza la especie para buscar en vacunasPorEspecie
   function normalizarEspecie(e: string) {
@@ -230,12 +257,13 @@ const VacunasSection: React.FC<VacunasProps> = ({ especie, animalId, token }) =>
   };
 
   const agregarVacuna = async () => {
-    // El tipo se determina por el checkbox, no por el select
     const tipoVacuna = nuevaVacuna.unica ? 'unica' : nuevaVacuna.refuerzo ? 'refuerzo' : '';
-    if (!nuevaVacuna.nombre || !tipoVacuna || !nuevaVacuna.fecha) return alert('Completa los campos obligatorios');
+    if (!nuevaVacuna.nombre || !tipoVacuna || !nuevaVacuna.fecha) {
+      console.log('[VacunasSection] Error: campos obligatorios faltantes', nuevaVacuna);
+      return alert('Completa los campos obligatorios');
+    }
     setLoading(true);
     try {
-      // Adaptar los campos al modelo del backend
       const payload = {
         nombre: nuevaVacuna.nombre,
         tipo: tipoVacuna,
@@ -244,8 +272,9 @@ const VacunasSection: React.FC<VacunasProps> = ({ especie, animalId, token }) =>
         observaciones: nuevaVacuna.especificaciones || '',
         animal: animalId
       };
+      console.log('[VacunasSection] Agregar vacuna', payload);
       await createVacuna(token, animalId, payload);
-      // Refrescar vacunas
+      // Refrescar vacunas solo tras agregar
       const data = await getVacunas(token, animalId);
       setVacunas(data);
       setMostrarFormulario(false);
@@ -259,7 +288,9 @@ const VacunasSection: React.FC<VacunasProps> = ({ especie, animalId, token }) =>
         proxima: '',
         especificaciones: ''
       });
+      console.log('[VacunasSection] Vacuna agregada y formulario reseteado');
     } catch (err) {
+      console.log('[VacunasSection] Error al registrar la vacuna', err);
       alert('Error al registrar la vacuna');
     }
     setLoading(false);
@@ -430,17 +461,28 @@ const VacunasSection: React.FC<VacunasProps> = ({ especie, animalId, token }) =>
                     vacuna={v}
                     frecuencia={frecuencia}
                     editando={editandoId === v.id}
-                    onEditar={() => setEditandoId(v.id)}
-                    onEliminar={() => setModalEliminar({ open: true, id: v.id })}
+                    onEditar={() => {
+                      console.log('[VacunasSection] Editar vacuna', v.id);
+                      setEditandoId(v.id);
+                    }}
+                    onEliminar={() => {
+                      console.log('[VacunasSection] Abrir modal eliminar', v.id);
+                      setModalEliminar({ open: true, id: v.id });
+                    }}
                     onGuardar={async payload => {
+                      console.log('[VacunasSection] Guardar edición vacuna', v.id, payload);
                       setLoading(true);
                       await updateVacuna(token, animalId, v.id, payload);
                       const data = await getVacunas(token, animalId);
                       setVacunas(data);
                       setLoading(false);
                       setEditandoId(null);
+                      console.log('[VacunasSection] Edición guardada y editandoId reseteado');
                     }}
-                    onCancelar={() => setEditandoId(null)}
+                    onCancelar={() => {
+                      console.log('[VacunasSection] Cancelar edición vacuna', v.id);
+                      setEditandoId(null);
+                    }}
                     loading={loading}
                   />
                 );
@@ -457,19 +499,33 @@ const VacunasSection: React.FC<VacunasProps> = ({ especie, animalId, token }) =>
                 }}>
                   <h3 style={{ color: '#1976d2', marginBottom: 18 }}>¿Eliminar vacuna?</h3>
                   <p style={{ color: '#333', marginBottom: 18 }}>Esta acción no se puede deshacer.<br />¿Estás seguro que deseas eliminar esta vacuna?</p>
+                  {modalEliminar.error && (
+                    <div style={{ color: '#e53935', marginBottom: 12 }}>
+                      {modalEliminar.error}
+                    </div>
+                  )}
                   <div style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
                     <button
                       style={{ background: '#e53935', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 24px', fontWeight: 600, fontSize: '1em', boxShadow: '0 1px 4px #90caf9', cursor: 'pointer' }}
                       onClick={async e => {
                         e.stopPropagation();
+                        console.log('[VacunasSection] Confirmar eliminar vacuna', modalEliminar.id);
                         if (modalEliminar.id) {
                           setLoading(true);
-                          await deleteVacuna(token, animalId, modalEliminar.id);
-                          const data = await getVacunas(token, animalId);
-                          setVacunas(data);
-                          setLoading(false);
+                          try {
+                            await deleteVacuna(token, animalId, modalEliminar.id);
+                            const data = await getVacunas(token, animalId);
+                            setVacunas(data);
+                            setLoading(false);
+                            setModalEliminar({ open: false });
+                            alert('Vacuna eliminada. La ficha médica y el perfil siguen abiertos.');
+                            console.log('[VacunasSection] Modal eliminar cerrado, ficha médica y editar perfil permanecen abiertos');
+                          } catch (err) {
+                            setLoading(false);
+                            setModalEliminar(m => ({ ...m, error: 'Error al eliminar la vacuna. Intenta de nuevo.' }));
+                            console.log('[VacunasSection] Error al eliminar vacuna', err);
+                          }
                         }
-                        setModalEliminar({ open: false });
                       }}
                     >Eliminar</button>
                     <button
@@ -477,6 +533,7 @@ const VacunasSection: React.FC<VacunasProps> = ({ especie, animalId, token }) =>
                       onClick={e => {
                         e.stopPropagation();
                         setModalEliminar({ open: false });
+                        console.log('[VacunasSection] Modal eliminar cancelado');
                       }}
                     >Cancelar</button>
                   </div>
