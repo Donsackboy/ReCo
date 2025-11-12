@@ -30,7 +30,7 @@ Recuenda que estamos promoviendo un usuario, no creando.
 ## Creacion de admin
 TODO: me da paja
 
-- **Frontend**: http://localhost:5174
+- **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:8000
 - **Admin Django**: http://localhost:8000/admin
 

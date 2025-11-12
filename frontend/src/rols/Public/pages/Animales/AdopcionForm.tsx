@@ -27,6 +27,7 @@ const preguntas = [
 
 const AdopcionForm = () => {
   // All hooks at the top
+  const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const [showLogin, setShowLogin] = useState(!token);
   const [showRegister, setShowRegister] = useState(false);
@@ -299,9 +300,6 @@ const AdopcionForm = () => {
           {errorMsg}
         </div>
       )}
-      <div style={{ marginTop: '18px', color: '#228B22', fontSize: '0.98rem' }}>
-        <strong>Refugio:</strong> {refugio}
-      </div>
     </div>
   );
 };

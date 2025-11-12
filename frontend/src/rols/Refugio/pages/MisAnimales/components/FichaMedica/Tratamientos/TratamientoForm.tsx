@@ -92,9 +92,9 @@ const TratamientoForm: React.FC<TratamientoFormProps> = ({ idAnimal }) => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (!token || !idAnimal) return;
-    console.log('Consultando tratamientos para idAnimal:', idAnimal); // <-- LOG DE ANIMAL ID
-    getTratamientos(token, idAnimal)
+  if (!token || typeof idAnimal !== 'number') return;
+  console.log('Consultando tratamientos para idAnimal:', idAnimal); // <-- LOG DE ANIMAL ID
+  getTratamientos(token, Number(idAnimal))
   .then((data: any) => {
         console.log('Tratamientos API response:', data); // <-- LOG PARA DEPURAR
         if (Array.isArray(data)) {
@@ -215,9 +215,11 @@ const TratamientoForm: React.FC<TratamientoFormProps> = ({ idAnimal }) => {
     }
     try {
       // Llama a la API para actualizar el tratamiento
-  await updateTratamiento(editTratamiento.id_tratamiento, editTratamiento, token);
+      await updateTratamiento(editTratamiento.id_tratamiento, editTratamiento, token);
       // Refresca la lista
-      const nuevos = await getTratamientos(token, editTratamiento.id_animal);
+      const idAnimalValid = editTratamiento.id_animal !== undefined ? Number(editTratamiento.id_animal) : null;
+      if (idAnimalValid === null || isNaN(idAnimalValid)) throw new Error('id_animal inválido');
+      const nuevos = await getTratamientos(token, idAnimalValid);
       setTratamientos(nuevos);
       setEditIdx(null);
       setEditTratamiento(null);

@@ -5,32 +5,20 @@ const VacunaItem: React.FC<{
   editando: boolean;
   onEditar: () => void;
   onEliminar: () => void;
-  onGuardar?: (payload: any) => Promise<void>;
+  onGuardar?: (payload: any) => void;
   onCancelar?: () => void;
   loading?: boolean;
 }> = ({ vacuna, frecuencia, editando, onEditar, onEliminar, onGuardar, onCancelar, loading }) => {
   const [localTipo, setLocalTipo] = useState(vacuna.tipo);
   const [localNombre, setLocalNombre] = useState(vacuna.nombre);
-  const [localFecha, setLocalFecha] = useState(vacuna.fecha_aplicacion || vacuna.fecha || '');
+  const [localFecha, setLocalFecha] = useState(vacuna.fecha_aplicacion || '');
   const [localRefuerzo, setLocalRefuerzo] = useState(vacuna.fecha_refuerzo || '');
   const [localObservaciones, setLocalObservaciones] = useState(vacuna.observaciones || '');
+  const [error, setError] = useState<string>('');
   return (
     <li className="vacuna-item">
       {editando ? (
-        <form className="vacuna-edit-form" style={{ display: 'flex', flexDirection: 'column', gap: 8 }} onSubmit={async e => {
-          e.preventDefault();
-          if (onGuardar) {
-            const payload: any = {
-              nombre: localNombre,
-              tipo: localTipo,
-              fecha_aplicacion: localFecha,
-              observaciones: localObservaciones,
-              animal: vacuna.id,
-            };
-            if (localTipo === 'refuerzo' && localRefuerzo) payload.fecha_refuerzo = localRefuerzo;
-            await onGuardar(payload);
-          }
-        }}>
+        <div className="vacuna-edit-form" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <label>Nombre de la vacuna</label>
           <input type="text" value={localNombre} name="nombre" className="form-input" onChange={e => setLocalNombre(e.target.value)} />
           <label>Fecha de aplicación</label>
@@ -52,11 +40,37 @@ const VacunaItem: React.FC<{
           )}
           <label>Observaciones</label>
           <textarea value={localObservaciones} name="observaciones" className="form-input" onChange={e => setLocalObservaciones(e.target.value)} />
+          {error && <div style={{ color: '#e53935', marginBottom: 8 }}>{error}</div>}
           <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
-            <button type="submit" className="form-boton-btn" disabled={loading}>Guardar</button>
+            <button
+              type="button"
+              className="form-boton-btn"
+              disabled={loading}
+              onClick={() => {
+                setError('');
+                if (!localNombre || !localTipo || !localFecha) {
+                  setError('Completa los campos obligatorios');
+                  return;
+                }
+                if (onGuardar) {
+                  const payload: any = {
+                    nombre: localNombre,
+                    tipo: localTipo,
+                    fecha_aplicacion: localFecha,
+                    observaciones: localObservaciones,
+                    ...(localTipo === 'refuerzo' && localRefuerzo ? { fecha_refuerzo: localRefuerzo } : {})
+                  };
+                  try {
+                    onGuardar(payload);
+                  } catch (err) {
+                    setError('Error al guardar la vacuna. Intenta de nuevo.');
+                  }
+                }
+              }}
+            >Guardar</button>
             <button type="button" className="form-boton-btn cancelar-btn" onClick={onCancelar}>Cancelar</button>
           </div>
-        </form>
+  </div>
       ) : (
         <>
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8, justifyContent: 'space-between', flexWrap: 'wrap' }}>
@@ -116,24 +130,15 @@ interface Vacuna {
   especificaciones?: string;
 }
 
-import { useEffect } from 'react';
-import { getVacunas, createVacuna, deleteVacuna, updateVacuna } from '../../../../../api/ApiRefugio';
+// No backend imports needed
 
 interface VacunasProps {
   especie: string;
-  animalId: number;
-  token: string;
+  vacunas: Vacuna[];
+  setVacunas: React.Dispatch<React.SetStateAction<Vacuna[]>>;
 }
 
-let mountCount = 0;
-const VacunasSection: React.FC<VacunasProps> = ({ especie, animalId, token }) => {
-  mountCount++;
-  useEffect(() => {
-    console.log(`[VacunasSection] MOUNT #${mountCount} - animalId:`, animalId, 'especie:', especie, 'token:', token);
-    return () => {
-      console.log(`[VacunasSection] UNMOUNT #${mountCount} - animalId:`, animalId);
-    };
-  }, []);
+const VacunasSection: React.FC<VacunasProps> = ({ especie, vacunas, setVacunas }) => {
   const [mostrarComunes, setMostrarComunes] = useState(false);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [nuevaVacuna, setNuevaVacuna] = useState<Vacuna>({
@@ -147,8 +152,7 @@ const VacunasSection: React.FC<VacunasProps> = ({ especie, animalId, token }) =>
     especificaciones: ''
   });
   const [vacunaSeleccionada, setVacunaSeleccionada] = useState<string>('');
-  const [vacunas, setVacunas] = useState<Vacuna[]>([]);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false); // not needed
   const [modalEliminar, setModalEliminar] = useState<{ open: boolean; id?: number; error?: string }>({ open: false });
   const [editandoId, setEditandoId] = useState<number | null>(null);
 
@@ -159,31 +163,11 @@ const VacunasSection: React.FC<VacunasProps> = ({ especie, animalId, token }) =>
     nuevaVacuna,
     vacunaSeleccionada,
     vacunas,
-    loading,
+  // loading,
     modalEliminar,
     editandoId
   });
-  // Obtener vacunas al montar el componente
-  // Solo consulta la BD si animalId cambia realmente (no si el token cambia)
-  // Consulta solo al montar y cuando cambia animalId
-  useEffect(() => {
-    let isMounted = true;
-    async function fetchVacunas() {
-      setLoading(true);
-      try {
-        const data = await getVacunas(token, animalId);
-        if (isMounted) {
-          setVacunas(data);
-          console.log('[VacunasSection] Vacunas cargadas', data);
-        }
-      } catch (err) {
-        if (isMounted) console.log('[VacunasSection] Error al cargar vacunas', err);
-      }
-      if (isMounted) setLoading(false);
-    }
-    fetchVacunas();
-    return () => { isMounted = false; };
-  }, []); // Solo al montar
+  // Vacunas are now managed by parent, so no fetching here
 
   // Normaliza la especie para buscar en vacunasPorEspecie
   function normalizarEspecie(e: string) {
@@ -256,44 +240,32 @@ const VacunasSection: React.FC<VacunasProps> = ({ especie, animalId, token }) =>
     }
   };
 
-  const agregarVacuna = async () => {
+  const agregarVacuna = () => {
     const tipoVacuna = nuevaVacuna.unica ? 'unica' : nuevaVacuna.refuerzo ? 'refuerzo' : '';
     if (!nuevaVacuna.nombre || !tipoVacuna || !nuevaVacuna.fecha) {
-      console.log('[VacunasSection] Error: campos obligatorios faltantes', nuevaVacuna);
-      return alert('Completa los campos obligatorios');
+      alert('Completa los campos obligatorios');
+      return;
     }
-    setLoading(true);
-    try {
-      const payload = {
-        nombre: nuevaVacuna.nombre,
-        tipo: tipoVacuna,
-        fecha_aplicacion: nuevaVacuna.fecha,
-        fecha_refuerzo: nuevaVacuna.refuerzo ? nuevaVacuna.proxima : null,
-        observaciones: nuevaVacuna.especificaciones || '',
-        animal: animalId
-      };
-      console.log('[VacunasSection] Agregar vacuna', payload);
-      await createVacuna(token, animalId, payload);
-      // Refrescar vacunas solo tras agregar
-      const data = await getVacunas(token, animalId);
-      setVacunas(data);
-      setMostrarFormulario(false);
-      setNuevaVacuna({
-        id: 0,
-        nombre: '',
-        tipo: '',
-        fecha: '',
-        unica: false,
-        refuerzo: false,
-        proxima: '',
-        especificaciones: ''
-      });
-      console.log('[VacunasSection] Vacuna agregada y formulario reseteado');
-    } catch (err) {
-      console.log('[VacunasSection] Error al registrar la vacuna', err);
-      alert('Error al registrar la vacuna');
-    }
-    setLoading(false);
+    const nueva: Vacuna = {
+      ...nuevaVacuna,
+      tipo: tipoVacuna,
+      fecha_aplicacion: nuevaVacuna.fecha,
+      fecha_refuerzo: nuevaVacuna.refuerzo ? nuevaVacuna.proxima : undefined,
+      observaciones: nuevaVacuna.especificaciones || '',
+      id: Date.now() // temp id for local
+    };
+    setVacunas(prev => [...prev, nueva]);
+    setMostrarFormulario(false);
+    setNuevaVacuna({
+      id: 0,
+      nombre: '',
+      tipo: '',
+      fecha: '',
+      unica: false,
+      refuerzo: false,
+      proxima: '',
+      especificaciones: ''
+    });
   };
 
   return (
@@ -442,9 +414,7 @@ const VacunasSection: React.FC<VacunasProps> = ({ especie, animalId, token }) =>
         )}
 
         {/* Lista de vacunas o mensaje vacío debajo del formulario */}
-        {loading ? (
-          <div style={{ marginTop: 24 }}>Cargando vacunas...</div>
-        ) : (!vacunas || vacunas.length === 0) ? (
+        {(!vacunas || vacunas.length === 0) ? (
           <div className="vacunas-empty" style={{ marginTop: 24 }}>
             <span role="img" aria-label="vacuna" style={{ fontSize: '1.5rem', marginRight: 8 }}>💉</span>
             No hay vacunas registradas
@@ -469,21 +439,17 @@ const VacunasSection: React.FC<VacunasProps> = ({ especie, animalId, token }) =>
                       console.log('[VacunasSection] Abrir modal eliminar', v.id);
                       setModalEliminar({ open: true, id: v.id });
                     }}
-                    onGuardar={async payload => {
-                      console.log('[VacunasSection] Guardar edición vacuna', v.id, payload);
-                      setLoading(true);
-                      await updateVacuna(token, animalId, v.id, payload);
-                      const data = await getVacunas(token, animalId);
-                      setVacunas(data);
-                      setLoading(false);
+                    onGuardar={payload => {
+                      // Actualiza solo el array local de vacunas
+                      setVacunas(prev => prev.map(vac => vac.id === v.id ? { ...vac, ...payload } : vac));
                       setEditandoId(null);
-                      console.log('[VacunasSection] Edición guardada y editandoId reseteado');
+                      console.log('[VacunasSection] Edición local guardada, pendiente guardar en BD');
                     }}
                     onCancelar={() => {
                       console.log('[VacunasSection] Cancelar edición vacuna', v.id);
                       setEditandoId(null);
                     }}
-                    loading={loading}
+                    // loading={loading}
                   />
                 );
               })}
@@ -507,24 +473,13 @@ const VacunasSection: React.FC<VacunasProps> = ({ especie, animalId, token }) =>
                   <div style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
                     <button
                       style={{ background: '#e53935', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 24px', fontWeight: 600, fontSize: '1em', boxShadow: '0 1px 4px #90caf9', cursor: 'pointer' }}
-                      onClick={async e => {
+                      onClick={e => {
                         e.stopPropagation();
                         console.log('[VacunasSection] Confirmar eliminar vacuna', modalEliminar.id);
                         if (modalEliminar.id) {
-                          setLoading(true);
-                          try {
-                            await deleteVacuna(token, animalId, modalEliminar.id);
-                            const data = await getVacunas(token, animalId);
-                            setVacunas(data);
-                            setLoading(false);
-                            setModalEliminar({ open: false });
-                            alert('Vacuna eliminada. La ficha médica y el perfil siguen abiertos.');
-                            console.log('[VacunasSection] Modal eliminar cerrado, ficha médica y editar perfil permanecen abiertos');
-                          } catch (err) {
-                            setLoading(false);
-                            setModalEliminar(m => ({ ...m, error: 'Error al eliminar la vacuna. Intenta de nuevo.' }));
-                            console.log('[VacunasSection] Error al eliminar vacuna', err);
-                          }
+                          setVacunas(prev => prev.filter(v => v.id !== modalEliminar.id));
+                          setModalEliminar({ open: false });
+                          alert('Vacuna eliminada localmente. Se guardará en BD al guardar la ficha médica.');
                         }
                       }}
                     >Eliminar</button>

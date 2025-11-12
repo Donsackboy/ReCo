@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './FichaMedica.css';
 import GeneralSection from './GeneralSection/GeneralSection';
 // Si necesitas el tipo FichaMedica, defínelo aquí o impórtalo de un archivo de tipos
-import { updateFichaMedica } from '../../../../api/ApiRefugio';
+import { updateFichaMedica, getVacunas, createVacuna, updateVacuna, deleteVacuna, getCirugias, createCirugia, updateCirugia, deleteCirugia } from '../../../../api/ApiRefugio';
 import VacunasSection from './Vacunas/VacunasSection';
 import CirugiasSection from './Cirugias/CirugiasSection';
+import type { Cirugia } from './Cirugias/CirugiaForm';
 import TratamientosSection from './Tratamientos/TratamientosSection';
 import AlergiasCondicionesSection from './AlegiasyCondicionesCronicas/AlegiasCondicionesSection';
 
@@ -15,9 +16,23 @@ interface FichaMedicaModalProps {
 }
 
 const FichaMedicaModal: React.FC<FichaMedicaModalProps> = ({ animalId, onClose, especie }) => {
+  const [vacunas, setVacunas] = useState<any[]>([]);
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchVacunas() {
+      try {
+        const token = localStorage.getItem('token') || '';
+        const data = await getVacunas(token, Number(animalId));
+        if (isMounted && vacunas.length === 0) setVacunas(data);
+      } catch (err) {
+        // Optionally handle error
+      }
+    }
+    fetchVacunas();
+    return () => { isMounted = false; };
+  }, [animalId]);
+  const [cirugias, setCirugias] = useState<Cirugia[]>([]);
   const [form, setForm] = useState<any>({
-    vacunas: [],
-    cirugias: [],
     tratamientos: [],
     alergias: [],
     archivos: []
@@ -39,7 +54,113 @@ const FichaMedicaModal: React.FC<FichaMedicaModalProps> = ({ animalId, onClose, 
     setLoading(true);
     setError('');
     try {
-      await updateFichaMedica(localStorage.getItem('token') || '', Number(animalId), ficha);
+      const token = localStorage.getItem('token') || '';
+      // --- VACUNAS CRUD ---
+      const vacunasOriginales = await getVacunas(token, Number(animalId));
+      const vacunasOriginalesIds = vacunasOriginales.map((v: any) => v.id);
+      const vacunasNuevasIds = vacunas.map((v: any) => v.id);
+      const vacunasEliminadas = vacunasOriginales.filter((v: any) => !vacunasNuevasIds.includes(v.id));
+      const vacunasNuevas = vacunas.filter((v: any) => !vacunasOriginalesIds.includes(v.id));
+      const vacunasEditadas = vacunas.filter((v: any) => vacunasOriginalesIds.includes(v.id));
+      for (const v of vacunasEliminadas) {
+        await deleteVacuna(token, Number(animalId), v.id);
+      }
+      for (const v of vacunasNuevas) {
+        const payload = { ...v };
+        delete payload.id;
+        await createVacuna(token, Number(animalId), payload);
+      }
+      for (const v of vacunasEditadas) {
+        const original = vacunasOriginales.find((o: any) => o.id === v.id);
+        if (original && JSON.stringify(v) !== JSON.stringify(original)) {
+          const payload = { ...v };
+          delete payload.id;
+          await updateVacuna(token, Number(animalId), v.id, payload);
+        }
+      }
+
+      // --- CIRUGIAS CRUD ---
+      const cirugiasOriginales = await getCirugias(token, Number(animalId));
+      const cirugiasOriginalesIds = cirugiasOriginales.map((c: any) => c.id_cirugia);
+      const cirugiasNuevasIds = cirugias.map((c: any) => c.id_cirugia);
+      const cirugiasEliminadas = cirugiasOriginales.filter((c: any) => !cirugiasNuevasIds.includes(c.id_cirugia));
+      const cirugiasNuevas = cirugias.filter((c: any) => !cirugiasOriginalesIds.includes(c.id_cirugia));
+      const cirugiasEditadas = cirugias.filter((c: any) => cirugiasOriginalesIds.includes(c.id_cirugia));
+      for (const c of cirugiasEliminadas) {
+        await deleteCirugia(c.id_cirugia, token);
+      }
+      for (const c of cirugiasNuevas) {
+        // Solo enviar campos válidos y no id_cirugia, id_animal como número
+        const { id_cirugia, ...rest } = c;
+        const validKeys = [
+          'id_animal','tipo','otro_nombre','motivo','fecha','costo','veterinario','observaciones','pago_estado','monto_pagado','adjunto'
+        ];
+        let payload: any = Object.fromEntries(
+          Object.entries(rest)
+            .filter(([k, v]) => v !== undefined && v !== null && validKeys.includes(k))
+        );
+        if (typeof payload.id_animal !== 'number') {
+          payload.id_animal = Number(c.id_animal);
+        }
+        // Si adjunto es un File, usar FormData
+        if (payload.adjunto && typeof payload.adjunto === 'object' && payload.adjunto instanceof File) {
+          const formData = new FormData();
+          Object.entries(payload).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) {
+              if (value instanceof File) {
+                formData.append(key, value);
+              } else {
+                formData.append(key, String(value));
+              }
+            }
+          });
+          await createCirugia(formData, token);
+        } else {
+          await createCirugia(payload, token);
+        }
+      }
+      for (const c of cirugiasEditadas) {
+        const original = cirugiasOriginales.find((o: any) => o.id_cirugia === c.id_cirugia);
+        if (original && JSON.stringify(c) !== JSON.stringify(original)) {
+          const { id_cirugia, ...rest } = c;
+          const validKeys = [
+            'id_animal','tipo','otro_nombre','motivo','fecha','costo','veterinario','observaciones','pago_estado','monto_pagado','adjunto'
+          ];
+          let payload: any = Object.fromEntries(
+            Object.entries(rest)
+              .filter(([k, v]) => v !== undefined && v !== null && validKeys.includes(k))
+          );
+          if (typeof payload.id_animal !== 'number') {
+            payload.id_animal = Number(c.id_animal);
+          }
+          if (typeof c.id_cirugia === 'number') {
+            if (payload.adjunto && typeof payload.adjunto === 'object' && payload.adjunto instanceof File) {
+              const formData = new FormData();
+              Object.entries(payload).forEach(([key, value]) => {
+                if (value !== undefined && value !== null) {
+                  if (value instanceof File) {
+                    formData.append(key, value);
+                  } else {
+                    formData.append(key, String(value));
+                  }
+                }
+              });
+              await updateCirugia(c.id_cirugia, formData, token);
+            } else {
+              await updateCirugia(c.id_cirugia, payload, token);
+            }
+          }
+        }
+      }
+
+      // --- FICHA MEDICA ---
+      const fichaCompleta = {
+        ...ficha,
+        tratamientos: form.tratamientos,
+        alergias: form.alergias,
+        archivos: form.archivos
+      };
+      await updateFichaMedica(token, Number(animalId), fichaCompleta);
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
@@ -61,13 +182,15 @@ const FichaMedicaModal: React.FC<FichaMedicaModalProps> = ({ animalId, onClose, 
 
           <VacunasSection
             especie={especie ?? ''}
-            animalId={Number(animalId)}
-            token={localStorage.getItem('token') || ''}
+            vacunas={vacunas}
+            setVacunas={setVacunas}
           />
 
           <CirugiasSection
+            cirugias={cirugias}
+            setCirugias={setCirugias}
             animalId={Number(animalId)}
-            token={localStorage.getItem('token') || ''}
+            especie={especie}
           />
 
           <TratamientosSection

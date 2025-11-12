@@ -1,60 +1,36 @@
+
 import React, { useState } from 'react';
 import CirugiaForm from './CirugiaForm';
 import type { Cirugia } from './CirugiaForm';
-import { getCirugias, createCirugia, updateCirugia, deleteCirugia } from './cirugiasApi';
 
 interface CirugiasSectionProps {
+  cirugias: Cirugia[];
+  setCirugias: React.Dispatch<React.SetStateAction<Cirugia[]>>;
   animalId: number;
-  token: string;
+  especie?: string;
 }
 
-const CirugiasSection: React.FC<CirugiasSectionProps> = ({ animalId, token }) => {
-  const [cirugias, setCirugias] = useState<Cirugia[]>([]);
-  const [loading, setLoading] = useState(false);
+const CirugiasSection: React.FC<CirugiasSectionProps> = ({ cirugias, setCirugias, animalId, especie }) => {
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<number | null>(null);
 
-  React.useEffect(() => {
-    async function fetchCirugias() {
-      setLoading(true);
-      try {
-        const data = await getCirugias(token, animalId);
-        setCirugias(data);
-      } catch (err) {}
-      setLoading(false);
-    }
-    fetchCirugias();
-  }, [animalId, token]);
-
+  // Agregar cirugía localmente
   const handleAdd = async (data: Cirugia) => {
-    setLoading(true);
-    try {
-      const nueva = await createCirugia({ ...data, id_animal: animalId }, token);
-      setCirugias(prev => [...prev, nueva]);
-      setShowForm(false);
-    } catch (err) { alert('Error al registrar cirugía'); }
-    setLoading(false);
+    setCirugias(prev => [...prev, { ...data, id_cirugia: Date.now() }]);
+    setShowForm(false);
   };
 
+  // Editar cirugía localmente
   const handleEdit = async (data: Cirugia) => {
     if (!editId) return;
-    setLoading(true);
-    try {
-      const actualizada = await updateCirugia(editId, data, token);
-      setCirugias(prev => prev.map(c => c.id_cirugia === editId ? actualizada : c));
-      setEditId(null);
-    } catch (err) { alert('Error al actualizar cirugía'); }
-    setLoading(false);
+    setCirugias(prev => prev.map(c => c.id_cirugia === editId ? { ...data, id_cirugia: editId } : c));
+    setEditId(null);
   };
 
+  // Eliminar cirugía localmente
   const handleDelete = async (id: number) => {
-    setLoading(true);
-    try {
-      await deleteCirugia(id, token);
-      setCirugias(prev => prev.filter(c => c.id_cirugia !== id));
-      setEditId(null);
-    } catch (err) { alert('Error al eliminar cirugía'); }
-    setLoading(false);
+    setCirugias(prev => prev.filter(c => c.id_cirugia !== id));
+    setEditId(null);
   };
 
   return (
@@ -68,11 +44,11 @@ const CirugiasSection: React.FC<CirugiasSectionProps> = ({ animalId, token }) =>
           initial={{ id_animal: animalId }}
           onSave={handleAdd}
           onCancel={() => setShowForm(false)}
+          especie={especie}
+          noForm={true}
         />
       )}
-      {loading ? (
-        <div style={{ marginTop: 24 }}>Cargando cirugías...</div>
-      ) : cirugias.length === 0 ? (
+      {cirugias.length === 0 ? (
         <div className="empty-state">
           <span role="img" aria-label="cirugia" className="emoji">🩺</span>
           No hay cirugías registradas
@@ -88,6 +64,8 @@ const CirugiasSection: React.FC<CirugiasSectionProps> = ({ animalId, token }) =>
                   onCancel={() => setEditId(null)}
                   onDelete={() => handleDelete(c.id_cirugia!)}
                   isEdit
+                  especie={especie}
+                  noForm={true}
                 />
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -100,7 +78,17 @@ const CirugiasSection: React.FC<CirugiasSectionProps> = ({ animalId, token }) =>
                   <div style={{ color: '#1565c0', fontSize: '0.98em' }}><strong>Pago:</strong> {c.pago_estado} (${c.monto_pagado})</div>
                   {c.motivo && <div style={{ color: '#1976d2', fontSize: '0.97em' }}><strong>Motivo:</strong> {c.motivo}</div>}
                   {c.observaciones && <div style={{ color: '#1976d2', fontSize: '0.97em' }}><strong>Observaciones:</strong> {c.observaciones}</div>}
-                  {c.adjunto && <div style={{ color: '#1976d2', fontSize: '0.97em' }}><strong>Adjunto:</strong> {c.adjunto}</div>}
+                  {c.adjunto && (
+                    <div style={{ color: '#1976d2', fontSize: '0.97em' }}>
+                      <strong>Adjunto:</strong> {
+                        typeof c.adjunto === 'string'
+                          ? c.adjunto
+                          : c.adjunto instanceof File
+                            ? c.adjunto.name
+                            : ''
+                      }
+                    </div>
+                  )}
                   <button type="button" className="form-boton-btn" style={{ marginTop: 8, minWidth: 120 }} onClick={() => setEditId(c.id_cirugia!)}>Editar</button>
                 </div>
               )}

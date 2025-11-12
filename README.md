@@ -201,7 +201,7 @@ npm run dev
 
 
 #### 🎨 Frontend (Interfaz de Usuario)
-- **URL principal**: http://localhost:5174
+- **URL principal**: http://localhost:5173
 - **URLs alternativas** (si el puerto está ocupado): 
    - http://localhost:5174
    - http://localhost:5175
@@ -227,7 +227,7 @@ Actualmente la carpeta principal del proyecto es `reco` (no `ReCo`). Asegúrate 
 
 ### � Solución de Problemas Comunes
 
-#### "Puerto en uso" o "Port 5174 is in use"
+#### "Puerto en uso" o "Port 5173 is in use"
 ```bash
 # Vite automáticamente buscará el siguiente puerto disponible
 # Revisa la terminal para ver el puerto asignado (ej: 5174, 5175, etc.)

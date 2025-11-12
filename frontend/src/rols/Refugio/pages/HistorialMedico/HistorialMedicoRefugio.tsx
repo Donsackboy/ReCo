@@ -5,7 +5,8 @@ import './HistorialMedicoRefugio.css';
 import { getAnimales, getFichaMedica, getVacunas, getCirugias, getTratamientos } from '../../api/ApiRefugio';
 // @ts-ignore
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
+import EstructuraPDF from './EstructuraPDF';
 
 // Tipos
 interface HistorialItem {
@@ -26,10 +27,6 @@ interface Animal {
   foto_url?: string;
 }
 
-import { vacunasPorEspecie } from '../MisAnimales/components/FichaMedica/Utils/vacunasEspecies';
-import EstructuraPDF from './EstructuraPDF';
-
-
 
 
 
@@ -38,13 +35,15 @@ const getToken = () => localStorage.getItem('token');
 
 const descargarPDF = (animal: Animal) => {
   const doc = new jsPDF();
+  // Extiende el prototipo para que TypeScript reconozca autoTable
+  (doc as any).autoTable = autoTable;
   doc.setFontSize(18);
   doc.text(`Ficha Médica de ${animal.nombre}`, 15, 20);
   doc.setFontSize(12);
   doc.text(`Especie: ${animal.especie}`, 15, 30);
   // Historial en tabla
   if (animal.historial && animal.historial.length > 0) {
-    doc.autoTable({
+    (doc as any).autoTable({
       startY: 40,
       head: [["Fecha", "Descripción"]],
       body: animal.historial.map((item) => [item.fecha, item.descripcion]),
@@ -56,24 +55,6 @@ const descargarPDF = (animal: Animal) => {
   }
   doc.save(`FichaMedica_${animal.nombre}.pdf`);
 };
-
-
-const imprimirHistorial = (animal: Animal) => {
-  const printWindow = window.open('', '_blank');
-  if (printWindow) {
-    printWindow.document.write('<html><head><title>Imprimir Historial Médico</title></head><body>');
-    printWindow.document.write(`<h2>Historial Médico de ${animal.nombre} (${animal.especie})</h2>`);
-    printWindow.document.write('<ul>');
-    animal.historial.forEach((item) => {
-      printWindow.document.write(`<li><strong>${item.fecha}:</strong> ${item.descripcion}</li>`);
-    });
-    printWindow.document.write('</ul>');
-    printWindow.document.write('</body></html>');
-    printWindow.document.close();
-    printWindow.print();
-  }
-};
-
 
 const HistorialMedicoRefugio: React.FC = () => {
   const location = useLocation();
@@ -300,12 +281,6 @@ const HistorialMedicoRefugio: React.FC = () => {
           <p>No se encontraron animales con los filtros seleccionados.</p>
         ) : (
           animalesFiltrados.map((animal: Animal, idx: number) => {
-            // Vacunas aplicadas
-            const vacunasAplicadas: string[] = animal.historial.filter((h: HistorialItem) => h.descripcion.startsWith('Vacuna: ')).map((h: HistorialItem) => h.descripcion.replace('Vacuna: ', ''));
-            // Vacunas obligatorias por especie
-            const obligatorias: string[] = (vacunasPorEspecie[animal.especie] || []).filter((v: any) => v.obligatoria).map((v: any) => v.nombre);
-            // Vacunas pendientes
-            const vacunasPendientes: string[] = obligatorias.filter((vac: string) => !vacunasAplicadas.includes(vac));
             return (
               <div key={animal.id ?? idx} className="ficha-tarjeta" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ flex: 1 }}>
@@ -317,6 +292,10 @@ const HistorialMedicoRefugio: React.FC = () => {
                   <img src={animal.foto_url || '/default-animal.png'} alt={animal.nombre} style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: 10, marginBottom: '1rem' }} />
                   <button style={{ alignSelf: 'flex-end' }} onClick={() => handleVerDetalles(animal)}>
                     Ver detalles
+                  </button>
+                  <button style={{ alignSelf: 'flex-end', marginTop: '0.5rem', background: '#1976d2', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 18px', fontWeight: 600, fontSize: '1em', boxShadow: '0 1px 4px #90caf9', cursor: 'pointer' }}
+                    onClick={() => descargarPDF(animal)}>
+                    Descargar PDF
                   </button>
                 </div>
               </div>

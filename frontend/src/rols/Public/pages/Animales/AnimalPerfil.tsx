@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function AnimalPerfil() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [animal, setAnimal] = React.useState<any>(null);
   const [imgIdx, setImgIdx] = React.useState(0);
   const [loading, setLoading] = React.useState(true);
@@ -192,7 +193,15 @@ export default function AnimalPerfil() {
         )}
       </ul>
       <button style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22', marginRight: '16px' }}
-  onClick={() => navigate(`/adopcion?animalId=${animal.id_animal}&refugio=${encodeURIComponent(animal.refugio)}`)}
+        onClick={() => {
+          let refugioId = '';
+          if (typeof animal.refugio === 'object' && animal.refugio !== null) {
+            refugioId = animal.refugio.id_refugio ?? animal.refugio.id ?? '';
+          } else {
+            refugioId = animal.refugio ?? '';
+          }
+          navigate(`/adopcion?animalId=${animal.id}&refugio=${encodeURIComponent(refugioId)}`);
+        }}
       >Adoptar</button>
       <button style={{ background: '#228B22', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22' }}
   onClick={() => navigate(`/hogares-temporales/registro?animalId=${animal.id}`)}

@@ -116,27 +116,33 @@ export async function getCirugias(token: string, animalId?: number): Promise<any
 	return response.json();
 }
 
-export async function createCirugia(data: CirugiaData, token: string): Promise<any> {
+export async function createCirugia(data: CirugiaData | FormData, token: string): Promise<any> {
+	let headers: any = { 'Authorization': `Token ${token}` };
+	let body: any = data;
+	if (!(data instanceof FormData)) {
+		headers['Content-Type'] = 'application/json';
+		body = JSON.stringify(data);
+	}
 	const response = await fetch(`${API_BASE}/cirugias/`, {
 		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			'Authorization': `Token ${token}`,
-		},
-		body: JSON.stringify(data),
+		headers,
+		body,
 	});
 	if (!response.ok) throw new Error('Error al crear cirugía');
 	return response.json();
 }
 
-export async function updateCirugia(id: number, data: CirugiaData, token: string): Promise<any> {
+export async function updateCirugia(id: number, data: CirugiaData | FormData, token: string): Promise<any> {
+	let headers: any = { 'Authorization': `Token ${token}` };
+	let body: any = data;
+	if (!(data instanceof FormData)) {
+		headers['Content-Type'] = 'application/json';
+		body = JSON.stringify(data);
+	}
 	const response = await fetch(`${API_BASE}/cirugias/${id}/`, {
 		method: 'PUT',
-		headers: {
-			'Content-Type': 'application/json',
-			'Authorization': `Token ${token}`,
-		},
-		body: JSON.stringify(data),
+		headers,
+		body,
 	});
 	if (!response.ok) throw new Error('Error al actualizar cirugía');
 	return response.json();

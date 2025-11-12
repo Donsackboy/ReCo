@@ -7,7 +7,6 @@
 // --- DATOS DE REFUGIOS ---
 // Puedes agregar, quitar o modificar refugios y animales aquí
 import React, { useState, useEffect } from 'react';
-import { getAnimales } from '../../api/ApiPublic.js';
 import RefugiosCard from '../../components/Refugios/Refugioscard';
 import './Refugios.css';
 
@@ -15,9 +14,6 @@ import { regionesChile } from '../../../../utils/regionesComunasChile';
 
 // Los refugios y animales se obtendrán desde la API
 
-function getRandomAnimales(animales: { id: number; nombre: string; imagen: string }[], count = 3) {
-  return animales.sort(() => 0.5 - Math.random()).slice(0, count);
-}
 
 
 const Refugios: React.FC = () => {
@@ -67,10 +63,25 @@ const Refugios: React.FC = () => {
     ...refugio,
     id: refugio.id_refugio, // mapeo para compatibilidad con RefugiosCard
     animales: animales.filter(a => {
-      if (typeof a.refugio === 'object' && a.refugio !== null && typeof a.refugio.id === 'number') {
-        return a.refugio.id === refugio.id_refugio;
+      // Si a.refugio es objeto, compara su id
+      if (a.refugio && typeof a.refugio === 'object') {
+        // Puede ser { id: number } o { id_refugio: number }
+        if (typeof a.refugio.id === 'number') {
+          return a.refugio.id === refugio.id_refugio;
+        }
+        if (typeof a.refugio.id_refugio === 'number') {
+          return a.refugio.id_refugio === refugio.id_refugio;
+        }
       }
-      return a.refugio === refugio.id_refugio;
+      // Si a.refugio es número
+      if (typeof a.refugio === 'number') {
+        return a.refugio === refugio.id_refugio;
+      }
+      // Si a.refugio es string (por si acaso)
+      if (typeof a.refugio === 'string') {
+        return String(refugio.id_refugio) === a.refugio;
+      }
+      return false;
     }).map(animal => {
       let imagen = '';
       if (animal.imagenes && animal.imagenes.length > 0) {
