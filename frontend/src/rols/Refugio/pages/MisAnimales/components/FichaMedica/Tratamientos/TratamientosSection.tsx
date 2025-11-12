@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { getTratamientos, createTratamiento, updateTratamiento } from '../../../../../api/ApiRefugio';
+
 
 export type Tratamiento = {
   id_tratamiento?: number;
@@ -53,12 +53,18 @@ const estadoPagoOpciones = [
   { value: 'pagado', label: 'Pagado', color: '#43a047' },
 ];
 
-interface TratamientosSectionProps {
-  idAnimal: number | string;
-}
+type TratamientosSectionProps = {
+  tratamientos: Tratamiento[];
+  setTratamientos: React.Dispatch<React.SetStateAction<Tratamiento[]>>;
+};
 
-const TratamientosSection: React.FC<TratamientosSectionProps> = ({ idAnimal }) => {
+const TratamientosSection: React.FC<TratamientosSectionProps> = ({ tratamientos = [], setTratamientos }) => {
   const requiredMark = <span style={{ color: 'red', marginLeft: 4 }}>*</span>;
+  // Defensive: Ensure tratamientos is always an array
+  const safeTratamientos = Array.isArray(tratamientos) ? tratamientos : [];
+  if (!Array.isArray(tratamientos)) {
+    console.error('Tratamientos prop is not an array:', tratamientos);
+  }
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<Tratamiento>({
     tipo: '',
@@ -81,23 +87,7 @@ const TratamientosSection: React.FC<TratamientosSectionProps> = ({ idAnimal }) =
   const [editIdx, setEditIdx] = useState<number | null>(null);
   const [editTratamiento, setEditTratamiento] = useState<Tratamiento | null>(null);
   const [deleteIdx, setDeleteIdx] = useState<number | null>(null);
-  const [tratamientos, setTratamientos] = useState<Tratamiento[]>([]);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token || typeof idAnimal !== 'number') return;
-    getTratamientos(token, Number(idAnimal))
-      .then((data: any) => {
-        if (Array.isArray(data)) {
-          setTratamientos(data);
-        } else if (data.results && Array.isArray(data.results)) {
-          setTratamientos(data.results);
-        } else {
-          setTratamientos([]);
-        }
-      })
-      .catch(() => setTratamientos([]));
-  }, [idAnimal, showForm]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -114,72 +104,47 @@ const TratamientosSection: React.FC<TratamientosSectionProps> = ({ idAnimal }) =
     setForm(f => ({ ...f, adjunto: e.target.files ? e.target.files[0] : null }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.tipo || !form.nombre || !form.motivo || !form.fecha_inicio || !form.dosis || !form.via_administracion || !form.estado) {
       alert('Completa todos los campos obligatorios para guardar el tratamiento.');
       return;
     }
-    let id_animal_valid = idAnimal;
-    if (typeof id_animal_valid === 'string') {
-      if (!/^[0-9]+$/.test(id_animal_valid)) {
-        alert('El id del animal debe ser un número válido.');
-        return;
-      }
-      id_animal_valid = Number(id_animal_valid);
-    }
-    if (typeof id_animal_valid !== 'number' || isNaN(id_animal_valid)) {
-      alert('No se encontró el id del animal.');
-      return;
-    }
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('No hay token de autenticación.');
-      return;
-    }
-    try {
-      const formatDate = (dateStr: string) => {
-        if (!dateStr) return undefined;
-        if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
-        try {
-          const d = new Date(dateStr);
-          if (!isNaN(d.getTime())) {
-            return d.toISOString().slice(0, 10);
-          }
-        } catch {}
-        return dateStr;
-      };
-      const tratamientoData = {
-        ...form,
-        id_animal: id_animal_valid,
-        fecha_inicio: formatDate(form.fecha_inicio),
-        fecha_fin: formatDate(form.fecha_fin || ''),
-      };
-      await createTratamiento(tratamientoData, token);
-      setShowForm(false);
-      setForm({
-        tipo: '',
-        nombre: '',
-        motivo: '',
-        fecha_inicio: '',
-        fecha_fin: '',
-        duracion_dias: undefined,
-        dosis: '',
-        via_administracion: '',
-        veterinario: '',
-        estado: 'pendiente',
-        costo: undefined,
-        estado_pago: 'no_pagado',
-        monto_pagado: undefined,
-        observaciones: '',
-        adjunto: null,
-      });
-      // Refrescar lista
-      const nuevos = await getTratamientos(token, id_animal_valid);
-      setTratamientos(nuevos);
-    } catch (err) {
-      alert('Error al guardar tratamiento. Intenta nuevamente.');
-    }
+    const formatDate = (dateStr: string) => {
+      if (!dateStr) return undefined;
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+      try {
+        const d = new Date(dateStr);
+        if (!isNaN(d.getTime())) {
+          return d.toISOString().slice(0, 10);
+        }
+      } catch {}
+      return dateStr;
+    };
+    const tratamientoData: Tratamiento = {
+      ...form,
+      fecha_inicio: formatDate(form.fecha_inicio) || '',
+      fecha_fin: formatDate(form.fecha_fin || '') || '',
+    };
+    setTratamientos(prev => [...prev, tratamientoData]);
+    setShowForm(false);
+    setForm({
+      tipo: '',
+      nombre: '',
+      motivo: '',
+      fecha_inicio: '',
+      fecha_fin: '',
+      duracion_dias: undefined,
+      dosis: '',
+      via_administracion: '',
+      veterinario: '',
+      estado: 'pendiente',
+      costo: undefined,
+      estado_pago: 'no_pagado',
+      monto_pagado: undefined,
+      observaciones: '',
+      adjunto: null,
+    });
   };
 
   // Edición y eliminación
@@ -196,56 +161,26 @@ const TratamientosSection: React.FC<TratamientosSectionProps> = ({ idAnimal }) =
     setEditTratamiento({ ...editTratamiento, [name]: newValue });
   };
 
-  const handleEditSave = async () => {
+  const handleEditSave = () => {
     if (!editTratamiento) return;
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('No hay token de autenticación.');
-      return;
-    }
-    try {
-      if (typeof editTratamiento.id_tratamiento === 'number') {
-        await updateTratamiento(editTratamiento.id_tratamiento, editTratamiento, token);
-      } else {
-        throw new Error('id_tratamiento inválido');
-      }
-      const idAnimalValid = editTratamiento.id_animal !== undefined ? Number(editTratamiento.id_animal) : null;
-      if (idAnimalValid === null || isNaN(idAnimalValid)) throw new Error('id_animal inválido');
-      const nuevos = await getTratamientos(token, idAnimalValid);
-      setTratamientos(nuevos);
-      setEditIdx(null);
-      setEditTratamiento(null);
-    } catch (err) {
-      alert('Error al guardar cambios.');
-    }
+    setTratamientos(prev => prev.map((t, i) => i === editIdx ? editTratamiento : t));
+    setEditIdx(null);
+    setEditTratamiento(null);
   };
 
   const handleDelete = () => {
     if (deleteIdx !== null) {
-      const tratamiento = tratamientos[deleteIdx];
-      if (tratamiento && tratamiento.id_tratamiento) {
-        const token = localStorage.getItem('token');
-        fetch(`${import.meta.env.VITE_API_BASE}/tratamientos/${tratamiento.id_tratamiento}/`, {
-          method: 'DELETE',
-          headers: { 'Authorization': `Token ${token}` }
-        }).then(() => {
-          setTratamientos(prev => prev.filter((_, i) => i !== deleteIdx));
-          setEditIdx(null);
-          setEditTratamiento(null);
-          setDeleteIdx(null);
-        });
-      } else {
-        setTratamientos(prev => prev.filter((_, i) => i !== deleteIdx));
-        setEditIdx(null);
-        setEditTratamiento(null);
-        setDeleteIdx(null);
-      }
+      setTratamientos(prev => prev.filter((_, i) => i !== deleteIdx));
+      setEditIdx(null);
+      setEditTratamiento(null);
+      setDeleteIdx(null);
     }
   };
 
   return (
     <div style={{ background: '#e3f2fd', border: '2px solid #90caf9', borderRadius: 14, padding: 18, marginBottom: 8, boxShadow: '0 2px 8px rgba(144,202,249,0.08)' }}>
       <h3 style={{ marginBottom: 8, color: '#1976d2', fontWeight: 700 }}>Registro de tratamientos</h3>
+      {/* Use safeTratamientos everywhere instead of tratamientos */}
       {!showForm && (
         <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: 12 }}>
           <button type="button" style={{ background: '#1976d2', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 28px', fontWeight: 700, fontSize: '1rem', cursor: 'pointer', boxShadow: '0 2px 8px #1976d233' }} onClick={() => setShowForm(true)}>
@@ -325,7 +260,7 @@ const TratamientosSection: React.FC<TratamientosSectionProps> = ({ idAnimal }) =
                 <input name="adjunto" type="file" onChange={handleFile} style={{ marginTop: 4, background: '#fff' }} />
               </label>
               <div style={{ textAlign: 'center', marginTop: 18 }}>
-                <button type="button" style={{ background: '#1976d2', color: '#fff', border: 'none', borderRadius: '10px', padding: '12px 38px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 12px #1976d233' }} onClick={handleSubmit}>Guardar tratamiento</button>
+                <button type="button" style={{ background: '#1976d2', color: '#fff', border: 'none', borderRadius: '10px', padding: '12px 38px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 12px #1976d233' }} onClick={handleSubmit}>Guardar</button>
                 <button type="button" style={{ marginLeft: 16, background: '#eee', color: '#1976d2', border: 'none', borderRadius: '10px', padding: '12px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer' }} onClick={() => { setShowForm(false); setForm({ tipo: '', nombre: '', motivo: '', fecha_inicio: '', fecha_fin: '', duracion_dias: undefined, dosis: '', via_administracion: '', veterinario: '', estado: 'pendiente', costo: undefined, estado_pago: 'no_pagado', monto_pagado: undefined, observaciones: '', adjunto: null }); }}>Cancelar</button>
               </div>
             </div>

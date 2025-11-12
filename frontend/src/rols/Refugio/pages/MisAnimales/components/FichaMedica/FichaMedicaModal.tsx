@@ -33,9 +33,9 @@ const FichaMedicaModal: React.FC<FichaMedicaModalProps> = ({ animalId, onClose, 
   }, [animalId]);
   const [cirugias, setCirugias] = useState<Cirugia[]>([]);
   const [form, setForm] = useState<any>({
-    tratamientos: [],
-    alergias: [],
-    archivos: []
+    tratamientos: Array.isArray([]) ? [] : [],
+    alergias: Array.isArray([]) ? [] : [],
+    archivos: Array.isArray([]) ? [] : [],
   });
   const [ficha, setFicha] = useState<any>({
     estado_salud: '',
@@ -193,10 +193,7 @@ const FichaMedicaModal: React.FC<FichaMedicaModalProps> = ({ animalId, onClose, 
             especie={especie}
           />
 
-          <TratamientosSection
-            tratamientos={form.tratamientos}
-            setForm={setForm}
-          />
+          <TratamientosSection tratamientos={form.tratamientos} setTratamientos={t => setForm(f => ({ ...f, tratamientos: t }))} />
 
           <AlergiasCondicionesSection
             alergias={form.alergias}
