@@ -12,6 +12,7 @@ const Donaciones: React.FC = () => {
     numero_cuenta: '',
     rut_titular: '',
     nombre_titular: '',
+    correo_donacion: '',
   });
   const [saving, setSaving] = useState(false);
 
@@ -52,6 +53,7 @@ const Donaciones: React.FC = () => {
           numero_cuenta: data.numero_cuenta || '',
           rut_titular: data.rut_titular || '',
           nombre_titular: data.nombre_titular || '',
+          correo_donacion: data.correo_donacion || '',
         });
         setLoading(false);
       } catch {
@@ -69,8 +71,20 @@ const Donaciones: React.FC = () => {
     'numero_cuenta',
     'rut_titular',
     'nombre_titular',
+    'correo_donacion',
   ];
   const transferenciaFaltante = refugio && transferenciaCampos.some(campo => !refugio[campo] || refugio[campo].trim() === '');
+
+  // Etiqueta dinámica para el tipo de cuenta (se muestra antes del número de cuenta)
+  const tipoCuentaLabelMap: Record<string, string> = {
+    'Corriente': 'Cta. corriente',
+    'Vista': 'Cuenta Vista',
+    'Ahorro': 'Cuenta de Ahorro',
+    'RUT': 'Cuenta RUT',
+  };
+  const tipoCuentaLabel = refugio && refugio.tipo_cuenta
+    ? (tipoCuentaLabelMap[refugio.tipo_cuenta] || refugio.tipo_cuenta)
+    : 'Tipo de cuenta';
 
   const handleEditOpen = () => setEditOpen(true);
   const handleEditClose = () => setEditOpen(false);
@@ -124,11 +138,26 @@ const Donaciones: React.FC = () => {
           </span>
         ) : (!loading && refugio) ? (
           <div className="donaciones-datos-box">
-            <div><b>Banco:</b> {refugio.banco}</div>
-            <div><b>Tipo de cuenta:</b> {refugio.tipo_cuenta}</div>
-            <div><b>Número de cuenta:</b> {refugio.numero_cuenta}</div>
-            <div><b>RUT:</b> {refugio.rut_titular}</div>
-            <div><b>Nombre titular:</b> {refugio.nombre_titular}</div>
+            <div className="donaciones-row">
+              <div className="donaciones-label">Titular:</div>
+              <div className="donaciones-value">{refugio.nombre_titular}</div>
+            </div>
+            <div className="donaciones-row">
+              <div className="donaciones-label">RUT:</div>
+              <div className="donaciones-value">{refugio.rut_titular}</div>
+            </div>
+            <div className="donaciones-row">
+              <div className="donaciones-label">{tipoCuentaLabel}:</div>
+              <div className="donaciones-value">{refugio.numero_cuenta}</div>
+            </div>
+            <div className="donaciones-row">
+              <div className="donaciones-label">Email:</div>
+              <div className="donaciones-value">{refugio.correo_donacion}</div>
+            </div>
+            <div className="donaciones-row">
+              <div className="donaciones-label">Banco:</div>
+              <div className="donaciones-value">{refugio.banco}</div>
+            </div>
           </div>
         ) : null}
         {!loading && refugio && (
@@ -163,6 +192,9 @@ const Donaciones: React.FC = () => {
             </label><br/>
             <label>Nombre titular:<br/>
               <input name="nombre_titular" value={form.nombre_titular} onChange={handleFormChange} required type="text" />
+            </label><br/>
+            <label>Email de donaciones:<br/>
+              <input name="correo_donacion" value={form.correo_donacion} onChange={handleFormChange} type="email" />
             </label><br/>
             <div className="donaciones-modal-btns">
               <button type="submit" disabled={saving} className="donaciones-save-btn">Guardar</button>

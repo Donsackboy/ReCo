@@ -27,6 +27,23 @@
   font-size: 1.1rem;
   text-align: left;
 }
+/* Alineación por filas: etiqueta a la izquierda, valor a la derecha. */
+.donaciones-row {
+  display: grid;
+  grid-template-columns: 160px 1fr; /* etiqueta fija + valor flexible */
+  column-gap: 12px;
+  align-items: center;
+  padding: 6px 0;
+}
+.donaciones-label {
+  text-align: right;
+  padding-right: 8px;
+  font-weight: 600;
+}
+.donaciones-value {
+  text-align: left;
+  word-break: break-word;
+}
 .donaciones-edit-btn {
   margin-top: 18px;
   padding: 8px 22px;

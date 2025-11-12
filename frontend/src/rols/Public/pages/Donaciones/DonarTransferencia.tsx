@@ -20,10 +20,28 @@ const DonarTransferencia: React.FC = () => {
   const stateAny: any = (location && (location as any).state) || {};
   const initialRefugio: Refugio | undefined = stateAny.refugio;
 
+  function normalizeRefugio(raw: any): Refugio {
+    if (!raw) return {} as Refugio;
+    return {
+      id_refugio: raw.id_refugio ?? raw.id ?? raw.pk ?? null,
+      nombre: raw.nombre ?? raw.nombre_refugio ?? raw.title ?? '',
+      logo: raw.logo ?? null,
+  // No usar `raw.nombre` como fallback: el titular de la donación debe venir
+  // de `nombre_titular` o `datos_donacion_titular` exclusivamente.
+      datos_donacion_titular: raw.nombre_titular ?? raw.datos_donacion_titular ?? null,
+      datos_donacion_banco: raw.banco ?? raw.datos_donacion_banco ?? null,
+      datos_donacion_tipo_cuenta: raw.tipo_cuenta ?? raw.datos_donacion_tipo_cuenta ?? null,
+      datos_donacion_numero_cuenta: raw.numero_cuenta ?? raw.datos_donacion_numero_cuenta ?? null,
+      datos_donacion_rut: raw.rut_titular ?? raw.datos_donacion_rut ?? null,
+      datos_donacion_instrucciones: raw.datos_donacion_instrucciones ?? raw.instrucciones ?? null,
+      datos_donacion_links: raw.datos_donacion_links ?? raw.links ?? null,
+    };
+  }
+
   const [refugios, setRefugios] = useState<Refugio[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selected, setSelected] = useState<Refugio | null>(initialRefugio || null);
+  const [selected, setSelected] = useState<Refugio | null>(initialRefugio ? normalizeRefugio(initialRefugio) : null);
 
   useEffect(() => {
     setLoading(true);
@@ -33,14 +51,17 @@ const DonarTransferencia: React.FC = () => {
         if (!res.ok) throw new Error('Error fetching refugios');
         return res.json();
       })
-      .then((data: any) => setRefugios(data || []))
+      .then((data: any) => {
+        const mapped = (data || []).map((r: any) => normalizeRefugio(r));
+        setRefugios(mapped || []);
+      })
       .catch((e: any) => setError(String(e)))
       .finally(() => setLoading(false));
   }, []);
 
   function formatDonationText(r: Refugio | null) {
     if (!r) return '';
-    return `Titular: ${r.datos_donacion_titular || '-'}\nBanco: ${r.datos_donacion_banco || '-'}\nTipo: ${r.datos_donacion_tipo_cuenta || '-'}\nCuenta: ${r.datos_donacion_numero_cuenta || '-'}\nRUT: ${r.datos_donacion_rut || '-'}\nInstrucciones: ${r.datos_donacion_instrucciones || '-'}\nLinks: ${(Array.isArray(r.datos_donacion_links) ? r.datos_donacion_links.join(', ') : (r.datos_donacion_links || '-'))}`;
+    return `Titular: ${r.datos_donacion_titular || '-'}\nBanco: ${r.datos_donacion_banco || '-'}\nTipo: ${r.datos_donacion_tipo_cuenta || '-'}\nCuenta: ${r.datos_donacion_numero_cuenta || '-'}\nRUT: ${r.datos_donacion_rut || '-'}`;
   }
 
   return (
@@ -97,19 +118,6 @@ const DonarTransferencia: React.FC = () => {
                 <div><strong>Tipo cuenta:</strong> {selected.datos_donacion_tipo_cuenta || '—'}</div>
                 <div><strong>Número cuenta:</strong> {selected.datos_donacion_numero_cuenta || '—'}</div>
                 <div><strong>RUT:</strong> {selected.datos_donacion_rut || '—'}</div>
-                <div style={{ gridColumn: '1 / -1' }}><strong>Instrucciones:</strong> <div style={{ color: '#555' }}>{selected.datos_donacion_instrucciones || '—'}</div></div>
-                <div style={{ gridColumn: '1 / -1' }}>
-                  <strong>Links:</strong>
-                  <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
-                    {Array.isArray(selected.datos_donacion_links) && selected.datos_donacion_links.length > 0 ? (
-                      (selected.datos_donacion_links as string[]).map((l, idx) => (
-                        <a key={idx} href={l} target="_blank" rel="noreferrer" style={{ color: '#1565c0' }}>{l}</a>
-                      ))
-                    ) : (
-                      <div>—</div>
-                    )}
-                  </div>
-                </div>
               </div>
               <div style={{ marginTop: 14 }}>
                 <button onClick={() => navigator.clipboard?.writeText(formatDonationText(selected))} style={{ marginRight: 8, padding: '8px 12px', borderRadius: 8, background: '#1976d2', color: '#fff', border: 'none', cursor: 'pointer' }}>Copiar datos</button>
