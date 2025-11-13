@@ -17,6 +17,7 @@ interface FichaMedicaModalProps {
 
 const FichaMedicaModal: React.FC<FichaMedicaModalProps> = ({ animalId, onClose, especie }) => {
   const [vacunas, setVacunas] = useState<any[]>([]);
+  const [vacunasEliminadas, setVacunasEliminadas] = useState<number[]>([]);
   useEffect(() => {
     let isMounted = true;
     async function fetchVacunas() {
@@ -57,19 +58,25 @@ const FichaMedicaModal: React.FC<FichaMedicaModalProps> = ({ animalId, onClose, 
       const token = localStorage.getItem('token') || '';
       // --- VACUNAS CRUD ---
       const vacunasOriginales = await getVacunas(token, Number(animalId));
-      const vacunasOriginalesIds = vacunasOriginales.map((v: any) => v.id);
-      const vacunasNuevasIds = vacunas.map((v: any) => v.id);
-      const vacunasEliminadas = vacunasOriginales.filter((v: any) => !vacunasNuevasIds.includes(v.id));
-      const vacunasNuevas = vacunas.filter((v: any) => !vacunasOriginalesIds.includes(v.id));
-      const vacunasEditadas = vacunas.filter((v: any) => vacunasOriginalesIds.includes(v.id));
-      for (const v of vacunasEliminadas) {
-        await deleteVacuna(token, Number(animalId), v.id);
+  const vacunasOriginalesIds = vacunasOriginales.map((v: any) => v.id);
+      // Eliminar vacunas marcadas para eliminar
+      for (const id of vacunasEliminadas) {
+        await deleteVacuna(token, Number(animalId), id);
       }
+      // Crear nuevas vacunas (sin id de backend)
+      const vacunasNuevas = vacunas.filter((v: any) => !vacunasOriginalesIds.includes(v.id));
       for (const v of vacunasNuevas) {
-        const payload = { ...v };
+        // Construir payload correcto
+        const payload: any = { ...v, animal: Number(animalId) };
         delete payload.id;
+        // fecha_refuerzo solo si tiene valor y formato correcto
+        if (!payload.fecha_refuerzo || String(payload.fecha_refuerzo).trim() === '') {
+          delete payload.fecha_refuerzo;
+        }
         await createVacuna(token, Number(animalId), payload);
       }
+      // Editar vacunas existentes
+      const vacunasEditadas = vacunas.filter((v: any) => vacunasOriginalesIds.includes(v.id));
       for (const v of vacunasEditadas) {
         const original = vacunasOriginales.find((o: any) => o.id === v.id);
         if (original && JSON.stringify(v) !== JSON.stringify(original)) {
@@ -184,6 +191,8 @@ const FichaMedicaModal: React.FC<FichaMedicaModalProps> = ({ animalId, onClose, 
             especie={especie ?? ''}
             vacunas={vacunas}
             setVacunas={setVacunas}
+            vacunasEliminadas={vacunasEliminadas}
+            setVacunasEliminadas={setVacunasEliminadas}
           />
 
           <CirugiasSection
@@ -193,7 +202,7 @@ const FichaMedicaModal: React.FC<FichaMedicaModalProps> = ({ animalId, onClose, 
             especie={especie}
           />
 
-          <TratamientosSection tratamientos={form.tratamientos} setTratamientos={t => setForm(f => ({ ...f, tratamientos: t }))} />
+          <TratamientosSection tratamientos={form.tratamientos} setTratamientos={t => setForm((f: typeof form) => ({ ...f, tratamientos: t }))} />
 
           <AlergiasCondicionesSection
             alergias={form.alergias}

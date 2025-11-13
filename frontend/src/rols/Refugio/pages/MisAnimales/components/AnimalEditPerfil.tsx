@@ -439,45 +439,6 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
           </label>
         </div>
         <hr style={{ margin: '20px 0', border: 'none', borderTop: '2px solid #90EE90' }} />
-        <div style={{ marginBottom: 18 }}>
-          <h3 style={{ color: '#1976d2', fontWeight: 700, marginBottom: 10, fontSize: '1.3rem', letterSpacing: 1 }}>Vacunas</h3>
-          <div style={{ background: 'linear-gradient(90deg, #e3f2fd 0%, #bbdefb 100%)', border: '1.5px solid #90caf9', borderRadius: 12, padding: '14px 16px', marginBottom: 10, color: '#1976d2', fontWeight: 600, fontSize: '1.08rem', boxShadow: '0 2px 8px #90caf922', display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span role="img" aria-label="vacuna" style={{ fontSize: '1.5rem', marginRight: 6 }}>💉</span>
-            Para agregar o eliminar vacunas, ve a la <span style={{ color: '#1976d2', fontWeight: 700, textDecoration: 'underline', cursor: 'pointer' }}>Ficha Médica</span> del animal.
-          </div>
-          <ul style={{ marginTop: 8 }}>
-            {!form.vacunas || form.vacunas.length === 0 ? (
-              <li style={{ color: '#888' }}>No hay vacunas registradas.</li>
-            ) : (
-              form.vacunas.map((v: Vacuna, idx: number) => {
-                const nombreVacuna = v.nombre || v.tipo || 'Sin nombre';
-                const fechaAplicacion = v.fecha_aplicacion || '-';
-                return (
-                  <li key={idx} style={{
-                    marginBottom: 10,
-                    background: '#e3f2fd',
-                    border: '1.5px solid #90caf9',
-                    borderRadius: 10,
-                    padding: '10px 16px',
-                    color: '#1976d2',
-                    fontWeight: 500,
-                    boxShadow: '0 1px 6px #90caf922',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 12
-                  }}>
-                    <span role="img" aria-label="vacuna" style={{ fontSize: '1.3rem', marginRight: 8 }}>💉</span>
-                    <span style={{ fontWeight: 700 }}>{nombreVacuna}</span>
-                    <span style={{ color: '#1976d2', marginLeft: 10 }}>Fecha de aplicación: <span style={{ color: '#145214', fontWeight: 600 }}>{fechaAplicacion}</span></span>
-                    {v.tipo === 'unica' && <span style={{ marginLeft: 10, color: '#388e3c', fontWeight: 600, fontSize: '0.98em' }}>(Única aplicación)</span>}
-                    {v.tipo === 'refuerzo' && <span style={{ marginLeft: 10, color: '#0288d1', fontWeight: 600, fontSize: '0.98em' }}>Refuerzo: <span style={{ color: '#145214' }}>{v.fecha_refuerzo || '-'}</span></span>}
-                  </li>
-                );
-              })
-            )}
-          </ul>
-        </div>
-        <hr style={{ margin: '20px 0', border: 'none', borderTop: '2px solid #90EE90' }} />
         {/* Gestión de fotos con carrusel */}
         <div style={{ marginBottom: 18 }}>
           <h3 style={{ color: '#145214', fontWeight: 700, marginBottom: 10, fontSize: '1.3rem' }}>Fotos del animal</h3>
