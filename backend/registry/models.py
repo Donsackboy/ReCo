@@ -2,6 +2,7 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 
 # --- Modelo Ficha Médica ---
 class FichaMedica(models.Model):
@@ -424,31 +425,65 @@ class Suscripciones(models.Model):
 
 class Eventos(models.Model):
     id_evento = models.AutoField(primary_key=True)
-    id_refugio = models.ForeignKey('Refugio', on_delete=models.CASCADE)
+    # Relación con el refugio que crea el evento
+    id_refugio = models.ForeignKey('Refugio', on_delete=models.CASCADE, related_name='eventos') 
     nombre = models.CharField(max_length=100)
-    fecha = models.DateField()
-    lugar = models.CharField(max_length=150)
+    
+    # Campos de fecha inicial y final (usando DateTimeField para incluir hora)
+    fecha_hora_inicio = models.DateTimeField(help_text="Fecha y hora de inicio del evento")
+    fecha_hora_fin = models.DateTimeField(help_text="Fecha y hora de finalización del evento")
+    
+    lugar = models.CharField(max_length=150, help_text="Dirección o lugar del evento")
     descripcion = models.TextField()
+    
+    # Switch de voluntariado
+    es_voluntariado = models.BooleanField(default=False, help_text="Marcar si este evento es principalmente una jornada de voluntariado.")
+    
+    # Switch de inscripción (vinculado a la lógica de voluntariado)
+    requiere_inscripcion = models.BooleanField(default=False, help_text="Marcar si los usuarios deben inscribirse para asistir.")
+
+    def clean(self):
+        """
+        Validación a nivel de modelo.
+        """
+        # Lógica: si es voluntariado, DEBE requerir inscripción.
+        if self.es_voluntariado and not self.requiere_inscripcion:
+            raise ValidationError(
+                {'requiere_inscripcion': 'Un evento de voluntariado debe requerir inscripción obligatoriamente.'}
+            )
+        
+        # Validación para que la fecha de fin no sea anterior a la de inicio
+        if self.fecha_hora_fin and self.fecha_hora_inicio:
+            if self.fecha_hora_fin < self.fecha_hora_inicio:
+                raise ValidationError(
+                    {'fecha_hora_fin': 'La fecha de finalización no puede ser anterior a la fecha de inicio.'}
+                )
 
     def __str__(self):
-        return f"{self.nombre} - {self.fecha}"
+        # Actualizado para mostrar la nueva fecha
+        return f"{self.nombre} - {self.fecha_hora_inicio.strftime('%Y-%m-%d %H:%M')}"
 
     class Meta:
         db_table = 'eventos'
         verbose_name_plural = 'Eventos'
+        ordering = ['fecha_hora_inicio'] # Ordenar eventos por fecha de inicio
 
 class InscripcionesEventos(models.Model):
     id_inscripcion = models.AutoField(primary_key=True)
-    id_usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    id_evento = models.ForeignKey('Eventos', on_delete=models.CASCADE)
+    id_usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='inscripciones_evento')
+    # Añadido related_name para mejor acceso inverso
+    id_evento = models.ForeignKey('Eventos', on_delete=models.CASCADE, related_name='inscripciones') 
     asistencia = models.BooleanField(default=False)
+    fecha_inscripcion = models.DateTimeField(auto_now_add=True) # Útil para saber cuándo se inscribió
 
     def __str__(self):
-        return f"Inscripción {self.id_inscripcion} - {self.id_usuario}"
+        return f"Inscripción {self.id_inscripcion} - {self.id_usuario} en {self.id_evento.nombre}"
 
     class Meta:
         db_table = 'inscripciones_eventos'
         verbose_name_plural = 'Inscripciones a Eventos'
+        # Asegura que un usuario solo pueda inscribirse una vez por evento
+        unique_together = ('id_usuario', 'id_evento')
 
 
 class CatalogoServicios(models.Model):

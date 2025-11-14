@@ -183,17 +183,17 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': 'DEBUG' if DEBUG else 'INFO',
+        'level': 'INFO', # INFO oculta el ruido de archivos
     },
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': 'DEBUG' if DEBUG else 'INFO',
+            'level': 'INFO', # INFO para Django también
             'propagate': True,
         },
         'registry': {
             'handlers': ['console'],
-            'level': 'DEBUG',
+            'level': 'DEBUG', # Mantenemos DEBUG solo para TU código
             'propagate': False,
         },
     },

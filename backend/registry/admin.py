@@ -59,8 +59,9 @@ class SuscripcionesAdmin(admin.ModelAdmin):
 
 @admin.register(Eventos)
 class EventosAdmin(admin.ModelAdmin):
-    list_display = ("id_evento", "id_refugio", "nombre", "fecha", "lugar")
-    list_filter = ("fecha",)
+    # Actualizado para reflejar los cambios en models.py
+    list_display = ("id_evento", "id_refugio", "nombre", "fecha_hora_inicio", "fecha_hora_fin", "lugar", "es_voluntariado", "requiere_inscripcion")
+    list_filter = ("fecha_hora_inicio", "es_voluntariado", "requiere_inscripcion")
     search_fields = ("nombre", "lugar")
 
 @admin.register(InscripcionesEventos)
