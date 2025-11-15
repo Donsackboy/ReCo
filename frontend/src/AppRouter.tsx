@@ -1,3 +1,4 @@
+import UsuarioPerfil from './rols/Usuario/pages/ConfirguracionPerfil/UsuarioPerfil';
 import Voluntarios from './rols/Refugio/pages/Voluntarios';
 import InscritosEvento from './rols/Refugio/pages/InscritosEvento';
 import Necesidades from './rols/Refugio/pages/Necesidades/NecesidadesRefugio';
@@ -104,6 +105,9 @@ function AppRouterContent() {
           <Route path="/donar-monetaria" element={<DonarMonetaria />} />
           <Route path="/donar-insumo" element={<DonarInsumo />} />
           <Route path="/donar-servicio" element={<DonarServicio />} />
+
+          {/* Ruta para ver y editar perfil de usuario */}
+          <Route path="/mi-perfil" element={<UsuarioPerfil />} />
 
           {/* Ruta para Mis Adopciones */}
           <Route path="/mis-adopciones" element={<MisAdopciones />} />

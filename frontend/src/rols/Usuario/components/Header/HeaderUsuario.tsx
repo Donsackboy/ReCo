@@ -43,25 +43,25 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
             <ul className="nav-menu">
               <li className="nav-item">
                 <Link to="/animales" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">🐶</span>
+                  <span className="nav-icon"></span>
                   <span className="nav-text">Animales</span>
                 </Link>
               </li>
               <li className="nav-item">
                 <a href="#hogar-temporal" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">🏠</span>
+                  <span className="nav-icon"></span>
                   <span className="nav-text">Hogar Temporal</span>
                 </a>
               </li>
               <li className="nav-item">
                 <a href="#eventos" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">🎪</span>
+                  <span className="nav-icon"></span>
                   <span className="nav-text">Eventos</span>
                 </a>
               </li>
               <li className="nav-item">
                 <a href="#donar" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">💝</span>
+                  <span className="nav-icon"></span>
                   <span className="nav-text">Donar</span>
                 </a>
               </li>
@@ -71,12 +71,26 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
           <div className="hamburger-container">
             <div className="auth-buttons desktop-auth">
               <div className="user-profile">
-                
                 <span className="user-icon">👤</span>
-                <span className="user-name">{userName}</span>
+                <Link to="/mi-perfil" style={{ textDecoration: 'none' }}>
+                  <button
+                    className="user-name-btn"
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#2ecc40', // verde
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      fontSize: '1em',
+                      padding: 0
+                    }}
+                  >
+                    {userName}
+                  </button>
+                </Link>
               </div>
               <button onClick={onLogout} className="btn-logout">
-                <span className="auth-icon">🚪</span>
+                <span className="auth-icon"></span>
                 <span className="auth-text">Cerrar Sesión</span>
               </button>
             </div>
@@ -107,37 +121,37 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
             {/* Botones principales de usuario */}
             <li className="side-menu-item">
               <Link to="/mis-solicitudes-adopcion" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">📋</span>
+                <span className="side-menu-icon"></span>
                 Mis Solicitudes de Adopción
               </Link>
             </li>
             <li className="side-menu-item">
               <Link to="/mis-adopciones" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">🐾</span>
+                <span className="side-menu-icon"></span>
                 Mis Mascotas
               </Link>
             </li>
             <li className="side-menu-item">
               <Link to="/eventos" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">🎪</span>
+                <span className="side-menu-icon"></span>
                 Eventos
               </Link>
             </li>
             <li className="side-menu-item">
               <Link to="/donar" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">💝</span>
+                <span className="side-menu-icon"></span>
                 Hacer Donación
               </Link>
             </li>
             <li className="side-menu-item">
               <Link to="/mis-donaciones" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">💰</span>
+                <span className="side-menu-icon"></span>
                 Mis Donaciones
               </Link>
             </li>
             <li className="side-menu-item">
               <Link to="/mis-voluntariados" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">🤝</span>
+                <span className="side-menu-icon"></span>
                 Mis Voluntariados
               </Link>
             </li>
@@ -149,25 +163,25 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
             </li>
             <li className="side-menu-item">
               <Link to="/refugios" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">🏠</span>
+                <span className="side-menu-icon"></span>
                 Refugios
               </Link>
             </li>
             <li className="side-menu-item">
               <Link to="/animales" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">🐾</span>
+                <span className="side-menu-icon"></span>
                 Animales
               </Link>
             </li>
             <li className="side-menu-item">
               <Link to="/hogares-temporales" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">🏡</span>
+                <span className="side-menu-icon"></span>
                 Hogares Temporales
               </Link>
             </li>
             <li className="side-menu-item">
               <Link to="/eventos" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">🎪</span>
+                <span className="side-menu-icon"></span>
                 Eventos
               </Link>
             </li>
@@ -175,7 +189,7 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
             {/* Configuración y salir */}
             <li className="side-menu-item">
               <Link to="/mi-perfil" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">⚙️</span>
+                <span className="side-menu-icon">👤</span>
                 Mi Perfil
               </Link>
             </li>

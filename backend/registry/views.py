@@ -479,9 +479,22 @@ def register(request):
         })
     return Response(serializer.errors, status=400)
 
-@api_view(['GET'])
+from rest_framework import status
+from .models import Usuario
+from .serializers import UserSerializer
+
+@api_view(['GET', 'PATCH'])
+@permission_classes([IsAuthenticated])
 def user_profile(request):
-    return Response(UserSerializer(request.user).data)
+    user = request.user
+    if request.method == 'GET':
+        return Response(UserSerializer(user).data)
+    elif request.method == 'PATCH':
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])

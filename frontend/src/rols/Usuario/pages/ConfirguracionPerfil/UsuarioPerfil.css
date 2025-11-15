@@ -1,0 +1,134 @@
+.usuario-info {
+  background: linear-gradient(135deg, #e8f8f5 0%, #d4efdf 100%);
+  border-radius: 18px;
+  box-shadow: 0 4px 24px #27ae6033;
+  padding: 32px 40px;
+  margin: 32px auto;
+  max-width: 420px;
+  font-size: 1.13em;
+  color: #145a32;
+  border: 1px solid #b7e4c7;
+}
+.usuario-info div {
+  margin-bottom: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid #b7e4c7;
+}
+.usuario-info strong {
+  color: #229954;
+  font-size: 1.08em;
+  letter-spacing: 0.5px;
+}
+.form-boton-btn {
+  background: linear-gradient(90deg, #229954 0%, #27ae60 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 28px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 18px;
+  box-shadow: 0 2px 8px #22995422;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.form-boton-btn:hover {
+  background: linear-gradient(90deg, #27ae60 0%, #229954 100%);
+  box-shadow: 0 4px 16px #22995433;
+}
+.form-error {
+  color: #e74c3c;
+  margin-top: 12px;
+  font-weight: 700;
+  background: #f9ebea;
+  border-radius: 6px;
+  padding: 8px 12px;
+  border: 1px solid #e74c3c33;
+}
+.usuario-editar-form {
+  background: linear-gradient(135deg, #f8fff8 0%, #e0fbe0 100%);
+  border-radius: 18px;
+  box-shadow: 0 2px 16px #22995422;
+  padding: 32px 36px;
+  margin: 32px auto;
+  max-width: 420px;
+  color: #145a32;
+  border: 2px solid #27ae60; 
+}
+
+.form-row {
+  margin-bottom: 16px;
+}
+.form-row label {
+  display: block;
+  font-weight: 600;
+  color: #27ae60 !important;
+  font-size: 1.09em;
+  letter-spacing: 0.3px;
+  margin-bottom: 6px;
+  text-shadow: none !important;
+}
+
+.usuario-editar-form .form-row input,
+.usuario-editar-form input[type="text"],
+.usuario-editar-form input[type="email"],
+.usuario-editar-form input[type="password"] {
+  background: #f8fff8 !important;
+  color: #145a32 !important;
+  font-weight: 500;
+  border: 2px solid #27ae60 !important;
+  transition: border 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 4px #27ae6011;
+  font-size: 1.08em;
+  letter-spacing: 0.2px;
+}
+/* Eliminar azul de autofill en Chrome */
+.form-row input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 100px #f8fff8 inset !important;
+  -webkit-text-fill-color: #229954 !important;
+  border: 2px solid #27ae60 !important;
+}
+.form-row input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 100px #f8fff8 inset !important;
+  -webkit-text-fill-color: #229954 !important;
+  border: 2.5px solid #229954 !important;
+}
+.form-row input:-webkit-autofill:hover {
+  -webkit-box-shadow: 0 0 0 100px #f8fff8 inset !important;
+  -webkit-text-fill-color: #229954 !important;
+}
+.form-row input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 100px #f8fff8 inset !important;
+  -webkit-text-fill-color: #229954 !important;
+}
+.form-boton-btn {
+  background: linear-gradient(90deg, #27ae60 0%, #229954 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 28px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 18px;
+  box-shadow: 0 2px 8px #22995422;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.form-boton-btn:hover {
+  background: linear-gradient(90deg, #229954 0%, #27ae60 100%);
+  box-shadow: 0 4px 16px #22995444;
+}
+.cancelar-btn {
+  background: linear-gradient(90deg, #e74c3c 0%, #c0392b 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 28px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 18px;
+  box-shadow: 0 2px 8px #e74c3c22;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.cancelar-btn:hover {
+  background: linear-gradient(90deg, #c0392b 0%, #e74c3c 100%);
+  box-shadow: 0 4px 16px #e74c3c44;
+}

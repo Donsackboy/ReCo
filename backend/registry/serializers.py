@@ -80,7 +80,7 @@ class RefugioSerializer(serializers.ModelSerializer):
         extra_fields = ['usuario']
 
 class UserSerializer(serializers.ModelSerializer):
-    refugio = RefugioSerializer(read_only=True)
+    refugio = RefugioSerializer(read_only=True, allow_null=True, required=False)
     class Meta:
         model = Usuario
         fields = ('id', 'username', 'email', 'tipo_usuario', 'first_name', 'last_name', 'telefono', 'refugio')
