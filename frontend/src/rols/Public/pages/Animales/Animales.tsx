@@ -12,6 +12,7 @@ const Animales = () => {
     refugio: '',
     region: ''
   });
+  const [refugioNombre, setRefugioNombre] = useState('');
   const [search, setSearch] = useState('');
 
   const [animales, setAnimales] = useState<any[]>([]);
@@ -29,6 +30,8 @@ const Animales = () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const refugioParam = params.get('refugio');
+    console.log('Animales.tsx - location.search:', location.search);
+    console.log('Animales.tsx - refugioParam:', refugioParam);
     if (refugioParam) {
       setFiltros(f => ({ ...f, refugio: refugioParam }));
     }
@@ -47,6 +50,13 @@ const Animales = () => {
         const resRefugios = await fetch(`${import.meta.env.VITE_API_BASE}/public/refugios/`);
         let dataRefugios = await resRefugios.json();
         setRefugios(Array.isArray(dataRefugios) ? dataRefugios : []);
+
+        // Si hay filtro de refugio, buscar el nombre
+        if (refugioParam && Array.isArray(dataRefugios)) {
+          const found = dataRefugios.find((r: any) => String(r.id_refugio) === String(refugioParam));
+          console.log('Animales.tsx - refugio encontrado:', found);
+          setRefugioNombre(found ? found.nombre : '');
+        }
       } catch {
         setAnimales([]);
         setRefugios([]);
@@ -228,6 +238,40 @@ const Animales = () => {
 
         {/* Contenedor galería y paginación */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+          {/* Indicador de filtro de refugio activo */}
+          {filtros.refugio && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+              {/* LOG: filtro de refugio y nombre */}
+              {console.log('Animales.tsx - filtro refugio:', filtros.refugio, 'nombre:', refugioNombre)}
+              <span style={{
+                background: '#e0f7fa',
+                color: '#00796b',
+                borderRadius: '16px',
+                padding: '4px 12px',
+                fontWeight: 500,
+                fontSize: '1rem',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.08)'
+              }}>
+                Refugio: {
+                  refugioNombre
+                    ? refugioNombre
+                    : (refugios.find(r => String(r.id_refugio) === String(filtros.refugio))?.nombre || (filtros.refugio ? 'Refugio seleccionado' : ''))
+                }
+              </span>
+              <button
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#00796b',
+                  fontSize: '1.2rem',
+                  cursor: 'pointer',
+                  marginLeft: 4
+                }}
+                title="Quitar filtro de refugio"
+                onClick={() => { setFiltros(f => ({ ...f, refugio: '' })); setRefugioNombre(''); }}
+              >×</button>
+            </div>
+          )}
           {/* Paginación arriba */}
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
             <Pagination paginaActual={pagina} totalPaginas={totalPaginas} onPageChange={setPagina} />

@@ -42,27 +42,34 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
           <nav className="center-nav">
             <ul className="nav-menu">
               <li className="nav-item">
+              <Link to="/refugios" className="nav-link" onClick={closeMenu}>
+                <span className="nav-icon"></span>
+                Refugios
+              </Link>
+              </li>
+              <li className="nav-item">
+                
                 <Link to="/animales" className="nav-link" onClick={closeMenu}>
                   <span className="nav-icon"></span>
                   <span className="nav-text">Animales</span>
                 </Link>
               </li>
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <a href="#hogar-temporal" className="nav-link" onClick={closeMenu}>
                   <span className="nav-icon"></span>
                   <span className="nav-text">Hogar Temporal</span>
                 </a>
+              </li> */}
+              <li className="nav-item">
+              <Link to="/mis-solicitudes-adopcion" className="nav-link" onClick={closeMenu}>
+                <span className="nav-icon"></span>
+                Mis Solicitudes de Adopción
+              </Link>
               </li>
               <li className="nav-item">
                 <a href="#eventos" className="nav-link" onClick={closeMenu}>
                   <span className="nav-icon"></span>
                   <span className="nav-text">Eventos</span>
-                </a>
-              </li>
-              <li className="nav-item">
-                <a href="#donar" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon"></span>
-                  <span className="nav-text">Donar</span>
                 </a>
               </li>
             </ul>
@@ -125,36 +132,24 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
                 Mis Solicitudes de Adopción
               </Link>
             </li>
-            <li className="side-menu-item">
+            {/* <li className="side-menu-item">
               <Link to="/mis-adopciones" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon"></span>
                 Mis Mascotas
               </Link>
-            </li>
-            <li className="side-menu-item">
-              <Link to="/eventos" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon"></span>
-                Eventos
-              </Link>
-            </li>
-            <li className="side-menu-item">
-              <Link to="/donar" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon"></span>
-                Hacer Donación
-              </Link>
-            </li>
-            <li className="side-menu-item">
+            </li> */}
+            {/* <li className="side-menu-item">
               <Link to="/mis-donaciones" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon"></span>
                 Mis Donaciones
               </Link>
-            </li>
-            <li className="side-menu-item">
+            </li> */}
+            {/* <li className="side-menu-item">
               <Link to="/mis-voluntariados" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon"></span>
                 Mis Voluntariados
               </Link>
-            </li>
+            </li> */}
             {/* Sección pública */}
             <hr className="side-menu-separator" style={{ borderColor: '#2ecc40', borderWidth: 2 }} />
 
@@ -173,12 +168,12 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
                 Animales
               </Link>
             </li>
-            <li className="side-menu-item">
+            {/* <li className="side-menu-item">
               <Link to="/hogares-temporales" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon"></span>
                 Hogares Temporales
               </Link>
-            </li>
+            </li> */}
             <li className="side-menu-item">
               <Link to="/eventos" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon"></span>

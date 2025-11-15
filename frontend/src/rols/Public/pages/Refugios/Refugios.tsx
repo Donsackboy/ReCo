@@ -59,47 +59,48 @@ const Refugios: React.FC = () => {
   const regiones = [{ nombre: 'Todas', value: '' }, ...regionesChile.map((r: string) => ({ nombre: r, value: r }))];
 
   // Relacionar animales con refugios y mapear id_refugio a id
-  const refugiosConAnimales = refugios.map(refugio => ({
-    ...refugio,
-    id: refugio.id_refugio, // mapeo para compatibilidad con RefugiosCard
-    animales: animales.filter(a => {
-      // Si a.refugio es objeto, compara su id
-      if (a.refugio && typeof a.refugio === 'object') {
-        // Puede ser { id: number } o { id_refugio: number }
-        if (typeof a.refugio.id === 'number') {
-          return a.refugio.id === refugio.id_refugio;
+  const refugiosConAnimales = refugios.map(refugio => {
+    const id_refugio = refugio.id_refugio !== undefined ? refugio.id_refugio : refugio.id;
+    // Forzar que el objeto tenga id_refugio y log completo
+    const refugioObj = {
+      ...refugio,
+      id_refugio,
+      animales: animales.filter(a => {
+        let animalRefugioId = null;
+        if (a.refugio && typeof a.refugio === 'object') {
+          if (typeof a.refugio.id_refugio !== 'undefined') animalRefugioId = a.refugio.id_refugio;
+          else if (typeof a.refugio.id !== 'undefined') animalRefugioId = a.refugio.id;
+        } else if (typeof a.refugio !== 'undefined') {
+          animalRefugioId = a.refugio;
         }
-        if (typeof a.refugio.id_refugio === 'number') {
-          return a.refugio.id_refugio === refugio.id_refugio;
+        // Log para depuración
+        console.log('Filtrado animal:', {
+          animalId: a.id_animal,
+          animalRefugioId,
+          refugioId: refugio.id_refugio,
+          coincide: String(animalRefugioId) === String(refugio.id_refugio)
+        });
+        return String(animalRefugioId) === String(refugio.id_refugio);
+      }).map(animal => {
+        let imagen = '';
+        if (animal.imagenes && animal.imagenes.length > 0) {
+          imagen = animal.imagenes[0];
+        } else if (animal.fotos && animal.fotos.length > 0) {
+          imagen = animal.fotos[0];
         }
-      }
-      // Si a.refugio es número
-      if (typeof a.refugio === 'number') {
-        return a.refugio === refugio.id_refugio;
-      }
-      // Si a.refugio es string (por si acaso)
-      if (typeof a.refugio === 'string') {
-        return String(refugio.id_refugio) === a.refugio;
-      }
-      return false;
-    }).map(animal => {
-      let imagen = '';
-      if (animal.imagenes && animal.imagenes.length > 0) {
-        imagen = animal.imagenes[0];
-      } else if (animal.fotos && animal.fotos.length > 0) {
-        imagen = animal.fotos[0];
-      }
-      // Si la imagen es base64, asegúrate que empiece con 'data:image/'
-      if (imagen && imagen.startsWith('/9j/')) {
-        imagen = 'data:image/jpeg;base64,' + imagen;
-      }
-      return {
-        ...animal,
-        imagen,
-      };
-    })
-  }));
-
+        // Si la imagen es base64, asegúrate que empiece con 'data:image/'
+        if (imagen && imagen.startsWith('/9j/')) {
+          imagen = 'data:image/jpeg;base64,' + imagen;
+        }
+        return {
+          ...animal,
+          imagen,
+        };
+      })
+    };
+    console.log('Refugios.tsx - refugio enviado a Card:', refugioObj);
+    return refugioObj;
+  });
   const refugiosFiltrados = refugiosConAnimales.filter(refugio => {
   const coincideNombre = refugio.nombre?.toLowerCase().includes(search.toLowerCase());
   // Normalizar para comparar región ignorando mayúsculas/minúsculas y espacios

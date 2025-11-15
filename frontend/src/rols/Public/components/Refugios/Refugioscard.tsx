@@ -10,7 +10,7 @@ interface Animal {
 
 interface RefugioCardProps {
   refugio: {
-    id: number;
+    id_refugio: number;
     nombre: string;
     region: string;
     logo: string;
@@ -26,15 +26,16 @@ const RefugiosCard: React.FC<RefugioCardProps> = ({ refugio }) => {
   const [visibleCount, setVisibleCount] = useState(4);
   useEffect(() => {
     function handleResize() {
-      // Calcula cuántas imágenes caben en el ancho de la tarjeta
       const card = document.querySelector('.refugio-card');
       if (card) {
         const cardWidth = card.clientWidth;
-  const infoWidth = 320; // ancho info refugio + margen derecho actualizado (0px)
-  const animalWidth = 160 + 50; // imagen + gap reducido
-  const verMasWidth = 180; // espacio para el botón 'Ver más' (min-width)
-  const maxCount = Math.floor((cardWidth - infoWidth - verMasWidth) / animalWidth);
-  setVisibleCount(Math.max(1, maxCount));
+        const infoWidth = 320;
+        const animalWidth = 180 + 18; // ancho real imagen + gap
+        const verMasWidth = 120; // espacio mínimo para el botón
+        // Calcula cuántos animales caben en la fila
+        const availableWidth = Math.max(0, cardWidth - infoWidth - verMasWidth);
+        const maxCount = Math.floor(availableWidth / animalWidth);
+        setVisibleCount(maxCount > 0 ? maxCount : 1);
       } else {
         setVisibleCount(4);
       }
@@ -43,6 +44,7 @@ const RefugiosCard: React.FC<RefugioCardProps> = ({ refugio }) => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+  console.log('RefugiosCard render - id_refugio:', refugio.id_refugio, 'nombre:', refugio.nombre);
   return (
     <div className="refugio-card" style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: 32, padding: 24, background: '#fff', borderRadius: 20, boxShadow: '0 4px 18px #43ea6b22', marginBottom: 24, flexWrap: 'wrap' }}>
       <div className="refugio-info" style={{ minWidth: 220, maxWidth: 320, flex: '0 0 220px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', gap: 8 }}>
@@ -53,7 +55,7 @@ const RefugiosCard: React.FC<RefugioCardProps> = ({ refugio }) => {
           onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = '/Images/animales/placeholder.png'; }}
         />
         <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#145214', fontWeight: 700, textAlign: 'center' }}>{refugio.nombre}</h3>
-        <Link to={`/refugio/${refugio.id}`} style={{ color: '#43ea6b', fontWeight: 600, fontSize: '1rem', textDecoration: 'none', margin: '4px 0' }}>Ver refugio</Link>
+        <Link to={`/refugio/${refugio.id_refugio}`} style={{ color: '#43ea6b', fontWeight: 600, fontSize: '1rem', textDecoration: 'none', margin: '4px 0' }}>Ver refugio</Link>
         {refugio.region && <div style={{ color: '#228B22', fontSize: '1rem', marginBottom: '8px', textAlign: 'center' }}>{refugio.region}</div>}
       </div>
       <div className="refugio-animales-horizontal" style={{ display: 'flex', flexDirection: 'row', gap: 18, flexWrap: 'wrap', alignItems: 'flex-start', flex: 1 }}>
@@ -71,7 +73,7 @@ const RefugiosCard: React.FC<RefugioCardProps> = ({ refugio }) => {
         {refugio.animales.length > visibleCount && (
           <div style={{ display: 'flex', alignItems: 'center', height: '150px' }}>
             <Link
-              to={{ pathname: '/animales', search: `?refugio=${encodeURIComponent(refugio.id)}` }}
+              to={`/animales?refugio=${encodeURIComponent(refugio.id_refugio)}`}
               style={{ marginLeft: '16px', color: '#43ea6b', fontWeight: 600, fontSize: '1.1rem', textDecoration: 'none', whiteSpace: 'nowrap', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minWidth: '100px', height: 'fit-content' }}
             >
               <span>Ver más ...</span>
