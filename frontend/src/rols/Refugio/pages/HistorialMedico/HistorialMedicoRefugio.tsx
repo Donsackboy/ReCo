@@ -2,7 +2,7 @@ import { useLocation } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import './HistorialMedicoRefugio.css';
 // @ts-ignore
-import { getAnimales, getFichaMedica, getVacunas, getCirugias, getTratamientos } from '../../api/ApiRefugio';
+import { getAnimales, getFichaMedica, getVacunas, getCirugias, getTratamientos } from '../../Api/ApiRefugio';
 // @ts-ignore
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';

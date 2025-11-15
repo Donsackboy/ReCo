@@ -8,7 +8,7 @@ export async function deleteVacuna(token: string, animalId: number, vacunaId: nu
 	if (!response.ok) throw new Error('Error al eliminar vacuna');
 	return true;
 }
-import { API_BASE } from '../../../api/apiBase.js';
+import { API_BASE } from '../../../Api/apiBase.js';
 
 export type AnimalData = Record<string, any>;
 export type CirugiaData = Record<string, any>;

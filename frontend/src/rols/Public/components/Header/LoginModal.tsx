@@ -23,6 +23,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +43,8 @@ const LoginModal: React.FC<LoginModalProps> = ({
         const data = await response.json();
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
+        // Notificar al resto de la app que el usuario cambió (login/logout)
+        try { window.dispatchEvent(new Event('userChanged')); } catch {}
         alert("¡Login exitoso!");
 
         // Redireccionar dependiendo de autoridad de usuario
@@ -50,7 +53,9 @@ const LoginModal: React.FC<LoginModalProps> = ({
         console.log("[DEBUG] tipo_usuario:", user?.tipo_usuario);
         if (user?.tipo_usuario === "admin") {
           console.log("[DEBUG] Redirigiendo a /admin");
-          navigate("/admin");
+          // Cerrar el modal antes de navegar para que el header/admin dashboard quede visible
+          onClose();
+          navigate("/admin", { replace: true });
         } else {
           console.log("[DEBUG] No es admin, recargando página normal");
           onClose();

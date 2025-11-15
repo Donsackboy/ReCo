@@ -1,4 +1,4 @@
-import { API_BASE } from '../../../api/apiBase.js';
+import { API_BASE } from '../../../Api/apiBase.js';
 
 // Obtener todos los usuarios (solo admin)
 export async function getUsuarios(token) {

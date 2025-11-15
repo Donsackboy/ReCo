@@ -4,6 +4,7 @@ import InscritosEvento from './rols/Refugio/pages/InscritosEvento';
 import Necesidades from './rols/Refugio/pages/Necesidades/NecesidadesRefugio';
 // Enrutador principal para las páginas
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React from 'react';
 import HeaderPublic from './rols/Public/components/Header/HeaderPublic';
 import HeaderUsuario from './rols/Usuario/components/Header/HeaderUsuario';
 import HeaderAdmin from './rols/Admin/components/Header/HeaderAdmin';
@@ -31,6 +32,7 @@ import VoluntariadoPage from './rols/Public/pages/Voluntariado/Voluntariado.tsx'
 import AdopcionForm from './rols/Public/pages/Animales/AdopcionForm.tsx';
 import DonarVacuna from './rols/Public/pages/Animales/DonarVacuna.tsx';
 import DonarMonetaria from './rols/Public/pages/Donaciones/DonarMonetaria.tsx';
+import DonarTransferencia from './rols/Public/pages/Donaciones/DonarTransferencia.tsx';
 import DonarInsumo from './rols/Public/pages/Donaciones/DonarInsumo.tsx';
 import DonarServicio from './rols/Public/pages/Donaciones/DonarServicio.tsx';
 import RefugioPerfil from './rols/Public/pages/Refugios/RefugioPerfil.tsx';
@@ -53,13 +55,26 @@ import ConfiguracionRefugio from './rols/Refugio/pages/Configuracion';
 
 function AppRouterContent() {
   // Intent: elegir el header según el tipo de usuario guardado en localStorage
-  const user = (() => {
+  const [user, setUser] = React.useState(() => {
     try {
       return JSON.parse(localStorage.getItem('user') || 'null');
     } catch {
       return null;
     }
-  })();
+  });
+
+  // Escuchar cambios al usuario (p.ej. login/logout) para re-renderizar header
+  React.useEffect(() => {
+    const handler = () => {
+      try {
+        setUser(JSON.parse(localStorage.getItem('user') || 'null'));
+      } catch {
+        setUser(null);
+      }
+    };
+    window.addEventListener('userChanged', handler);
+    return () => window.removeEventListener('userChanged', handler);
+  }, []);
 
   const isAdmin = user && user.tipo_usuario === 'admin';
   const isUsuario = user && user.tipo_usuario === 'default';
@@ -103,6 +118,7 @@ function AppRouterContent() {
           <Route path="/adopcion" element={<AdopcionForm />} />
           <Route path="/donar-vacuna" element={<DonarVacuna />} />
           <Route path="/donar-monetaria" element={<DonarMonetaria />} />
+          <Route path="/donar-monetaria/transferencia" element={<DonarTransferencia />} />
           <Route path="/donar-insumo" element={<DonarInsumo />} />
           <Route path="/donar-servicio" element={<DonarServicio />} />
 

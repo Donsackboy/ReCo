@@ -3,7 +3,7 @@ import './GestionarUsuarios.css';
 // @ts-ignore: Dynamic import to avoid TS module error
 let getUsuarios: any, updateUsuario: any, deleteUsuario: any;
 
-import('../../api/ApiAdmin.js').then(api => {
+import('../../Api/ApiAdmin.js').then(api => {
   getUsuarios = api.getUsuarios;
   updateUsuario = api.updateUsuario;
   deleteUsuario = api.deleteUsuario;

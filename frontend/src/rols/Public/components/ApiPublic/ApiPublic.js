@@ -1,4 +1,4 @@
-import { API_BASE } from '../../../../api/apiBase.js';
+import { API_BASE } from '../../../../Api/apiBase.js';
 
 // Obtener 5 animales random con foto principal (público)
 export async function getAnimalesCarousel() {
