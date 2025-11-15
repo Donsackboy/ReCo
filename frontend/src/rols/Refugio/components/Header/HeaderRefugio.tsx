@@ -71,7 +71,7 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
                   <span className="nav-text">Historial Médico</span>
                 </Link>
               </li>
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <Link to="/refugio/mis-eventos" className="nav-link" onClick={closeMenu}>
                   <span className="nav-icon"></span>
                   <span className="nav-text">Mis Eventos</span>
@@ -82,7 +82,7 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
                   <span className="nav-icon"></span>
                   <span className="nav-text">Donaciones</span>
                 </Link>
-              </li>
+              </li> */}
             </ul>
             <button className="user-profile" onClick={() => navigate('/refugio/configuracion')}>
               <span className="user-icon">🏠</span>
@@ -134,7 +134,7 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
                 Historial Médico
               </Link>
             </li>
-            <li className="side-menu-item">
+            {/* <li className="side-menu-item">
               <Link to="/refugio/mis-eventos" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon"></span>
                 Mis Eventos
@@ -157,7 +157,7 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
                 <span className="side-menu-icon"></span>
                 Necesidades
               </Link>
-            </li>
+            </li> */}
             {/* Sección pública */}
             <hr className="side-menu-separator" style={{ borderColor: '#2ecc40', borderWidth: 2 }} />
 

@@ -177,7 +177,7 @@ const GestionAdopciones: React.FC = () => {
                   <div className="animal-nombre">🐾 {solicitud.animal_nombre}</div>
                   <div><strong>Solicitante:</strong> {solicitud.nombre}</div>
                   <div><strong>Fecha:</strong> {new Date(solicitud.fecha_solicitud).toLocaleString()}</div>
-                  <button className="boton-ver" onClick={() => handleVerDetalle(solicitud)}>Ver detalles</button>
+                  <button className="boton-ver" style={{ fontSize: '0.92rem', padding: '6px 14px', alignSelf: 'flex-start', marginTop: '8px', marginLeft: '0' }} onClick={() => handleVerDetalle(solicitud)}>Ver detalles</button>
                 </div>
               </div>
             ))}
@@ -206,7 +206,7 @@ const GestionAdopciones: React.FC = () => {
                   <div className="animal-nombre">🐾 {solicitud.animal_nombre}</div>
                   <div><strong>Solicitante:</strong> {solicitud.nombre}</div>
                   <div><strong>Fecha:</strong> {new Date(solicitud.fecha_solicitud).toLocaleString()}</div>
-                  <button className="boton-ver" onClick={() => handleVerDetalle(solicitud)}>Ver detalles</button>
+                  <button className="boton-ver" style={{ fontSize: '0.92rem', padding: '6px 14px', alignSelf: 'flex-start', marginTop: '8px', marginLeft: '0' }} onClick={() => handleVerDetalle(solicitud)}>Ver detalles</button>
                 </div>
               </div>
           ))}
