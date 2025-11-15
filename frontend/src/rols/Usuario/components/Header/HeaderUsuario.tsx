@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Logo from '../../../Public/components/Header/shared/Logo';
 
 interface HeaderUsuarioProps {
   onNavigateHome?: () => void;
@@ -28,34 +27,51 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
       <nav className="navbar">
         <div className="nav-container">
           {/* Logo a la izquierda */}
-          <Logo onClick={onNavigateHome} className="nav-logo" />
+              <div className="nav-logo" onClick={onNavigateHome}>
+                <a href="/" className="logo-link">
+                  <div className="logo-container">
+                    <img src="/Images/reco-logo.png" alt="ReCo Logo" className="logo-image" />
+                    <div className="logo-text-container">
+                      <div className="logo-text-styled">ReCo</div>
+                      <div className="logo-subtitle">REFUGIO CONECTADO</div>
+                    </div>
+                  </div>
+                </a>
+              </div>
           {/* Navegación central - Usuario NORMAL */}
           <nav className="center-nav">
             <ul className="nav-menu">
               <li className="nav-item">
+              <Link to="/refugios" className="nav-link" onClick={closeMenu}>
+                <span className="nav-icon"></span>
+                Refugios
+              </Link>
+              </li>
+              <li className="nav-item">
+                
                 <Link to="/animales" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">🐶</span>
+                  <span className="nav-icon"></span>
                   <span className="nav-text">Animales</span>
                 </Link>
               </li>
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <a href="#hogar-temporal" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">🏠</span>
+                  <span className="nav-icon"></span>
                   <span className="nav-text">Hogar Temporal</span>
                 </a>
-              </li>
+              </li> */}
               <li className="nav-item">
+              <Link to="/mis-solicitudes-adopcion" className="nav-link" onClick={closeMenu}>
+                <span className="nav-icon"></span>
+                Mis Solicitudes de Adopción
+              </Link>
+              </li>
+              {/* <li className="nav-item">
                 <a href="#eventos" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">🎪</span>
+                  <span className="nav-icon"></span>
                   <span className="nav-text">Eventos</span>
                 </a>
-              </li>
-              <li className="nav-item">
-                <a href="#donar" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">💝</span>
-                  <span className="nav-text">Donar</span>
-                </a>
-              </li>
+              </li> */}
             </ul>
           </nav>
           {/* Perfil de usuario y menú */}
@@ -63,10 +79,25 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
             <div className="auth-buttons desktop-auth">
               <div className="user-profile">
                 <span className="user-icon">👤</span>
-                <span className="user-name">{userName}</span>
+                <Link to="/mi-perfil" style={{ textDecoration: 'none' }}>
+                  <button
+                    className="user-name-btn"
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#2ecc40', // verde
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      fontSize: '1em',
+                      padding: 0
+                    }}
+                  >
+                    {userName}
+                  </button>
+                </Link>
               </div>
               <button onClick={onLogout} className="btn-logout">
-                <span className="auth-icon">🚪</span>
+                <span className="auth-icon"></span>
                 <span className="auth-text">Cerrar Sesión</span>
               </button>
             </div>
@@ -83,10 +114,10 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
         <div className={`side-menu ${isMenuOpen ? 'side-menu-open' : ''}`}>
           <div className="side-menu-header">
             <div className="side-menu-logo">
-              <Logo className="side-logo" />
               <div className="user-info">
+                <img src="/Images/reco-logo.png" alt="ReCo" className="side-logo" />
                 <span className="side-logo-text">👤 {userName}</span>
-                <span className="user-role">Usuario</span>
+
               </div>
             </div>
             <button className="close-btn" onClick={closeMenu}>
@@ -94,61 +125,67 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
             </button>
           </div>
           <ul className="side-menu-items">
-            <li className="side-menu-item">
-              <Link to="/animales" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">🐶</span>
-                Animales
-              </Link>
-            </li>
+            {/* Botones principales de usuario */}
             <li className="side-menu-item">
               <Link to="/mis-solicitudes-adopcion" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">📋</span>
+                <span className="side-menu-icon"></span>
                 Mis Solicitudes de Adopción
               </Link>
             </li>
-            <li className="side-menu-item">
+            {/* <li className="side-menu-item">
               <Link to="/mis-adopciones" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">�🐾</span>
+                <span className="side-menu-icon"></span>
                 Mis Mascotas
               </Link>
-            </li>
-            <li className="side-menu-item">
-              <Link to="/eventos" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">🎪</span>
-                Eventos
-              </Link>
-            </li>
-            <li className="side-menu-item">
-              <Link to="/donar" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">💝</span>
-                Hacer Donación
-              </Link>
-            </li>
-            <li className="side-menu-item">
+            </li> */}
+            {/* <li className="side-menu-item">
               <Link to="/mis-donaciones" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">💰</span>
+                <span className="side-menu-icon"></span>
                 Mis Donaciones
               </Link>
-            </li>
-            <li className="side-menu-item">
+            </li> */}
+            {/* <li className="side-menu-item">
               <Link to="/mis-voluntariados" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">🤝</span>
+                <span className="side-menu-icon"></span>
                 Mis Voluntariados
               </Link>
+            </li> */}
+            {/* Sección pública */}
+            <hr className="side-menu-separator" style={{ borderColor: '#2ecc40', borderWidth: 2 }} />
+
+            <li className="side-menu-category">
+              <span className="category-title">🌐 ACCESO PÚBLICO</span>
             </li>
-            {/* Separador */}
+            <li className="side-menu-item">
+              <Link to="/refugios" className="side-menu-link" onClick={closeMenu}>
+                <span className="side-menu-icon"></span>
+                Refugios
+              </Link>
+            </li>
+            <li className="side-menu-item">
+              <Link to="/animales" className="side-menu-link" onClick={closeMenu}>
+                <span className="side-menu-icon"></span>
+                Animales
+              </Link>
+            </li>
+            {/* <li className="side-menu-item">
+              <Link to="/hogares-temporales" className="side-menu-link" onClick={closeMenu}>
+                <span className="side-menu-icon"></span>
+                Hogares Temporales
+              </Link>
+            </li> */}
+            {/* <li className="side-menu-item">
+              <Link to="/eventos" className="side-menu-link" onClick={closeMenu}>
+                <span className="side-menu-icon"></span>
+                Eventos
+              </Link>
+            </li> */}
             <hr className="side-menu-separator" />
             {/* Configuración y salir */}
             <li className="side-menu-item">
               <Link to="/mi-perfil" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">⚙️</span>
+                <span className="side-menu-icon">👤</span>
                 Mi Perfil
-              </Link>
-            </li>
-            <li className="side-menu-item">
-              <Link to="/configuracion" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">🔧</span>
-                Configuración
               </Link>
             </li>
             <li className="side-menu-item">

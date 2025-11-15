@@ -128,12 +128,14 @@ Recomendaciones:
 
 /* Logo del refugio */
 .refugio-info img {
-  width: 85px;
-  height: 85px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
-  background-color: #eaffea;
-  box-shadow: 0 2px 6px #0001;
-  padding: 4px;
+  background: linear-gradient(135deg, #eaffea 60%, #b2f7ef 100%);
+  box-shadow: 0 4px 18px #43ea6b44, 0 1.5px 8px #2193b022;
+  padding: 6px;
+  border: 3px solid #43ea6b;
+  transition: box-shadow 0.2s, border 0.2s;
 }
 
 /* Nombre del refugio */
@@ -177,12 +179,18 @@ Recomendaciones:
 
 /* Imagen del animal */
 .refugio-animal img {
-  width: 130px;
-  height: 130px;
+  width: 140px;
+  height: 140px;
   object-fit: cover;
-  border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(0, 100, 0, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 22px;
+  box-shadow:
+    0 4px 18px #43ea6b33,
+    0 1.5px 8px #2193b022,
+    0 0 0 4px #fff,
+    0 0 0 8px #eaffea;
+  border: 2.5px solid #43ea6b;
+  transition: transform 0.2s, box-shadow 0.2s;
+  background: linear-gradient(135deg, #fff 60%, #eaffea 100%);
 }
 
 /* Efecto hover en la imagen del animal */

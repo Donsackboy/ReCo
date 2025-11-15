@@ -1,9 +1,14 @@
+from .views import UploadImageView
 from django.urls import path
 from . import views
-from django.urls import path
-from . import views
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'animales/(?P<animal_id>[^/.]+)/vacunas', views.VacunaViewSet, basename='vacuna-animal')
 
 urlpatterns = [
+    path('upload-image/', UploadImageView.as_view(), name='upload-image'),
+    path('fichamedica/<int:animal_id>/', views.FichaMedicaRetrieveUpdateView.as_view(), name='ficha_medica_retrieve_update'),
     path('refugio/historial-solicitudes-adopcion/', views.historial_solicitudes_adopcion_refugio, name='historial_solicitudes_adopcion_refugio'),
     path('refugio/solicitud-adopcion/<int:pk>/', views.actualizar_solicitud_adopcion, name='actualizar_solicitud_adopcion'),
     path('auth/login/', views.login, name='login'),
@@ -16,7 +21,6 @@ urlpatterns = [
     path('admin/refugios/<int:pk>/', views.RefugioDetailView.as_view(), name='admin_refugio_detail'),
     path('animales/', views.AnimalListCreateView.as_view(), name='animal_list_create'),
     path('animales/<int:pk>/', views.AnimalDetailView.as_view(), name='animal_detail'),
-    path('animales/<int:animal_id>/historial-medico/', views.HistorialMedicoAnimalListView.as_view(), name='animal_historial_medico'),
     path('public/postulacion-refugio/', views.PostulacionRefugioListCreateView.as_view(), name='public_postulacion_refugio'),
     path('public/postulacion-refugio/<int:pk>/', views.PostulacionRefugioUpdateView.as_view(), name='public_postulacion_refugio_update'),
     path('public/refugios/', views.RefugioPublicListView.as_view(), name='public_refugios_list'),
@@ -34,4 +38,9 @@ urlpatterns = [
     path('adopciones/', views.SolicitudAdopcionListCreateView.as_view(), name='solicitud_adopcion_list_create'),
     path('animales/<int:animal_id>/alergias-condiciones/', views.AlergiaCondicionListCreateView.as_view(), name='alergia_condicion_list_create'),
     path('refugio/me', views.refugio_me, name='refugio_me'),
+        path('animales/<int:animal_id>/ficha-medica/', views.FichaMedicaListCreateView.as_view(), name='ficha_medica_list_create'),
+    path('necesidades-refugio/', views.NecesidadRefugioListCreateView.as_view(), name='necesidad_refugio_list_create'),
+    path('necesidades-refugio/<int:pk>/', views.NecesidadRefugioDetailView.as_view(), name='necesidad_refugio_detail'),
 ]
+
+urlpatterns += router.urls

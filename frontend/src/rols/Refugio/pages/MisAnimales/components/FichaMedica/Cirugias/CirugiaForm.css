@@ -1,0 +1,67 @@
+.cirugia-form-card {
+  background: #f8fbff;
+  border: 1.5px solid #d0e6fa;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
+  padding: 28px 24px;
+  max-width: 480px;
+  margin: 0 auto 18px auto;
+  transition: box-shadow 0.2s;
+}
+.cirugia-form-card:hover {
+  box-shadow: 0 4px 18px rgba(25, 118, 210, 0.13);
+}
+.cirugia-form label {
+  font-weight: 500;
+  color: #1976d2;
+  margin-bottom: 4px;
+  font-size: 1.04em;
+}
+.cirugia-form .form-input {
+  border: 1px solid #b3d1f7;
+  border-radius: 7px;
+  padding: 5px 7px;
+  font-size: 1em;
+  margin-top: 0px;
+  background: #f4faff;
+  color: #1565c0;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.cirugia-form .form-input:focus {
+  border-color: #1976d2;
+  background: #e3f2fd;
+}
+.cirugia-form textarea.form-input {
+  min-height: 17px;
+  resize: vertical;
+}
+.cirugia-form .form-boton-btn {
+  background: linear-gradient(90deg, #1976d2 60%, #64b5f6 100%);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 18px;
+  font-weight: 600;
+  font-size: 1em;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(25, 118, 210, 0.08);
+  transition: background 0.2s;
+}
+.cirugia-form .form-boton-btn:disabled {
+  background: #b3d1f7;
+  color: #fff;
+  cursor: not-allowed;
+}
+.cirugia-form .cancelar-btn {
+  background: #e3f2fd;
+  color: #1976d2;
+  border: 1px solid #b3d1f7;
+}
+.cirugia-form .cancelar-btn:hover {
+  background: #bbdefb;
+}
+.cirugia-form-card span {
+  color: #1976d2;
+  font-size: 0.98em;
+}

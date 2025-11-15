@@ -1,0 +1,172 @@
+@media (max-width: 700px) {
+  .historial-container {
+    max-width: 99vw;
+    margin: 1rem auto;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    padding: 0.5rem;
+  }
+  .fichas-column {
+    gap: 1.2rem;
+    padding: 0;
+  }
+  .ficha-tarjeta {
+    max-width: 99vw;
+    width: 99vw;
+    padding: 1rem 0.5rem;
+    margin: 0 auto 1rem auto;
+    border-radius: 7px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 0.98rem;
+  }
+  .ficha-tarjeta h3 {
+    font-size: 1.15rem;
+    margin-bottom: 0.7rem;
+  }
+  .ficha-tarjeta img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 0.7rem;
+    margin-top: 0.7rem;
+    align-self: center;
+  }
+  .ficha-tarjeta button {
+    width: 100%;
+    margin: 0.5rem 0 0 0;
+    font-size: 1rem;
+    padding: 0.5rem 0.8rem;
+  }
+  .historial-header {
+    font-size: 1.3rem;
+    padding: 0.5rem 0;
+    text-align: center;
+  }
+  .loading-message, .error-message {
+    font-size: 1rem;
+    padding: 0.3rem 0;
+  }
+  .historial-container > div {
+    padding: 0.2rem 0;
+  }
+  .historial-container h2 {
+    font-size: 1.08rem;
+    margin-bottom: 0.7rem;
+  }
+  .historial-container input,
+  .historial-container select {
+    font-size: 0.98rem;
+    padding: 0.4rem;
+    margin-bottom: 0.4rem;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+  .historial-container label {
+    font-size: 0.98rem;
+    margin-bottom: 0.2rem;
+  }
+  .historial-container button {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+/* Estilos para HistorialMedicoRefugio */
+
+.historial-container {
+  max-width: 700px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  /* Tarjetas en columna para fichas médicas */
+  .fichas-column {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .ficha-tarjeta {
+    max-width: 500px;
+    width: 100%;
+    background: #f7fbfc;
+    border: 1px solid #b2d7ef;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 2rem 1.5rem;
+    margin: 0 auto;
+  }
+
+  .ficha-tarjeta h3 {
+    color: #2980b9;
+    margin-bottom: 1rem;
+  }
+
+  .ficha-tarjeta ul {
+    margin-bottom: 1.5rem;
+  }
+
+  .ficha-tarjeta li {
+    margin-bottom: 0.5rem;
+  }
+
+  .ficha-tarjeta button {
+    padding: 0.5rem 1.2rem;
+    margin-right: 1rem;
+    background: #2980b9;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+  }
+
+  .ficha-tarjeta button:hover {
+    background: #145a8a;
+  }
+.selected-animal h2 {
+  color: #2980b9;
+  margin-bottom: 1rem;
+}
+
+.selected-animal ul {
+  margin-bottom: 1.5rem;
+}
+
+.selected-animal li {
+  margin-bottom: 0.5rem;
+}
+
+.selected-animal button {
+  padding: 0.5rem 1.2rem;
+  margin-right: 1rem;
+  background: #2980b9;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.selected-animal button:hover {
+  background: #145a8a;
+}
+
+.error-message {
+  color: #c0392b;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.loading-message {
+  color: #7f8c8d;
+  text-align: center;
+  margin-bottom: 1rem;
+}

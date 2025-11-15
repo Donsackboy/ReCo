@@ -1,8 +1,136 @@
-
 # --- IMPORTS ---
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+
+# --- Modelo NecesidadRefugio ---
+class NecesidadRefugio(models.Model):
+    TIPO_CHOICES = [
+        ('alimento', 'Alimento'),
+        ('medicamento', 'Medicamento'),
+        ('servicio', 'Servicio'),
+        ('articulo', 'Artículo'),
+        ('otro', 'Otro'),
+    ]
+    PRIORIDAD_CHOICES = [
+        ('baja', 'Baja'),
+        ('media', 'Media'),
+        ('alta', 'Alta'),
+        ('urgente', 'Urgente'),
+    ]
+    ESTADO_CHOICES = [
+        ('activa', 'Activa'),
+        ('cumplida', 'Cumplida'),
+        ('cancelada', 'Cancelada'),
+    ]
+    id = models.AutoField(primary_key=True)
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
+    descripcion = models.TextField()
+    monto_necesario = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    monto_recaudado = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    prioridad = models.CharField(max_length=10, choices=PRIORIDAD_CHOICES, default='media')
+    estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='activa')
+    fecha_limite = models.DateField(blank=True, null=True)
+    imagen_url = models.URLField(blank=True, null=True)
+    refugio = models.ForeignKey('Refugio', on_delete=models.CASCADE, related_name='necesidades')
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.tipo} - {self.descripcion[:30]}..."
+
+# --- Modelo NecesidadRefugio ---
+class NecesidadRefugio(models.Model):
+    TIPO_CHOICES = [
+        ('alimento', 'Alimento'),
+        ('medicamento', 'Medicamento'),
+        ('servicio', 'Servicio'),
+        ('articulo', 'Artículo'),
+        ('otro', 'Otro'),
+    ]
+    PRIORIDAD_CHOICES = [
+        ('baja', 'Baja'),
+        ('media', 'Media'),
+        ('alta', 'Alta'),
+        ('urgente', 'Urgente'),
+    ]
+    ESTADO_CHOICES = [
+        ('activa', 'Activa'),
+        ('cumplida', 'Cumplida'),
+        ('cancelada', 'Cancelada'),
+    ]
+    id = models.AutoField(primary_key=True)
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
+    descripcion = models.TextField()
+    monto_necesario = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    monto_recaudado = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    prioridad = models.CharField(max_length=10, choices=PRIORIDAD_CHOICES, default='media')
+    estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='activa')
+    fecha_limite = models.DateField(blank=True, null=True)
+    imagen_url = models.URLField(blank=True, null=True)
+    refugio = models.ForeignKey('Refugio', on_delete=models.CASCADE, related_name='necesidades')
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.tipo} - {self.descripcion[:30]}..."
+
+# --- Modelo NecesidadRefugio ---
+class NecesidadRefugio(models.Model):
+    TIPO_CHOICES = [
+        ('alimento', 'Alimento'),
+        ('medicamento', 'Medicamento'),
+        ('servicio', 'Servicio'),
+        ('articulo', 'Artículo'),
+        ('otro', 'Otro'),
+    ]
+    PRIORIDAD_CHOICES = [
+        ('baja', 'Baja'),
+        ('media', 'Media'),
+        ('alta', 'Alta'),
+        ('urgente', 'Urgente'),
+    ]
+    ESTADO_CHOICES = [
+        ('activa', 'Activa'),
+        ('cumplida', 'Cumplida'),
+        ('cancelada', 'Cancelada'),
+    ]
+    id = models.AutoField(primary_key=True)
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
+    descripcion = models.TextField()
+    monto_necesario = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    monto_recaudado = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    prioridad = models.CharField(max_length=10, choices=PRIORIDAD_CHOICES, default='media')
+    estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='activa')
+    fecha_limite = models.DateField(blank=True, null=True)
+    imagen_url = models.URLField(blank=True, null=True)
+    refugio = models.ForeignKey('Refugio', on_delete=models.CASCADE, related_name='necesidades')
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.tipo} - {self.descripcion[:30]}..."
+# --- Modelo Ficha Médica ---
+class FichaMedica(models.Model):
+    id_ficha = models.AutoField(primary_key=True)
+    animal = models.OneToOneField('Animal', on_delete=models.CASCADE, related_name='ficha_medica')
+    estado_salud = models.CharField(max_length=30, choices=[
+        ('sano', 'Sano'),
+        ('en_tratamiento', 'En tratamiento'),
+        ('en_recuperacion', 'En recuperación'),
+        ('condicion_cronica', 'Condición crónica'),
+    ], default='sano')
+    peso_actual = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    fecha_ultimo_control = models.DateField(blank=True, null=True)
+    veterinario_responsable = models.CharField(max_length=100, blank=True, null=True)
+    clinica = models.CharField(max_length=100, blank=True, null=True)
+    recomendaciones = models.TextField(blank=True, null=True)
+    observaciones = models.TextField(blank=True, null=True, help_text="Notas adicionales del veterinario o del refugio")
+
+    def __str__(self):
+        return f'Ficha médica de {self.animal.nombre}'
+
+    class Meta:
+        db_table = 'ficha_medica'
+        verbose_name_plural = 'Fichas médicas'
+
 
 class Refugio(models.Model):
     id_refugio = models.AutoField(primary_key=True)
@@ -101,8 +229,8 @@ class SolicitudAdopcion(models.Model):
 class Animal(models.Model):
 
     class Meta:
-        db_table = 'alergia_condicion'
-        verbose_name_plural = 'Alergias y Condiciones Crónicas'
+        db_table = 'animales'
+        verbose_name_plural = 'Animales'
     class Estado(models.TextChoices):
         DISPONIBLE = "disponible", "Disponible"
         ADOPTADO = "adoptado", "Adoptado"
@@ -115,8 +243,7 @@ class Animal(models.Model):
 
     class Tamano(models.TextChoices):
         PEQUENO = "Pequeño", "Pequeño"
-        PEQUENO_GRANDE = "Pequeño-Grande", "Pequeño-Grande"
-        MEDIA = "Media", "Media"
+        PEQUENO_MEDIANO = "Pequeño-Mediano", "Pequeño-Mediano"
         MEDIANO = "Mediano", "Mediano"
         MEDIANO_GRANDE = "Mediano-Grande", "Mediano-Grande"
         GRANDE = "Grande", "Grande"
@@ -125,17 +252,32 @@ class Animal(models.Model):
     id_animal = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
     especie = models.CharField(max_length=50)
-    edad = models.IntegerField(blank=True, null=True)
+    TIPO_EDAD_CHOICES = [
+        ("anios", "Años"),
+        ("meses", "Meses"),
+    ]
+    tipo_edad = models.CharField(max_length=10, choices=TIPO_EDAD_CHOICES, default="anios")
+    edad = models.IntegerField(blank=True, null=True, help_text="Edad en años o meses según tipo_edad")
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.tipo_edad == "meses":
+            if self.edad is not None and (self.edad < 0 or self.edad > 11):
+                raise ValidationError({"edad": "Si el tipo de edad es 'meses', debe ser entre 0 y 11."})
+        elif self.tipo_edad == "anios":
+            if self.edad is not None and self.edad < 0:
+                raise ValidationError({"edad": "La edad en años debe ser un entero no negativo."})
     sexo = models.CharField(max_length=10, choices=Sexo.choices, blank=True, null=True)
     tamano = models.CharField(max_length=20, choices=Tamano.choices, blank=True, null=True)
     estado = models.CharField(max_length=30, choices=Estado.choices, default=Estado.DISPONIBLE)
     refugio = models.ForeignKey(Refugio, on_delete=models.CASCADE, db_column="id_refugio", related_name="animales")
     busca_hogar_temporal = models.BooleanField(default=False)
+    esterilizado = models.BooleanField(default=False)
+    desparasitado = models.BooleanField(default=False)
     motivo_hogar_temporal = models.TextField(blank=True, null=True, help_text="Descripción si busca hogar temporal")
-    vacunas = models.JSONField(default=list, blank=True, help_text="Lista de vacunas del animal")
     motivo_cambio_hogar_temporal = models.TextField(blank=True, null=True, help_text="Motivo por el que el animal necesita cambiar de hogar temporal")
     duracion_estimada_hogar = models.CharField(max_length=50, blank=True, null=True)
     fotos = models.JSONField(default=list, blank=True, help_text="Lista de hasta 3 URLs de fotos del animal")
+    descripcion = models.TextField(blank=True, null=True)
     fecha_ingreso = models.DateField(blank=True, null=True, help_text="Fecha de ingreso al refugio")
     fecha_cumpleanos = models.DateField(blank=True, null=True, help_text="Fecha de cumpleaños del animal (opcional)")
     UBICACION_CHOICES = [
@@ -146,6 +288,23 @@ class Animal(models.Model):
 
     def __str__(self):
         return f"{self.nombre} ({self.especie})"
+
+# Modelo Vacuna separado
+class Vacuna(models.Model):
+    id = models.AutoField(primary_key=True)
+    animal = models.ForeignKey('Animal', on_delete=models.CASCADE, related_name='vacunas')
+    nombre = models.CharField(max_length=100, help_text="Nombre de la vacuna", default="Sin nombre")
+    TIPO_CHOICES = [
+        ('unica', 'Única'),
+        ('refuerzo', 'Refuerzo'),
+    ]
+    tipo = models.CharField(max_length=10, choices=TIPO_CHOICES)
+    fecha_aplicacion = models.DateField()
+    fecha_refuerzo = models.DateField(blank=True, null=True, help_text="Fecha de refuerzo si aplica")
+    observaciones = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Vacuna {self.nombre} ({self.get_tipo_display()}) para {self.animal}" 
 
 
 # --- Modelo Cirugia ---
@@ -176,8 +335,6 @@ class Cirugia(models.Model):
     class Meta:
         db_table = 'cirugias'
         verbose_name_plural = 'Cirugías'
-    # --- Modelo Tratamiento ---
-    # ...existing code...
 
 # --- Modelo Tratamiento ---
 class Tratamiento(models.Model):
@@ -315,7 +472,10 @@ class AlergiaCondicion(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField(blank=True, null=True)
     fecha_diagnostico = models.DateField(blank=True, null=True)
+
+
 class HogaresTemporales(models.Model):
+    comuna = models.CharField(max_length=100, blank=True, null=True, help_text="Comuna del hogar temporal")
     ESTADO_OPCIONES = [
         ('en_proceso', 'En Proceso'),
         ('aprobado', 'Aprobado'),
@@ -332,7 +492,7 @@ class HogaresTemporales(models.Model):
 
     id_hogar = models.AutoField(primary_key=True)
     id_usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    id_animal = models.ForeignKey('Animal', on_delete=models.CASCADE)  # Asumiendo modelo Animal
+    id_animal = models.ForeignKey('Animal', on_delete=models.CASCADE, blank=True, null=True)  # Puede ser null para postulaciones generales
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
     estado = models.CharField(max_length=20, choices=ESTADO_OPCIONES, default='en_proceso')
@@ -433,34 +593,6 @@ class InscripcionesEventos(models.Model):
         db_table = 'inscripciones_eventos'
         verbose_name_plural = 'Inscripciones a Eventos'
 
-class HistorialMedico(models.Model):
-    TIPO_ATENCION_OPCIONES = [
-        ('vacuna', 'Vacuna'),
-        ('desparasitacion', 'Desparasitación'),
-        ('cirugia', 'Cirugía'),
-        ('consulta', 'Consulta'),
-        ('tratamiento', 'Tratamiento'),
-        ('otro', 'Otro'),
-    ]
-
-    id_historial = models.AutoField(primary_key=True)
-    id_animal = models.ForeignKey('Animal', on_delete=models.CASCADE)
-    tipo_atencion = models.CharField(max_length=20, choices=TIPO_ATENCION_OPCIONES)
-    descripcion = models.TextField()
-    veterinario = models.CharField(max_length=100)
-    clinica = models.CharField(max_length=150)
-    fecha = models.DateField()
-    proximo_control = models.DateField(blank=True, null=True)
-    costo = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    documentos_url = models.CharField(max_length=255, blank=True, null=True)
-    notas = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return f"Historial {self.id_historial} - {self.tipo_atencion}"
-
-    class Meta:
-        db_table = 'historial_medico'
-        verbose_name_plural = 'Historiales Médicos'
 
 class CatalogoServicios(models.Model):
     CATEGORIA_OPCIONES = [

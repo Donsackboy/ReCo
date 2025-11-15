@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
-import { getAnimales } from '../../../../api';
+import { getAnimales } from '../../api/ApiPublic.js';
 
 import { regionesChile, regionesComunasChile as comunasPorRegion } from '../../../../utils/regionesComunasChile';
 const regiones = regionesChile;

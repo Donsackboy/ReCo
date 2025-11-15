@@ -1,0 +1,1 @@
+export declare function updateFichaMedica(token: string, animalId: number | string, data: any): Promise<any>;

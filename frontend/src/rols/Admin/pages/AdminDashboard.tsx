@@ -4,6 +4,8 @@ import './AdminDashboard.css';
 
 const AdminDashboard: React.FC = () => {
   const [refugiosCount, setRefugiosCount] = useState(0);
+  const [refugiosSinVerificar, setRefugiosSinVerificar] = useState(0);
+  const [animalesCount, setAnimalesCount] = useState(0);
   const [donacionesSinVerificar, setDonacionesSinVerificar] = useState(0);
   const [reportesGenerados, setReportesGenerados] = useState(0);
 
@@ -14,13 +16,35 @@ const AdminDashboard: React.FC = () => {
       headers: { 'Authorization': `Token ${token}` }
     })
       .then(res => res.ok ? res.json() : [])
-      .then(data => setRefugiosCount(Array.isArray(data) ? data.length : (data?.results?.length || 0)));
+      .then(data => {
+        setRefugiosCount(Array.isArray(data) ? data.length : (data?.results?.length || 0));
+        // Refugios sin verificar (ejemplo: status === 'pendiente')
+        let sinVerificar = 0;
+        if (Array.isArray(data)) {
+          sinVerificar = data.filter(r => r.status === 'pendiente' || r.estado === 'pendiente').length;
+        } else if (Array.isArray(data.results)) {
+          sinVerificar = data.results.filter(r => r.status === 'pendiente' || r.estado === 'pendiente').length;
+        }
+        setRefugiosSinVerificar(sinVerificar);
+      });
 
-
-    // Donaciones sin verificar (placeholder, requiere endpoint real)
-    setDonacionesSinVerificar(3);
-    // Reportes generados (placeholder, requiere endpoint real)
-    setReportesGenerados(7);
+    // Animales totales en el sistema
+    fetch(`${import.meta.env.VITE_API_BASE}/animales/`, {
+      headers: { 'Authorization': `Token ${token}` }
+    })
+      .then(res => res.ok ? res.json() : {})
+      .then(data => {
+        console.log('Respuesta animales:', data);
+        if (typeof data.count === 'number') {
+          setAnimalesCount(data.count);
+        } else if (Array.isArray(data)) {
+          setAnimalesCount(data.length);
+        } else if (Array.isArray(data.results)) {
+          setAnimalesCount(data.results.length);
+        } else {
+          setAnimalesCount(0);
+        }
+      });
   }, []);
   return (
     <div className="admin-dashboard" style={{ padding: 24 }}>
@@ -35,18 +59,18 @@ const AdminDashboard: React.FC = () => {
             <div style={{ fontSize: '2em', fontWeight: 800 }}>{refugiosCount}</div>
           </div>
         </div>
-        <div style={{ background: 'linear-gradient(90deg,#ffb300,#d32f2f)', color: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #ffb30033', padding: '1.5em 2em', minWidth: 220, display: 'flex', alignItems: 'center', gap: 16 }}>
-          <span style={{ fontSize: '2.2em' }}>💸</span>
+        <div style={{ background: 'linear-gradient(90deg,#ffb300,#d32f2f)', color: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #d32f2f33', padding: '1.5em 2em', minWidth: 220, display: 'flex', alignItems: 'center', gap: 16 }}>
+          <span style={{ fontSize: '2.2em' }}>⏳</span>
           <div>
-            <div style={{ fontWeight: 700, fontSize: '1.2em' }}>Donaciones sin verificar</div>
-            <div style={{ fontSize: '2em', fontWeight: 800 }}>{donacionesSinVerificar}</div>
+            <div style={{ fontWeight: 700, fontSize: '1.2em' }}>Refugios sin verificar</div>
+            <div style={{ fontSize: '2em', fontWeight: 800 }}>{refugiosSinVerificar}</div>
           </div>
         </div>
-        <div style={{ background: 'linear-gradient(90deg,#43ea6b,#7b1fa2)', color: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #43ea6b33', padding: '1.5em 2em', minWidth: 220, display: 'flex', alignItems: 'center', gap: 16 }}>
-          <span style={{ fontSize: '2.2em' }}>📊</span>
+        <div style={{ background: 'linear-gradient(90deg,#1976d2,#43ea6b)', color: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #1976d233', padding: '1.5em 2em', minWidth: 220, display: 'flex', alignItems: 'center', gap: 16 }}>
+          <span style={{ fontSize: '2.2em' }}>🐾</span>
           <div>
-            <div style={{ fontWeight: 700, fontSize: '1.2em' }}>Reportes</div>
-            <div style={{ fontSize: '2em', fontWeight: 800 }}>{reportesGenerados}</div>
+            <div style={{ fontWeight: 700, fontSize: '1.2em' }}>Animales totales</div>
+            <div style={{ fontSize: '2em', fontWeight: 800 }}>{animalesCount}</div>
           </div>
         </div>
       </div>
@@ -55,14 +79,14 @@ const AdminDashboard: React.FC = () => {
         <ul>
           <li><Link to="/admin/gestionar-refugios">Gestionar Refugios</Link></li>
           <li><Link to="/admin/gestionar-usuarios">Gestionar Usuarios</Link></li>
-          <li><Link to="/admin/verificaciones">Verificar Comprobantes</Link></li>
-          <li><Link to="/admin/animales">Gestionar Animales</Link></li>
-          <li><Link to="/admin/reportes">Reportes</Link></li>
+          <li><Link to="/admin/verificaciones">Verificar Refugios</Link></li>
+          {/* <li><Link to="/admin/animales">Gestionar Animales</Link></li> */}
+          {/* <li><Link to="/admin/reportes">Reportes</Link></li> */}
         </ul>
       </nav>
 
       <section style={{ marginTop: 24 }}>
-        <h2>Resumen rápido</h2>
+        {/* <h2>Resumen rápido</h2>
         <div style={{ display: 'flex', gap: '2em', flexWrap: 'wrap' }}>
           <div style={{ background: '#fff2', borderRadius: 8, padding: '1em 2em', minWidth: 180 }}>
             <span style={{ fontWeight: 700 }}>Refugios activos:</span> 12
@@ -73,7 +97,7 @@ const AdminDashboard: React.FC = () => {
           <div style={{ background: '#fff2', borderRadius: 8, padding: '1em 2em', minWidth: 180 }}>
             <span style={{ fontWeight: 700 }}>Reportes generados:</span> 7
           </div>
-        </div>
+        </div> */}
       </section>
     </div>
   );

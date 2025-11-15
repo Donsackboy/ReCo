@@ -201,9 +201,9 @@ npm run dev
 
 
 #### 🎨 Frontend (Interfaz de Usuario)
-- **URL principal**: http://localhost:5174
+- **URL principal**: http://localhost:5173
 - **URLs alternativas** (si el puerto está ocupado): 
-   - http://localhost:5173
+   - http://localhost:5174
    - http://localhost:5175
    - http://localhost:5176
    - etc.

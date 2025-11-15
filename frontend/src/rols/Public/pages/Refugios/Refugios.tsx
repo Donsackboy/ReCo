@@ -7,7 +7,6 @@
 // --- DATOS DE REFUGIOS ---
 // Puedes agregar, quitar o modificar refugios y animales aquí
 import React, { useState, useEffect } from 'react';
-import { getAnimales } from '../../../../api';
 import RefugiosCard from '../../components/Refugios/Refugioscard';
 import './Refugios.css';
 
@@ -15,9 +14,6 @@ import { regionesChile } from '../../../../utils/regionesComunasChile';
 
 // Los refugios y animales se obtendrán desde la API
 
-function getRandomAnimales(animales: { id: number; nombre: string; imagen: string }[], count = 3) {
-  return animales.sort(() => 0.5 - Math.random()).slice(0, count);
-}
 
 
 const Refugios: React.FC = () => {
@@ -63,15 +59,48 @@ const Refugios: React.FC = () => {
   const regiones = [{ nombre: 'Todas', value: '' }, ...regionesChile.map((r: string) => ({ nombre: r, value: r }))];
 
   // Relacionar animales con refugios y mapear id_refugio a id
-  const refugiosConAnimales = refugios.map(refugio => ({
-    ...refugio,
-    id: refugio.id_refugio, // mapeo para compatibilidad con RefugiosCard
-    animales: animales.filter(a => a.refugio === refugio.id_refugio).map(animal => ({
-      ...animal,
-      imagen: (animal.imagenes && animal.imagenes.length > 0) ? animal.imagenes[0] : (animal.fotos && animal.fotos.length > 0 ? animal.fotos[0] : '')
-    }))
-  }));
-
+  const refugiosConAnimales = refugios.map(refugio => {
+    const id_refugio = refugio.id_refugio !== undefined ? refugio.id_refugio : refugio.id;
+    // Forzar que el objeto tenga id_refugio y log completo
+    const refugioObj = {
+      ...refugio,
+      id_refugio,
+      animales: animales.filter(a => {
+        let animalRefugioId = null;
+        if (a.refugio && typeof a.refugio === 'object') {
+          if (typeof a.refugio.id_refugio !== 'undefined') animalRefugioId = a.refugio.id_refugio;
+          else if (typeof a.refugio.id !== 'undefined') animalRefugioId = a.refugio.id;
+        } else if (typeof a.refugio !== 'undefined') {
+          animalRefugioId = a.refugio;
+        }
+        // Log para depuración
+        console.log('Filtrado animal:', {
+          animalId: a.id_animal,
+          animalRefugioId,
+          refugioId: refugio.id_refugio,
+          coincide: String(animalRefugioId) === String(refugio.id_refugio)
+        });
+        return String(animalRefugioId) === String(refugio.id_refugio);
+      }).map(animal => {
+        let imagen = '';
+        if (animal.imagenes && animal.imagenes.length > 0) {
+          imagen = animal.imagenes[0];
+        } else if (animal.fotos && animal.fotos.length > 0) {
+          imagen = animal.fotos[0];
+        }
+        // Si la imagen es base64, asegúrate que empiece con 'data:image/'
+        if (imagen && imagen.startsWith('/9j/')) {
+          imagen = 'data:image/jpeg;base64,' + imagen;
+        }
+        return {
+          ...animal,
+          imagen,
+        };
+      })
+    };
+    console.log('Refugios.tsx - refugio enviado a Card:', refugioObj);
+    return refugioObj;
+  });
   const refugiosFiltrados = refugiosConAnimales.filter(refugio => {
   const coincideNombre = refugio.nombre?.toLowerCase().includes(search.toLowerCase());
   // Normalizar para comparar región ignorando mayúsculas/minúsculas y espacios

@@ -1,8 +1,42 @@
+/* Ocultar botones de registro e inicio de sesión en mobile */
+@media (max-width: 700px) {
+  .header .auth-buttons .btn-login,
+  .header .auth-buttons .btn-register {
+    display: none !important;
+  }
+}
 /*=============================================*/
 /*        MEDIA QUERIES HEADER PUBLIC          */
 /*=============================================*/
+
+/* Orden de ocultamiento: voluntariado, donaciones, eventos, hogares temporales, animales, refugios */
 @media (max-width: 1450px) {
+  .header .nav-menu .nav-item .nav-link[href*="voluntariado"] {
+    display: none !important;
+  }
+}
+@media (max-width: 1350px) {
+  .header .nav-menu .nav-item .nav-link[href*="donaciones"] {
+    display: none !important;
+  }
+}
+@media (max-width: 1250px) {
   .header .nav-menu .nav-item .nav-link[href*="eventos"] {
+    display: none !important;
+  }
+}
+@media (max-width: 1150px) {
+  .header .nav-menu .nav-item .nav-link[href*="hogares-temporales"] {
+    display: none !important;
+  }
+}
+@media (max-width: 1050px) {
+  .header .nav-menu .nav-item .nav-link[href*="animales"] {
+    display: none !important;
+  }
+}
+@media (max-width: 950px) {
+  .header .nav-menu .nav-item .nav-link[href*="refugios"] {
     display: none !important;
   }
 }

@@ -1,0 +1,118 @@
+/* Contenedor principal */
+.perfil-refugio-responsive-container {
+  padding: 32px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.perfil-refugio-title {
+  text-align: center;
+  font-weight: 700;
+  font-size: 28px;
+  margin-bottom: 24px;
+}
+
+.perfil-refugio-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+
+.perfil-refugio-logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.perfil-refugio-logo {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3.5px solid #eee;
+  background: #fafafa;
+  box-shadow: 0 4px 32px #228b2244;
+}
+
+.perfil-refugio-info {
+  width: 100%;
+}
+
+.perfil-refugio-nombre {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.perfil-refugio-lista {
+  list-style: none;
+  padding: 0;
+  font-size: 1.08rem;
+  margin: 0;
+}
+
+.perfil-refugio-separador {
+  margin: 18px 0;
+  border: none;
+  border-top: 1.5px solid #e0e0e0;
+}
+
+.perfil-refugio-usuario-titulo {
+  color: #228B22;
+  margin-bottom: 8px;
+  margin-top: 0;
+}
+
+.perfil-refugio-editar-btn {
+  margin-top: 18px;
+  padding: 10px 32px;
+  background: linear-gradient(90deg,#2196f3,#21cbf3);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  box-shadow: 0 1px 6px rgba(33,150,243,0.12);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.perfil-refugio-guardando {
+  margin-top: 18px;
+  text-align: center;
+  color: #2196f3;
+  font-weight: 500;
+}
+
+@media (min-width: 700px) {
+  .perfil-refugio-card {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 32px;
+    padding: 36px 48px;
+  }
+  .perfil-refugio-logo-container {
+    margin-bottom: 0;
+    margin-right: 32px;
+    min-width: 240px;
+  }
+  .perfil-refugio-logo {
+    width: 240px;
+    height: 240px;
+  }
+  .perfil-refugio-info {
+    width: 100%;
+    min-width: 320px;
+  }
+  .perfil-refugio-editar-btn {
+    align-self: flex-end;
+    margin-top: 32px;
+  }
+}

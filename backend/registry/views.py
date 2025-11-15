@@ -1,3 +1,68 @@
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
+from django.core.files.storage import default_storage
+from django.conf import settings
+import os
+
+class UploadImageView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request):
+        image = request.FILES.get('file')
+        if not image:
+            return Response({'error': 'No file provided'}, status=400)
+        # Crear carpeta si no existe
+        folder = os.path.join(settings.MEDIA_ROOT, 'refugios_logos')
+        os.makedirs(folder, exist_ok=True)
+        try:
+            file_path = os.path.join('refugios_logos', image.name)
+            full_path = os.path.join(settings.MEDIA_ROOT, file_path)
+            with open(full_path, 'wb+') as destination:
+                for chunk in image.chunks():
+                    destination.write(chunk)
+            url = request.build_absolute_uri(os.path.join(settings.MEDIA_URL, file_path))
+            return Response({'url': url})
+        except Exception as e:
+            return Response({'error': f'Error saving image: {str(e)}'}, status=500)
+# ...existing code...
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+import logging
+
+logger = logging.getLogger(__name__)
+
+# ...existing code...
+
+# Endpoint para obtener y actualizar la ficha médica de un animal por animal_id
+from rest_framework.generics import RetrieveUpdateAPIView
+from .models import FichaMedica
+from .serializers import FichaMedicaSerializer
+from rest_framework import permissions
+
+class FichaMedicaRetrieveUpdateView(RetrieveUpdateAPIView):
+    def update(self, request, *args, **kwargs):
+        print(f"PATCH ficha médica data: {request.data}")
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        if not serializer.is_valid():
+            print(f"Errores de validación PATCH ficha médica: {serializer.errors}")
+            return Response(serializer.errors, status=400)
+        self.perform_update(serializer)
+        print(f"PATCH ficha médica response: {serializer.data}")
+        return Response(serializer.data)
+    serializer_class = FichaMedicaSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        animal_id = self.kwargs.get('animal_id')
+        return FichaMedica.objects.get(animal_id=animal_id)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -96,13 +161,25 @@ from rest_framework.views import APIView
 from .permissions import IsRefugioOrAdmin, IsAdmin, IsRefugio
 from .serializers import (
     AnimalSerializer, PostulacionRefugioSerializer, UserSerializer, LoginSerializer,
-    HogarTemporalSerializer, RefugioSerializer, HistorialMedicoSerializer,
-    CirugiaSerializer, TratamientoSerializer, AlergiaCondicionSerializer
+    HogarTemporalSerializer, RefugioSerializer,
+    CirugiaSerializer, TratamientoSerializer, AlergiaCondicionSerializer, FichaMedicaSerializer
 )
 from .models import (
-    Animal, PostulacionRefugio, Usuario, HogaresTemporales, Refugio, HistorialMedico,
-    Cirugia, Tratamiento, AlergiaCondicion
+    Animal, PostulacionRefugio, Usuario, HogaresTemporales, Refugio,
+    Cirugia, Tratamiento, AlergiaCondicion, FichaMedica
 )
+# Endpoint para listar y crear fichas médicas
+from rest_framework import generics, permissions
+class FichaMedicaListCreateView(generics.ListCreateAPIView):
+    serializer_class = FichaMedicaSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = FichaMedica.objects.all()
+        animal_id = self.kwargs.get('animal_id')
+        if animal_id:
+            queryset = queryset.filter(animal_id=animal_id)
+        return queryset
 
 # Endpoint para listar y crear alergias/condiciones crónicas de un animal
 from rest_framework import generics, permissions
@@ -152,6 +229,30 @@ class AnimalDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Animal.objects.all()
     serializer_class = AnimalSerializer
     permission_classes = [IsRefugioOrAdmin]
+
+    def destroy(self, request, *args, **kwargs):
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning('Intentando eliminar animal')
+        try:
+            instance = self.get_object()
+            logger.warning(f'Animal a eliminar: {instance.id_animal} - {instance.nombre}')
+            # Rechazar automáticamente solicitudes de adopción pendientes
+            from .models import SolicitudAdopcion
+            solicitudes = SolicitudAdopcion.objects.filter(animal=instance, estado='pendiente')
+            logger.warning(f'Solicitudes pendientes encontradas: {solicitudes.count()}')
+            for solicitud in solicitudes:
+                logger.warning(f'Rechazando solicitud {solicitud.id_solicitud}')
+                solicitud.estado = 'rechazada'
+                solicitud.anotaciones = (solicitud.anotaciones or '') + '\nRechazada automáticamente: el animal fue eliminado del sistema.'
+                solicitud.save()
+            logger.warning('Eliminación de animal completada, llamando super().destroy')
+            return super().destroy(request, *args, **kwargs)
+        except Exception as e:
+            logger.error(f'Error al eliminar animal: {e}', exc_info=True)
+            from rest_framework.response import Response
+            from rest_framework import status
+            return Response({'error': f'Error interno al eliminar animal: {e}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class RefugioPublicListView(generics.ListAPIView):
     queryset = Refugio.objects.all()
@@ -301,9 +402,14 @@ class AnimalListCreateView(generics.ListCreateAPIView):
         # Asignar refugio automáticamente si el usuario es refugio
         user = self.request.user
         if hasattr(user, 'refugio') and user.refugio:
-            serializer.save(refugio=user.refugio)
+            animal = serializer.save(refugio=user.refugio)
         else:
-            serializer.save()
+            animal = serializer.save()
+        # Crear ficha médica asociada automáticamente si no existe
+        from .models import FichaMedica
+        if not hasattr(animal, 'ficha_medica'):
+            FichaMedica.objects.create(animal=animal)
+
 class UserListAdminView(generics.ListCreateAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UserSerializer
@@ -371,9 +477,22 @@ def register(request):
         })
     return Response(serializer.errors, status=400)
 
-@api_view(['GET'])
+from rest_framework import status
+from .models import Usuario
+from .serializers import UserSerializer
+
+@api_view(['GET', 'PATCH'])
+@permission_classes([IsAuthenticated])
 def user_profile(request):
-    return Response(UserSerializer(request.user).data)
+    user = request.user
+    if request.method == 'GET':
+        return Response(UserSerializer(user).data)
+    elif request.method == 'PATCH':
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
@@ -383,17 +502,6 @@ def crear_hogar_temporal(request):
         hogar = serializer.save()
         return Response(HogarTemporalSerializer(hogar).data, status=201)
     return Response(serializer.errors, status=400)
-from .models import HistorialMedico
-from .serializers import HistorialMedicoSerializer
-from rest_framework import generics
-
-class HistorialMedicoAnimalListView(generics.ListAPIView):
-    serializer_class = HistorialMedicoSerializer
-    permission_classes = [permissions.AllowAny]
-
-    def get_queryset(self):
-        animal_id = self.kwargs.get('animal_id')
-        return HistorialMedico.objects.filter(id_animal=animal_id)
 
 class CirugiaListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
@@ -457,6 +565,17 @@ def refugio_me(request):
             return Response(debug_info, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     elif request.method in ['PATCH', 'PUT']:
         partial = request.method == 'PATCH'
+        eliminar_logo = request.data.get('eliminar_logo')
+        nuevo_logo = request.FILES.get('logo')
+        # Eliminar logo si se solicita
+        if eliminar_logo == 'true' and refugio.logo:
+            refugio.logo.delete(save=False)  # Elimina el archivo físico
+            refugio.logo = None
+        # Reemplazar logo si se sube uno nuevo
+        if nuevo_logo:
+            if refugio.logo:
+                refugio.logo.delete(save=False)
+            refugio.logo = nuevo_logo
         serializer = RefugioSerializer(refugio, data=request.data, partial=partial, context={'request': request})
         user = request.user
         # Actualizar datos del usuario asociado si se envían
@@ -487,3 +606,41 @@ def refugio_me(request):
                 user.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# --- Vacunas ---
+from rest_framework import viewsets
+from .models import Vacuna
+from .serializers import VacunaSerializer
+
+class VacunaViewSet(viewsets.ModelViewSet):
+    serializer_class = VacunaSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = Vacuna.objects.all()
+        animal_id = self.kwargs.get('animal_id')
+        if animal_id:
+            queryset = queryset.filter(animal_id=animal_id)
+        return queryset
+
+from .models import NecesidadRefugio
+from .serializers import NecesidadRefugioSerializer
+from rest_framework import generics, permissions
+
+class NecesidadRefugioListCreateView(generics.ListCreateAPIView):
+    serializer_class = NecesidadRefugioSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    def get_queryset(self):
+        user = self.request.user
+        if hasattr(user, 'refugio') and user.refugio:
+            return NecesidadRefugio.objects.filter(refugio=user.refugio)
+        return NecesidadRefugio.objects.none()
+    def perform_create(self, serializer):
+        user = self.request.user
+        if hasattr(user, 'refugio') and user.refugio:
+            serializer.save(refugio=user.refugio)
+
+class NecesidadRefugioDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = NecesidadRefugioSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = NecesidadRefugio.objects.all()

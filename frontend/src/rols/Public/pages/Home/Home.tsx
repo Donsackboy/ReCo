@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getAnimalesCount, getAnimalesCarousel } from '../../../../api.js';
+import { getAnimalesCount, getAnimalesCarousel } from '../../api/ApiPublic.js';
 import AnimalCard from '../../components/Animales/AnimalCard';
 import './Home.css';
 
@@ -39,66 +39,31 @@ function Home() {
         <p>
           {numeroAnimales === null
             ? 'Cargando animales...'
-            : `Tenemos ${numeroAnimales} animales esperando una familia`}
+            : ` ${numeroAnimales} peluditos esperando una familia`}
         </p>
-        {/* Carrusel de animales */}
+        {/* Carrusel simple de animales */}
         {animalesCarousel.length > 0 && (
-          <div className="carousel-container">
-            <button className="carousel-arrow" onClick={handlePrev}>&#8592;</button>
-            <div className="carousel-track">
-              {animalesCarousel.map((animal, idx) => {
-                const pos = idx - carouselIndex;
-                // Adaptar datos para AnimalCard
-                const animalCardData = {
-                  id: animal.id,
-                  nombre: animal.nombre,
-                  sexo: animal.sexo || '',
-                  edad: animal.edad || '',
-                  tamano: animal.tamano || '',
-                  refugio: animal.refugio || '',
-                  region: animal.region || '',
-                  diasEnRefugio: animal.diasEnRefugio || 0,
-                  imagenes: animal.foto_principal ? [animal.foto_principal] : ['/Images/animales/placeholder.png'],
-                  resena: animal.resena || '',
-                };
-                let style: React.CSSProperties = {
-                  zIndex: 5 - Math.abs(pos),
-                  position: 'absolute',
-                  left: `calc(50% + ${pos * 120}px - 90px)`,
-                  top: pos === 0 ? '0px' : '30px',
-                  width: pos === 0 ? '320px' : '220px',
-                  height: pos === 0 ? '500px' : '340px',
-                  opacity: Math.abs(pos) > 2 ? 0 : 1,
-                  transition: 'all 0.4s cubic-bezier(.77,.2,.32,1.01)',
-                  pointerEvents: Math.abs(pos) > 2 ? 'none' : 'auto',
-                };
-                // Tarjeta principal (centrada)
-                if (pos === 0) {
-                  return (
-                    <div key={animal.id} style={{...style, height:'400px', width:'320px', display:'flex', alignItems:'center', justifyContent:'center'}} className="carousel-item active">
-                      <div style={{display:'flex', flexDirection:'column', alignItems:'center', height:'100%', justifyContent:'space-between', width:'100%'}}>
-                        <div style={{position:'absolute', top:0, right:18, background:'#eaffea', color:'#228B22', borderRadius:10, padding:'6px 12px', fontWeight:600, fontSize:'0.95rem'}}>
-                          {animal.diasEnRefugio} días en el refugio
-                        </div>
-                        <img src={animal.foto_principal || '/Images/animales/placeholder.png'} alt={animal.nombre + ' portada'} style={{width:'260px', height:'250px', objectFit:'cover', borderRadius:'18px', margin:'16px auto 0 auto', boxShadow:'0 4px 18px rgba(44,151,69,0.57)', display:'block'}} />
-                        <h3 style={{fontSize:'1.2rem', color:'#3e1452ff', margin:'8px 0 0px'}}>{animal.nombre}</h3>
-                        <div style={{color:'#228B22', fontSize:'1rem', marginBottom:'8px'}}>{animal.edad} años • {animal.refugio}</div>
-                        <Link to={`/animales/${animal.id}`} style={{marginTop:'auto', background:'#43ea6b', color:'#fff', border:'none', borderRadius:'8px', padding:'8px 18px', fontWeight:600, cursor:'pointer', textDecoration:'none', display:'flex', alignItems:'center', justifyContent:'center', width:'40%', textAlign:'center'}}>
-                          <span style={{width:'100%', textAlign:'center', display:'block', whiteSpace:'nowrap'}}>Ver perfil</span>
-                        </Link>
-                      </div>
-                    </div>
-                  );
-                }
-                // Tarjetas laterales
-                return (
-                  <div key={animal.id} style={style} className="carousel-item">
-                    <AnimalCard animal={animalCardData} />
-                  </div>
-                );
-              })}
-            </div>
-            <button className="carousel-arrow" onClick={handleNext}>&#8594;</button>
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'nowrap', margin: '32px 0' }}>
+            {animalesCarousel.slice(0, 4).map((animal) => {
+              const animalCardData = {
+                id: animal.id,
+                nombre: animal.nombre,
+                sexo: animal.sexo || '',
+                edad: animal.edad || '',
+                tipo_edad: animal.tipo_edad || '',
+                tamano: animal.tamano || '',
+                refugio: animal.refugio || '',
+                region: animal.region || '',
+                diasEnRefugio: animal.diasEnRefugio || 0,
+                imagenes: animal.foto_principal ? [animal.foto_principal] : ['/Images/animales/placeholder.png'],
+                resena: animal.resena || '',
+              };
+              return (
+                <div key={animal.id} style={{ minWidth: '300px', maxWidth: '340px', flex: '1 1 300px', display: 'flex', justifyContent: 'center' }}>
+                  <AnimalCard animal={animalCardData} />
+                </div>
+              );
+            })}
           </div>
         )}
         <Link to="/animales" className="btn-primary" style={{marginTop:'2.5rem'}}>Ver Animales</Link>

@@ -4,10 +4,12 @@
 // =============================
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function AnimalPerfil() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [animal, setAnimal] = React.useState<any>(null);
   const [imgIdx, setImgIdx] = React.useState(0);
   const [loading, setLoading] = React.useState(true);
@@ -118,7 +120,21 @@ export default function AnimalPerfil() {
           >×</button>
         </div>
       )}
-      <div style={{ color: '#228B22', fontSize: '1.1rem', marginBottom: '10px' }}>{animal.sexo} • {animal.edad} años • {animal.tamano}</div>
+  <div style={{ color: '#228B22', fontSize: '1.1rem', marginBottom: animal.descripcion ? '0' : '18px', textAlign: 'center' }}>{animal.sexo} • {animal.edad} años • {animal.tamano}</div>
+      {animal.descripcion && (
+        <div style={{
+          background: '#eaffea',
+          borderRadius: '12px',
+          padding: '14px 18px',
+          color: '#145214',
+          fontSize: '1.08rem',
+          margin: '12px 0 18px 0',
+          boxShadow: '0 2px 8px #43ea6b22',
+          fontWeight: 500
+        }}>
+          {animal.descripcion}
+        </div>
+      )}
       <div style={{ color: '#1a421a', fontSize: '1.05rem', marginBottom: '18px' }}>{animal.resena}</div>
       <div style={{ marginBottom: '18px', fontWeight: 600 }}>
         <span style={{ color: '#43ea6b' }}>Días en refugio:</span> {
@@ -128,7 +144,7 @@ export default function AnimalPerfil() {
         }
       </div>
       <div style={{ marginBottom: '18px', fontWeight: 600 }}>
-        <span style={{ color: '#43ea6b' }}>Refugio:</span> {animal.refugio} <span style={{ color: '#228B22', marginLeft: '8px' }}>({animal.region})</span>
+        <span style={{ color: '#43ea6b' }}>Refugio:</span> {animal.refugio?.nombre || 'No disponible'}
       </div>
       {animal.fecha_cumpleanos && (
         <div style={{ marginBottom: '18px', fontWeight: 600 }}>
@@ -164,23 +180,31 @@ export default function AnimalPerfil() {
               Fecha: {v.fecha} {v.refuerzo ? <span>• Próximo refuerzo: {v.refuerzo}</span> : null}
             </div>
             <button style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '8px', padding: '7px 16px', fontWeight: 600, fontSize: '0.98rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22', marginLeft: '18px' }}
-              onClick={() => window.location.href = `/donar-vacuna?animalId=${animal.id}&refugio=${encodeURIComponent(animal.refugio)}&vacuna=${encodeURIComponent(v.tipo)}`}
+              onClick={() => navigate(`/donar-vacuna?animalId=${animal.id}&refugio=${encodeURIComponent(animal.refugio)}&vacuna=${encodeURIComponent(v.tipo)}`)}
             >Donar vacuna</button>
           </li>
         )) : (
           <li style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span>No hay vacunas registradas.</span>
             <button style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '8px', padding: '7px 16px', fontWeight: 600, fontSize: '0.98rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22', marginLeft: '18px' }}
-              onClick={() => window.location.href = `/donar-vacuna?animalId=${animal.id}&refugio=${encodeURIComponent(animal.refugio)}`}
+              onClick={() => navigate(`/donar-vacuna?animalId=${animal.id}&refugio=${encodeURIComponent(animal.refugio)}`)}
             >Donar vacuna</button>
           </li>
         )}
       </ul>
       <button style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22', marginRight: '16px' }}
-  onClick={() => window.location.href = `/adopcion?animalId=${animal.id_animal}&refugio=${encodeURIComponent(animal.refugio)}`}
+        onClick={() => {
+          let refugioId = '';
+          if (typeof animal.refugio === 'object' && animal.refugio !== null) {
+            refugioId = animal.refugio.id_refugio ?? animal.refugio.id ?? '';
+          } else {
+            refugioId = animal.refugio ?? '';
+          }
+          navigate(`/adopcion?animalId=${animal.id}&refugio=${encodeURIComponent(refugioId)}`);
+        }}
       >Adoptar</button>
       <button style={{ background: '#228B22', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22' }}
-        onClick={() => window.location.href = `/hogares-temporales/registro?animalId=${animal.id}`}
+  onClick={() => navigate(`/hogares-temporales/registro?animalId=${animal.id}`)}
       >Dar hogar temporal</button>
     </div>
   );

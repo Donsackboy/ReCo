@@ -1,3 +1,16 @@
+from pathlib import Path
+import os
+import environ
+
+# -----------------------------------
+# BASE CONFIG
+# -----------------------------------
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# ...existing code...
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Backend de autenticación por email
 AUTHENTICATION_BACKENDS = [
     'registry.email_backend.EmailBackend',
@@ -61,7 +74,7 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+        'registry.logging_auth.LoggingTokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',

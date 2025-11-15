@@ -1,15 +1,225 @@
-.galeria-animales {
+.animales-page {
   display: flex;
-  flex-wrap: wrap;
-  gap: 32px;
-  justify-content: center;
-  align-items: flex-start;
-  margin: 32px auto;
-  max-width: 1200px;
-  min-height: 60vh;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: stretch;
+  position: relative;
 }
 
-.animal-card {
+.animales-page.desktop {
+  flex-direction: row;
+  gap: 32px;
+  padding: 40px 24px;
+}
+
+.animales-page.mobile {
+  flex-direction: column;
+  padding: 24px 6px;
+}
+
+/* --- Botón filtros en móvil --- */
+.filtros-mobile-btn {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  margin: 20px 0 18px 0;
+}
+
+.filtros-mobile-btn button {
+  background: #43ea6b;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 32px;
+  font-weight: 800;
+  font-size: 1.15rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #43ea6b22;
+  letter-spacing: 1px;
+}
+
+/* --- Panel filtros --- */
+.animales-filtros {
+  background: linear-gradient(135deg, #eaffea 80%, #43ea6b11 100%);
+  border-radius: 22px;
+  padding: 32px 24px;
+  box-shadow: 0 4px 18px #43ea6b22;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 240px;
+  max-width: 320px;
+}
+
+.mobile-filtros {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+  width: 100vw;
+  height: 100vh;
+  overflow-y: auto;
+  border-radius: 0;
+  box-shadow: 0 8px 32px #43ea6b33;
+}
+
+/* --- Header filtros --- */
+.filtros-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.filtros-header h2 {
+  font-size: 1.5rem;
+  color: #228b22;
+  font-weight: 700;
+  margin: 0;
+}
+
+.cerrar-filtros {
+  background: none;
+  color: #e74c3c;
+  border: none;
+  font-size: 2.2rem;
+  font-weight: 900;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* --- Grupos de filtros --- */
+.filtros-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filtros-group label {
+  font-weight: 600;
+  color: #145214;
+}
+
+.filtros-group select,
+.filtros-group input {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1.5px solid #43ea6b;
+  background: #fff;
+  font-size: 1rem;
+}
+
+/* --- Botón limpiar filtros --- */
+.btn-limpiar {
+  margin-top: 18px;
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 0;
+  font-weight: 700;
+  font-size: 1.08rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #e74c3c22;
+}
+
+/* --- Galería --- */
+
+
+/* --- Galería --- */
+.animales-galeria {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  min-height: 60vh;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+/* Centrado de las tarjetas individuales */
+.animal-card-wrapper {
   flex: 1 1 320px;
-  margin-bottom: 24px;
+  min-width: 320px;
+  max-width: 400px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+}
+
+/* --- Modo responsive para móviles --- */
+@media (max-width: 699px) {
+  .animales-galeria {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 25px;
+    width: 100%;
+  }
+
+  .animal-card-wrapper {
+    flex: none;
+    width: 90%;
+    max-width: 400px;
+    justify-content: center;
+  }
+}
+
+/* Paginación mejorada */
+.paginacion-mejorada {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+.paginacion-arrow {
+  background: #eaffea;
+  color: #228b22;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-weight: 700;
+  font-size: 1.08rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #43ea6b22;
+  transition: background 0.2s, color 0.2s;
+}
+.paginacion-arrow:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.paginacion-info {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #145214;
+}
+
+/* --- Paginación --- */
+.paginacion {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.paginacion-btn {
+  background: #eaffea;
+  color: #228b22;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-weight: 700;
+  font-size: 1.08rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #43ea6b22;
+  transition: background 0.2s, color 0.2s;
+}
+
+.paginacion-btn.activa {
+  background: #43ea6b;
+  color: #fff;
 }

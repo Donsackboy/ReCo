@@ -1,3 +1,50 @@
+// Necesidades del Refugio
+export async function getNecesidadesRefugio(token) {
+  const response = await fetch(`${API_BASE}/necesidades-refugio/`, {
+    headers: {
+      'Authorization': `Token ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error('Error al obtener necesidades del refugio');
+  return response.json();
+}
+
+export async function createNecesidadRefugio(data, token) {
+  const response = await fetch(`${API_BASE}/necesidades-refugio/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Error al crear necesidad');
+  return response.json();
+}
+
+export async function updateNecesidadRefugio(id, data, token) {
+  const response = await fetch(`${API_BASE}/necesidades-refugio/${id}/`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Error al editar necesidad');
+  return response.json();
+}
+
+export async function deleteNecesidadRefugio(id, token) {
+  const response = await fetch(`${API_BASE}/necesidades-refugio/${id}/`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Token ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error('Error al eliminar necesidad');
+  return true;
+}
 // Obtener 5 animales random con foto principal (público)
 export async function getAnimalesCarousel() {
   const response = await fetch(`${API_BASE}/public/animales/carousel/`);
@@ -196,4 +243,66 @@ export async function getAdopcionesPendientesRefugio(token) {
   if (!response.ok) throw new Error('Error al obtener adopciones pendientes del refugio');
   const data = await response.json();
   return data.count;
+}
+
+// Obtener ficha médica de un animal
+export async function getFichaMedica(token, animalId) {
+  const response = await fetch(`${API_BASE}/fichamedica/${animalId}/`, {
+    headers: {
+      'Authorization': `Token ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error('Error al obtener ficha médica');
+  return response.json();
+}
+
+// Actualizar ficha médica de un animal
+export async function updateFichaMedica(token, animalId, data) {
+  const response = await fetch(`${API_BASE}/fichamedica/${animalId}/`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Error al actualizar ficha médica');
+  return response.json();
+}
+
+// Obtener vacunas de un animal
+export async function getVacunas(token, animalId) {
+  const response = await fetch(`${API_BASE}/animales/${animalId}/vacunas/`, {
+    headers: {
+      'Authorization': `Token ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error('Error al obtener vacunas');
+  return response.json();
+}
+
+// Crear vacuna para un animal
+export async function createVacuna(token, animalId, data) {
+  const response = await fetch(`${API_BASE}/animales/${animalId}/vacunas/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Error al crear vacuna');
+  return response.json();
+}
+
+// Eliminar vacuna
+export async function deleteVacuna(token, animalId, vacunaId) {
+  const response = await fetch(`${API_BASE}/animales/${animalId}/vacunas/${vacunaId}/`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Token ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error('Error al eliminar vacuna');
+  return true;
 }

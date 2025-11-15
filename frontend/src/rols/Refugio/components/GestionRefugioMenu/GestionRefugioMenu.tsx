@@ -52,12 +52,12 @@ const GestionRefugioMenu: React.FC<GestionRefugioMenuProps> = ({ nombreRefugio }
         <button className="gestion-button" onClick={() => navigate('/refugio/hogar-temporal')}>
           <span role="img" aria-label="house">🏠</span> Hogares Temporales
         </button>
-        <button className="gestion-button" onClick={() => handleButtonClick('Eventos')}>
+        {/* <button className="gestion-button" onClick={() => handleButtonClick('Eventos')}>
           <span role="img" aria-label="tada">🎉</span> Gestionar Eventos
         </button>
         <button className="gestion-button" onClick={() => handleButtonClick('Donaciones')}>
           <span role="img" aria-label="gift">💝</span> Ver Donaciones
-        </button>
+        </button> */}
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
-
 import React, { useEffect, useState } from 'react';
+import './GestionAdopciones.css';
+import { preguntasAdopcion } from '../../../../utils/preguntasAdopcion';
 
 interface SolicitudAdopcion {
   id_solicitud: number;
@@ -17,21 +18,10 @@ interface SolicitudAdopcion {
   anotaciones?: string | null;
   usuario: number;
   foto_animal?: string;
+  foto_principal?: string;
 }
 
-// Array fijo de preguntas estándar para el formulario de adopción
-const preguntasFormulario = [
-  "¿Por qué quieres adoptar?",
-  "¿Quién vivirá con el animal?",
-  "¿Tienes otras mascotas?",
-  "¿Tipo de vivienda?",
-  "¿Experiencia previa con animales?",
-  "¿Disponibilidad de tiempo para el animal?",
-  "¿Qué harías si el animal se enferma?",
-  "¿Qué harías si tienes que mudarte?",
-  "¿Cómo planeas educar al animal?",
-  "¿Qué harías si el animal tiene problemas de comportamiento?",
-];
+// Usamos preguntasAdopcion del archivo utils
 
 const estadoColor: Record<string, string> = {
   pendiente: '#ffa726',
@@ -45,13 +35,14 @@ const GestionAdopciones: React.FC = () => {
   const [adopciones, setAdopciones] = useState<SolicitudAdopcion[]>([]);
   const [loading, setLoading] = useState(true);
   const [detalle, setDetalle] = useState<SolicitudAdopcion | null>(null);
-const [anotacionesEdit, setAnotacionesEdit] = useState<string>("");
+  const [anotacionesEdit, setAnotacionesEdit] = useState<string>("");
   const [estadoNuevo, setEstadoNuevo] = useState<string>('');
   const [actualizando, setActualizando] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     let interval: number;
+
     const fetchAdopciones = () => {
       if (token) {
         fetch(`${import.meta.env.VITE_API_BASE}/refugio/solicitudes-adopcion-pendientes/`, {
@@ -73,6 +64,7 @@ const [anotacionesEdit, setAnotacionesEdit] = useState<string>("");
         setLoading(false);
       }
     };
+
     const fetchHistorial = () => {
       if (token) {
         fetch(`${import.meta.env.VITE_API_BASE}/refugio/historial-solicitudes-adopcion/`, {
@@ -90,21 +82,23 @@ const [anotacionesEdit, setAnotacionesEdit] = useState<string>("");
           });
       }
     };
-    // Guardar referencia para usar en handleCambiarEstado
+
     (window as any).fetchHistorial = fetchHistorial;
     fetchAdopciones();
     fetchHistorial();
+
     interval = window.setInterval(() => {
       fetchAdopciones();
       if (mostrarHistorial) fetchHistorial();
     }, 5000);
+
     return () => clearInterval(interval);
   }, []);
 
   const handleVerDetalle = (solicitud: SolicitudAdopcion) => {
-  setDetalle(solicitud);
-  setEstadoNuevo(solicitud.estado);
-  setAnotacionesEdit(solicitud.anotaciones || "");
+    setDetalle(solicitud);
+    setEstadoNuevo(solicitud.estado);
+    setAnotacionesEdit(solicitud.anotaciones || "");
   };
 
   const handleCerrarDetalle = () => {
@@ -131,123 +125,155 @@ const [anotacionesEdit, setAnotacionesEdit] = useState<string>("");
         ? { ...s, estado: estadoNuevo, anotaciones: anotacionesEdit }
         : s
     ));
-    // Actualizar historial inmediatamente si está visible
     if (mostrarHistorial && typeof (window as any).fetchHistorial === 'function') {
       (window as any).fetchHistorial();
     }
   };
 
   return (
-    <div>
-      <h1 style={{ color: '#228B22', fontWeight: 800, fontSize: 32, marginBottom: 18 }}>Adopciones</h1>
-      <div style={{ marginBottom: 18 }}>
-        <button
-          style={{ marginRight: 12, background: mostrarHistorial ? '#eee' : '#228B22', color: mostrarHistorial ? '#333' : '#fff', border: 'none', borderRadius: 8, padding: '8px 18px', fontWeight: 600, cursor: 'pointer' }}
-          onClick={() => setMostrarHistorial(false)}
-        >Pendientes</button>
-        <button
-          style={{ background: mostrarHistorial ? '#228B22' : '#eee', color: mostrarHistorial ? '#fff' : '#333', border: 'none', borderRadius: 8, padding: '8px 18px', fontWeight: 600, cursor: 'pointer' }}
-          onClick={() => setMostrarHistorial(true)}
-        >Historial</button>
+    <div className="gestion-adopciones">
+      <div className="header-adopciones">
+        <h1 className="titulo">Gestión de Adopciones</h1>
+
+        <div className="botones-toggle">
+          <button
+            className={`boton-toggle ${!mostrarHistorial ? 'activo' : ''}`}
+            onClick={() => setMostrarHistorial(false)}
+          >
+            Pendientes
+          </button>
+          <button
+            className={`boton-toggle ${mostrarHistorial ? 'activo' : ''}`}
+            onClick={() => setMostrarHistorial(true)}
+          >
+            Historial
+          </button>
+        </div>
       </div>
-      {mostrarHistorial ? (
+
+      {loading ? (
+        <div className="loading">Cargando...</div>
+      ) : mostrarHistorial ? (
         historial.length === 0 ? (
-          <div style={{textAlign: 'center', marginTop: '2rem'}}>
-            <img src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" alt="Sin historial" style={{width: '120px', opacity: 0.5}} />
-            <h2 style={{color: '#888'}}>No hay historial de formularios aceptados o rechazados</h2>
+          <div className="mensaje-vacio">
+            <img src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" alt="Sin historial" />
+            <h2>No hay historial de solicitudes</h2>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div className="grid-solicitudes">
             {historial.map(solicitud => (
-              <div key={solicitud.id_solicitud} style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px #43ea6b22', padding: 24, width: '100%', maxWidth: 500, position: 'relative', margin: '0 auto', marginBottom: 18, display: 'flex', alignItems: 'center' }}>
-                {solicitud.foto_animal && (
-                  <img src={solicitud.foto_animal} alt="Foto del animal" style={{ width: 90, height: 90, objectFit: 'cover', borderRadius: 12, marginRight: 18 }} />
-                )}
-                <div style={{ flex: 1 }}>
-                  <span style={{ position: 'absolute', top: 18, right: 18, background: estadoColor[solicitud.estado] || '#999', color: '#fff', borderRadius: 8, padding: '4px 14px', fontWeight: 700, fontSize: 14 }}>{solicitud.estado.charAt(0).toUpperCase() + solicitud.estado.slice(1)}</span>
-                  <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8 }}>Animal: <span style={{ fontWeight: 400 }}>{solicitud.animal_nombre}</span></div>
+              <div key={solicitud.id_solicitud} className="tarjeta-solicitud tarjeta-flex">
+                <div className="foto-animal-wrapper">
+                  <img
+                    src={solicitud.foto_principal || solicitud.foto_animal || 'https://cdn-icons-png.flaticon.com/512/616/616408.png'}
+                    alt="Animal"
+                    className="foto-animal"
+                  />
+                </div>
+                <div className="contenido-solicitud">
+                  <span className="estado" style={{ background: estadoColor[solicitud.estado] }}>
+                    {solicitud.estado.charAt(0).toUpperCase() + solicitud.estado.slice(1)}
+                  </span>
+                  <div className="animal-nombre">🐾 {solicitud.animal_nombre}</div>
                   <div><strong>Solicitante:</strong> {solicitud.nombre}</div>
                   <div><strong>Fecha:</strong> {new Date(solicitud.fecha_solicitud).toLocaleString()}</div>
-                  <button style={{ marginTop: 18, background: '#228B22', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 18px', fontWeight: 600, cursor: 'pointer' }} onClick={() => handleVerDetalle(solicitud)}>Ver detalles</button>
+                  <button className="boton-ver" style={{ fontSize: '0.92rem', padding: '6px 14px', alignSelf: 'flex-start', marginTop: '8px', marginLeft: '0' }} onClick={() => handleVerDetalle(solicitud)}>Ver detalles</button>
                 </div>
               </div>
             ))}
           </div>
         )
-      ) : loading ? (
-        <p>Cargando...</p>
       ) : adopciones.length === 0 ? (
-        <div style={{textAlign: 'center', marginTop: '2rem'}}>
-          <img src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" alt="Bandeja vacía" style={{width: '120px', opacity: 0.5}} />
-          <h2 style={{color: '#888'}}>No se han recibido formularios de adopción</h2>
+        <div className="mensaje-vacio">
+          <img src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" alt="Bandeja vacía" />
+          <h2>No hay solicitudes pendientes</h2>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-          {adopciones.map(solicitud => (
-            <div key={solicitud.id_solicitud} style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px #43ea6b22', padding: 24, width: '100%', maxWidth: 500, position: 'relative', margin: '0 auto', marginBottom: 18, display: 'flex', alignItems: 'center' }}>
-              {solicitud.foto_animal && (
-                <img src={solicitud.foto_animal} alt="Foto del animal" style={{ width: 90, height: 90, objectFit: 'cover', borderRadius: 12, marginRight: 18 }} />
-              )}
-              <div style={{ flex: 1 }}>
-                <span style={{ position: 'absolute', top: 18, right: 18, background: estadoColor[solicitud.estado] || '#999', color: '#fff', borderRadius: 8, padding: '4px 14px', fontWeight: 700, fontSize: 14 }}>{solicitud.estado.charAt(0).toUpperCase() + solicitud.estado.slice(1)}</span>
-                <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8 }}>Animal: <span style={{ fontWeight: 400 }}>{solicitud.animal_nombre}</span></div>
-                <div><strong>Solicitante:</strong> {solicitud.nombre}</div>
-                <div><strong>Fecha:</strong> {new Date(solicitud.fecha_solicitud).toLocaleString()}</div>
-                <button style={{ marginTop: 18, background: '#228B22', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 18px', fontWeight: 600, cursor: 'pointer' }} onClick={() => handleVerDetalle(solicitud)}>Ver detalles</button>
+        <div className="grid-solicitudes">
+            {adopciones.map(solicitud => (
+              <div key={solicitud.id_solicitud} className="tarjeta-solicitud tarjeta-flex">
+                <div className="foto-animal-wrapper">
+                  <img
+                    src={solicitud.foto_principal || solicitud.foto_animal || 'https://cdn-icons-png.flaticon.com/512/616/616408.png'}
+                    alt="Animal"
+                    className="foto-animal"
+                  />
+                </div>
+                <div className="contenido-solicitud">
+                  <span className="estado" style={{ background: estadoColor[solicitud.estado] }}>
+                    {solicitud.estado.charAt(0).toUpperCase() + solicitud.estado.slice(1)}
+                  </span>
+                  <div className="animal-nombre">🐾 {solicitud.animal_nombre}</div>
+                  <div><strong>Solicitante:</strong> {solicitud.nombre}</div>
+                  <div><strong>Fecha:</strong> {new Date(solicitud.fecha_solicitud).toLocaleString()}</div>
+                  <button className="boton-ver" style={{ fontSize: '0.92rem', padding: '6px 14px', alignSelf: 'flex-start', marginTop: '8px', marginLeft: '0' }} onClick={() => handleVerDetalle(solicitud)}>Ver detalles</button>
+                </div>
               </div>
-            </div>
           ))}
         </div>
       )}
+
       {detalle && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: '#0008', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: '#fff', borderRadius: 18, padding: 32, minWidth: 350, maxWidth: 500, boxShadow: '0 2px 24px #43ea6b44', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
-            <button style={{ position: 'absolute', top: 12, right: 12, background: '#eee', border: 'none', borderRadius: 8, padding: '4px 10px', fontWeight: 700, cursor: 'pointer' }} onClick={handleCerrarDetalle}>X</button>
-            <h2 style={{ color: '#228B22', marginBottom: 12 }}>Formulario de Adopción</h2>
-            {/* Foto del animal si está disponible */}
-            {detalle.foto_animal && (
-              <div style={{ textAlign: 'center', marginBottom: 12 }}>
-                <img src={detalle.foto_animal} alt="Foto del animal" style={{ maxWidth: '100%', maxHeight: 180, borderRadius: 12 }} />
+        <div className="modal-fondo">
+          <div className="modal-detalle" style={{ maxWidth: '1000px', width: '100%' }}>
+            <button className="boton-cerrar" onClick={handleCerrarDetalle}>×</button>
+            <h2 style={{ color: '#2e7d32', fontWeight: 800, marginBottom: '1.2rem', textAlign: 'center' }}>
+              Formulario de adopción de {detalle.animal_nombre || 'animal'}
+            </h2>
+
+            <div style={{ display: 'flex', gap: '2.2rem', alignItems: 'flex-start', marginBottom: '1.2rem', flexWrap: 'wrap' }}>
+              <div className="detalle-info" style={{ background: '#f4f8f4', borderRadius: '12px', padding: '1rem 1.2rem', boxShadow: '0 1px 4px rgba(46,125,50,0.07)', minWidth: '260px', flex: '1 1 320px' }}>
+                <div><span style={{ fontWeight: 600 }}>Solicitante:</span> {detalle.nombre}</div>
+                <div><span style={{ fontWeight: 600 }}>Dirección:</span> {detalle.direccion}</div>
+                <div><span style={{ fontWeight: 600 }}>Fecha nacimiento:</span> {detalle.fecha_nacimiento}</div>
+                <div><span style={{ fontWeight: 600 }}>Teléfono:</span> {detalle.telefono}</div>
+                <div><span style={{ fontWeight: 600 }}>Email:</span> {detalle.email}</div>
+                <div><span style={{ fontWeight: 600 }}>Rol familia:</span> {detalle.rol_familia}</div>
+                <div><span style={{ fontWeight: 600 }}>Estado:</span> <span style={{ color: estadoColor[detalle.estado], fontWeight: 700 }}>{detalle.estado}</span></div>
               </div>
-            )}
-            <div style={{ marginBottom: 8 }}><strong>Animal:</strong> {detalle.animal_nombre}</div>
-            <div style={{ marginBottom: 8 }}><strong>Solicitante:</strong> {detalle.nombre}</div>
-            <div style={{ marginBottom: 8 }}><strong>Dirección:</strong> {detalle.direccion}</div>
-            <div style={{ marginBottom: 8 }}><strong>Fecha nacimiento:</strong> {detalle.fecha_nacimiento}</div>
-            <div style={{ marginBottom: 8 }}><strong>Teléfono:</strong> {detalle.telefono}</div>
-            <div style={{ marginBottom: 8 }}><strong>Email:</strong> {detalle.email}</div>
-            <div style={{ marginBottom: 8 }}><strong>Rol familia:</strong> {detalle.rol_familia}</div>
-            <div style={{ marginBottom: 8 }}><strong>Estado:</strong> <span style={{ color: estadoColor[detalle.estado] || '#999', fontWeight: 700 }}>{detalle.estado.charAt(0).toUpperCase() + detalle.estado.slice(1)}</span></div>
-            <div style={{ marginBottom: 8 }}><strong>Fecha solicitud:</strong> {new Date(detalle.fecha_solicitud).toLocaleString()}</div>
-            <div style={{ marginBottom: 12 }}>
-              <strong>Respuestas del formulario:</strong>
-              <ul style={{ marginTop: 6, marginLeft: 18 }}>
-                {detalle.respuestas && detalle.respuestas.map((r: string, i: number) => (
-                  <li key={i} style={{ marginBottom: 4 }}>
-                    <strong>{preguntasFormulario[i] || `Pregunta ${i + 1}`}:</strong> {r}
+              <div style={{ textAlign: 'center', flex: '0 0 220px', minWidth: '180px' }}>
+                <img src={detalle.foto_principal || detalle.foto_animal || 'https://cdn-icons-png.flaticon.com/512/616/616408.png'} alt="Animal" style={{ maxWidth: '180px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(46,125,50,0.12)' }} />
+                <div style={{ fontSize: '1.15rem', fontWeight: 700, marginTop: '0.7rem', color: '#2e7d32' }}>🐾 {detalle.animal_nombre}</div>
+              </div>
+            </div>
+
+            <div className="detalle-respuestas" style={{ marginBottom: '1.2rem' }}>
+              <h4 style={{ color: '#388e3c', fontWeight: 700, marginBottom: '0.7rem' }}>Respuestas del formulario</h4>
+              <ul style={{ paddingLeft: 0, margin: 0 }}>
+                {detalle.respuestas.map((r, i) => (
+                  <li key={i} style={{ marginBottom: '1.2rem', borderRadius: '12px', boxShadow: '0 1px 6px rgba(46,125,50,0.09)', background: '#eafbe7', padding: '0.8rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <div style={{ background: '#a5d6a7', borderRadius: '8px', padding: '0.6rem 1rem', fontWeight: 700, color: '#205c20', fontSize: '1.11rem', letterSpacing: '0.01em', boxShadow: '0 1px 4px rgba(46,125,50,0.07)' }}>
+                      {preguntasAdopcion[i] || `Pregunta ${i + 1}`}
+                    </div>
+                    <div style={{ background: '#fff', borderRadius: '8px', padding: '0.6rem 1rem', fontWeight: 500, color: '#388e3c', fontSize: '1.01rem', marginTop: '0.2rem', border: '1px solid #e0e0e0' }}>
+                      {r}
+                    </div>
                   </li>
                 ))}
               </ul>
             </div>
-            <div style={{ marginBottom: 8 }}>
-              <strong>Anotaciones / Observaciones:</strong>
+
+            <div className="detalle-anotaciones" style={{ marginBottom: '1.2rem' }}>
+              <strong style={{ color: '#388e3c' }}>Anotaciones:</strong>
               <textarea
                 value={anotacionesEdit}
                 onChange={e => setAnotacionesEdit(e.target.value)}
                 rows={3}
-                style={{ width: '100%', marginTop: 4, borderRadius: 8, padding: 8, border: '1px solid #ccc' }}
-                placeholder="Agrega anotaciones aquí..."
+                placeholder="Agrega anotaciones..."
+                style={{ width: '100%', marginTop: '0.5rem', padding: '0.6rem', borderRadius: '8px', border: '1px solid #b2dfdb', fontSize: '1rem', background: '#f9fdf9' }}
               />
             </div>
-            <div style={{ marginBottom: 12, display: 'flex', alignItems: 'center' }}>
-              <strong>Cambiar estado:</strong>
-              <select value={estadoNuevo} onChange={e => setEstadoNuevo(e.target.value)} style={{ marginLeft: 8, padding: '4px 10px', borderRadius: 6 }}>
+
+            <div className="detalle-acciones" style={{ display: 'flex', gap: '0.7rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+              <select value={estadoNuevo} onChange={e => setEstadoNuevo(e.target.value)} style={{ padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid #43a047', fontWeight: 600 }}>
                 <option value="pendiente">Pendiente</option>
                 <option value="aceptada">Aceptada</option>
                 <option value="rechazada">Rechazada</option>
               </select>
-              <button style={{ marginLeft: 12, background: '#228B22', color: '#fff', border: 'none', borderRadius: 8, padding: '6px 16px', fontWeight: 600, cursor: 'pointer' }} onClick={handleCambiarEstado} disabled={actualizando}>{actualizando ? 'Actualizando...' : 'Guardar'}</button>
-              <button style={{ marginLeft: 8, background: '#eee', color: '#333', border: 'none', borderRadius: 8, padding: '6px 16px', fontWeight: 600, cursor: 'pointer' }} onClick={handleCerrarDetalle}>Cerrar</button>
+              <button onClick={handleCambiarEstado} disabled={actualizando} style={{ background: '#43a047', color: '#fff', borderRadius: '8px', padding: '0.5rem 1.2rem', fontWeight: 600, border: 'none', transition: 'background 0.3s' }}>
+                {actualizando ? 'Actualizando...' : 'Guardar'}
+              </button>
+              <button className="btn-secundario" onClick={handleCerrarDetalle} style={{ background: '#e0e0e0', color: '#333', borderRadius: '8px', padding: '0.5rem 1.2rem', fontWeight: 600, border: 'none' }}>Cerrar</button>
             </div>
           </div>
         </div>

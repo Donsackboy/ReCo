@@ -1,0 +1,72 @@
+.section-card {
+  background: #e3f2fd;
+  border: 2px solid #90caf9;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(25, 118, 210, 0.08);
+}
+.section-title {
+  font-size: 1.3rem;
+  color: #1976d2;
+  margin-bottom: 12px;
+  font-weight: 700;
+  text-align: left;
+}
+.empty-state {
+  background: #fff;
+  border: 1.5px solid #90caf9;
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+  color: #1976d2;
+  font-weight: 600;
+  font-size: 1.05rem;
+  box-shadow: 0 2px 8px rgba(144,202,249,0.08);
+}
+.emoji {
+  font-size: 1.5rem;
+  margin-right: 8px;
+}
+.form-boton-btn {
+  background-color: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-bottom: 0;
+}
+.form-boton-btn:hover {
+  background-color: #1565c0;
+}
+.cancelar-btn {
+  background-color: #e53935;
+  color: #fff;
+}
+.cancelar-btn:hover {
+  background-color: #b71c1c;
+}
+.form-input {
+  padding: 8px;
+  border: 1.5px solid #90caf9;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  outline: none;
+  background: #fff;
+  margin-bottom: 4px;
+}
+.form-input:focus {
+  border-color: #1976d2;
+}
+.cirugia-form {
+  background: #fff;
+  border: 2px solid #90caf9;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(144,202,249,0.08);
+}

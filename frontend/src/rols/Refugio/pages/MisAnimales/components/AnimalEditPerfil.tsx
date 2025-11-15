@@ -1,16 +1,27 @@
-
+import { useNavigate } from 'react-router-dom';
+import './AnimalEditPerfil.css';
 import { useState, useEffect } from 'react';
-import FichaMedicaModal from './FichaMedicaModal';
-import type { FichaMedica } from './FichaMedicaModal';
-import { updateAnimal } from '../../../../../../src/api.js';
-import { getCirugias } from '../../../../../../src/api.js';
-import type { Vacuna } from './AnimalList';
+import FichaMedicaModal from './FichaMedica/FichaMedicaModal';
+import EstructuraPDF from '../../HistorialMedico/EstructuraPDF';
+import { updateAnimal, getCirugias } from '../../../api/ApiRefugio';
+import { getVacunas, createVacuna, deleteVacuna } from '../../../api/ApiRefugio';
+// Tipo local Vacuna
+export type Vacuna = {
+  id: number;
+  nombre: string;
+  tipo: string;
+  fecha_aplicacion: string;
+  fecha_refuerzo?: string;
+  observaciones?: string;
+  animal: number;
+};
 
 // Tipos mínimos para evitar errores
-type Animal = {
+type AnimalType = {
   id_animal?: number;
   nombre?: string;
   edad?: string | number;
+  tipo_edad?: string;
   especie?: string;
   descripcion?: string;
   estado?: string;
@@ -26,19 +37,21 @@ type Animal = {
   vacunas?: Vacuna[];
   fotos?: string[];
 };
-type AnimalAdmin = Animal & { id_animal: number; };
+type AnimalAdmin = AnimalType & { id_animal: number; };
 
 interface AnimalEditPerfilProps {
-  animal: Animal | AnimalAdmin;
+  animal: AnimalType | AnimalAdmin;
   onClose: () => void;
-  onSave: (updated?: Animal | AnimalAdmin) => void;
+  onSave: (updated?: AnimalType | AnimalAdmin) => void;
 }
 
 
 export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEditPerfilProps) {
+  const navigate = useNavigate();
   // Estado para el modal de ficha médica
   const [fichaModalOpen, setFichaModalOpen] = useState(false);
-  const [fichaMedica, setFichaMedica] = useState<FichaMedica>({
+  const [showPreviewPDF, setShowPreviewPDF] = useState(false);
+  const [fichaMedica, setFichaMedica] = useState<any>({
     general: {
       estadoSalud: '',
       peso: '',
@@ -54,44 +67,29 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
     archivos: [],
   });
 
+  // Solo consulta cirugías cuando se abre el modal, no en cada render ni cambio de animal
   useEffect(() => {
+    let isMounted = true;
+    setFichaMedica((prev: any) => prev); // No reinicializar vacunas ni ficha médica al abrir/cerrar modal
     async function fetchCirugias() {
       try {
         const token = localStorage.getItem('token');
         if (!token || !animal.id_animal) return;
         const cirugias = await getCirugias(token, animal.id_animal);
-        setFichaMedica(f => ({
-          ...f,
-          cirugias: Array.isArray(cirugias) ? cirugias : [],
-        }));
+        if (isMounted) setFichaMedica((f: any) => ({ ...f, cirugias: Array.isArray(cirugias) ? cirugias : [] }));
       } catch (err) {
-        setFichaMedica(f => ({ ...f, cirugias: [] }));
+        if (isMounted) setFichaMedica((f: any) => ({ ...f, cirugias: [] }));
       }
     }
-    if (fichaModalOpen) {
-      setFichaMedica({
-        general: {
-          estadoSalud: '',
-          peso: '',
-          ultimoControl: '',
-          veterinario: '',
-        },
-        vacunas: animal.vacunas || [],
-        cirugias: [],
-        tratamientos: [],
-        alergias: [],
-        condicionesCronicas: [],
-        recomendaciones: '',
-        archivos: [],
-      });
-      fetchCirugias();
-    }
-  }, [fichaModalOpen, animal]);
+    fetchCirugias();
+    return () => { isMounted = false; };
+  }, []); // Solo al montar
 
   // Estado para edición de animal
   const [form, setForm] = useState({
     nombre: animal.nombre || '',
     edad: animal.edad || '',
+  tipo_edad: animal.tipo_edad || 'anios',
     especie: animal.especie || '',
     descripcion: animal.descripcion || '',
     estado: animal.estado || 'disponible',
@@ -106,6 +104,11 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
     desparasitado: animal.desparasitado || false,
     vacunas: (animal.vacunas as Vacuna[]) || [],
     fotos: Array.isArray((animal as any).fotos) ? (animal as any).fotos : [],
+    // Campos generales de ficha médica
+  estadoSalud: fichaMedica.general?.estadoSalud || '',
+  peso: fichaMedica.general?.peso || '',
+  ultimoControl: fichaMedica.general?.ultimoControl || '',
+  veterinario: fichaMedica.general?.veterinario || '',
   });
 
   // Estado para la foto actual
@@ -114,27 +117,27 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
   // Mover foto actual a la izquierda
   const handleMoveFotoLeft = () => {
     if (form.fotos.length < 2 || currentFoto === 0) return;
-    setForm(f => {
+    setForm((f: typeof form) => {
       const fotos = [...f.fotos];
       [fotos[currentFoto - 1], fotos[currentFoto]] = [fotos[currentFoto], fotos[currentFoto - 1]];
       return { ...f, fotos };
     });
-    setCurrentFoto(prev => Math.max(0, prev - 1));
+    setCurrentFoto((prev: number) => Math.max(0, prev - 1));
   };
 
   // Mover foto actual a la derecha
   const handleMoveFotoRight = () => {
     if (form.fotos.length < 2 || currentFoto === form.fotos.length - 1) return;
-    setForm(f => {
+    setForm((f: typeof form) => {
       const fotos = [...f.fotos];
       [fotos[currentFoto + 1], fotos[currentFoto]] = [fotos[currentFoto], fotos[currentFoto + 1]];
       return { ...f, fotos };
     });
-    setCurrentFoto(prev => Math.min(form.fotos.length - 1, prev + 1));
+    setCurrentFoto((prev: number) => Math.min(form.fotos.length - 1, prev + 1));
   };
   // Eliminar foto del array
   const handleRemoveFoto = (idx: number) => {
-    setForm(f => ({ ...f, fotos: f.fotos.filter((_: string, i: number) => i !== idx) }));
+    setForm((f: typeof form) => ({ ...f, fotos: f.fotos.filter((_: string, i: number) => i !== idx) }));
     if (idx === currentFoto && currentFoto > 0) setCurrentFoto(currentFoto - 1);
     else if (idx === currentFoto && currentFoto === form.fotos.length - 1) setCurrentFoto(0);
   };
@@ -154,7 +157,7 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
       });
     });
     Promise.all(readers).then(urls => {
-      setForm(f => ({ ...f, fotos: [...f.fotos, ...urls].slice(0, 3) }));
+      setForm((f: typeof form) => ({ ...f, fotos: [...(f.fotos || []), ...urls].slice(0, 3) }));
       setCurrentFoto(form.fotos.length); // Muestra la última agregada
     });
   };
@@ -162,13 +165,12 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
   // Carrusel de fotos
   const [currentFoto, setCurrentFoto] = useState(0);
   const handlePrevFoto = () => {
-    setCurrentFoto(f => f === 0 ? form.fotos.length - 1 : f - 1);
+    setCurrentFoto((f: number) => f === 0 ? form.fotos.length - 1 : f - 1);
   };
   const handleNextFoto = () => {
-    setCurrentFoto(f => f === form.fotos.length - 1 ? 0 : f + 1);
+    setCurrentFoto((f: number) => f === form.fotos.length - 1 ? 0 : f + 1);
   };
   const [fullscreenImg, setFullscreenImg] = useState<string | null>(null);
-  const [vacuna, setVacuna] = useState<Vacuna>({ tipo: '', fecha: '', unica: false, refuerzo: false });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -185,26 +187,7 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
     }
   };
 
-  // Vacuna input change handler
-  const handleVacunaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, type, value } = e.target;
-    if (type === 'checkbox') {
-      setVacuna(v => ({ ...v, [name]: (e.target as HTMLInputElement).checked }));
-    } else {
-      setVacuna(v => ({ ...v, [name]: value }));
-    }
-  };
-
-  // Add vacuna to list
-  const handleAddVacuna = () => {
-    if (!vacuna.tipo || !vacuna.fecha) return;
-    setForm(f => ({ ...f, vacunas: [...f.vacunas, vacuna] }));
-    setVacuna({ tipo: '', fecha: '', unica: false, refuerzo: false });
-  };
-
-  const handleRemoveVacuna = (idx: number) => {
-    setForm({ ...form, vacunas: form.vacunas.filter((_, i: number) => i !== idx) });
-  };
+  // Elimina handlers locales de vacunas. Usa funciones de ApiRefugio si necesitas manipular vacunas.
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -212,49 +195,74 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
     setError('');
     setSuccess(false);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || '';
       // Enviar fechas como null si están vacías
       const dataToSend = {
         ...form,
         fecha_ingreso: form.fecha_ingreso ? form.fecha_ingreso : null,
         fecha_cumpleanos: form.fecha_cumpleanos ? form.fecha_cumpleanos : null,
+        tipo_edad: form.tipo_edad,
+        // Agregar los datos generales de ficha médica
+        estadoSalud: form.estadoSalud,
+        peso: form.peso,
+        ultimoControl: form.ultimoControl,
+        veterinario: form.veterinario,
       };
-      await updateAnimal(animal.id_animal, dataToSend, token);
+    await updateAnimal(animal.id_animal ?? 0, dataToSend, token);
       setSuccess(true);
-      if (onSave) onSave();
+      if (onSave && typeof animal.id_animal === 'number') {
+        onSave({
+          ...form,
+          ...dataToSend,
+          id_animal: animal.id_animal,
+          fecha_ingreso: dataToSend.fecha_ingreso ?? undefined,
+          fecha_cumpleanos: dataToSend.fecha_cumpleanos ?? undefined,
+        });
+      }
     } catch (err) {
       setError('Error al guardar cambios');
     }
     setLoading(false);
   };
 
+  // Estado para mostrar el modal de confirmación
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  // Eliminar animal con confirmación visual
+  const handleDeleteAnimal = async () => {
+    setShowDeleteModal(true);
+  };
+  const confirmDeleteAnimal = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${import.meta.env.VITE_API_BASE}/animales/${animal.id_animal ?? 0}/`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Token ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        const text = await response.text();
+        setError(`Error al eliminar el animal: ${response.status} ${text}`);
+        setLoading(false);
+        return;
+      }
+      setSuccess(true);
+      if (onSave) onSave();
+      onClose();
+    } catch (err) {
+      setError('Error al eliminar el animal');
+    }
+    setLoading(false);
+    setShowDeleteModal(false);
+  };
+
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      width: '100vw',
-      height: '100vh',
-      background: 'rgba(34,139,34,0.08)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 9999
-    }}>
-      <div style={{
-        maxWidth: 1100,
-        minWidth: 700,
-        width: '90vw',
-        minHeight: 700,
-        background: '#f6fff6',
-        borderRadius: 28,
-        boxShadow: '0 8px 40px #228b2233',
-        padding: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        position: 'relative'
-      }}>
+    <div className="animal-edit-modal-overlay">
+      <div className="animal-edit-modal-card">
         {/* Botón X de cerrar/cancelar arriba a la derecha */}
         <button
           type="button"
@@ -274,11 +282,12 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
           }}
           aria-label="Cerrar edición"
         >×</button>
-        <div style={{ flex: 1, overflowY: 'auto', padding: 48 }}>
+  <div className="animal-edit-modal-content">
           <h2 style={{ color: '#145214', marginBottom: 18, textAlign: 'center', fontWeight: 800, letterSpacing: 1.5, fontSize: '2.2rem' }}>Editar Perfil de {form.nombre}</h2>
           <form onSubmit={handleSubmit} style={{ overflowY: 'auto', maxHeight: '70vh' }}>
             {/* FORMULARIO PRINCIPAL */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 18, marginBottom: 10 }}>
+            <div className="animal-edit-form-grid">
+              {/* Primera fila: Ubicación actual, Nombre, Edad y tipo de edad */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Ubicación actual:</label>
                 <select name="ubicacion_actual" value={form.ubicacion_actual} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', background: '#fff' }}>
@@ -291,16 +300,36 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
                 <input name="nombre" value={form.nombre} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', boxShadow: '0 1px 6px #90EE9022' }} />
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Edad:</label>
-                <input name="edad" value={form.edad} onChange={handleChange} type="number" min="0" style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', boxShadow: '0 1px 6px #90EE9022' }} />
+                <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Especie:</label>
+                <select name="especie" value={form.especie} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', background: '#fff' }}>
+                  <option value="">Selecciona especie</option>
+                  <option value="perro">Perro</option>
+                  <option value="gato">Gato</option>
+                  <option value="conejo">Conejo</option>
+                  <option value="caballo">Caballo</option>
+                  <option value="ave">Ave</option>
+                </select>
               </div>
+              <div style={{ display: 'flex', flexDirection: 'row', gap: 6 }}>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Edad:</label>
+                  <input name="edad" value={form.edad} onChange={handleChange} type="number" min="0" style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', boxShadow: '0 1px 6px #90EE9022' }} />
+                </div>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Tipo de edad:</label>
+                  <select name="tipo_edad" value={form.tipo_edad} onChange={handleChange} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', marginTop: 0 }}>
+                    <option value="anios">Años</option>
+                    <option value="meses">Meses</option>
+                  </select>
+                </div>
+              </div>
+              {/* Segunda fila: Tamaño, Fecha ingreso, Fecha cumpleaños */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Tamaño:</label>
                 <select name="tamano" value={form.tamano} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', background: '#fff' }}>
                   <option value="">Selecciona tamaño</option>
                   <option value="Pequeño">Pequeño</option>
                   <option value="Pequeño-Grande">Pequeño-Grande</option>
-                  <option value="Media">Media</option>
                   <option value="Mediano">Mediano</option>
                   <option value="Mediano-Grande">Mediano-Grande</option>
                   <option value="Grande">Grande</option>
@@ -315,37 +344,79 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
                 <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Fecha de cumpleaños (opcional):</label>
                 <input name="fecha_cumpleanos" value={form.fecha_cumpleanos} onChange={handleChange} type="date" style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', boxShadow: '0 1px 6px #90EE9022' }} />
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
+              {/* Salud, esterilizado, desparasitado y botón ficha médica */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, gridColumn: '1 / span 3' }}>
                 <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Salud:</label>
-                <div style={{ display: 'flex', gap: 18, alignItems: 'center', flexWrap: 'nowrap' }}>
+                <div style={{ display: 'flex', gap: 18, alignItems: 'center', flexWrap: 'nowrap', marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, color: '#145214', display: 'flex', alignItems: 'center', gap: 6 }}>
                     Esterilizado <input type="checkbox" name="esterilizado" checked={!!form.esterilizado} onChange={handleChange} />
                   </label>
                   <label style={{ fontWeight: 500, color: '#145214', display: 'flex', alignItems: 'center', gap: 6 }}>
                     Desparasitado <input type="checkbox" name="desparasitado" checked={!!form.desparasitado} onChange={handleChange} />
                   </label>
-                  <button type="button" style={{ marginLeft: 18, background: '#43a047', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 18px', fontWeight: 700, cursor: 'pointer' }} onClick={() => setFichaModalOpen(true)}>
-                    Editar ficha médica
-                  </button>
+                </div>
+                <div style={{ display: 'flex', gap: '12px', marginBottom: 10 }}>
+                  <button
+                    type="button"
+                    onClick={() => setFichaModalOpen(true)}
+                    style={{
+                      background: 'linear-gradient(90deg, #6dd5ed 0%, #2193b0 100%)',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 10,
+                      padding: '10px 24px',
+                      fontWeight: 700,
+                      fontSize: '1.08rem',
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 8px #2193b022',
+                      marginTop: 0,
+                      alignSelf: 'flex-start',
+                    }}
+                  >Editar ficha médica</button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const idAnimal = animal.id_animal ?? (animal as any).id;
+                      navigate(`/refugio/historial-medico?id=${encodeURIComponent(idAnimal)}&preview=true`);
+                    }}
+                    style={{
+                      background: 'linear-gradient(90deg, #43ea6b 0%, #2980b9 100%)',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 10,
+                      padding: '10px 24px',
+                      fontWeight: 700,
+                      fontSize: '1.08rem',
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 8px #2980b922',
+                      marginTop: 0,
+                      alignSelf: 'flex-start',
+                    }}
+                  >Ver previsualización ficha médica</button>
                 </div>
               </div>
-      {/* Modal de ficha médica */}
-      <FichaMedicaModal
-        open={fichaModalOpen}
-        onClose={() => setFichaModalOpen(false)}
-        ficha={fichaMedica}
-        onSave={ficha => {
-          setFichaMedica(ficha);
-          setForm(f => ({
-            ...f,
-            vacunas: ficha.vacunas as Vacuna[],
-          }));
-        }}
-  animalId={animal.id_animal ?? ''}
-        animalEspecie={animal.especie}
-      />
+  {/* Modal de ficha médica: renderizado fuera del modal principal para evitar desmontaje por re-render del padre */}
+  {fichaModalOpen && (
+    <FichaMedicaModal
+      animalId={animal.id_animal ?? ''}
+      onClose={() => setFichaModalOpen(false)}
+      especie={form.especie}
+    />
+  )}
+      {/* Modal de previsualización PDF ficha médica */}
+      {showPreviewPDF && (
+        <EstructuraPDF animal={{
+          id: (animal as any).id ?? animal.id_animal,
+          id_animal: animal.id_animal,
+          nombre: form.nombre,
+          especie: form.especie,
+          edad: form.edad?.toString(),
+          estado_salud: (form as any).estadoSalud,
+          historial: (animal as any).historial ?? [],
+          foto_url: Array.isArray(form.fotos) && form.fotos.length > 0 ? form.fotos[0] : undefined,
+        }} onClose={() => setShowPreviewPDF(false)} />
+      )}
             </div>
-            {/* ...existing code... */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18, marginBottom: 10 }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Sexo:</label>
@@ -353,15 +424,6 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
               <option value="">Selecciona sexo</option>
               <option value="Macho">Macho</option>
               <option value="Hembra">Hembra</option>
-            </select>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <label style={{ fontWeight: 600, color: '#145214', marginBottom: 2 }}>Estado:</label>
-            <select name="estado" value={form.estado} onChange={handleChange} required style={{ width: '100%', padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem', background: '#fff' }}>
-              <option value="disponible">Disponible</option>
-              <option value="adoptado">Adoptado</option>
-              <option value="en_hogar_temporal">En hogar temporal</option>
-              <option value="buscando_nuevo_hogar_temporal">Buscando nuevo hogar temporal</option>
             </select>
           </div>
         </div>
@@ -377,39 +439,11 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
           </label>
         </div>
         <hr style={{ margin: '20px 0', border: 'none', borderTop: '2px solid #90EE90' }} />
-        <div style={{ marginBottom: 18 }}>
-          <h3 style={{ color: '#145214', fontWeight: 700, marginBottom: 10, fontSize: '1.3rem' }}>Vacunas</h3>
-          <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
-            <input name="tipo" value={vacuna.tipo} onChange={e => handleVacunaChange(e)} placeholder="Tipo" style={{ width: 120, padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem' }} />
-            <input name="fecha" value={vacuna.fecha} onChange={e => handleVacunaChange(e)} type="date" style={{ width: 120, padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem' }} />
-            <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
-              <input type="checkbox" name="refuerzo" checked={vacuna.refuerzo} onChange={handleVacunaChange} /> Refuerzo
-            </label>
-            <input name="proxima" value={vacuna.proxima || ''} onChange={e => handleVacunaChange(e)} placeholder="Fecha próximo refuerzo" type="date" style={{ width: 120, padding: 8, borderRadius: 8, border: '1.5px solid #90EE90', fontSize: '1rem' }} />
-            <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
-              <input type="checkbox" name="unica" checked={vacuna.unica} onChange={e => handleVacunaChange(e)} /> Única
-            </label>
-            <button type="button" onClick={handleAddVacuna} style={{ background: '#43ea6b', color: '#fff', border: 'none', borderRadius: '8px', padding: '8px 18px', fontWeight: 700, fontSize: '1.05rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22', transition: 'box-shadow 0.2s' }}>Agregar</button>
-          </div>
-          <ul style={{ marginTop: 8 }}>
-            {form.vacunas.length === 0 ? (
-              <li style={{ color: '#888' }}>No hay vacunas registradas.</li>
-            ) : (
-              form.vacunas.map((v: Vacuna, idx: number) => (
-                <li key={idx} style={{ marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#eafbe7', borderRadius: 8, padding: '6px 12px' }}>
-                  <span style={{ color: '#145214' }}><strong>{v.tipo}</strong> {v.unica ? '(única aplicación)' : ''} - Fecha: {v.fecha} {v.refuerzo ? `• Próximo refuerzo: ${v.refuerzo}` : ''}</span>
-                  <button type="button" onClick={() => handleRemoveVacuna(idx)} style={{ background: '#e74c3c', color: '#fff', border: 'none', borderRadius: '8px', padding: '4px 10px', fontWeight: 700, fontSize: '0.98rem', cursor: 'pointer', marginLeft: 12, boxShadow: '0 1px 6px #e74c3c22', transition: 'box-shadow 0.2s' }}>Eliminar</button>
-                </li>
-              ))
-            )}
-          </ul>
-        </div>
-        <hr style={{ margin: '20px 0', border: 'none', borderTop: '2px solid #90EE90' }} />
         {/* Gestión de fotos con carrusel */}
         <div style={{ marginBottom: 18 }}>
           <h3 style={{ color: '#145214', fontWeight: 700, marginBottom: 10, fontSize: '1.3rem' }}>Fotos del animal</h3>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, marginBottom: 12, width: '100%' }}>
-            {form.fotos.length === 0 ? (
+            {!form.fotos || form.fotos.length === 0 ? (
               <div style={{ color: '#888', fontSize: 15 }}>No hay fotos registradas.</div>
             ) : (
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -498,8 +532,73 @@ export default function AnimalEditPerfil({ animal, onClose, onSave }: AnimalEdit
         {error && <div style={{ color: 'red', marginTop: 14, textAlign: 'center', fontWeight: 600 }}>{error}</div>}
         {success && <div style={{ color: 'green', marginTop: 14, textAlign: 'center', fontWeight: 600 }}>¡Cambios guardados correctamente!</div>}
       </form>
-    </div>
+      {/* Modal de confirmación de eliminación */}
+      {showDeleteModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(20, 20, 20, 0.35)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 10001
+        }}>
+          <div className="confirm-delete-modal" style={{
+            background: '#fff',
+            borderRadius: 22,
+            boxShadow: '0 12px 48px #228b2244',
+            padding: '44px 54px',
+            minWidth: 400,
+            maxWidth: 520,
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 22,
+            border: '2.5px solid #e74c3c22',
+            position: 'relative'
+          }}>
+            <span style={{ fontSize: 48, color: '#e74c3c', marginBottom: 8 }}>⚠️</span>
+            <h2 style={{ color: '#e74c3c', fontWeight: 900, marginBottom: 8, fontSize: '2rem' }}>¿Eliminar animal?</h2>
+            <p style={{ color: '#333', fontSize: '1.15rem', marginBottom: 10 }}>
+              Esta acción eliminará el animal y <b>toda su información asociada</b>:
+            </p>
+            <ul style={{ textAlign: 'left', margin: '18px auto', color: '#145214', fontSize: '1.08rem', lineHeight: 1.7, fontWeight: 600, background: '#f6fff6', borderRadius: 10, padding: '18px 24px', boxShadow: '0 2px 8px #90EE9022', border: '1.5px solid #90EE90' }}>
+              <li>Formularios de adopción pendientes y su historial</li>
+              <li>Ficha médica</li>
+              <li>Vacunas</li>
+              <li>Cirugías</li>
+              <li>Alergias y condiciones crónicas</li>
+            </ul>
+            <span style={{ color: '#e74c3c', fontWeight: 800, fontSize: '1.08rem', marginBottom: 8 }}>Esta acción no se puede deshacer.</span>
+            <div style={{ display: 'flex', gap: 28, justifyContent: 'center', marginTop: 18 }}>
+              <button
+                type="button"
+                onClick={confirmDeleteAnimal}
+                style={{ background: 'linear-gradient(90deg,#e74c3c 60%,#ffb3b3 100%)', color: '#fff', border: 'none', borderRadius: 10, padding: '12px 32px', fontWeight: 800, fontSize: '1.15rem', cursor: 'pointer', boxShadow: '0 2px 12px #e74c3c33', letterSpacing: 1 }}
+              >Eliminar</button>
+              <button
+                type="button"
+                onClick={() => setShowDeleteModal(false)}
+                style={{ background: 'linear-gradient(90deg,#90EE90 60%,#eaffea 100%)', color: '#145214', border: 'none', borderRadius: 10, padding: '12px 32px', fontWeight: 800, fontSize: '1.15rem', cursor: 'pointer', boxShadow: '0 2px 12px #90EE9033', letterSpacing: 1 }}
+              >Cancelar</button>
+            </div>
+          </div>
         </div>
+      )}
+      {/* Botón para eliminar animal */}
+      <button
+        type="button"
+        onClick={handleDeleteAnimal}
+        style={{ background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 18px', fontWeight: 700, cursor: 'pointer', marginTop: 18 }}
+      >
+        Eliminar animal
+      </button>
     </div>
+  </div>
+  </div>
   );
 }

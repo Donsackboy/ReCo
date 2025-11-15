@@ -1,7 +1,12 @@
 from rest_framework import serializers
-# --- Solicitud de Adopción ---
-from .models import SolicitudAdopcion
+from django.conf import settings
+from django.contrib.auth import authenticate
+from .models import (
+    SolicitudAdopcion, PostulacionRefugio, Usuario, HogaresTemporales, Refugio, Animal,
+    Cirugia, Tratamiento, AlergiaCondicion, FichaMedica, Vacuna, NecesidadRefugio
+)
 
+# --- Solicitud de Adopción ---
 class SolicitudAdopcionSerializer(serializers.ModelSerializer):
     def get_animal_nombre(self, obj):
         try:
@@ -9,15 +14,28 @@ class SolicitudAdopcionSerializer(serializers.ModelSerializer):
         except Exception:
             return None
 
+    def get_foto_principal(self, obj):
+        try:
+            fotos = getattr(obj.animal, 'fotos', None)
+            if fotos and isinstance(fotos, list) and len(fotos) > 0:
+                return fotos[0]
+        except Exception:
+            pass
+        return None
+
     animal_nombre = serializers.SerializerMethodField()
+    foto_principal = serializers.SerializerMethodField()
 
     class Meta:
         model = SolicitudAdopcion
         fields = '__all__'
-        extra_fields = ['animal_nombre']
-from .models import PostulacionRefugio, Usuario, HogaresTemporales, Refugio, Animal, HistorialMedico, Cirugia, Tratamiento, AlergiaCondicion
-from django.conf import settings
-from django.contrib.auth import authenticate
+        extra_fields = ['animal_nombre', 'foto_principal']
+
+# --- Ficha Médica ---
+class FichaMedicaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FichaMedica
+        fields = '__all__'
 
 # --- Postulación de Refugio ---
 class PostulacionRefugioSerializer(serializers.ModelSerializer):
@@ -62,7 +80,7 @@ class RefugioSerializer(serializers.ModelSerializer):
         extra_fields = ['usuario']
 
 class UserSerializer(serializers.ModelSerializer):
-    refugio = RefugioSerializer(read_only=True)
+    refugio = RefugioSerializer(read_only=True, allow_null=True, required=False)
     class Meta:
         model = Usuario
         fields = ('id', 'username', 'email', 'tipo_usuario', 'first_name', 'last_name', 'telefono', 'refugio')
@@ -93,23 +111,38 @@ class HogarTemporalSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 # Serializer para Animal
+
+class VacunaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vacuna
+        fields = '__all__'
+
 class AnimalSerializer(serializers.ModelSerializer):
-    refugio = serializers.PrimaryKeyRelatedField(queryset=Refugio.objects.all())
+    refugio = serializers.SerializerMethodField()
     sexo = serializers.ChoiceField(choices=[
         "Macho", "Hembra"
     ], required=False, allow_null=True)
     tamano = serializers.ChoiceField(choices=[
         "Pequeño", "Pequeño-Grande", "Media", "Mediano", "Mediano-Grande", "Grande", "Gigante"
     ], required=False, allow_null=True)
+    vacunas = VacunaSerializer(many=True, read_only=True)
+
+    def get_refugio(self, obj):
+        if obj.refugio:
+            return {
+                "id_refugio": obj.refugio.id_refugio,
+                "nombre": obj.refugio.nombre,
+                "descripcion": obj.refugio.descripcion,
+                "region": obj.refugio.region,
+            }
+        return None
+
     class Meta:
         model = Animal
         fields = '__all__'
+        # Asegura que tipo_edad y edad estén incluidos explícitamente
+        extra_fields = ['tipo_edad', 'edad', 'vacunas']
 
-# Serializer para Historial Médico
-class HistorialMedicoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = HistorialMedico
-        fields = '__all__'
 
 # Serializer para Cirugia
 class CirugiaSerializer(serializers.ModelSerializer):
@@ -127,4 +160,13 @@ class TratamientoSerializer(serializers.ModelSerializer):
 class AlergiaCondicionSerializer(serializers.ModelSerializer):
     class Meta:
         model = AlergiaCondicion
+        fields = '__all__'
+
+# Serializer para NecesidadRefugio
+class NecesidadRefugioSerializer(serializers.ModelSerializer):
+    refugio = serializers.PrimaryKeyRelatedField(required=False, queryset=Refugio.objects.all())
+    estado = serializers.CharField(required=False, default='activa')
+    fecha_limite = serializers.DateField(required=False, allow_null=True)
+    class Meta:
+        model = NecesidadRefugio
         fields = '__all__'

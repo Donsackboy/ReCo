@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Logo from '../../../Public/components/Header/shared/Logo';
+import { useNavigate } from 'react-router-dom';
 import '../../../Public/components/Header/Logo.css';
 import '../../../Public/components/Header/NavMenu.css';
 import '../../../Public/components/Header/UserProfile.css';
@@ -20,6 +20,7 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
   onLogout
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -33,64 +34,59 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
     <header className="header header-layout">
       <nav className="navbar">
         <div className="nav-container">
-          <Logo onClick={onNavigateHome} />
+          <div className="nav-logo" onClick={onNavigateHome}>
+            <a href="/" className="logo-link">
+              <div className="logo-container">
+                <img src="/Images/reco-logo.png" alt="ReCo Logo" className="logo-image" />
+                <div className="logo-text-container">
+                  <div className="logo-text-styled">ReCo</div>
+                  <div className="logo-subtitle">REFUGIO CONECTADO</div>
+                </div>
+              </div>
+            </a>
+          </div>
           <div className="center-nav">
             <ul className="nav-menu">
               <li className="nav-item">
                 <Link to="/refugio/dashboard" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">📊</span>
+                  <span className="nav-icon"></span>
                   <span className="nav-text">Dashboard</span>
                 </Link>
               </li>
               <li className="nav-item">
                 <Link to="/refugio/mis-animales" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">🐕</span>
+                  <span className="nav-icon"></span>
                   <span className="nav-text">Mis Animales</span>
                 </Link>
               </li>
               <li className="nav-item">
                 <Link to="/refugio/adopciones" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">📋</span>
+                  <span className="nav-icon"></span>
                   <span className="nav-text">Adopciones</span>
                 </Link>
               </li>
               <li className="nav-item">
                 <Link to="/refugio/historial-medico" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">🏥</span>
+                  <span className="nav-icon"></span>
                   <span className="nav-text">Historial Médico</span>
                 </Link>
               </li>
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <Link to="/refugio/mis-eventos" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">📅</span>
+                  <span className="nav-icon"></span>
                   <span className="nav-text">Mis Eventos</span>
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/refugio/inscritos-evento" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">📋</span>
-                  <span className="nav-text">Inscritos Evento</span>
-                </Link>
-              </li>
-              <li className="nav-item">
                 <Link to="/refugio/donaciones" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">💰</span>
+                  <span className="nav-icon"></span>
                   <span className="nav-text">Donaciones</span>
                 </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/refugio/necesidades" className="nav-link" onClick={closeMenu}>
-                  <span className="nav-icon">📝</span>
-                  <span className="nav-text">Necesidades</span>
-                </Link>
-              </li>
+              </li> */}
             </ul>
-            <button className="user-profile" onClick={() => window.location.href = '/refugio/configuracion'}>
+            <button className="user-profile" onClick={() => navigate('/refugio/configuracion')}>
               <span className="user-icon">🏠</span>
               <span className="auth-text">Mi Perfil</span>
-            </button>
-            <button className="auth-text logout-btn" onClick={onLogout}>
-              Cerrar Sesión
             </button>
           </div>
           <button className="hamburger-btn" onClick={toggleMenu}>
@@ -106,7 +102,6 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
               <img src="/Images/reco-logo.png" alt="ReCo" className="side-logo" />
               <div className="user-info">
                 <span className="side-logo-text">🏠 {refugioNombre}</span>
-                <span className="user-role">Refugio</span>
               </div>
             </div>
             <button className="close-btn" onClick={closeMenu}>
@@ -114,57 +109,91 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
             </button>
           </div>
           <ul className="side-menu-items">
+            {/* Orden correcto de botones principales de refugio */}
             <li className="side-menu-item">
               <Link to="/refugio/dashboard" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">📊</span>
+                <span className="side-menu-icon"></span>
                 Dashboard
               </Link>
             </li>
             <li className="side-menu-item">
               <Link to="/refugio/mis-animales" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">🐕</span>
+                <span className="side-menu-icon"></span>
                 Mis Animales
               </Link>
             </li>
             <li className="side-menu-item">
               <Link to="/refugio/adopciones" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">📋</span>
+                <span className="side-menu-icon"></span>
                 Adopciones
               </Link>
             </li>
             <li className="side-menu-item">
               <Link to="/refugio/historial-medico" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">🏥</span>
+                <span className="side-menu-icon"></span>
                 Historial Médico
               </Link>
             </li>
-            <li className="side-menu-item">
+            {/* <li className="side-menu-item">
               <Link to="/refugio/mis-eventos" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">📅</span>
+                <span className="side-menu-icon"></span>
                 Mis Eventos
               </Link>
             </li>
             <li className="side-menu-item">
               <Link to="/refugio/inscritos-evento" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">📋</span>
+                <span className="side-menu-icon"></span>
                 Inscritos Evento
               </Link>
             </li>
             <li className="side-menu-item">
               <Link to="/refugio/donaciones" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">💰</span>
+                <span className="side-menu-icon"></span>
                 Donaciones
               </Link>
             </li>
             <li className="side-menu-item">
               <Link to="/refugio/necesidades" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">📝</span>
+                <span className="side-menu-icon"></span>
                 Necesidades
+              </Link>
+            </li> */}
+            {/* Sección pública */}
+            <hr className="side-menu-separator" style={{ borderColor: '#2ecc40', borderWidth: 2 }} />
+
+            <li className="side-menu-category">
+              <span className="category-title">🌐 ACCESO PÚBLICO</span>
+            </li>
+            <li className="side-menu-item">
+              <Link to="/refugios" className="side-menu-link" onClick={closeMenu}>
+                <span className="side-menu-icon"></span>
+                Refugios
               </Link>
             </li>
             <li className="side-menu-item">
+              <Link to="/animales" className="side-menu-link" onClick={closeMenu}>
+                <span className="side-menu-icon"></span>
+                Animales
+              </Link>
+            </li>
+            <li className="side-menu-item">
+              <Link to="/hogares-temporales" className="side-menu-link" onClick={closeMenu}>
+                <span className="side-menu-icon"></span>
+                Hogares Temporales
+              </Link>
+            </li>
+            <li className="side-menu-item">
+              <Link to="/eventos" className="side-menu-link" onClick={closeMenu}>
+                <span className="side-menu-icon"></span>
+                Eventos
+              </Link>
+            </li>
+            {/* Separador verde antes de perfil y cerrar sesión */}
+            <hr className="side-menu-separator" style={{ borderColor: '#2ecc40', borderWidth: 2 }} />
+
+            <li className="side-menu-item">
               <Link to="/refugio/configuracion" className="side-menu-link" onClick={closeMenu}>
-                <span className="side-menu-icon">⚙️</span>
+                <span className="side-menu-icon"></span>
                 Mi Perfil
               </Link>
             </li>
