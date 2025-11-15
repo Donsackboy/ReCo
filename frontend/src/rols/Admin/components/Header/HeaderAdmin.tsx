@@ -59,7 +59,7 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
                   {window.innerWidth > 900 && (
                     <li className="nav-item">
                       <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin')}}>
-                        <span className="nav-icon">📈</span>
+                        <span className="nav-icon"></span>
                         <span className="nav-text">Dashboard</span>
                       </a>
                     </li>
@@ -67,7 +67,7 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
                   {window.innerWidth > 1000 && (
                     <li className="nav-item">
                       <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/gestionar-refugios')}}>
-                        <span className="nav-icon">🏛️</span>
+                        <span className="nav-icon"></span>
                         <span className="nav-text">Refugios</span>
                       </a>
                     </li>
@@ -75,7 +75,7 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
                   {window.innerWidth > 1100 && (
                     <li className="nav-item">
                       <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/gestionar-usuarios')}}>
-                        <span className="nav-icon">👥</span>
+                        <span className="nav-icon"></span>
                         <span className="nav-text">Usuarios</span>
                       </a>
                     </li>
@@ -83,23 +83,23 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
                   {window.innerWidth > 1200 && (
                     <li className="nav-item">
                       <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/verificaciones')}}>
-                        <span className="nav-icon">✅</span>
+                        <span className="nav-icon"></span>
                         <span className="nav-text">Verificaciones</span>
                       </a>
                     </li>
                   )}
-                  {window.innerWidth > 1300 && (
+                  {/*window.innerWidth > 1300 && (
                     <li className="nav-item">
                       <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/animales')}}>
-                        <span className="nav-icon">🐾</span>
+                        <span className="nav-icon"></span>
                         <span className="nav-text">Animales</span>
                       </a>
                     </li>
-                  )}
+                  )*/}
                   {window.innerWidth > 1700 && (
                     <li className="nav-item">
                       <a className="nav-link" href="#" onClick={e => {e.preventDefault();navigate('/admin/reportes')}}>
-                        <span className="nav-icon">📊</span>
+                        <span className="nav-icon"></span>
                         <span className="nav-text">Reportes</span>
                       </a>
                     </li>
@@ -117,18 +117,17 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
                       <span className="nav-text">Animales</span>
                     </a>
                   </li>
-                  <li className="nav-item">
+                {/* <li className="nav-item">
                     <a href="/hogares-temporales" className="nav-link">
                       <span className="nav-text">Hogares Temporales</span>
                     </a>
-                  </li>
+                  </li>*/}
                   <li className="nav-item">
                     <a href="/donaciones" className="nav-link">
                       <span className="nav-text">Donaciones</span>
                     </a>
                   </li>
-                  <li className="nav-item">
-                    <a href="/eventos" className="nav-link">
+                {/* <li className="nav-item">
                       <span className="nav-text">Eventos</span>
                     </a>
                   </li>
@@ -136,7 +135,7 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
                     <a href="/voluntariado" className="nav-link">
                       <span className="nav-text">Voluntariado</span>
                     </a>
-                  </li>
+                  </li>*/}
                 </>
               )}
             </ul>
@@ -200,12 +199,12 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
                 Dashboard General
               </a>
             </li>
-            <li className="side-menu-item">
+            {/* <li className="side-menu-item">
               <a href="#estadisticas" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">📊</span>
                 Estadísticas
               </a>
-            </li>
+            </li> */}
             
             {/* Gestión de entidades */}
             <li className="side-menu-category">
@@ -223,12 +222,12 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
                 Gestionar Usuarios
               </a>
             </li>
-            <li className="side-menu-item">
+            {/* <li className="side-menu-item">
               <a href="#catalogo-servicios" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">🏥</span>
                 Catálogo Servicios
               </a>
-            </li>
+            </li> */}
             
             {/* Verificaciones */}
             <li className="side-menu-category">
@@ -242,7 +241,7 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
             </li>
             
             {/* Reportes */}
-            <li className="side-menu-category">
+            {/* <li className="side-menu-category">
               <span className="category-title">📊 REPORTES</span>
             </li>
             <li className="side-menu-item">
@@ -256,18 +255,18 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
                 <span className="side-menu-icon">💰</span>
                 Reportes Financieros
               </a>
-            </li>
+            </li> */}
             
             {/* Separador */}
             <hr className="side-menu-separator" />
             
             {/* Configuración y salir */}
-            <li className="side-menu-item">
+            {/* <li className="side-menu-item">
               <a href="#configuracion-sistema" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">⚙️</span>
                 Configuración Sistema
               </a>
-            </li>
+            </li> */}
             <li className="side-menu-item">
               <a href="#mi-perfil" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">👤</span>

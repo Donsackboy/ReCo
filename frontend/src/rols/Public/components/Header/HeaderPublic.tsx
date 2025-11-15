@@ -55,9 +55,9 @@ function HeaderPublic() {
   return (
     <header className="header">
       <nav className="navbar">
-        <div className="nav-container">
+        <div className="nav-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
           {/* Logo y nombre - extremo izquierdo */}
-          <div className="nav-logo">
+          <div className="nav-logo" style={{ marginLeft: '10px' }}>
             <Link to="/" className="logo-link" onClick={closeMenu}>
               <div className="logo-container">
                 <img
@@ -74,7 +74,7 @@ function HeaderPublic() {
           </div>
 
           {/* Bloque central: Menú de navegación */}
-          <nav className="center-nav">
+          <nav className="center-nav" style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
             <ul className="nav-menu">
               <li className="nav-item">
                 <Link to="/refugios" className="nav-link" onClick={closeMenu}>
@@ -86,22 +86,22 @@ function HeaderPublic() {
                   <span className="nav-text">Animales</span>
                 </Link>
               </li>
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <Link to="/hogares-temporales" className="nav-link" onClick={closeMenu}>
                   <span className="nav-text">Hogares Temporales</span>
                 </Link>
-              </li>
+              </li> */}
               <li className="nav-item">
                 <Link to="/donaciones" className="nav-link" onClick={closeMenu}>
                   <span className="nav-text">Donaciones</span>
                 </Link>
               </li>
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <Link to="/eventos" className="nav-link" onClick={closeMenu}>
                   <span className="nav-text">Eventos</span>
                 </Link>
-              </li>
-              <li className="nav-item">
+              </li> */}
+              {/* <li className="nav-item">
                 <a
                   href="#"
                   className="nav-link"
@@ -117,12 +117,12 @@ function HeaderPublic() {
                 >
                   <span className="nav-text">Voluntariado</span>
                 </a>
-              </li>
+              </li> */}
             </ul>
           </nav>
 
-          {/* Menú hamburguesa - extremo derecho (siempre visible) */}
-          <div className="hamburger-container">
+          {/* Menú hamburguesa y auth - extremo derecho */}
+          <div className="hamburger-container" style={{ marginRight: '30px', display: 'flex', alignItems: 'center' }}>
             <div className="auth-buttons desktop-auth">
               <button onClick={openLogin} className="btn-login">
                 <span className="auth-icon">👤</span>
@@ -172,25 +172,25 @@ function HeaderPublic() {
                 Animales
               </Link>
             </li>
-            <li className="side-menu-item">
+            {/* <li className="side-menu-item">
               <Link to="/hogares-temporales" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">🏡</span>
                 Hogares Temporales
               </Link>
-            </li>
+            </li> */}
             <li className="side-menu-item">
               <Link to="/donaciones" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">💝</span>
                 Donaciones
               </Link>
             </li>
-            <li className="side-menu-item">
+            {/* <li className="side-menu-item">
               <Link to="/eventos" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon">�</span>
                 Eventos
               </Link>
-            </li>
-            <li className="side-menu-item">
+            </li> */}
+            {/* <li className="side-menu-item">
               <a
                 href="#"
                 className="side-menu-link"
@@ -207,7 +207,7 @@ function HeaderPublic() {
                 <span className="side-menu-icon">🤝</span>
                 Voluntariado
               </a>
-            </li>
+            </li> */}
 
             {/* Separador */}
             <hr className="side-menu-separator" />

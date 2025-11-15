@@ -19,16 +19,27 @@ interface AnimalCardProps {
 }
 
 function formatEdad(edad: number | string, tipo_edad?: string): string {
+  // Si tipo_edad es meses, mostrar meses
+  if (tipo_edad && tipo_edad.toLowerCase().includes('mes')) {
+    if (typeof edad === 'string') {
+      const match = edad.match(/(\d+)/);
+      if (match) {
+        const valor = parseInt(match[1], 10);
+        return valor === 1 ? '1 mes' : `${valor} meses`;
+      }
+      return edad;
+    }
+    return edad === 1 ? '1 mes' : `${edad} meses`;
+  }
+  // Si tipo_edad es años o no viene, mostrar años
   if (typeof edad === 'string') {
     const match = edad.match(/(\d+)/);
     if (match) {
       const valor = parseInt(match[1], 10);
-      if (tipo_edad === 'meses') return valor === 1 ? '1 mes' : `${valor} meses`;
       return valor === 1 ? '1 año' : `${valor} años`;
     }
     return edad;
   }
-  if (tipo_edad === 'meses') return edad === 1 ? '1 mes' : `${edad} meses`;
   return edad === 1 ? '1 año' : `${edad} años`;
 }
 

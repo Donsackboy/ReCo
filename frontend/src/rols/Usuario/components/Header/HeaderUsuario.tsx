@@ -66,12 +66,12 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
                 Mis Solicitudes de Adopción
               </Link>
               </li>
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <a href="#eventos" className="nav-link" onClick={closeMenu}>
                   <span className="nav-icon"></span>
                   <span className="nav-text">Eventos</span>
                 </a>
-              </li>
+              </li> */}
             </ul>
           </nav>
           {/* Perfil de usuario y menú */}
@@ -174,12 +174,12 @@ const HeaderUsuario: React.FC<HeaderUsuarioProps> = ({
                 Hogares Temporales
               </Link>
             </li> */}
-            <li className="side-menu-item">
+            {/* <li className="side-menu-item">
               <Link to="/eventos" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon"></span>
                 Eventos
               </Link>
-            </li>
+            </li> */}
             <hr className="side-menu-separator" />
             {/* Configuración y salir */}
             <li className="side-menu-item">
