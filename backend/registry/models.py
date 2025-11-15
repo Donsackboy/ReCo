@@ -442,31 +442,39 @@ class Eventos(models.Model):
     # Switch de inscripción (vinculado a la lógica de voluntariado)
     requiere_inscripcion = models.BooleanField(default=False, help_text="Marcar si los usuarios deben inscribirse para asistir.")
 
+    # Archivos multimedia (fotos y videos)
+    archivos = models.ManyToManyField('ArchivoEvento', blank=True, related_name='eventos', help_text="Archivos multimedia del evento (fotos/videos)")
+
     def clean(self):
-        """
-        Validación a nivel de modelo.
-        """
-        # Lógica: si es voluntariado, DEBE requerir inscripción.
+        """Validaciones de negocio para eventos."""
         if self.es_voluntariado and not self.requiere_inscripcion:
-            raise ValidationError(
-                {'requiere_inscripcion': 'Un evento de voluntariado debe requerir inscripción obligatoriamente.'}
-            )
-        
-        # Validación para que la fecha de fin no sea anterior a la de inicio
-        if self.fecha_hora_fin and self.fecha_hora_inicio:
-            if self.fecha_hora_fin < self.fecha_hora_inicio:
-                raise ValidationError(
-                    {'fecha_hora_fin': 'La fecha de finalización no puede ser anterior a la fecha de inicio.'}
-                )
+            raise ValidationError({'requiere_inscripcion': 'Un evento de voluntariado debe requerir inscripción obligatoriamente.'})
+
+        if self.fecha_hora_fin and self.fecha_hora_inicio and self.fecha_hora_fin < self.fecha_hora_inicio:
+            raise ValidationError({'fecha_hora_fin': 'La fecha de finalización no puede ser anterior a la fecha de inicio.'})
 
     def __str__(self):
-        # Actualizado para mostrar la nueva fecha
-        return f"{self.nombre} - {self.fecha_hora_inicio.strftime('%Y-%m-%d %H:%M')}"
+        inicio = self.fecha_hora_inicio.strftime('%Y-%m-%d %H:%M') if self.fecha_hora_inicio else 'sin fecha'
+        return f"{self.nombre} - {inicio}"
 
     class Meta:
         db_table = 'eventos'
         verbose_name_plural = 'Eventos'
-        ordering = ['fecha_hora_inicio'] # Ordenar eventos por fecha de inicio
+        ordering = ['fecha_hora_inicio']
+
+
+# Modelo para archivos multimedia de eventos
+class ArchivoEvento(models.Model):
+    archivo = models.FileField(upload_to='eventos_media/')
+    tipo = models.CharField(max_length=10, choices=[('foto', 'Foto'), ('video', 'Video')], default='foto')
+    fecha_subida = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.archivo.name
+
+    class Meta:
+        db_table = 'archivos_evento'
+        verbose_name_plural = 'Archivos de Evento'
 
 class InscripcionesEventos(models.Model):
     id_inscripcion = models.AutoField(primary_key=True)

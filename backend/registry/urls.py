@@ -1,8 +1,13 @@
 
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from . import views
 
+router = DefaultRouter()
+router.register(r'eventos', views.EventosViewSet, basename='eventos')
+
 urlpatterns = [
+    path('', include(router.urls)),
     path('fichamedica/<int:animal_id>/', views.FichaMedicaRetrieveUpdateView.as_view(), name='ficha_medica_retrieve_update'),
     path('refugio/historial-solicitudes-adopcion/', views.historial_solicitudes_adopcion_refugio, name='historial_solicitudes_adopcion_refugio'),
     path('refugio/solicitud-adopcion/<int:pk>/', views.actualizar_solicitud_adopcion, name='actualizar_solicitud_adopcion'),
@@ -30,6 +35,7 @@ urlpatterns = [
     path('tratamientos/<int:pk>/', views.TratamientoRetrieveUpdateDestroyView.as_view(), name='tratamiento_detail'),
     path('refugio/solicitudes-adopcion-pendientes/', views.solicitudes_adopcion_pendientes_refugio, name='solicitudes_adopcion_pendientes_refugio'),
     path('refugio/adopciones-pendientes/', views.adopciones_pendientes_refugio, name='adopciones_pendientes_refugio'),
+    path('refugio/dashboard-resumen/', views.refugio_dashboard_summary, name='refugio_dashboard_summary'),
     path('adopciones/', views.SolicitudAdopcionListCreateView.as_view(), name='solicitud_adopcion_list_create'),
     path('animales/<int:animal_id>/alergias-condiciones/', views.AlergiaCondicionListCreateView.as_view(), name='alergia_condicion_list_create'),
     path('refugio/me', views.refugio_me, name='refugio_me'),

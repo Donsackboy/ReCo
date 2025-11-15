@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAnimales, getAdopcionesPendientesRefugio } from '../../../../api';
-
-interface Animal {
-  hogar_temporal?: { estado: string }[];
-}
+import { getRefugioDashboardStats } from '../../../../api';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -14,29 +10,38 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      getAnimales(token).then((animales: Animal[]) => {
-        setAnimalesCount(animales.length);
-        // Hogares temporales pendientes (mantener lógica actual)
-        const hogares = animales.flatMap((a: Animal) => a.hogar_temporal || []);
-        setHogarTemporalPendientes(hogares.filter((h: { estado: string }) => h.estado === 'pendiente').length);
-      }).catch(() => {
-        setAnimalesCount(0);
-        setHogarTemporalPendientes(0);
-      });
-      // Adopciones pendientes del refugio (nuevo endpoint, refresco automático)
-      const fetchAdopcionesPendientes = async () => {
-        try {
-          const count = await getAdopcionesPendientesRefugio(token);
-          setAdopcionesPendientes(count);
-        } catch {
-          setAdopcionesPendientes(0);
-        }
-      };
-      fetchAdopcionesPendientes();
-      const interval = setInterval(fetchAdopcionesPendientes, 5000); // refresca cada 5 segundos
-      return () => clearInterval(interval);
+    if (!token) {
+      setAnimalesCount(0);
+      setAdopcionesPendientes(0);
+      setHogarTemporalPendientes(0);
+      return;
     }
+
+    let isMounted = true;
+
+    const fetchStats = async () => {
+      try {
+        const data = await getRefugioDashboardStats(token);
+        if (!isMounted) return;
+        setAnimalesCount(data.animales ?? 0);
+        setAdopcionesPendientes(data.adopciones_pendientes ?? 0);
+        setHogarTemporalPendientes(data.hogares_temporales_pendientes ?? 0);
+      } catch (error) {
+        console.error('Error al obtener el resumen del refugio:', error);
+        if (!isMounted) return;
+        setAnimalesCount(0);
+        setAdopcionesPendientes(0);
+        setHogarTemporalPendientes(0);
+      }
+    };
+
+    fetchStats();
+    const interval = setInterval(fetchStats, 15000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
   return (

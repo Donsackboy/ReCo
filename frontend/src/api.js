@@ -198,6 +198,16 @@ export async function getAdopcionesPendientesRefugio(token) {
   return data.count;
 }
 
+export async function getRefugioDashboardStats(token) {
+  const response = await fetch(`${API_BASE}/refugio/dashboard-resumen/`, {
+    headers: {
+      'Authorization': `Token ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error('Error al obtener el resumen del refugio');
+  return response.json();
+}
+
 // Obtener ficha médica de un animal
 export async function getFichaMedica(token, animalId) {
   const response = await fetch(`${API_BASE}/fichamedica/${animalId}/`, {

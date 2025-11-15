@@ -4,7 +4,7 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics, permissions, viewsets
 import logging
 
 logger = logging.getLogger(__name__)
@@ -106,6 +106,38 @@ def adopciones_pendientes_refugio(request):
     animales_refugio = Animal.objects.filter(refugio=refugio)
     count = SolicitudAdopcion.objects.filter(animal__in=animales_refugio, estado='pendiente').count()
     return Response({'count': count})
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def refugio_dashboard_summary(request):
+    user = request.user
+    if not hasattr(user, 'refugio') or not user.refugio:
+        return Response({
+            'animales': 0,
+            'adopciones_pendientes': 0,
+            'hogares_temporales_pendientes': 0,
+        })
+
+    refugio = user.refugio
+    animales_qs = Animal.objects.filter(refugio=refugio)
+    animales_count = animales_qs.count()
+
+    adopciones_count = SolicitudAdopcion.objects.filter(
+        animal__in=animales_qs,
+        estado='pendiente'
+    ).count()
+
+    hogares_temporales_count = HogaresTemporales.objects.filter(
+        id_animal__refugio=refugio,
+        estado__in=['en_proceso']
+    ).count()
+
+    return Response({
+        'animales': animales_count,
+        'adopciones_pendientes': adopciones_count,
+        'hogares_temporales_pendientes': hogares_temporales_count,
+    })
 from rest_framework import generics, permissions, status
 from .serializers import SolicitudAdopcionSerializer
 from .models import SolicitudAdopcion
@@ -136,11 +168,11 @@ from .permissions import IsRefugioOrAdmin, IsAdmin, IsRefugio
 from .serializers import (
     AnimalSerializer, PostulacionRefugioSerializer, UserSerializer, LoginSerializer,
     HogarTemporalSerializer, RefugioSerializer,
-    CirugiaSerializer, TratamientoSerializer, AlergiaCondicionSerializer, FichaMedicaSerializer
+    CirugiaSerializer, TratamientoSerializer, AlergiaCondicionSerializer, FichaMedicaSerializer, EventosSerializer
 )
 from .models import (
     Animal, PostulacionRefugio, Usuario, HogaresTemporales, Refugio,
-    Cirugia, Tratamiento, AlergiaCondicion, FichaMedica
+    Cirugia, Tratamiento, AlergiaCondicion, FichaMedica, Eventos
 )
 # Endpoint para listar y crear fichas médicas
 from rest_framework import generics, permissions
@@ -560,3 +592,44 @@ def refugio_me(request):
                 user.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+class EventosViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint que permite a los refugios gestionar (CRUD) sus eventos.
+    """
+    serializer_class = EventosSerializer
+    parser_classes = list(viewsets.ModelViewSet.parser_classes) + [
+        __import__('rest_framework.parsers').parsers.MultiPartParser,
+        __import__('rest_framework.parsers').parsers.FormParser,
+    ]
+    # Seguridad: Solo usuarios autenticados Y que sean tipo Refugio pueden acceder.
+    permission_classes = [permissions.IsAuthenticated, IsRefugio]
+
+    def get_queryset(self):
+        """
+        Esta vista solo debe devolver los eventos
+        del refugio que está logueado.
+        """
+        user = self.request.user
+        if hasattr(user, 'refugio') and user.refugio:
+            # Filtramos eventos para que solo muestre los del refugio del usuario
+            # y los ordenamos por fecha de inicio (los más nuevos primero)
+            return Eventos.objects.filter(id_refugio=user.refugio).order_by('-fecha_hora_inicio')
+        
+        # Si por alguna razón el usuario no es un refugio, no devuelve nada.
+        return Eventos.objects.none()
+
+    def perform_create(self, serializer):
+        """
+        Asigna automáticamente el 'id_refugio' del usuario logueado
+        al crear un nuevo evento y asocia archivos multimedia si se envían.
+        """
+        evento = serializer.save(id_refugio=self.request.user.refugio)
+        archivos = self.request.FILES.getlist('archivos')
+        for archivo in archivos:
+            tipo = 'video' if 'video' in archivo.content_type else 'foto'
+            archivo_obj = ArchivoEvento.objects.create(archivo=archivo, tipo=tipo)
+            evento.archivos.add(archivo_obj)
+        evento.save()

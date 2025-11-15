@@ -90,9 +90,8 @@ const PostulacionRefugio: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    // Transformar sitios_web en string de redes_sociales para guardar automáticamente
-    const redes_sociales = form.sitios_web.map(s => s.url).join(', ');
-    const payload = { ...form, redes_sociales };
+    // Enviar solo los campos que espera el backend
+    const payload = { ...form };
     try {
       const res = await fetch(`${import.meta.env.VITE_API_BASE}/public/postulacion-refugio/`, {
         method: 'POST',

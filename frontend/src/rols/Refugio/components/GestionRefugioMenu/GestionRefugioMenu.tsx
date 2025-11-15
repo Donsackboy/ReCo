@@ -4,9 +4,13 @@ import './GestionRefugioMenu.css';
 
 interface GestionRefugioMenuProps {
   nombreRefugio: string;
+  animalesCount?: number;
+  adopcionesPendientes?: number;
+  hogarTemporalPendientes?: number;
 }
 
-const GestionRefugioMenu: React.FC<GestionRefugioMenuProps> = ({ nombreRefugio }) => {
+
+const GestionRefugioMenu: React.FC<GestionRefugioMenuProps> = ({ nombreRefugio, animalesCount = 0, adopcionesPendientes = 0, hogarTemporalPendientes = 0 }) => {
   const navigate = useNavigate();
 
   const handleButtonClick = (seccion: string) => {
@@ -16,11 +20,6 @@ const GestionRefugioMenu: React.FC<GestionRefugioMenuProps> = ({ nombreRefugio }
       alert(`Navegando a la sección: ${seccion} (Próximamente)`);
     }
   };
-
-  // Simulación de contadores (en producción, obtén estos datos de la API)
-  const [animalesCount] = React.useState(12);
-  const [adopcionesPendientes] = React.useState(3);
-  const [hogarTemporalPendientes] = React.useState(2);
 
   return (
     <div className="gestion-refugio-card menu-card">

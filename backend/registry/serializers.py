@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate
 from .models import (
     SolicitudAdopcion, PostulacionRefugio, Usuario, HogaresTemporales, Refugio, Animal,
-    Cirugia, Tratamiento, AlergiaCondicion, FichaMedica
+    Cirugia, Tratamiento, AlergiaCondicion, FichaMedica, Eventos, ArchivoEvento
 )
 
 # --- Solicitud de Adopción ---
@@ -155,3 +155,17 @@ class AlergiaCondicionSerializer(serializers.ModelSerializer):
     class Meta:
         model = AlergiaCondicion
         fields = '__all__'
+
+# Serializer para Eventos
+class ArchivoEventoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ArchivoEvento
+        fields = ['id', 'archivo', 'tipo', 'fecha_subida']
+
+class EventosSerializer(serializers.ModelSerializer):
+    archivos = ArchivoEventoSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Eventos
+        fields = '__all__'
+        read_only_fields = ('id_refugio',)
