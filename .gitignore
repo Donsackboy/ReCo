@@ -35,3 +35,4 @@ npm-debug.log*
 
 # Misc caches
 .cache/
+backend/db.sqlite3
