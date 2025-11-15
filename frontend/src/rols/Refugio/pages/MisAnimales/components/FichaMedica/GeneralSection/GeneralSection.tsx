@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getFichaMedica } from '../../../../../api/ApiRefugio';
+import { getFichaMedica } from '../../../../../Api/ApiRefugio';
 
 interface GeneralSectionProps {
   animalId: number;

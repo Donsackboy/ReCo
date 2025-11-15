@@ -67,6 +67,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import generics, permissions, status
+from .serializers import SolicitudAdopcionSerializer
+from .models import SolicitudAdopcion
 import logging
 
 logger = logging.getLogger(__name__)
@@ -103,8 +106,6 @@ def actualizar_solicitud_adopcion(request, pk):
     solicitud.save()
     from .serializers import SolicitudAdopcionSerializer
     return Response(SolicitudAdopcionSerializer(solicitud).data)
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
 # Endpoint para obtener las solicitudes de adopción pendientes asociadas al refugio logeado
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -120,8 +121,7 @@ def solicitudes_adopcion_pendientes_refugio(request):
     serializer = SolicitudAdopcionSerializer(solicitudes, many=True)
     return Response(serializer.data)
 # Importar decoradores y permisos al inicio del archivo
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+
 # Endpoint para cantidad de adopciones pendientes de un refugio
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -134,9 +134,7 @@ def adopciones_pendientes_refugio(request):
     animales_refugio = Animal.objects.filter(refugio=refugio)
     count = SolicitudAdopcion.objects.filter(animal__in=animales_refugio, estado='pendiente').count()
     return Response({'count': count})
-from rest_framework import generics, permissions, status
-from .serializers import SolicitudAdopcionSerializer
-from .models import SolicitudAdopcion
+
 # --- Solicitud de Adopción ---
 class SolicitudAdopcionListCreateView(generics.ListCreateAPIView):
     serializer_class = SolicitudAdopcionSerializer
@@ -536,6 +534,7 @@ class TratamientoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView
     serializer_class = TratamientoSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+# Esta API puede editar todos los datos del Refuio
 @api_view(['GET', 'PATCH', 'PUT'])
 @permission_classes([IsAuthenticated])
 def refugio_me(request):
@@ -554,6 +553,12 @@ def refugio_me(request):
         try:
             serializer = RefugioSerializer(refugio, context={'request': request})
             debug_info['serializer_data'] = serializer.data
+            # Logging explícito para depuración
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning(f"[refugio_me] Datos serializados: {serializer.data}")
+            if 'nombre' not in serializer.data:
+                logger.error(f"[refugio_me] El campo 'nombre' no está presente en la respuesta del serializer: {serializer.data}")
             return Response(serializer.data)
         except Exception as e:
             debug_info['error'] = str(e)

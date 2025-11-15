@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './NecesidadesRefugio.css';
 import { useEffect } from 'react';
-import { getNecesidadesRefugio, createNecesidadRefugio, updateNecesidadRefugio, deleteNecesidadRefugio } from '../../api/ApiRefugio';
+import { getNecesidadesRefugio, createNecesidadRefugio, updateNecesidadRefugio, deleteNecesidadRefugio } from '../../Api/ApiRefugio';
 
 type TipoNecesidad = 'alimento' | 'medicamento' | 'servicio' | 'articulo' | 'otro';
 type Prioridad = 'baja' | 'media' | 'alta' | 'urgente';

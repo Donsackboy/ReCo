@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
-const DonacionesPage = () => {
+export const DonacionesPage = () => {
   const navigate = useNavigate();
   return (
     <div style={{ maxWidth: '900px', margin: '40px auto', background: '#f0fff4', borderRadius: '18px', boxShadow: '0 2px 12px #43ea6b22', padding: '32px' }}>
@@ -44,6 +44,7 @@ const DonacionesPage = () => {
           </div>
         </Link>
       </div>
+      
     </div>
   );
 };
