@@ -2,10 +2,19 @@ import React, { useState } from "react";
 import { createPortal } from "react-dom";
 import "../AuthModals.css";
 
+interface AuthenticatedUser {
+  id: number;
+  email: string;
+  tipo_usuario?: string;
+  username?: string;
+  [key: string]: unknown;
+}
+
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSwitchToRegister: () => void;
+  onSwitchToRegister?: () => void;
+  onLoginSuccess?: (user: AuthenticatedUser) => void;
 }
 
 interface FormData {
@@ -17,6 +26,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
   isOpen,
   onClose,
   onSwitchToRegister,
+  onLoginSuccess,
 }) => {
   const [formData, setFormData] = useState<FormData>({
     email: "",
@@ -42,6 +52,12 @@ const LoginModal: React.FC<LoginModalProps> = ({
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         alert("¡Login exitoso!");
+
+        if (onLoginSuccess) {
+          onLoginSuccess(data.user);
+          onClose();
+          return;
+        }
 
         // Redireccionar dependiendo de autoridad de usuario
         const user = JSON.parse(localStorage.getItem("user") || "null");
@@ -111,7 +127,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
           <button
             type="button"
             className="switch-button"
-            onClick={onSwitchToRegister}
+            onClick={() => onSwitchToRegister?.()}
           >
             Regístrate aquí
           </button>

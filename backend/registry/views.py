@@ -5,6 +5,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status, generics, permissions, viewsets
+from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 import logging
 
 logger = logging.getLogger(__name__)
@@ -13,8 +15,8 @@ logger = logging.getLogger(__name__)
 
 # Endpoint para obtener y actualizar la ficha médica de un animal por animal_id
 from rest_framework.generics import RetrieveUpdateAPIView
-from .models import FichaMedica
-from .serializers import FichaMedicaSerializer
+from .models import FichaMedica, Eventos, InscripcionesEventos
+from .serializers import FichaMedicaSerializer, EventoPublicSerializer, EventoInscripcionSerializer
 from rest_framework import permissions
 
 class FichaMedicaRetrieveUpdateView(RetrieveUpdateAPIView):
@@ -138,6 +140,126 @@ def refugio_dashboard_summary(request):
         'adopciones_pendientes': adopciones_count,
         'hogares_temporales_pendientes': hogares_temporales_count,
     })
+
+
+class EventoPublicListView(generics.ListAPIView):
+    queryset = Eventos.objects.select_related('id_refugio').prefetch_related('archivos').all()
+    serializer_class = EventoPublicSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        region = self.request.query_params.get('region')
+        if region and region.lower() != 'todas':
+            queryset = queryset.filter(id_refugio__region__iexact=region)
+
+        refugio_id = self.request.query_params.get('refugio_id')
+        if refugio_id:
+            queryset = queryset.filter(id_refugio__id_refugio=refugio_id)
+
+        voluntariado = self.request.query_params.get('voluntariado')
+        if voluntariado == 'true':
+            queryset = queryset.filter(es_voluntariado=True)
+        elif voluntariado == 'false':
+            queryset = queryset.filter(es_voluntariado=False)
+
+        upcoming = self.request.query_params.get('upcoming')
+        if upcoming == 'true':
+            from django.utils import timezone
+            queryset = queryset.filter(fecha_hora_fin__gte=timezone.now())
+
+        return queryset.order_by('fecha_hora_inicio')
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
+
+class EventoInscripcionView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, evento_id: int):
+        evento = get_object_or_404(Eventos, pk=evento_id)
+
+        if not evento.requiere_inscripcion:
+            return Response(
+                {
+                    'detail': 'Este evento no requiere inscripción.',
+                    'inscrito': False,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        inscripcion, created = InscripcionesEventos.objects.get_or_create(
+            id_usuario=request.user,
+            id_evento=evento,
+        )
+
+        inscritos_total = evento.inscripciones.count()
+
+        if created:
+            return Response(
+                {
+                    'detail': 'Te inscribiste correctamente en el evento.',
+                    'inscrito': True,
+                    'ya_inscrito': False,
+                    'inscritos_total': inscritos_total,
+                },
+                status=status.HTTP_201_CREATED,
+            )
+
+        return Response(
+            {
+                'detail': 'Ya estabas inscrito en este evento.',
+                'inscrito': True,
+                'ya_inscrito': True,
+                'inscritos_total': inscritos_total,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class EventoInscripcionesRefugioView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, evento_id: int):
+        refugio = getattr(request.user, 'refugio', None)
+
+        if request.user.tipo_usuario != 'refugio' or refugio is None:
+            return Response(
+                {'detail': 'Solo los refugios pueden ver las inscripciones de sus eventos.'},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        evento = get_object_or_404(
+            Eventos.objects.prefetch_related('inscripciones__id_usuario'),
+            pk=evento_id,
+            id_refugio=refugio,
+        )
+
+        inscripciones_qs = evento.inscripciones.select_related('id_usuario').order_by('fecha_inscripcion')
+        serializer = EventoInscripcionSerializer(inscripciones_qs, many=True)
+
+        evento_data = {
+            'id_evento': evento.id_evento,
+            'nombre': evento.nombre,
+            'lugar': evento.lugar,
+            'fecha_hora_inicio': evento.fecha_hora_inicio.isoformat() if evento.fecha_hora_inicio else None,
+            'fecha_hora_fin': evento.fecha_hora_fin.isoformat() if evento.fecha_hora_fin else None,
+            'requiere_inscripcion': evento.requiere_inscripcion,
+            'es_voluntariado': evento.es_voluntariado,
+        }
+
+        return Response(
+            {
+                'evento': evento_data,
+                'inscritos_total': inscripciones_qs.count(),
+                'inscripciones': serializer.data,
+            },
+            status=status.HTTP_200_OK,
+        )
 from rest_framework import generics, permissions, status
 from .serializers import SolicitudAdopcionSerializer
 from .models import SolicitudAdopcion
@@ -168,7 +290,8 @@ from .permissions import IsRefugioOrAdmin, IsAdmin, IsRefugio
 from .serializers import (
     AnimalSerializer, PostulacionRefugioSerializer, UserSerializer, LoginSerializer,
     HogarTemporalSerializer, RefugioSerializer,
-    CirugiaSerializer, TratamientoSerializer, AlergiaCondicionSerializer, FichaMedicaSerializer, EventosSerializer
+    CirugiaSerializer, TratamientoSerializer, AlergiaCondicionSerializer, FichaMedicaSerializer, EventosSerializer,
+    EventoPublicSerializer
 )
 from .models import (
     Animal, PostulacionRefugio, Usuario, HogaresTemporales, Refugio,

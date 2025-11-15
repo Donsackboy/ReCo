@@ -280,7 +280,7 @@ const MisEventos: React.FC = () => {
                   </div>
                   <div className="necesidad-card-actions">
                     {evento.requiere_inscripcion && (
-                      <Link to={`/refugio/evento/${evento.id_evento}/inscritos`} className="btn btn-secondary">
+                      <Link to={`/refugio/eventos/${evento.id_evento}/inscritos`} className="btn btn-secondary">
                         Ver Inscritos
                       </Link>
                     )}

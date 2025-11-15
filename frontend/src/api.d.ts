@@ -8,5 +8,12 @@ declare module '../../../api.js' {
     adopciones_pendientes: number;
     hogares_temporales_pendientes: number;
   }>;
+  export function getEventosPublicos(params?: Record<string, string | number | boolean | undefined | null>): Promise<any>;
+  export function inscribirseEnEvento(eventoId: number, token: string): Promise<{
+    detail: string;
+    inscrito: boolean;
+    ya_inscrito: boolean;
+    inscritos_total: number;
+  }>;
   // Agrega otras funciones si es necesario
 }

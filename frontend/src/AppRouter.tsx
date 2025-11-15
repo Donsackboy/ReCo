@@ -143,7 +143,7 @@ export default function AppRouter() {
         <Route path="/refugio/historial-medico" element={isRefugio ? (<HistorialMedico />) : (<Navigate to="/" replace />)} />
 
         <Route path="/refugio/voluntarios" element={isRefugio ? (<Voluntarios />) : (<Navigate to="/" replace />)} />
-        <Route path="/refugio/inscritos-evento" element={isRefugio ? (<InscritosEvento />) : (<Navigate to="/" replace />)} />
+        <Route path="/refugio/eventos/:id/inscritos" element={isRefugio ? (<InscritosEvento />) : (<Navigate to="/" replace />)} />
         <Route path="/refugio/necesidades" element={isRefugio ? (<Necesidades />) : (<Navigate to="/" replace />)} />
         <Route path="/refugio/configuracion" element={isRefugio ? (<ConfiguracionRefugio />) : (<Navigate to="/" replace />)} />
       </Routes>

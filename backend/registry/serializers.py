@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate
 from .models import (
     SolicitudAdopcion, PostulacionRefugio, Usuario, HogaresTemporales, Refugio, Animal,
-    Cirugia, Tratamiento, AlergiaCondicion, FichaMedica, Eventos, ArchivoEvento
+    Cirugia, Tratamiento, AlergiaCondicion, FichaMedica, Eventos, ArchivoEvento, InscripcionesEventos
 )
 
 # --- Solicitud de Adopción ---
@@ -158,6 +158,17 @@ class AlergiaCondicionSerializer(serializers.ModelSerializer):
 
 # Serializer para Eventos
 class ArchivoEventoSerializer(serializers.ModelSerializer):
+    archivo = serializers.SerializerMethodField()
+
+    def get_archivo(self, obj):
+        if not obj.archivo:
+            return None
+        request = self.context.get('request')
+        url = obj.archivo.url
+        if request:
+            return request.build_absolute_uri(url)
+        return url
+
     class Meta:
         model = ArchivoEvento
         fields = ['id', 'archivo', 'tipo', 'fecha_subida']
@@ -169,3 +180,70 @@ class EventosSerializer(serializers.ModelSerializer):
         model = Eventos
         fields = '__all__'
         read_only_fields = ('id_refugio',)
+
+
+class EventoPublicSerializer(serializers.ModelSerializer):
+    refugio = serializers.SerializerMethodField()
+    archivos = ArchivoEventoSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Eventos
+        fields = (
+            'id_evento',
+            'nombre',
+            'descripcion',
+            'lugar',
+            'fecha_hora_inicio',
+            'fecha_hora_fin',
+            'es_voluntariado',
+            'requiere_inscripcion',
+            'refugio',
+            'archivos',
+        )
+
+    def get_refugio(self, obj):
+        if not obj.id_refugio:
+            return None
+        return {
+            'id': obj.id_refugio.id_refugio,
+            'nombre': obj.id_refugio.nombre,
+            'region': obj.id_refugio.region,
+        }
+
+
+class EventoInscripcionUsuarioSerializer(serializers.ModelSerializer):
+    nombre = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Usuario
+        fields = (
+            'id',
+            'nombre',
+            'email',
+            'username',
+            'first_name',
+            'last_name',
+            'telefono',
+            'tipo_usuario',
+        )
+
+    def get_nombre(self, obj):
+        nombres = (obj.first_name or '').strip()
+        apellidos = (obj.last_name or '').strip()
+        nombre_completo = f"{nombres} {apellidos}".strip()
+        if nombre_completo:
+            return nombre_completo
+        return obj.username or obj.email
+
+
+class EventoInscripcionSerializer(serializers.ModelSerializer):
+    usuario = EventoInscripcionUsuarioSerializer(source='id_usuario', read_only=True)
+
+    class Meta:
+        model = InscripcionesEventos
+        fields = (
+            'id_inscripcion',
+            'fecha_inscripcion',
+            'asistencia',
+            'usuario',
+        )

@@ -208,6 +208,45 @@ export async function getRefugioDashboardStats(token) {
   return response.json();
 }
 
+export async function getEventosPublicos(params = {}) {
+  const url = new URL(`${API_BASE}/public/eventos/`);
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      url.searchParams.append(key, String(value));
+    }
+  });
+
+  const response = await fetch(url.toString());
+  if (!response.ok) throw new Error('Error al obtener los eventos públicos');
+  return response.json();
+}
+
+export async function inscribirseEnEvento(eventoId, token) {
+  const response = await fetch(`${API_BASE}/public/eventos/${eventoId}/inscribirse/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
+  });
+
+  let data = null;
+  try {
+    data = await response.json();
+  } catch (error) {
+    data = null;
+  }
+
+  if (!response.ok) {
+    const message = (data && data.detail) ? data.detail : 'No fue posible completar la inscripción al evento';
+    const error = new Error(message);
+    error.status = response.status;
+    throw error;
+  }
+
+  return data;
+}
+
 // Obtener ficha médica de un animal
 export async function getFichaMedica(token, animalId) {
   const response = await fetch(`${API_BASE}/fichamedica/${animalId}/`, {
