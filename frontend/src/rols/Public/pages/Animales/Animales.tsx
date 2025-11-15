@@ -280,12 +280,51 @@ const Animales = () => {
           {/* Galería de animales */}
           <section
             className={`animales-galeria${isMobile ? ' animales-galeria-mobile' : ''}`}
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'flex-start',
+              gap: '25px',
+              alignItems: 'flex-start',
+              width: '100%'
+            }}
           >
-            {animalesPagina.map(animal => (
-              <div key={animal.id} className="animal-card-wrapper">
-                <AnimalCard animal={animal} />
+            {animalesFiltrados.length === 0 ? (
+              <div
+                style={{
+                  width: '100%',
+                  minHeight: '350px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  color: '#228B22',
+                  fontWeight: 600,
+                  fontSize: '1.25rem',
+                  background: 'rgba(34,139,34,0.07)',
+                  borderRadius: '18px',
+                  boxShadow: '0 2px 12px #43ea6b22',
+                  margin: '32px 0',
+                  padding: '32px 0'
+                }}
+              >
+                <svg width="54" height="54" viewBox="0 0 54 54" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginBottom: 16 }}>
+                  <circle cx="27" cy="27" r="27" fill="#eaffea"/>
+                  <path d="M18 34C18 29.5817 21.5817 26 26 26C30.4183 26 34 29.5817 34 34" stroke="#43ea6b" strokeWidth="2.5" strokeLinecap="round"/>
+                  <ellipse cx="22" cy="22" rx="2" ry="3" fill="#43ea6b"/>
+                  <ellipse cx="30" cy="22" rx="2" ry="3" fill="#43ea6b"/>
+                </svg>
+                {filtros.refugio
+                  ? <span>Este refugio <b>no tiene animales registrados aún</b>.<br/>¡Vuelve pronto para ver nuevos peluditos!</span>
+                  : <span>No hay animales que coincidan con los filtros seleccionados.</span>}
               </div>
-            ))}
+            ) : (
+              animalesPagina.map(animal => (
+                <div key={animal.id} className="animal-card-wrapper" style={{ flex: '0 0 auto' }}>
+                  <AnimalCard animal={animal} />
+                </div>
+              ))
+            )}
           </section>
 
           {/* Paginación abajo */}
