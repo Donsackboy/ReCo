@@ -29,5 +29,7 @@ run_with_retries() {
 
 run_with_retries "python manage.py migrate --noinput"
 
+# Crear superusuario admin@reco.cl por defecto si no existe
+run_with_retries "python manage.py initadmin"
+echo "Superusuario admin@reco.cl verificado/creado."
 echo "Migraciones aplicadas correctamente."
-# ...existing code...
