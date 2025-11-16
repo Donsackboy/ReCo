@@ -171,6 +171,29 @@ class Refugio(models.Model):
     personalidad_juridica = models.BooleanField(default=False)
     estado = models.CharField(max_length=20, default='activo')
 
+    # Datos para donaciones por transferencia
+    banco = models.CharField(max_length=100, blank=True, null=True)
+    TIPO_CUENTA_CHILE = [
+        ("Corriente", "Cuenta Corriente"),
+        ("Vista", "Cuenta Vista"),
+        ("Ahorro", "Cuenta de Ahorro"),
+        ("RUT", "Cuenta RUT"),
+    ]
+    tipo_cuenta = models.CharField(max_length=50, choices=TIPO_CUENTA_CHILE, blank=True, null=True)
+    numero_cuenta = models.CharField(max_length=50, blank=True, null=True)
+    nombre_titular = models.CharField(max_length=100, blank=True, null=True)
+    rut_titular = models.CharField(max_length=12, blank=True, null=True)
+    correo_donacion = models.EmailField(max_length=100, blank=True, null=True)
+
+    # Mercado Pago / Este no, tiene que ser marketplace
+    # // TODO: 
+    # mp_access_token = models.CharField(
+    #     max_length=255, 
+    #     blank=True, 
+    #     null=True, 
+    #     help_text="Access Token de Producción de Mercado Pago del refugio."
+    # )
+
     def __str__(self):
         return self.nombre
 
@@ -393,9 +416,9 @@ class PostulacionRefugio(models.Model):
 
     def __str__(self):
         return f"{self.nombre} ({self.comuna}, {self.region})"
-from django.db import models
-from django.conf import settings
-from django.contrib.auth.models import AbstractUser
+# from django.db import models
+# from django.conf import settings
+# from django.contrib.auth.models import AbstractUser
 
 class Usuario(AbstractUser):
     # Hacer que email sea el campo de identificación

@@ -1,4 +1,4 @@
-import { API_BASE } from '../../../api/apiBase.js';
+import { API_BASE } from '../../../Api/apiBase.js';
 
 // Obtener todos los animales (público)
 export async function getAnimales() {

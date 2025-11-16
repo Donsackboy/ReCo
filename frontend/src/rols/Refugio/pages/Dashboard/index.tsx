@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAnimales, getAdopcionesPendientesRefugio } from '../../api/ApiRefugio';
+import { getAnimales, getAdopcionesPendientesRefugio } from '../../Api/ApiRefugio';
 
 interface Animal {
   hogar_temporal?: { estado: string }[];

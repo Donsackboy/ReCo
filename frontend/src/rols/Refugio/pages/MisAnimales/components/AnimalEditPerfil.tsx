@@ -3,8 +3,8 @@ import './AnimalEditPerfil.css';
 import { useState, useEffect } from 'react';
 import FichaMedicaModal from './FichaMedica/FichaMedicaModal';
 import EstructuraPDF from '../../HistorialMedico/EstructuraPDF';
-import { updateAnimal, getCirugias } from '../../../api/ApiRefugio';
-import { getVacunas, createVacuna, deleteVacuna } from '../../../api/ApiRefugio';
+import { updateAnimal, getCirugias } from '../../../Api/ApiRefugio';
+import { getVacunas, createVacuna, deleteVacuna } from '../../../Api/ApiRefugio';
 // Tipo local Vacuna
 export type Vacuna = {
   id: number;

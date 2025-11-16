@@ -4,3 +4,4 @@ django-environ
 djangorestframework
 django-cors-headers
 Pillow
+mercadopago

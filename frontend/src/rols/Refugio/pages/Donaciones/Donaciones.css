@@ -1,0 +1,185 @@
+.donaciones-loading {
+  font-size: 1.2rem;
+  color: #888;
+}
+.donaciones-error {
+  color: #e53935;
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+}
+.donaciones-transferencia {
+  margin-top: 32px;
+}
+.donaciones-faltante {
+  color: #e53935;
+  font-size: 1.2rem;
+}
+.donaciones-faltan-campos {
+  font-size: 1rem;
+  color: #888;
+}
+.donaciones-datos-box {
+  margin: 24px auto;
+  background: #f6f6f6;
+  padding: 18px;
+  border-radius: 10px;
+  max-width: 400px;
+  font-size: 1.1rem;
+  text-align: left;
+}
+/* Alineación por filas: etiqueta a la izquierda, valor a la derecha. */
+.donaciones-row {
+  display: grid;
+  grid-template-columns: 160px 1fr; /* etiqueta fija + valor flexible */
+  column-gap: 12px;
+  align-items: center;
+  padding: 6px 0;
+}
+.donaciones-label {
+  text-align: right;
+  padding-right: 8px;
+  font-weight: 600;
+}
+.donaciones-value {
+  text-align: left;
+  word-break: break-word;
+}
+.donaciones-edit-btn {
+  margin-top: 18px;
+  padding: 8px 22px;
+  background: #2196f3;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.donaciones-modal-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #0007;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.donaciones-modal-form {
+  background: #fff;
+  padding: 32px;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px #0002;
+  min-width: 320px;
+  max-width: 380px;
+}
+.donaciones-modal-form h3 {
+  margin-bottom: 18px;
+}
+.donaciones-modal-form label {
+  display: block;
+  margin-bottom: 8px;
+}
+.donaciones-modal-form input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+.donaciones-modal-btns {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+}
+.donaciones-save-btn {
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-weight: 500;
+}
+.donaciones-cancel-btn {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-weight: 500;
+}
+.donaciones-guardando {
+  margin-top: 12px;
+  color: #2196f3;
+}
+.donaciones-json {
+  margin-top: 32px;
+  background: #f6f6f6;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 1rem;
+  text-align: left;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.donaciones-container {
+  max-width: 600px;
+  margin: 120px auto 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  padding: 32px 24px;
+  position: relative;
+  z-index: 1;
+}
+.donaciones-container h1 {
+  margin-bottom: 24px;
+  font-size: 2rem;
+  text-align: center;
+}
+.donaciones-container h2 {
+  margin-top: 24px;
+  font-size: 1.2rem;
+}
+.donaciones-container ul {
+  margin-bottom: 16px;
+}
+.donaciones-container button {
+  margin-top: 12px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  background: #4caf50;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 500;
+}
+.donaciones-container button[type="button"] {
+  background: #ccc;
+  color: #333;
+}
+.donaciones-container form {
+  margin-top: 16px;
+}
+.donaciones-container input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+.donaciones-container p {
+  margin-top: 8px;
+}
+.refugio-nombre {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #388e3c;
+  letter-spacing: 1px;
+}

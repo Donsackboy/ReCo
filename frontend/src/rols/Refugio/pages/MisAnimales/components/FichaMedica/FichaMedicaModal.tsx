@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './FichaMedica.css';
 import GeneralSection from './GeneralSection/GeneralSection';
 // Si necesitas el tipo FichaMedica, defínelo aquí o impórtalo de un archivo de tipos
-import { updateFichaMedica, getVacunas, createVacuna, updateVacuna, deleteVacuna, getCirugias, createCirugia, updateCirugia, deleteCirugia } from '../../../../api/ApiRefugio';
+import { updateFichaMedica, getVacunas, createVacuna, updateVacuna, deleteVacuna, getCirugias, createCirugia, updateCirugia, deleteCirugia } from '../../../../Api/ApiRefugio';
 import VacunasSection from './Vacunas/VacunasSection';
 import CirugiasSection from './Cirugias/CirugiasSection';
 import type { Cirugia } from './Cirugias/CirugiaForm';

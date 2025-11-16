@@ -1,0 +1,49 @@
+.opciones-container{
+  max-width:720px;
+  margin:40px auto;
+  padding:20px;
+  text-align:center;
+  font-family: Arial, sans-serif;
+}
+
+.opciones-buttons{
+  display:flex;
+  gap:20px;
+  justify-content:center;
+  margin-top:24px;
+  flex-wrap:wrap;
+}
+
+.opcion-wrapper{ display:flex; flex-direction:column; align-items:center }
+
+.opcion-button{
+  width:340px; /* ancho fijo para que ambos botones mantengan el mismo tamaño */
+  height:140px; /* altura fija para consistencia visual */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px 18px;
+  border-radius:12px;
+  font-size:1.05rem;
+  font-weight:700;
+  cursor:pointer;
+  border: none;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+  overflow: visible; /* permitir que elementos (logo) sobresalgan del botón */
+}
+
+.opcion-button:hover{transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,0.12)}
+
+.opcion-transferencia{ background: #2ecc71; color: #fff }
+.opcion-mercadopago{ background: #ffd54f; color: #222; display:flex; align-items:center; justify-content:center; padding:6px; overflow: visible }
+.opcion-mercadopago { position: relative; }
+.opcion-mercadopago .mp-logo{ display:block; position:relative; z-index:2 }
+.opcion-mercadopago img, .mp-logo{ height:220px; width:auto } /* logo MUY grande - permitirá que sobresalga */
+.opcion-mercadopago img{ margin: 0; transform: translateY(0%); } /* bajar el logo para situarlo más abajo dentro del botón y permitir que sobresalga */
+.mp-dev-below{ margin-top:10px; font-size:0.95rem; color:#c0392b; font-weight:700 }
+
+@media (max-width:640px){
+  .opcion-button{ width:90%; height:auto; padding:18px 12px }
+  .opcion-mercadopago img, .mp-logo{ height:120px }
+}
