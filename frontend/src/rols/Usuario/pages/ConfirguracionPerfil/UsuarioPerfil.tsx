@@ -18,7 +18,7 @@ function UsuarioPerfil() {
 	const [passwordForm, setPasswordForm] = useState<{ password: string; password2: string }>({ password: '', password2: '' });
 	const [passwordError, setPasswordError] = useState<string>('');
 
-	const API_URL = "http://localhost:8000/api/auth/profile/";
+	const API_URL = `${import.meta.env.VITE_API_BASE}/api/auth/profile/`;
 
 	// Cambios del formulario de perfil
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
