@@ -221,6 +221,7 @@ class AnimalPublicCarouselView(APIView):
                 "id": animal.pk,
                 "nombre": animal.nombre,
                 "edad": animal.edad if animal.edad is not None else '',
+                "tipo_edad": getattr(animal, 'tipo_edad', ''),
                 "refugio": animal.refugio.nombre if animal.refugio else '',
                 "diasEnRefugio": dias_en_refugio,
                 "foto_principal": foto_principal

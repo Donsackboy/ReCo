@@ -203,9 +203,11 @@ export default function AnimalPerfil() {
           navigate(`/adopcion?animalId=${animal.id}&refugio=${encodeURIComponent(refugioId)}`);
         }}
       >Adoptar</button>
+      {/*
       <button style={{ background: '#228B22', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 24px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 8px #43ea6b22' }}
-  onClick={() => navigate(`/hogares-temporales/registro?animalId=${animal.id}`)}
+        onClick={() => navigate(`/hogares-temporales/registro?animalId=${animal.id}`)}
       >Dar hogar temporal</button>
+      */}
     </div>
   );
 }

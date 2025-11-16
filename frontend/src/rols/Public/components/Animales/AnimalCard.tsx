@@ -57,17 +57,19 @@ const AnimalCard: React.FC<AnimalCardProps> = ({ animal }) => (
                                         minWidth: '250px', 
                                         position: 'relative', 
                                         overflow: 'hidden' }}>
-    <div style={{ position: 'absolute',
-                  top: '8px',
-                  right: '18px',
-                  background: '#eaffea',
-                  color: '#228B22',
-                  borderRadius: '10px',
-                  padding: '6px 12px',
-                  fontWeight: 600,
-                  fontSize: '0.95rem' }}>
-      {animal.diasEnRefugio} días en el refugio
-    </div>
+    {animal.diasEnRefugio > 0 && (
+      <div style={{ position: 'absolute',
+                    top: '8px',
+                    right: '18px',
+                    background: '#eaffea',
+                    color: '#228B22',
+                    borderRadius: '10px',
+                    padding: '6px 12px',
+                    fontWeight: 600,
+                    fontSize: '0.95rem' }}>
+        {animal.diasEnRefugio} días en el refugio
+      </div>
+    )}
     <img
       src={animal.imagenes && animal.imagenes.length > 0 && animal.imagenes[0] ? animal.imagenes[0] : '/Images/animales/placeholder.png'}
       alt={animal.nombre + ' portada'}
