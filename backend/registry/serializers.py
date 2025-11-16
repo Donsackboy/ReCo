@@ -81,9 +81,23 @@ class RefugioSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     refugio = RefugioSerializer(read_only=True, allow_null=True, required=False)
+
     class Meta:
         model = Usuario
-        fields = ('id', 'username', 'email', 'tipo_usuario', 'first_name', 'last_name', 'telefono', 'refugio')
+        fields = (
+            'id',
+            'username',
+            'email',
+            'tipo_usuario',
+            'first_name',
+            'last_name',
+            'telefono',
+            'refugio',
+            'is_superuser',
+            'is_staff',
+            'is_active',
+        )
+
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
