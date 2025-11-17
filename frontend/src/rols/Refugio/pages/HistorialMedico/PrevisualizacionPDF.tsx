@@ -23,10 +23,9 @@ interface Props {
 }
 
 const EstructuraPDF: React.FC<Props> = ({ animal, onClose }) => {
+    const [editHistorial] = useState(animal.historial || []);
   const [editNombre, setEditNombre] = useState(animal.nombre);
   const [editEdad, setEditEdad] = useState(animal.edad || '');
-  const [editEstado, setEditEstado] = useState(animal.estado_salud || '');
-  const [editHistorial, setEditHistorial] = useState<HistorialItem[]>(animal.historial);
 
   // Vacunas aplicadas y pendientes
   const vacunasAplicadas: string[] = editHistorial.filter(h => h.descripcion.startsWith('Vacuna: ')).map(h => h.descripcion.replace('Vacuna: ', ''));

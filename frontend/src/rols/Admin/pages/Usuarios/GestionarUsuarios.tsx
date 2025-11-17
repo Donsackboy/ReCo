@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './GestionarUsuarios.css';
-// @ts-ignore: Dynamic import to avoid TS module error
-let getUsuarios: any, updateUsuario: any, deleteUsuario: any;
-
-import('../../api/ApiAdmin.js').then(api => {
-  getUsuarios = api.getUsuarios;
-  updateUsuario = api.updateUsuario;
-  deleteUsuario = api.deleteUsuario;
-});
+import { getUsuarios, updateUsuario, deleteUsuario } from '../../api/apiAdmin';
 import HeaderAdmin from '../../components/Header/HeaderAdmin';
 
 interface Usuario {
@@ -217,18 +210,14 @@ const GestionarUsuarios = () => {
                     onChange={e => setUsuarioEdit({ ...usuarioEdit, email: e.target.value })}
                   />
                 </label>
-                {usuarioEdit.tipo_usuario !== 'admin' && (
-                  <label>Tipo:
-                    <select
-                      value={usuarioEdit.tipo_usuario}
-                      onChange={e => setUsuarioEdit({ ...usuarioEdit, tipo_usuario: e.target.value })}
-                    >
-                      <option value="default">Usuario</option>
-                      <option value="refugio">Refugio</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                  </label>
-                )}
+                <label>Tipo:
+                  <input
+                    type="text"
+                    value={usuarioEdit.tipo_usuario}
+                    disabled
+                    style={{ background: '#eee', color: '#333' }}
+                  />
+                </label>
                 <label>Nombre:
                   <input
                     type="text"

@@ -1,8 +1,8 @@
 import React from 'react';
-import HeaderPublic from '../../rols/Public/components/HeaderPublic';
-import HeaderRefugio from '../../rols/Refugio/components/HeaderRefugio';
-import HeaderUsuario from '../../rols/Usuario/components/Header/HeaderUsuario';
-import HeaderAdmin from '../../rols/Admin/components/Header/HeaderAdmin';
+import HeaderPublic from './HeaderPublic';
+import HeaderRefugio from '../../../Refugio/components/Header/HeaderRefugio';
+import HeaderUsuario from '../../../Usuario/components/Header/HeaderUsuario';
+import HeaderAdmin from '../../../Admin/components/Header/HeaderAdmin';
 // Eliminar imports de variants, ahora los headers están en las carpetas de cada rol
 
 // Tipos de usuario según tu enum de la base de datos
@@ -29,7 +29,7 @@ const HeaderWrapper: React.FC<HeaderWrapperProps> = ({
   
   // Si no hay usuario logueado, mostrar header público
   if (!user || !user.tipo_usuario) {
-    return <HeaderPublic onNavigateHome={onNavigateHome} />;
+    return <HeaderPublic />;
   }
 
   // Seleccionar header según tipo de usuario
@@ -64,7 +64,7 @@ const HeaderWrapper: React.FC<HeaderWrapperProps> = ({
 
     default:
       // Fallback al header público si el tipo no es reconocido
-      return <HeaderPublic onNavigateHome={onNavigateHome} />;
+      return <HeaderPublic />;
   }
 };
 

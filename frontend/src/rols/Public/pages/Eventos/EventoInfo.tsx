@@ -1,5 +1,5 @@
 import React from 'react';
-import { Evento } from './types';
+import type { Evento } from './types';
 
 interface EventoInfoProps {
   evento: Evento;

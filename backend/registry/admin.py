@@ -1,6 +1,9 @@
 # Imports primero
 from django.contrib import admin
 from .models import PostulacionRefugio, Usuario, Refugio, Animal, HogaresTemporales, Donaciones, Suscripciones, Eventos, InscripcionesEventos, CatalogoServicios, DonacionesEspecificas, ComprobantesServicio, NecesidadesRefugio, PerfilAdoptante, Cirugia, Tratamiento, SolicitudAdopcion, AlergiaCondicion, FichaMedica, Vacuna
+from .models_especie import Especie
+
+admin.site.register(Especie)
 # Imports primero
 from django.contrib import admin
 from .models import PostulacionRefugio, Usuario, Refugio, Animal, HogaresTemporales, Donaciones, Suscripciones, Eventos, InscripcionesEventos, CatalogoServicios, DonacionesEspecificas, ComprobantesServicio, NecesidadesRefugio, PerfilAdoptante, Cirugia, Tratamiento, SolicitudAdopcion, AlergiaCondicion, FichaMedica
@@ -32,6 +35,11 @@ class UsuarioAdmin(admin.ModelAdmin):
 class RefugioAdmin(admin.ModelAdmin):
     list_display = ("id_refugio", "nombre", "comuna", "region", "telefono")
     search_fields = ("nombre", "comuna", "region")
+    fieldsets = (
+        (None, {
+            'fields': ('nombre', 'direccion', 'correo_contacto', 'telefono', 'descripcion', 'region', 'comuna', 'logo', 'sitio_web', 'redes_sociales', 'horario_atencion', 'servicios_ofrecidos', 'ano_fundacion', 'personalidad_juridica', 'estado', 'banco', 'tipo_cuenta', 'numero_cuenta', 'rut_titular')
+        }),
+    )
 
 @admin.register(Animal)
 class AnimalAdmin(admin.ModelAdmin):

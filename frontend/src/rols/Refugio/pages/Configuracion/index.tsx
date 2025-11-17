@@ -50,6 +50,17 @@ const ConfiguracionRefugio: React.FC = () => {
           // Convertir string separada por comas a lista JSON
           const redes = typeof value === 'string' ? value.split(',').map(r => r.trim()).filter(Boolean) : value;
           formData.append(key, JSON.stringify(redes));
+        } else if (["banco", "tipoCuenta", "tipo_cuenta", "numeroCuenta", "numero_cuenta", "rutTitular", "rut_titular"].includes(key)) {
+          // Enviar campos bancarios con el nombre esperado por el backend
+          let backendKey = key;
+          let bancoValue = value;
+          if (key === "banco" && form.banco === "Banco Otros" && form.bancoOtro) {
+            bancoValue = form.bancoOtro;
+          }
+          if (key === "tipoCuenta") backendKey = "tipo_cuenta";
+          if (key === "numeroCuenta") backendKey = "numero_cuenta";
+          if (key === "rutTitular") backendKey = "rut_titular";
+          formData.append(backendKey, String(bancoValue));
         } else {
           formData.append(key, String(value));
         }
@@ -116,6 +127,17 @@ const ConfiguracionRefugio: React.FC = () => {
               <li><b>Descripción:</b> {refugio.descripcion || '-'}</li>
               <li><b>Redes sociales:</b> {Array.isArray(refugio.redes_sociales) ? refugio.redes_sociales.join(', ') : (refugio.redes_sociales || '-')}</li>
             </ul>
+            <div className="perfil-refugio-bancarios-card">
+              <h4 className="perfil-refugio-bancarios-titulo"><span role="img" aria-label="banco" style={{marginRight:8}}>💳</span>Datos bancarios para donaciones</h4>
+              <ul className="perfil-refugio-bancarios-lista">
+                <li><b>Banco:</b> {refugio.banco || '-'}</li>
+                <li><b>Tipo de cuenta:</b> {refugio.tipoCuenta || refugio.tipo_cuenta || '-'}</li>
+                <li><b>Número de cuenta:</b> {refugio.numeroCuenta || refugio.numero_cuenta || '-'}</li>
+                <li><b>Nombre titular:</b> {refugio.titularCuenta || refugio.titular_cuenta || '-'}</li>
+                <li><b>RUT titular:</b> {refugio.rutTitular || refugio.rut_titular || '-'}</li>
+                <li><b>Email bancario:</b> {refugio.emailBancario || refugio.email_bancario || refugio.email || '-'}</li>
+              </ul>
+            </div>
             <hr className="perfil-refugio-separador" />
             <h4 className="perfil-refugio-usuario-titulo">Usuario asociado</h4>
             <ul className="perfil-refugio-lista">
@@ -131,7 +153,6 @@ const ConfiguracionRefugio: React.FC = () => {
       )}
       {loading && <div className="perfil-refugio-guardando">Guardando cambios...</div>}
     </div>
-// ...existing code...
   );
 };
 

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
-import { useNavigate } from 'react-router-dom';
 import "../AuthModals.css";
 
 interface LoginModalProps {
@@ -48,14 +47,8 @@ const LoginModal: React.FC<LoginModalProps> = ({
         const user = JSON.parse(localStorage.getItem("user") || "null");
         console.log("[DEBUG] user en localStorage:", user);
         console.log("[DEBUG] tipo_usuario:", user?.tipo_usuario);
-        if (user?.tipo_usuario === "admin") {
-          console.log("[DEBUG] Redirigiendo a /admin");
-          navigate("/admin");
-        } else {
-          console.log("[DEBUG] No es admin, recargando página normal");
-          onClose();
-          window.location.reload();
-        }
+        // Recargar la página para actualizar el header automáticamente
+        window.location.reload();
 
 
       } else {

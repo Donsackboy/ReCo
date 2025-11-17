@@ -134,6 +134,12 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
                 Historial Médico
               </Link>
             </li>
+              <li className="side-menu-item">
+                  <Link to="/refugio/donaciones-medicas" className="side-menu-link" onClick={closeMenu}>
+                    <span className="side-menu-icon">💊</span>
+                    Gestionar Donaciones Médicas
+                  </Link>
+                </li>
             {/* <li className="side-menu-item">
               <Link to="/refugio/mis-eventos" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon"></span>
@@ -182,12 +188,14 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
                 Hogares Temporales
               </Link>
             </li>
+            {/*
             <li className="side-menu-item">
               <Link to="/eventos" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon"></span>
                 Eventos
               </Link>
             </li>
+            */}
             {/* Separador verde antes de perfil y cerrar sesión */}
             <hr className="side-menu-separator" style={{ borderColor: '#2ecc40', borderWidth: 2 }} />
 

@@ -1,10 +1,149 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
+
+class DonacionMedicaRespuestaView(APIView):
+    def post(self, request, pk):
+        # Aquí va la lógica para responder la donación médica
+        # Por ahora solo responde OK
+        return Response({'detail': 'Respuesta registrada correctamente.'}, status=status.HTTP_200_OK)
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def descartar_donacion_medica(request, donacion_id):
+    try:
+        donacion = Donaciones.objects.get(id_donacion=donacion_id)
+        donacion.estado = 'descartada'  # O eliminar si prefieres
+        donacion.save()
+        return Response({"detail": "Donación descartada correctamente."}, status=200)
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)
+from .models import ListaVacunasAnimal, ListaVacunasEspecie
+from .serializers import ListaVacunasAnimalSerializer, ListaVacunasEspecieSerializer
+from rest_framework import viewsets, permissions
+
+# Donaciones médicas refugio
+from .models import Donaciones, DonacionesEspecificas, ComprobantesServicio, Animal, Refugio
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from .serializers import DonacionesEspecificasSerializer
+
+class DonacionesMedicasRefugioView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, id_refugio):
+        import logging
+        logger = logging.getLogger("donaciones_medicas")
+        donaciones = Donaciones.objects.filter(id_refugio=id_refugio, tipo='medica')
+        logger.info(f"Donaciones encontradas: {donaciones}")
+        resultado = []
+        for donacion in donaciones:
+            animal = None
+            comprobante_url = None
+            comentario = ""
+            usuario_nombre = None
+            vacuna_nombre = None
+            try:
+                donacion_especifica = DonacionesEspecificas.objects.filter(id_donacion=donacion).first()
+                logger.info(f"Donación específica: {donacion_especifica}")
+                if donacion_especifica:
+                    animal = donacion_especifica.id_animal
+                    logger.info(f"Animal obtenido: {animal}")
+                    comentario = donacion_especifica.notas or ""
+                    vacuna_nombre = donacion_especifica.nombre_vacuna or ""
+                    usuario_nombre = donacion.id_usuario.username if donacion.id_usuario else None
+                    comprobante = ComprobantesServicio.objects.filter(id_donacion_especifica=donacion_especifica).first()
+                    logger.info(f"Comprobante obtenido: {comprobante}")
+                    if comprobante:
+                        comprobante_url = comprobante.url_archivo
+                resultado.append({
+                    "id": donacion.id_donacion,
+                    "monto": float(donacion.monto),
+                    "animal": {"id_animal": getattr(animal, 'id_animal', None), "nombre": getattr(animal, 'nombre', None)} if animal else None,
+                    "comprobante_url": comprobante_url,
+                    "comentario": comentario,
+                    "vacuna_nombre": vacuna_nombre,
+                    "usuario_nombre": usuario_nombre,
+                    "respuesta_refugio": None
+                })
+            except Exception as e:
+                logger.error(f"Error procesando donación {donacion.id_donacion}: {e}")
+        return Response(resultado)
+
+
+class ListaVacunasAnimalViewSet(viewsets.ModelViewSet):
+    queryset = ListaVacunasAnimal.objects.all()
+    serializer_class = ListaVacunasAnimalSerializer
+
+class ListaVacunasEspecieViewSet(viewsets.ModelViewSet):
+    queryset = ListaVacunasEspecie.objects.all()
+    serializer_class = ListaVacunasEspecieSerializer
+    permission_classes = [permissions.IsAuthenticated]
+from transbank.webpay.webpay_plus.transaction import Transaction
+from django.conf import settings
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework import status
+import uuid
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.files.storage import default_storage
 from django.conf import settings
 import os
+import logging
+
+# Endpoint para iniciar donación Webpay Plus
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def iniciar_donacion_webpay(request):
+    logger = logging.getLogger("webpay_donacion")
+    logger.warning(f"Headers: {dict(request.headers)}")
+    logger.warning(f"Body: {request.body}")
+    logger.warning(f"Data: {request.data}")
+    # Loguear el token recibido en la cabecera Authorization
+    auth_header = request.headers.get('Authorization')
+    logger.warning(f"Authorization header: {auth_header}")
+    # Loguear los valores y tipos exactos de las credenciales Webpay
+    logger.warning(f"WEBPAY_API_KEY: {repr(getattr(settings, 'WEBPAY_API_KEY', None))} (type: {type(getattr(settings, 'WEBPAY_API_KEY', None))})")
+    logger.warning(f"WEBPAY_COMMERCE_CODE: {repr(getattr(settings, 'WEBPAY_COMMERCE_CODE', None))} (type: {type(getattr(settings, 'WEBPAY_COMMERCE_CODE', None))})")
+    logger.warning(f"WEBPAY_ENVIRONMENT: {repr(getattr(settings, 'WEBPAY_ENVIRONMENT', None))} (type: {type(getattr(settings, 'WEBPAY_ENVIRONMENT', None))})")
+
+    monto = request.data.get('monto')
+    email = request.data.get('email', 'donante@reco.cl')
+    if not monto:
+        logger.warning("No se recibió el monto en la solicitud.")
+        return Response({'error': 'Monto requerido'}, status=status.HTTP_400_BAD_REQUEST)
+
+    import random, string
+    buy_order = ''.join(random.choices(string.ascii_uppercase + string.digits, k=20))
+    session_id = str(uuid.uuid4())
+    return_url = request.build_absolute_uri('/api/webpay/retorno/')
+    import traceback
+    try:
+        # Configurar credenciales y ambiente
+        from transbank.common.options import WebpayOptions
+        options = WebpayOptions(
+            settings.WEBPAY_API_KEY,
+            settings.WEBPAY_COMMERCE_CODE,
+            settings.WEBPAY_ENVIRONMENT
+        )
+        tx = Transaction(options)
+        response = tx.create(buy_order, session_id, monto, return_url)
+        return Response({
+            'url': response['url'],
+            'token': response['token'],
+            'buy_order': buy_order,
+            'session_id': session_id
+        })
+    except Exception as e:
+        logger.error(f"Error en iniciar_donacion_webpay: {e}")
+        logger.error(traceback.format_exc())
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class UploadImageView(APIView):
     permission_classes = [IsAuthenticated]
@@ -34,15 +173,114 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 import logging
+from rest_framework.authtoken.models import Token
 
 logger = logging.getLogger(__name__)
 
 # ...existing code...
 
+# Endpoint para logout seguro
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def logout(request):
+    try:
+        user = request.user
+        Token.objects.filter(user=user).delete()
+        return Response({"detail": "Logout exitoso"}, status=status.HTTP_200_OK)
+    except Exception as e:
+        logger.error(f"Error en logout: {e}")
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 # Endpoint para obtener y actualizar la ficha médica de un animal por animal_id
 from rest_framework.generics import RetrieveUpdateAPIView
 from .models import FichaMedica
 from .serializers import FichaMedicaSerializer
+from .models import Donaciones, DonacionesEspecificas, CatalogoServicios, Animal, Refugio, Vacuna
+from .serializers import VacunaSerializer
+
+# Endpoint para registrar donación de vacuna
+from rest_framework.decorators import api_view
+@api_view(["POST"])
+def registrar_donacion_vacuna(request):
+    """
+    Espera: {
+        'id_usuario': int,
+        'id_refugio': int,
+        'id_animal': int,
+        'nombre_vacuna': str,
+        'tipo_vacuna': str,
+        'fecha_aplicacion': str (YYYY-MM-DD),
+        'monto': float
+    }
+    """
+    data = request.data
+    try:
+        usuario_id = data.get('id_usuario')
+        refugio_id = data.get('id_refugio')
+        animal_id = data.get('id_animal')
+        nombre_vacuna = data.get('nombre_vacuna')
+        tipo_vacuna = data.get('tipo_vacuna', 'unica')
+        fecha_aplicacion = data.get('fecha_aplicacion')
+        monto = data.get('monto', 0)
+        # Validación: solo la imagen es obligatoria
+        imagen = request.FILES.get('imagen')
+        if not imagen:
+            return Response({'error': 'Debes subir el comprobante de transferencia (imagen).'}, status=400)
+        usuario = request.user if request.user.id == usuario_id else None
+        refugio = Refugio.objects.get(id_refugio=refugio_id)
+        animal = Animal.objects.get(id_animal=animal_id)
+        # Crear donación principal
+        donacion = Donaciones.objects.create(
+            id_usuario_id=usuario_id,
+            id_refugio=refugio,
+            monto=monto,
+            tipo='medica',
+            estado='pendiente',
+            comprobante_imagen=imagen
+        )
+        # Buscar servicio tipo vacuna en catálogo
+        servicio = CatalogoServicios.objects.filter(categoria='vacuna', nombre__icontains=nombre_vacuna).first()
+        if not servicio:
+            servicio = CatalogoServicios.objects.create(
+                categoria='vacuna',
+                nombre=nombre_vacuna,
+                descripcion=f'Vacuna {nombre_vacuna}',
+                costo_promedio=monto,
+                especie_aplicable='ambos',
+                frecuencia='',
+                es_obligatorio=False,
+                activo=True
+            )
+        # Crear donación específica
+        donacion_especifica = DonacionesEspecificas.objects.create(
+              id_donacion=donacion,
+              id_servicio=servicio,
+              id_animal=animal,
+              id_refugio=refugio,
+              cantidad=1,
+              monto_unitario=monto,
+              estado_uso='pendiente',
+              nombre_vacuna=nombre_vacuna,
+              comentario_donador=data.get('comentario_donador', ''),
+              nombre_donador=data.get('nombre_donador', '')
+        )
+        # Registrar vacuna en el animal
+        vacuna = Vacuna.objects.create(
+            animal=animal,
+            nombre=nombre_vacuna,
+            tipo=tipo_vacuna,
+            fecha_aplicacion=fecha_aplicacion
+        )
+        serializer = DonacionesEspecificasSerializer(donacion_especifica)
+        return Response({
+            'donacion_id': donacion.id_donacion,
+            'donacion_especifica': serializer.data,
+            'vacuna_id': vacuna.id,
+            'animal_id': animal.id_animal,
+            'refugio_id': refugio.id_refugio
+        }, status=201)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
 from rest_framework import permissions
 
 class FichaMedicaRetrieveUpdateView(RetrieveUpdateAPIView):
@@ -572,7 +810,13 @@ def refugio_me(request):
             if refugio.logo:
                 refugio.logo.delete(save=False)
             refugio.logo = nuevo_logo
-        serializer = RefugioSerializer(refugio, data=request.data, partial=partial, context={'request': request})
+        # Mapear campos alternativos del frontend a los del modelo
+        data = request.data.copy()
+        if 'titularCuenta' in data:
+            data['titular_cuenta'] = data['titularCuenta']
+        if 'emailBancario' in data:
+            data['email_bancario'] = data['emailBancario']
+        serializer = RefugioSerializer(refugio, data=data, partial=partial, context={'request': request})
         user = request.user
         # Actualizar datos del usuario asociado si se envían
         usuario_fields = ['usuario_nombre', 'usuario_email', 'usuario_telefono']
@@ -618,6 +862,20 @@ class VacunaViewSet(viewsets.ModelViewSet):
         if animal_id:
             queryset = queryset.filter(animal_id=animal_id)
         return queryset
+
+    from rest_framework.decorators import action
+    from rest_framework.response import Response
+
+    @action(detail=False, methods=['get'], url_path='por-especie', permission_classes=[permissions.IsAuthenticated])
+    def por_especie(self, request):
+        vacunas = Vacuna.objects.all()
+        resultado = {}
+        for vacuna in vacunas:
+            especie = vacuna.especie
+            if especie not in resultado:
+                resultado[especie] = []
+            resultado[especie].append(self.get_serializer(vacuna).data)
+        return Response(resultado)
 
 from .models import NecesidadRefugio
 from .serializers import NecesidadRefugioSerializer

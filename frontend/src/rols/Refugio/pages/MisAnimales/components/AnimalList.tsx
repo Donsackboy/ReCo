@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getAnimales } from '../../../api/ApiRefugio';
+import { getAnimales } from '../../../api/apiRefugio';
 import AnimalEditPerfil from './AnimalEditPerfil';
 import AnimalForm from './AnimalForm';
 import './AnimalList.css';

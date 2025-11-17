@@ -1,11 +1,8 @@
-import React from 'react';
+// ...existing code...
 import { useNavigate } from 'react-router-dom';
 import { animales } from '../Animales/animalesData';
 
-import { regionesChile, regionesComunasChile as comunasPorRegion } from '../../../../utils/regionesComunasChile';
-const regionesConTodas = ['Todas', ...regionesChile];
 
-const especies = ['Perro', 'Gato', 'Conejo', 'Ave', 'Otro'];
 
 export default function HogaresTemporales() {
   const navigate = useNavigate();

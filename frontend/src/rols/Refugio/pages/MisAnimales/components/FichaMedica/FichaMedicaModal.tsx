@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './FichaMedica.css';
 import GeneralSection from './GeneralSection/GeneralSection';
 // Si necesitas el tipo FichaMedica, defínelo aquí o impórtalo de un archivo de tipos
-import { updateFichaMedica, getVacunas, createVacuna, updateVacuna, deleteVacuna, getCirugias, createCirugia, updateCirugia, deleteCirugia } from '../../../../api/ApiRefugio';
+import { updateFichaMedica, getVacunas, createVacuna, updateVacuna, deleteVacuna, getCirugias, createCirugia, updateCirugia, deleteCirugia } from '../../../../api/apiRefugio';
 import VacunasSection from './Vacunas/VacunasSection';
 import CirugiasSection from './Cirugias/CirugiasSection';
 import type { Cirugia } from './Cirugias/CirugiaForm';
@@ -195,22 +195,23 @@ const FichaMedicaModal: React.FC<FichaMedicaModalProps> = ({ animalId, onClose, 
             setVacunasEliminadas={setVacunasEliminadas}
           />
 
-          <CirugiasSection
+          {/* <CirugiasSection
             cirugias={cirugias}
             setCirugias={setCirugias}
             animalId={Number(animalId)}
             especie={especie}
-          />
+          /> */}
 
-          <TratamientosSection tratamientos={form.tratamientos} setTratamientos={t => setForm((f: typeof form) => ({ ...f, tratamientos: t }))} />
+          {/* <TratamientosSection tratamientos={form.tratamientos} setTratamientos={t => setForm((f: typeof form) => ({ ...f, tratamientos: t }))} /> */}
 
-          <AlergiasCondicionesSection
+          {/* <AlergiasCondicionesSection
             alergias={form.alergias}
             setForm={setForm}
             animalId={animalId}
-          />
+          /> */}
 
-          {/* Archivos adjuntos */}
+          {/* Archivos adjuntos ocultos */}
+          {/*
           <div className="section-card">
             <h3 className="section-title">Archivos adjuntos</h3>
             {(form.archivos?.length ?? 0) === 0 && (
@@ -221,6 +222,7 @@ const FichaMedicaModal: React.FC<FichaMedicaModalProps> = ({ animalId, onClose, 
             )}
             <div style={{ color: '#888' }}>(Funcionalidad de archivos pendiente)</div>
           </div>
+          */}
 
           <div className="actions-row">
             <button className="button-primary" onClick={handleSave} disabled={loading}>Guardar cambios</button>

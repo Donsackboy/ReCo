@@ -1,9 +1,6 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
 const DonacionesPage = () => {
-  const navigate = useNavigate();
   return (
     <div style={{ maxWidth: '900px', margin: '40px auto', background: '#f0fff4', borderRadius: '18px', boxShadow: '0 2px 12px #43ea6b22', padding: '32px' }}>
       <h2 style={{ color: '#145214', marginBottom: '18px' }}>Donaciones</h2>

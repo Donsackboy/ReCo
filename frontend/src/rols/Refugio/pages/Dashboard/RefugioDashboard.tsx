@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAnimales, getAdopcionesPendientesRefugio } from '../../api/ApiRefugio';
+import { getAnimales, getAdopcionesPendientesRefugio } from '../../api/apiRefugio';
 
 interface Animal {
   hogar_temporal?: { estado: string }[];
 }
 
-const Dashboard: React.FC = () => {
+const RefugioDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [animalesCount, setAnimalesCount] = useState(0);
   const [adopcionesPendientes, setAdopcionesPendientes] = useState(0);
-  const [hogarTemporalPendientes, setHogarTemporalPendientes] = useState(0);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -18,11 +17,8 @@ const Dashboard: React.FC = () => {
       getAnimales(token).then((animales: Animal[]) => {
         setAnimalesCount(animales.length);
         // Hogares temporales pendientes (mantener lógica actual)
-        const hogares = animales.flatMap((a: Animal) => a.hogar_temporal || []);
-        setHogarTemporalPendientes(hogares.filter((h: { estado: string }) => h.estado === 'pendiente').length);
       }).catch(() => {
         setAnimalesCount(0);
-        setHogarTemporalPendientes(0);
       });
       // Adopciones pendientes del refugio (nuevo endpoint, refresco automático)
       const fetchAdopcionesPendientes = async () => {
@@ -62,6 +58,9 @@ const Dashboard: React.FC = () => {
         <button style={{ background: '#7b1fa2', color: '#fff', border: 'none', borderRadius: 10, padding: '18px 38px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 12px #7b1fa233', marginBottom: 12 }} onClick={() => navigate('/refugio/mis-eventos')}>
           🎉 Gestionar Eventos
         </button>
+        {/* <button style={{ background: '#e3f6ff', color: '#145214', border: '1.5px solid #43a0ea', borderRadius: 10, padding: '18px 38px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 12px #43a0ea33', marginBottom: 12 }} onClick={() => navigate('/refugio/donaciones-medicas')}>
+          💊 Gestionar Donaciones Médicas
+        </button> */}
             {/*
             <button style={{ background: '#43a047', color: '#fff', border: 'none', borderRadius: 10, padding: '18px 38px', fontWeight: 700, fontSize: '1.08rem', cursor: 'pointer', boxShadow: '0 2px 12px #43a04733', marginBottom: 12 }} onClick={() => navigate('/refugio/hogar-temporal')}>
               🏠 Hogares Temporales
@@ -75,4 +74,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+export default RefugioDashboard;

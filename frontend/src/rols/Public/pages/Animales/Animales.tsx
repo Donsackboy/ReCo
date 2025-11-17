@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import AnimalCard from '../../components/Animales/AnimalCard';
 import './Animales.css';
@@ -241,8 +241,6 @@ const Animales = () => {
           {/* Indicador de filtro de refugio activo */}
           {filtros.refugio && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-              {/* LOG: filtro de refugio y nombre */}
-              {console.log('Animales.tsx - filtro refugio:', filtros.refugio, 'nombre:', refugioNombre)}
               <span style={{
                 background: '#e0f7fa',
                 color: '#00796b',

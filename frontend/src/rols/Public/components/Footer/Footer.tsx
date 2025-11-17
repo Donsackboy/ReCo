@@ -1,4 +1,4 @@
-import React from 'react';
+// ...existing code...
 import './Footer.css';
 
 export default function Footer() {

@@ -1,4 +1,4 @@
-import React from 'react';
+// ...existing code...
 
 export default function InfoHogarTemporal() {
   return (

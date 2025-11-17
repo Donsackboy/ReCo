@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getAnimalesCount, getAnimalesCarousel } from '../../api/ApiPublic.js';
+import { getAnimalesCount, getAnimalesCarousel } from '../../api/apiPublic';
 import AnimalCard from '../../components/Animales/AnimalCard';
 import './Home.css';
 
@@ -14,7 +14,6 @@ function Home() {
   const nombreDelRefugio = 'ReCo';
   const [numeroAnimales, setNumeroAnimales] = useState<number | null>(null);
   const [animalesCarousel, setAnimalesCarousel] = useState<any[]>([]);
-  const [carouselIndex, setCarouselIndex] = useState(2); // El central
 
   useEffect(() => {
     getAnimalesCount()
@@ -24,13 +23,6 @@ function Home() {
   .then((data: any[]) => setAnimalesCarousel(data))
       .catch(() => setAnimalesCarousel([]));
   }, []);
-
-  const handlePrev = () => {
-    setCarouselIndex((prev) => (prev === 0 ? animalesCarousel.length - 1 : prev - 1));
-  };
-  const handleNext = () => {
-    setCarouselIndex((prev) => (prev === animalesCarousel.length - 1 ? 0 : prev + 1));
-  };
 
   return (
     <div className="home">

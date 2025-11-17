@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-
+import { useState } from 'react';
 const DonarMonetaria = () => {
   const [monto, setMonto] = useState('');
   const [destino, setDestino] = useState('refugio');
   const [enviado, setEnviado] = useState(false);
 
-  const handleSubmit = e => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setEnviado(true);
   };

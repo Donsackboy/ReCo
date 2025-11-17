@@ -1,11 +1,13 @@
 # backend/Dockerfile
-FROM python:3.12-slim
+FROM python:3.11-slim
 
 WORKDIR /app
 
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN apt-get update && \
+	apt-get install -y build-essential libssl-dev libffi-dev libxml2-dev libxslt1-dev zlib1g-dev && \
+	pip install --no-cache-dir -r requirements.txt
 # Asegurar que Pillow esté instalado para ImageField
 
 COPY . .

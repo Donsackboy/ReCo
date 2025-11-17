@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
-import { getAnimales } from '../../api/ApiPublic.js';
 
 import { regionesChile, regionesComunasChile as comunasPorRegion } from '../../../../utils/regionesComunasChile';
 const regiones = regionesChile;
@@ -12,16 +11,10 @@ export default function RegistroHogarTemporal() {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const animalId = params.get('animalId');
-  const [animal, setAnimal] = useState<any>(null);
+  const [animal] = useState<any>(null);
 
   useEffect(() => {
-    if (animalId) {
-      const token = localStorage.getItem('token');
-      getAnimales(token).then(animales => {
-        const found = animales.find((a: any) => a.id === Number(animalId));
-        setAnimal(found || null);
-      });
-    }
+    // Aquí deberías cargar el animal usando tu API real
   }, [animalId]);
   const [form, setForm] = useState<{
     nombre: string;

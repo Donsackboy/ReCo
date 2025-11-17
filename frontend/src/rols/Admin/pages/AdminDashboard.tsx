@@ -6,8 +6,6 @@ const AdminDashboard: React.FC = () => {
   const [refugiosCount, setRefugiosCount] = useState(0);
   const [refugiosSinVerificar, setRefugiosSinVerificar] = useState(0);
   const [animalesCount, setAnimalesCount] = useState(0);
-  const [donacionesSinVerificar, setDonacionesSinVerificar] = useState(0);
-  const [reportesGenerados, setReportesGenerados] = useState(0);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -21,29 +19,18 @@ const AdminDashboard: React.FC = () => {
         // Refugios sin verificar (ejemplo: status === 'pendiente')
         let sinVerificar = 0;
         if (Array.isArray(data)) {
-          sinVerificar = data.filter(r => r.status === 'pendiente' || r.estado === 'pendiente').length;
+          sinVerificar = data.filter((r: any) => r.status === 'pendiente' || r.estado === 'pendiente').length;
         } else if (Array.isArray(data.results)) {
-          sinVerificar = data.results.filter(r => r.status === 'pendiente' || r.estado === 'pendiente').length;
+          sinVerificar = data.results.filter((r: any) => r.status === 'pendiente' || r.estado === 'pendiente').length;
         }
         setRefugiosSinVerificar(sinVerificar);
       });
 
-    // Animales totales en el sistema
-    fetch(`${import.meta.env.VITE_API_BASE}/animales/`, {
-      headers: { 'Authorization': `Token ${token}` }
-    })
-      .then(res => res.ok ? res.json() : {})
+    // Animales totales en el sistema (siempre actualizado)
+    fetch(`${import.meta.env.VITE_API_BASE}/public/animales/count/`)
+      .then(res => res.ok ? res.json() : { count: 0 })
       .then(data => {
-        console.log('Respuesta animales:', data);
-        if (typeof data.count === 'number') {
-          setAnimalesCount(data.count);
-        } else if (Array.isArray(data)) {
-          setAnimalesCount(data.length);
-        } else if (Array.isArray(data.results)) {
-          setAnimalesCount(data.results.length);
-        } else {
-          setAnimalesCount(0);
-        }
+        setAnimalesCount(typeof data.count === 'number' ? data.count : 0);
       });
   }, []);
   return (
@@ -80,8 +67,7 @@ const AdminDashboard: React.FC = () => {
           <li><Link to="/admin/gestionar-refugios">Gestionar Refugios</Link></li>
           <li><Link to="/admin/gestionar-usuarios">Gestionar Usuarios</Link></li>
           <li><Link to="/admin/verificaciones">Verificar Refugios</Link></li>
-          {/* <li><Link to="/admin/animales">Gestionar Animales</Link></li> */}
-          {/* <li><Link to="/admin/reportes">Reportes</Link></li> */}
+          <li><Link to="/admin/gestionar-vacunas">Gestionar Vacunas</Link></li>
         </ul>
       </nav>
 

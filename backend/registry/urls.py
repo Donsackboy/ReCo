@@ -1,19 +1,34 @@
-from .views import UploadImageView
+
+
+
 from django.urls import path
+from .views import UploadImageView
 from . import views
 from rest_framework.routers import DefaultRouter
 
+
+
+from .views_especie import EspecieViewSet
+
 router = DefaultRouter()
+router.register(r'especies', EspecieViewSet, basename='especie')
 router.register(r'animales/(?P<animal_id>[^/.]+)/vacunas', views.VacunaViewSet, basename='vacuna-animal')
+router.register(r'vacunas', views.VacunaViewSet, basename='vacuna')
+router.register(r'listas-vacunas-animal', views.ListaVacunasAnimalViewSet, basename='listas-vacunas-animal')
+router.register(r'listas-vacunas-especie', views.ListaVacunasEspecieViewSet, basename='listas-vacunas-especie')
 
 urlpatterns = [
+        path('donaciones-medicas/<int:pk>/respuesta/', views.DonacionMedicaRespuestaView.as_view(), name='donacion_medica_respuesta'),
     path('upload-image/', UploadImageView.as_view(), name='upload-image'),
+    path('registrar_donacion_vacuna/', views.registrar_donacion_vacuna, name='registrar_donacion_vacuna'),
     path('fichamedica/<int:animal_id>/', views.FichaMedicaRetrieveUpdateView.as_view(), name='ficha_medica_retrieve_update'),
     path('refugio/historial-solicitudes-adopcion/', views.historial_solicitudes_adopcion_refugio, name='historial_solicitudes_adopcion_refugio'),
+        path('refugio/<int:id_refugio>/donaciones-medicas/', views.DonacionesMedicasRefugioView.as_view(), name='donaciones_medicas_refugio'),
     path('refugio/solicitud-adopcion/<int:pk>/', views.actualizar_solicitud_adopcion, name='actualizar_solicitud_adopcion'),
     path('auth/login/', views.login, name='login'),
     path('auth/register/', views.register, name='register'),
     path('auth/profile/', views.user_profile, name='profile'),
+    path('auth/logout/', views.logout, name='logout'),
     path('hogares-temporales/', views.crear_hogar_temporal, name='crear_hogar_temporal'),
     path('admin/users/', views.UserListAdminView.as_view(), name='admin_user_list'),
     path('admin/users/<int:pk>/', views.UserDetailAdminView.as_view(), name='admin_user_detail'),
@@ -38,9 +53,10 @@ urlpatterns = [
     path('adopciones/', views.SolicitudAdopcionListCreateView.as_view(), name='solicitud_adopcion_list_create'),
     path('animales/<int:animal_id>/alergias-condiciones/', views.AlergiaCondicionListCreateView.as_view(), name='alergia_condicion_list_create'),
     path('refugio/me', views.refugio_me, name='refugio_me'),
-        path('animales/<int:animal_id>/ficha-medica/', views.FichaMedicaListCreateView.as_view(), name='ficha_medica_list_create'),
+    path('animales/<int:animal_id>/ficha-medica/', views.FichaMedicaListCreateView.as_view(), name='ficha_medica_list_create'),
     path('necesidades-refugio/', views.NecesidadRefugioListCreateView.as_view(), name='necesidad_refugio_list_create'),
     path('necesidades-refugio/<int:pk>/', views.NecesidadRefugioDetailView.as_view(), name='necesidad_refugio_detail'),
+    path('webpay/iniciar/', views.iniciar_donacion_webpay, name='iniciar_donacion_webpay'),
 ]
 
 urlpatterns += router.urls

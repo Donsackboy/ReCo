@@ -9,4 +9,3 @@ export type { UserType } from './HeaderWrapper';
 export { default as Logo } from './shared/Logo';
 
 // Header original (por compatibilidad)
-export { default as Header } from './Header';

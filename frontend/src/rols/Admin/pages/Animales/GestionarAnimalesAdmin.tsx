@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import EditarAnimalModal from './EditarAnimalModal';
 import CrearAnimalModal from './CrearAnimalModal';
@@ -37,8 +36,6 @@ const GestionarAnimalesAdmin: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState<Animal>({ nombre: '', especie: '', edad: '', sexo: '', refugio: 0, imagenes: [], resena: '', esterilizado: false, desparasitado: false, salud: '', vacunas: [] });
-  const [vacunaForm, setVacunaForm] = useState<Vacuna>({ tipo: '', fecha: '' });
-  const [fotoInput, setFotoInput] = useState('');
   const [editId, setEditId] = useState<number | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -88,59 +85,6 @@ const GestionarAnimalesAdmin: React.FC = () => {
     });
     setEditId(animal.id!);
     setEditModalOpen(true);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value, type, checked } = e.target as any;
-    if (type === 'checkbox') {
-      setForm(f => ({ ...f, [name]: checked }));
-    } else {
-      setForm(f => ({ ...f, [name]: value }));
-    }
-  };
-
-  const handleAddVacuna = () => {
-    if (!vacunaForm.tipo || !vacunaForm.fecha) return;
-    setForm(f => ({ ...f, vacunas: [...(f.vacunas || []), vacunaForm] }));
-    setVacunaForm({ tipo: '', fecha: '' });
-  };
-
-  const handleRemoveVacuna = (idx: number) => {
-    setForm(f => ({ ...f, vacunas: (f.vacunas || []).filter((_, i) => i !== idx) }));
-  };
-
-  const handleAddFoto = () => {
-    if (!fotoInput) return;
-    setForm(f => ({ ...f, imagenes: [...(f.imagenes || []), fotoInput] }));
-    setFotoInput('');
-  };
-
-  const handleRemoveFoto = (idx: number) => {
-    setForm(f => ({ ...f, imagenes: (f.imagenes || []).filter((_, i) => i !== idx) }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.nombre || !form.refugio) return alert('Completa todos los campos');
-    const token = localStorage.getItem('token');
-    const method = editId ? 'PUT' : 'POST';
-    const url = editId ? import.meta.env.VITE_API_BASE + `/animales/${editId}/` : import.meta.env.VITE_API_BASE + '/animales/';
-    fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Token ${token}` },
-      body: JSON.stringify(form)
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (editId) {
-          setAnimales(animales.map(a => a.id === editId ? data : a));
-        } else {
-          setAnimales([...animales, data]);
-        }
-        setForm({ nombre: '', especie: '', edad: '', sexo: '', refugio: 0 });
-        setEditId(null);
-        setModalOpen(false);
-      });
   };
 
   if (loading) return <div>Cargando animales...</div>;

@@ -2,6 +2,7 @@ from pathlib import Path
 import os
 import environ
 
+
 # -----------------------------------
 # BASE CONFIG
 # -----------------------------------
@@ -76,9 +77,10 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'registry.logging_auth.LoggingTokenAuthentication',
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
+    # No forzar IsAuthenticated globalmente, para que AllowAny funcione en endpoints públicos
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ],
 }
 
 
@@ -163,6 +165,7 @@ USE_I18N = True
 USE_TZ = True
 
 
+
 # -----------------------------------
 # STATIC & MEDIA
 # -----------------------------------
@@ -171,6 +174,13 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# -----------------------------------
+# WEBPAY CONFIG
+# -----------------------------------
+WEBPAY_API_KEY = env('WEBPAY_API_KEY', default='TU_API_KEY')
+WEBPAY_COMMERCE_CODE = env('WEBPAY_COMMERCE_CODE', default='TU_COMMERCE_CODE')
+WEBPAY_ENVIRONMENT = env('WEBPAY_ENVIRONMENT', default='INTEGRATION')
 
 
 # -----------------------------------

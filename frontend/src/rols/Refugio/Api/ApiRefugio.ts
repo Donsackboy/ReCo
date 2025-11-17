@@ -1,3 +1,14 @@
+// ---------------------------------------------------------------------------
+// 💊 Donaciones médicas
+// ---------------------------------------------------------------------------
+export async function getDonacionesMedicas(refugioId: number): Promise<any> {
+	const token = localStorage.getItem('token');
+	const response = await fetch(`${API_BASE}/refugio/${refugioId}/donaciones-medicas/`, {
+		headers: token ? { 'Authorization': `Token ${token}` } : {},
+	});
+	if (!response.ok) throw new Error('Error al obtener donaciones médicas');
+	return response.json();
+}
 export async function deleteVacuna(token: string, animalId: number, vacunaId: number): Promise<boolean> {
 	const response = await fetch(`${API_BASE}/animales/${animalId}/vacunas/${vacunaId}/`, {
 		method: 'DELETE',
@@ -67,6 +78,20 @@ export async function deleteNecesidadRefugio(id: number, token: string): Promise
 
 // ---------------------------------------------------------------------------
 // 🐶 Animales (Refugio)
+// ---------------------------------------------------------------------------
+// 💉 Registrar donación de vacuna
+export async function registrarDonacionVacuna(data: any, token: string): Promise<any> {
+	const response = await fetch(`${API_BASE}/registrar-donacion-vacuna/`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Token ${token}`,
+		},
+		body: JSON.stringify(data),
+	});
+	if (!response.ok) throw new Error('Error al registrar donación de vacuna');
+	return response.json();
+}
 // ---------------------------------------------------------------------------
 export async function getAnimales(token: string): Promise<any> {
 	const response = await fetch(`${API_BASE}/animales/`, {

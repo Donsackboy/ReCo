@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 interface AdminAnimalFormProps {
   refugios: { id: number; nombre: string }[];
@@ -20,12 +20,10 @@ const AdminAnimalForm: React.FC<AdminAnimalFormProps> = ({ refugios, onCreated, 
     fotos: [] as string[],
     vacunas: [] as any[],
   });
-  const [vacunaForm, setVacunaForm] = useState({ tipo: '', fecha: '' });
   const [fotoInput, setFotoInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  const token = localStorage.getItem('token');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -34,16 +32,6 @@ const AdminAnimalForm: React.FC<AdminAnimalFormProps> = ({ refugios, onCreated, 
     } else {
       setForm({ ...form, [name]: value });
     }
-  };
-
-  const handleAddVacuna = () => {
-    if (!vacunaForm.tipo || !vacunaForm.fecha) return;
-    setForm(f => ({ ...f, vacunas: [...(f.vacunas || []), vacunaForm] }));
-    setVacunaForm({ tipo: '', fecha: '' });
-  };
-
-  const handleRemoveVacuna = (idx: number) => {
-    setForm(f => ({ ...f, vacunas: (f.vacunas || []).filter((_: any, i: number) => i !== idx) }));
   };
 
   const handleAddFoto = () => {
@@ -62,13 +50,6 @@ const AdminAnimalForm: React.FC<AdminAnimalFormProps> = ({ refugios, onCreated, 
     setError('');
     setSuccess(false);
     try {
-      const data = {
-        ...form,
-        edad: form.edad ? parseInt(form.edad) : null,
-        refugio: Number(form.refugio),
-        fotos: form.fotos,
-        vacunas: form.vacunas,
-      };
       // Aquí deberías llamar a tu función de creación de animal en admin
       // await createAnimal(data, token);
       setSuccess(true);

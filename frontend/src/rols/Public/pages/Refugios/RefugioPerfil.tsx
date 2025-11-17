@@ -10,6 +10,28 @@ export default function RefugioPerfil() {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
+  // Modal para datos bancarios
+  const [openModal, setOpenModal] = React.useState(false);
+  const handleOpenModal = () => setOpenModal(true);
+  const handleCloseModal = () => setOpenModal(false);
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text);
+    alert('¡Copiado al portapapeles!');
+  };
+  const handleCopyAll = () => {
+    if (!refugio) return;
+    const datos = [
+      `Banco: ${refugio.banco || ''}`,
+      `Tipo de cuenta: ${refugio.tipo_cuenta || refugio.tipoCuenta || ''}`,
+      `N° Cuenta: ${refugio.numero_cuenta || refugio.numeroCuenta || ''}`,
+      `Nombre titular: ${refugio.titular_cuenta || refugio.titularCuenta || ''}`,
+      `RUT titular: ${refugio.rut_titular || refugio.rutTitular || ''}`,
+      `Email bancario: ${refugio.email_bancario || refugio.emailBancario || refugio.email || ''}`
+    ].join('\n');
+    navigator.clipboard.writeText(datos);
+    alert('¡Todos los datos bancarios copiados!');
+  };
+
   React.useEffect(() => {
     if (!id || isNaN(Number(id))) {
       setRefugio(null);
@@ -31,7 +53,7 @@ export default function RefugioPerfil() {
         let animalesData = await animalesRes.json();
         animalesData = Array.isArray(animalesData) ? animalesData.map((a: any) => ({ ...a, id: a.id_animal })) : [];
         // Log de los primeros 5 animales y sus campos de relación
-        console.log('Animales recibidos (primeros 5):', animalesData.slice(0, 5).map(a => ({
+        console.log('Animales recibidos (primeros 5):', animalesData.slice(0, 5).map((a: any) => ({
           id_animal: a.id_animal,
           refugio: a.refugio,
           refugio_id: a.refugio?.id,
@@ -68,5 +90,33 @@ export default function RefugioPerfil() {
 
   if (loading) return <div>Cargando...</div>;
   if (!refugio) return <div>{error || 'Refugio no encontrado'}</div>;
-  return <PerfilRefugio refugio={refugio} />;
+  return (
+    <>
+      <PerfilRefugio refugio={refugio} />
+      <button style={{ margin: '18px 0', padding: '10px 22px', background: '#228B22', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }} onClick={handleOpenModal}>
+        Dona al refugio
+      </button>
+      {openModal && (
+        <div className="modal-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(34,139,34,0.15)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={handleCloseModal}>
+          <div className="modal-content" style={{ background: '#fff', padding: 32, borderRadius: 16, maxWidth: 420, width: '90%', boxShadow: '0 4px 24px #228B2288', position: 'relative', border: '3px solid #43a047' }} onClick={e => e.stopPropagation()}>
+            <h2 style={{ marginBottom: 18, color: '#228B22', fontWeight: 800, fontSize: 26, textAlign: 'center' }}>Datos Bancarios del Refugio</h2>
+            {refugio?.banco ? (
+              <>
+                <div style={{ marginBottom: 10, fontSize: 18 }}><strong>Banco:</strong> {refugio.banco}</div>
+                <div style={{ marginBottom: 10, fontSize: 18 }}><strong>Tipo de cuenta:</strong> {refugio.tipo_cuenta || refugio.tipoCuenta || 'No disponible'}</div>
+                <div style={{ marginBottom: 10, fontSize: 18 }}><strong>N° Cuenta:</strong> {refugio.numero_cuenta || refugio.numeroCuenta || 'No disponible'}</div>
+                <div style={{ marginBottom: 10, fontSize: 18 }}><strong>Nombre titular:</strong> {refugio.titular_cuenta || refugio.titularCuenta || 'No disponible'}</div>
+                <div style={{ marginBottom: 10, fontSize: 18 }}><strong>RUT titular:</strong> {refugio.rut_titular || refugio.rutTitular || 'No disponible'}</div>
+                <div style={{ marginBottom: 10, fontSize: 18 }}><strong>Email bancario:</strong> {refugio.email_bancario || refugio.emailBancario || refugio.email || 'No disponible'}</div>
+                <button onClick={handleCopyAll} style={{ background: '#43a047', color: '#fff', fontWeight: 700, border: 'none', borderRadius: 8, padding: '10px 22px', fontSize: 17, margin: '18px 0 8px 0', cursor: 'pointer', width: '100%' }}>Copiar todos los datos</button>
+              </>
+            ) : (
+              <div>No hay datos bancarios disponibles para este refugio.</div>
+            )}
+            <button onClick={handleCloseModal} style={{ marginTop: 10, background: '#e3f6ff', color: '#228B22', fontWeight: 600, border: '1.5px solid #43a047', borderRadius: 8, padding: '8px 18px', fontSize: 16, width: '100%', cursor: 'pointer' }}>Cerrar</button>
+          </div>
+        </div>
+      )}
+    </>
+  );
 }

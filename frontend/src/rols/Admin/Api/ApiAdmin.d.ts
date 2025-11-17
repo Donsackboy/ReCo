@@ -1,1 +1,12 @@
-export * from './ApiAdmin.js';
+export const API_BASE: string;
+export function getListasVacunasAnimal(token: string): Promise<any>;
+export function createListaVacunasAnimal(token: string, data: any): Promise<any>;
+export function updateListaVacunasAnimal(id: number, data: any, token: string): Promise<any>;
+export function deleteListaVacunasAnimal(id: number, token: string): Promise<boolean>;
+export function createVacunaAdmin(token: string, animalId: number, data: any): Promise<any>;
+export function getUsuarios(token: string): Promise<any>;
+export function updateUsuario(id: number, data: any, token: string): Promise<any>;
+export function deleteUsuario(id: number, token: string): Promise<boolean>;
+export function getAnimales(token: string): Promise<any>;
+export function createAnimal(data: any, token: string): Promise<any>;
+export function updateAnimal(id: number, data: any, token: string): Promise<any>;

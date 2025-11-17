@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 
 export type Tratamiento = {
@@ -61,7 +61,6 @@ type TratamientosSectionProps = {
 const TratamientosSection: React.FC<TratamientosSectionProps> = ({ tratamientos = [], setTratamientos }) => {
   const requiredMark = <span style={{ color: 'red', marginLeft: 4 }}>*</span>;
   // Defensive: Ensure tratamientos is always an array
-  const safeTratamientos = Array.isArray(tratamientos) ? tratamientos : [];
   if (!Array.isArray(tratamientos)) {
     console.error('Tratamientos prop is not an array:', tratamientos);
   }

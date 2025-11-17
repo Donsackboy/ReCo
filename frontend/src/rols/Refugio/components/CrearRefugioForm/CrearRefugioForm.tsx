@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { regionesChile, regionesComunasChile as comunasPorRegion } from '../../../utils/regionesComunasChile';
+import { regionesChile, regionesComunasChile as comunasPorRegion } from '../../../../utils/regionesComunasChile';
 import '../GestionRefugioMenu/GestionRefugioMenu.css'; // Reutilizamos algunos estilos
 
 interface CrearRefugioFormProps {
@@ -7,6 +7,12 @@ interface CrearRefugioFormProps {
 }
 
 const CrearRefugioForm: React.FC<CrearRefugioFormProps> = ({ onRefugioCreado }) => {
+      const [confirmPassword] = useState('');
+    const [descripcion, setDescripcion] = useState('');
+    const [banco, setBanco] = useState('');
+    const [tipoCuenta, setTipoCuenta] = useState('');
+    const [numeroCuenta, setNumeroCuenta] = useState('');
+    const [rutTitular, setRutTitular] = useState('');
   const [nombre, setNombre] = useState('');
   const [region, setRegion] = useState('');
   const [comuna, setComuna] = useState('');
@@ -14,7 +20,6 @@ const CrearRefugioForm: React.FC<CrearRefugioFormProps> = ({ onRefugioCreado }) 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -149,14 +154,59 @@ const CrearRefugioForm: React.FC<CrearRefugioFormProps> = ({ onRefugioCreado }) 
           />
         </div>
         <div className="form-group">
-          <label htmlFor="confirmPassword">Confirmar contraseña:</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+          <label htmlFor="descripcion">Descripción del refugio:</label>
+          <textarea
+            id="descripcion"
+            value={descripcion}
+            onChange={e => setDescripcion(e.target.value)}
             required
-            placeholder="Repite la contraseña"
+            placeholder="Describe brevemente el refugio"
+          />
+        </div>
+
+        {/* Campos bancarios para donaciones */}
+        <div className="form-group">
+          <label htmlFor="banco">Banco:</label>
+          <input
+            type="text"
+            id="banco"
+            value={banco}
+            onChange={e => setBanco(e.target.value)}
+            placeholder="Ej: Banco Estado"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="tipoCuenta">Tipo de cuenta:</label>
+          <input
+            type="text"
+            id="tipoCuenta"
+            value={tipoCuenta}
+            onChange={e => setTipoCuenta(e.target.value)}
+            placeholder="Ej: Cuenta Vista, Corriente, Rut"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="numeroCuenta">Número de cuenta:</label>
+          <input
+            type="text"
+            id="numeroCuenta"
+            value={numeroCuenta}
+            onChange={e => setNumeroCuenta(e.target.value)}
+            placeholder="Ej: 123456789"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="rutTitular">RUT titular:</label>
+          <input
+            type="text"
+            id="rutTitular"
+            value={rutTitular}
+            onChange={e => setRutTitular(e.target.value)}
+            placeholder="Ej: 12.345.678-9"
+            required
           />
         </div>
         <button type="submit" className="gestion-button crear-button">

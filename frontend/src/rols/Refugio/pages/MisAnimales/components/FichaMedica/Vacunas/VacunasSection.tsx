@@ -171,7 +171,7 @@ const VacunaItem: React.FC<{
 };
 
 // --- Sección principal ---
-const VacunasSection: React.FC<VacunasProps> = ({ especie, vacunas, setVacunas, vacunasEliminadas, setVacunasEliminadas }) => {
+const VacunasSection: React.FC<VacunasProps> = ({ especie, vacunas, setVacunas, setVacunasEliminadas }) => {
   const [mostrarComunes, setMostrarComunes] = useState(false);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [nuevaVacuna, setNuevaVacuna] = useState<Vacuna>({

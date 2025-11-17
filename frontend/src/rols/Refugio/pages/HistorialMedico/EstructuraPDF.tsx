@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import { vacunasPorEspecie } from '../MisAnimales/components/FichaMedica/Utils/vacunasEspecies';
 
 export interface HistorialItem {
@@ -44,8 +44,7 @@ const EstructuraPDF: React.FC<Props> = ({ animal, onClose }) => {
     doc.text(`Vacunas aplicadas: ${vacunasAplicadas.length}`, 15, 51);
     doc.text(`Vacunas pendientes: ${vacunasPendientes.length > 0 ? vacunasPendientes.join(', ') : 'Ninguna'}`, 15, 58);
     if (animal.historial.length > 0) {
-      // @ts-ignore
-      doc.autoTable({
+      autoTable(doc, {
         startY: 65,
         head: [["Fecha", "Descripción"]],
         body: animal.historial.map(item => [item.fecha, item.descripcion]),
@@ -69,8 +68,7 @@ const EstructuraPDF: React.FC<Props> = ({ animal, onClose }) => {
     doc.text(`Vacunas aplicadas: ${vacunasAplicadas.length}`, 15, 51);
     doc.text(`Vacunas pendientes: ${vacunasPendientes.length > 0 ? vacunasPendientes.join(', ') : 'Ninguna'}`, 15, 58);
     if (animal.historial.length > 0) {
-      // @ts-ignore
-      doc.autoTable({
+      autoTable(doc, {
         startY: 65,
         head: [["Fecha", "Descripción"]],
         body: animal.historial.map(item => [item.fecha, item.descripcion]),

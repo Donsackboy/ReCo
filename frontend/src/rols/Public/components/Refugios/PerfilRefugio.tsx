@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import AnimalCard from '../Animales/AnimalCard';
 import './PerfilRefugio.css';
@@ -109,7 +109,7 @@ const PerfilRefugio: React.FC<PerfilRefugioProps> = ({ refugio }) => {
               )}
             </div>
           </div>
-          <button className="boton-donar">Donar al refugio</button>
+          <DonarModal refugio={refugio} />
         </div>
       </div>
 
@@ -127,7 +127,7 @@ const PerfilRefugio: React.FC<PerfilRefugioProps> = ({ refugio }) => {
       <div className="animales-header">
         <h3>Animales del refugio</h3>
         <Link
-          to={`/animales?refugio=${encodeURIComponent(refugio.id_refugio !== undefined ? refugio.id_refugio : refugio.id)}`}
+          to={`/animales?refugio=${encodeURIComponent(refugio.id)}`}
           className="boton-ver-todos"
         >
           Ver todos
@@ -156,6 +156,67 @@ const PerfilRefugio: React.FC<PerfilRefugioProps> = ({ refugio }) => {
         ))}
       </div>
     </div>
+  );
+};
+
+
+
+
+// Modal y botón sin MUI
+const DonarModal: React.FC<{ refugio: any }> = ({ refugio }) => {
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const handleCopyAll = () => {
+    if (!refugio) return;
+    const datos = [
+      `Banco: ${refugio.banco || ''}`,
+      `Tipo de cuenta: ${refugio.tipo_cuenta || refugio.tipoCuenta || ''}`,
+      `N° Cuenta: ${refugio.numero_cuenta || refugio.numeroCuenta || ''}`,
+      `Nombre titular: ${refugio.titular_cuenta || refugio.titularCuenta || ''}`,
+      `RUT titular: ${refugio.rut_titular || refugio.rutTitular || ''}`,
+      `Email bancario: ${refugio.email_bancario || refugio.emailBancario || refugio.email || ''}`
+    ].join('\n');
+    navigator.clipboard.writeText(datos);
+    alert('¡Todos los datos bancarios copiados!');
+  };
+  return (
+    <>
+      <button className="boton-donar" onClick={handleOpen}>Donar al refugio</button>
+      {open && (
+        <div className="modal-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: '#0008', zIndex: 9999 }} onClick={handleClose}>
+          <div className="modal-content" style={{ background: '#fff', padding: 32, borderRadius: 12, maxWidth: 400, margin: '80px auto', boxShadow: '0 2px 16px #0002', position: 'relative' }} onClick={e => e.stopPropagation()}>
+            <h2 style={{ marginBottom: 18 }}>Datos Bancarios del Refugio</h2>
+            {refugio?.banco ? (
+              <>
+                <div style={{ marginBottom: 10 }}><strong>Banco:</strong> {refugio.banco}</div>
+                <div style={{ marginBottom: 10 }}><strong>Tipo de cuenta:</strong> {refugio.tipo_cuenta || refugio.tipoCuenta || 'No disponible'}</div>
+                <div style={{ marginBottom: 10 }}><strong>N° Cuenta:</strong> {refugio.numero_cuenta || refugio.numeroCuenta || 'No disponible'}</div>
+                <div style={{ marginBottom: 10 }}><strong>Nombre titular:</strong> {refugio.titular_cuenta || refugio.titularCuenta || 'No disponible'}</div>
+                <div style={{ marginBottom: 10 }}><strong>RUT titular:</strong> {refugio.rut_titular || refugio.rutTitular || 'No disponible'}</div>
+                <div style={{ marginBottom: 10 }}><strong>Email bancario:</strong> {refugio.email_bancario || refugio.emailBancario || refugio.email || 'No disponible'}</div>
+                <button onClick={handleCopyAll} style={{ background: '#43a047', color: '#fff', fontWeight: 700, border: 'none', borderRadius: 8, padding: '10px 22px', fontSize: 17, margin: '18px 0 8px 0', cursor: 'pointer', width: '100%' }}>Copiar todos los datos</button>
+              </>
+            ) : (
+              <div>No hay datos bancarios disponibles para este refugio.</div>
+            )}
+            <button onClick={handleClose} style={{
+              marginTop: 10,
+              background: '#e3f6ff',
+              color: '#228B22',
+              fontWeight: 600,
+              border: '1.5px solid #43a047',
+              borderRadius: 8,
+              padding: '8px 18px',
+              fontSize: 16,
+              width: '100%',
+              cursor: 'pointer',
+              transition: 'background 0.2s, color 0.2s'
+            }}>Cerrar</button>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

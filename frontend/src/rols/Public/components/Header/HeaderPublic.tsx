@@ -1,7 +1,5 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
 import "./HeaderLayout.css";
 import "./Logo.css";
 import "./NavMenu.css";
@@ -22,7 +20,6 @@ function HeaderPublic() {
     setShowLogin(true);
     closeMenu();
   };
-  const navigate = useNavigate();
 
   const openRegister = () => {
     setShowRegister(true);

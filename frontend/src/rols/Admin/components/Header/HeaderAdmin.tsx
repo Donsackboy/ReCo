@@ -194,7 +194,7 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
               <span className="category-title">📈 PANEL ADMINISTRATIVO</span>
             </li>
             <li className="side-menu-item">
-              <a href="#admin-dashboard" className="side-menu-link" onClick={closeMenu}>
+              <a href="#admin-dashboard" className="side-menu-link" onClick={e => {e.preventDefault();closeMenu();navigate('/admin')}}>
                 <span className="side-menu-icon">📈</span>
                 Dashboard General
               </a>
@@ -220,6 +220,12 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
               <a href="#usuarios" className="side-menu-link" onClick={e => {e.preventDefault();navigate('/admin/gestionar-usuarios')}}>
                 <span className="side-menu-icon">👥</span>
                 Gestionar Usuarios
+              </a>
+            </li>
+            <li className="side-menu-item">
+              <a href="#gestionar-vacunas" className="side-menu-link" onClick={e => {e.preventDefault();navigate('/admin/gestionar-vacunas')}}>
+                <span className="side-menu-icon">💉</span>
+                Gestionar Vacunas
               </a>
             </li>
             {/* <li className="side-menu-item">
@@ -256,7 +262,38 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
                 Reportes Financieros
               </a>
             </li> */}
-            
+            {/* Sección pública */}
+            <hr className="side-menu-separator" style={{ borderColor: '#2ecc40', borderWidth: 2 }} />
+
+            <li className="side-menu-category">
+              <span className="category-title">🌐 ACCESO PÚBLICO</span>
+            </li>
+            <li className="side-menu-item">
+              <a href="#refugios" className="side-menu-link" onClick={e => {e.preventDefault();closeMenu();navigate('/refugios')}}>
+                <span className="side-menu-icon"></span>
+                Refugios
+              </a>
+            </li>
+            <li className="side-menu-item">
+              <a href="#animales" className="side-menu-link" onClick={e => {e.preventDefault();closeMenu();navigate('/animales')}}>
+                <span className="side-menu-icon"></span>
+                Animales
+              </a>
+            </li>
+            <li className="side-menu-item">
+              <a href="#hogares-temporales" className="side-menu-link" onClick={e => {e.preventDefault();closeMenu();navigate('/hogares-temporales')}}>
+                <span className="side-menu-icon"></span>
+                Hogares Temporales
+              </a>
+            </li>
+            {/*
+            <li className="side-menu-item">
+              <a href="#eventos" className="side-menu-link" onClick={e => {e.preventDefault();closeMenu();navigate('/eventos')}}>
+                <span className="side-menu-icon"></span>
+                Eventos
+              </a>
+            </li>
+            */}
             {/* Separador */}
             <hr className="side-menu-separator" />
             

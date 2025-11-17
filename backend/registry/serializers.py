@@ -1,9 +1,21 @@
 from rest_framework import serializers
+from .models import ListaVacunasAnimal, ListaVacunasEspecie
+
+
+class ListaVacunasAnimalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ListaVacunasAnimal
+        fields = '__all__'
+
+class ListaVacunasEspecieSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ListaVacunasEspecie
+        fields = '__all__'
 from django.conf import settings
 from django.contrib.auth import authenticate
 from .models import (
     SolicitudAdopcion, PostulacionRefugio, Usuario, HogaresTemporales, Refugio, Animal,
-    Cirugia, Tratamiento, AlergiaCondicion, FichaMedica, Vacuna, NecesidadRefugio
+    Cirugia, Tratamiento, AlergiaCondicion, FichaMedica, Vacuna, NecesidadRefugio, DonacionesEspecificas
 )
 
 # --- Solicitud de Adopción ---
@@ -170,3 +182,21 @@ class NecesidadRefugioSerializer(serializers.ModelSerializer):
     class Meta:
         model = NecesidadRefugio
         fields = '__all__'
+
+# Serializer para Donaciones Especificas
+class DonacionesEspecificasSerializer(serializers.ModelSerializer):
+    usuario_nombre = serializers.SerializerMethodField()
+    vacuna_nombre = serializers.SerializerMethodField()
+
+    def get_usuario_nombre(self, obj):
+        if obj.id_donacion and obj.id_donacion.id_usuario:
+            return obj.id_donacion.id_usuario.username
+        return None
+
+    def get_vacuna_nombre(self, obj):
+        return obj.nombre_vacuna or None
+
+    class Meta:
+        model = DonacionesEspecificas
+        fields = '__all__'
+        extra_fields = ['usuario_nombre', 'vacuna_nombre']

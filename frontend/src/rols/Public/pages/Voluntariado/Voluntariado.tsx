@@ -1,5 +1,5 @@
 // Página en blanco para Voluntariado
-import React from 'react';
+// ...existing code...
 export default function VoluntariadoPage() {
   return <div>Voluntariado</div>;
 }

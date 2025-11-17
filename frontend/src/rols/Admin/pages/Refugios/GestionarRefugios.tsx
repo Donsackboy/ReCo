@@ -196,7 +196,19 @@ const GestionarRefugios: React.FC = () => {
                 <td colSpan={5} style={{ textAlign: 'center', padding: '2em', color: '#888', fontSize: 18 }}>No se encontraron refugios.</td>
               </tr>
             ) : refugiosFiltrados.map(refugio => {
-              const cantidadAnimales = animales.filter(a => a.refugio === refugio.id_refugio).length;
+              const cantidadAnimales = animales.filter(a => {
+                // Soporta animal.refugio como objeto, id_refugio como número o string
+                if (a.id_refugio !== undefined) {
+                  return String(a.id_refugio) === String(refugio.id_refugio);
+                }
+                if (a.refugio !== undefined) {
+                  if (typeof a.refugio === 'object' && a.refugio !== null && a.refugio.id_refugio !== undefined) {
+                    return String(a.refugio.id_refugio) === String(refugio.id_refugio);
+                  }
+                  return String(a.refugio) === String(refugio.id_refugio);
+                }
+                return false;
+              }).length;
               return (
                 <tr key={refugio.id_refugio} style={{ background: '#fff', transition: 'background 0.2s', borderRadius: 12, boxShadow: '0 1px 8px #43a04711', cursor: 'pointer' }}
                   onMouseEnter={e => (e.currentTarget.style.background = '#e8f5e9')}

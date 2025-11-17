@@ -2,6 +2,52 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from .models_especie import Especie
+
+
+# --- Lista de Vacunas por Animal ---
+class ListaVacunasEspecie(models.Model):
+    especie = models.ForeignKey('Especie', on_delete=models.CASCADE, related_name='listas_vacunas')
+    nombre = models.CharField(max_length=100)
+    descripcion = models.TextField(blank=True)
+    frecuencia = models.CharField(max_length=100, blank=True)
+    dosis = models.CharField(max_length=50, blank=True)
+    obligatoria = models.BooleanField(default=False)
+    tipo = models.CharField(max_length=20, choices=[('unica', 'Única'), ('refuerzo', 'Refuerzo')], default='unica')
+    precio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def __str__(self):
+        return f"{self.nombre} ({self.especie})"
+from django.db import models
+class ListaVacunasAnimal(models.Model):
+    animal = models.ForeignKey('Animal', on_delete=models.CASCADE, related_name='listas_vacunas')
+    nombre = models.CharField(max_length=100)
+    descripcion = models.TextField(blank=True)
+    frecuencia = models.CharField(max_length=100, blank=True)
+    dosis = models.CharField(max_length=50, blank=True)
+    obligatoria = models.BooleanField(default=False)
+    tipo = models.CharField(max_length=20, choices=[('unica', 'Única'), ('refuerzo', 'Refuerzo')], default='unica')
+    precio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def __str__(self):
+        return f"{self.nombre} ({self.animal})"
+
+class Vacuna(models.Model):
+    nombre = models.CharField(max_length=100)
+    especie = models.CharField(max_length=50)
+    descripcion = models.TextField(blank=True)
+    frecuencia = models.CharField(max_length=100, blank=True)
+    obligatoria = models.BooleanField(default=False)
+    precio = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        unique_together = ('nombre', 'especie')
+        verbose_name = 'Vacuna'
+        verbose_name_plural = 'Vacunas'
+
+    def __str__(self):
+        return f"{self.nombre} ({self.especie})"
+
 
 # --- Modelo NecesidadRefugio ---
 class NecesidadRefugio(models.Model):
@@ -163,6 +209,12 @@ class Refugio(models.Model):
     ]
     region = models.CharField(max_length=80, choices=REGIONES_CHILE, blank=True, null=True)
     logo = models.ImageField(upload_to='refugios_logos/', blank=True, null=True)
+    banco = models.CharField(max_length=100, blank=True, null=True, help_text="Banco del refugio para donaciones")
+    tipo_cuenta = models.CharField(max_length=50, blank=True, null=True, help_text="Tipo de cuenta bancaria")
+    numero_cuenta = models.CharField(max_length=50, blank=True, null=True, help_text="Número de cuenta bancaria")
+    rut_titular = models.CharField(max_length=12, blank=True, null=True, help_text="RUT del titular de la cuenta")
+    titular_cuenta = models.CharField(max_length=100, blank=True, null=True, help_text="Nombre del titular de la cuenta bancaria")
+    email_bancario = models.EmailField(max_length=100, blank=True, null=True, help_text="Correo asociado a la cuenta bancaria")
     sitio_web = models.URLField(blank=True, null=True)
     redes_sociales = models.JSONField(default=list, blank=True, help_text="Lista de enlaces y redes sociales")
     horario_atencion = models.CharField(max_length=100, blank=True, null=True)
@@ -512,6 +564,7 @@ class Donaciones(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
     estado = models.CharField(max_length=15, choices=ESTADO_OPCIONES, default='pendiente')
     transbank_token = models.CharField(max_length=255, blank=True, null=True)
+    comprobante_imagen = models.ImageField(upload_to='donaciones_comprobantes/', blank=True, null=True, help_text='Comprobante de transferencia (imagen)')
 
     def __str__(self):
         return f"Donación {self.id_donacion} - ${self.monto}"
@@ -623,6 +676,9 @@ class DonacionesEspecificas(models.Model):
     estado_uso = models.CharField(max_length=15, choices=ESTADO_USO_OPCIONES, default='pendiente')
     fecha_uso = models.DateTimeField(blank=True, null=True)
     notas = models.TextField(blank=True, null=True)
+    nombre_vacuna = models.CharField(max_length=100, blank=True, null=True, help_text='Nombre de la vacuna donada')
+    comentario_donador = models.TextField(blank=True, null=True, help_text='Comentario del donador')
+    nombre_donador = models.CharField(max_length=150, blank=True, null=True, help_text='Nombre del donador')
 
     def __str__(self):
         return f"Donación Específica {self.id_donacion_especifica} - {self.cantidad}u"

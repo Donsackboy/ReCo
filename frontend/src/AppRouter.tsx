@@ -11,6 +11,7 @@ import Footer from './rols/Public/components/Footer/Footer';
 
 // Admin
 import AdminDashboard from './rols/Admin/pages/AdminDashboard';
+// import CrearVacunaAdmin from './rols/Admin/pages/Vacunasgestion/CrearVacunaAdmin.ts';
 import GestionarUsuarios from './rols/Admin/pages/Usuarios/GestionarUsuarios.tsx';
 import GestionarRefugios from './rols/Admin/pages/Refugios/GestionarRefugios.tsx';
 import Verificaciones from './rols/Admin/pages/Verificaciones/Verificaciones.tsx';
@@ -18,6 +19,9 @@ import HistorialSolicitudes from './rols/Admin/pages/Verificaciones/HistorialSol
 import GestionarAnimalesAdmin from './rols/Admin/pages/Animales/GestionarAnimalesAdmin';
 
 import { Navigate } from 'react-router-dom';
+// Utilidad para obtener la URL base de la API
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000/api";
+import GestionVacunasEspecies from './rols/Admin/pages/Vacunasgestion/GestionVacunasEspecies';
 import Home from './rols/Public/pages/Home/Home.tsx';
 import PostulacionRefugio from './rols/Public/pages/PostulacionRefugio';
 import RefugiosList from './rols/Public/pages/Refugios/Refugios.tsx';
@@ -40,8 +44,9 @@ import MisAdopciones from './rols/Usuario/pages/MisAdopciones.tsx';
 import MisSolicitudesAdopcion from './rols/Usuario/pages/MisSolicitudesAdopción/MisSolicitudesAdopcion.tsx';
 
 //refugio
+import GestionDonacionesMedicas from './rols/Refugio/pages/DonacionesMedicas/GestionDonacionesMedicas';
 import HeaderRefugio from './rols/Refugio/components/Header/HeaderRefugio.tsx';
-import Dashboard from './rols/Refugio/pages/Dashboard/index';
+import RefugioDashboard from './rols/Refugio/pages/Dashboard/RefugioDashboard';
 import MisAnimales from './rols/Refugio/pages/MisAnimales';
 import GestionAdopciones from './rols/Refugio/pages/Adopciones/GestionAdopciones.tsx';
 import MisEventos from './rols/Refugio/pages/MisEventos';
@@ -65,7 +70,21 @@ function AppRouterContent() {
   const isUsuario = user && user.tipo_usuario === 'default';
   const isRefugio = user && user.tipo_usuario === 'refugio';
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        await fetch(`${API_BASE}/auth/logout/`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Token ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+      } catch (err) {
+        // Ignorar errores de red/desconexión
+      }
+    }
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     window.location.href = '/';
@@ -124,8 +143,8 @@ function AppRouterContent() {
                   <Route path="gestionar-usuarios" element={<GestionarUsuarios />} />
                   <Route path="verificaciones" element={<Verificaciones />} />
                   <Route path="verificaciones/historial" element={<HistorialSolicitudes />} />
-                  <Route path="verificaciones/historial" element={<HistorialSolicitudes />} />
                   <Route path="animales" element={<GestionarAnimalesAdmin />} />
+                  <Route path="gestionar-vacunas" element={<GestionVacunasEspecies />} />
                 </Routes>
               ) : (
                 <Navigate to="/" replace />
@@ -134,7 +153,8 @@ function AppRouterContent() {
           />
 
           {/* --- Rutas Refugio --- */}
-          <Route path="/refugio/dashboard" element={isRefugio ? (<Dashboard />) : (<Navigate to="/" replace />)} />
+                    <Route path="/refugio/donaciones-medicas" element={isRefugio ? (<GestionDonacionesMedicas />) : (<Navigate to="/" replace />)} />
+          <Route path="/refugio/dashboard" element={isRefugio ? (<RefugioDashboard />) : (<Navigate to="/" replace />)} />
           <Route path="/refugio/mis-animales" element={isRefugio ? (<MisAnimales />) : (<Navigate to="/" replace />)} />
           <Route path="/refugio/adopciones" element={isRefugio ? (<GestionAdopciones />) : (<Navigate to="/" replace />)} />
           <Route path="/refugio/mis-eventos" element={isRefugio ? (<MisEventos />) : (<Navigate to="/" replace />)} />

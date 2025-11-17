@@ -29,12 +29,19 @@ interface FormData {
   usuario_telefono?: string;
   usuario_password?: string;
   usuario_password_confirm?: string;
+  // Campos bancarios
+  banco?: string;
+  bancoOtro?: string;
+  tipoCuenta?: string;
+  numeroCuenta?: string;
+  rutTitular?: string;
+  titularCuenta?: string;
+  emailBancario?: string;
 }
 
 
 const ConfiguracionRefugioForm: React.FC<RefugioFormProps> = ({ refugio, onSave }) => {
-  const [showFileInput, setShowFileInput] = useState(false);
-  const [logoEliminado, setLogoEliminado] = useState(false);
+
   const [form, setForm] = useState<FormData>({
     nombre: refugio?.nombre || '',
     correo_contacto: refugio?.correo_contacto || '',
@@ -56,7 +63,15 @@ const ConfiguracionRefugioForm: React.FC<RefugioFormProps> = ({ refugio, onSave 
     usuario_telefono: refugio?.usuario?.telefono || refugio?.usuario_telefono || '',
     usuario_password: '',
     usuario_password_confirm: '',
+    banco: refugio?.banco || '',
+    tipoCuenta: refugio?.tipoCuenta || refugio?.tipo_cuenta || '',
+    numeroCuenta: refugio?.numeroCuenta || refugio?.numero_cuenta || '',
+    rutTitular: refugio?.rutTitular || refugio?.rut_titular || '',
+    titularCuenta: refugio?.titularCuenta || refugio?.titular_cuenta || '',
+    emailBancario: refugio?.emailBancario || refugio?.email_bancario || '',
   });
+  const [showBancoInput, setShowBancoInput] = useState(() => (refugio?.banco === 'Banco Otros'));
+  const [logoEliminado, setLogoEliminado] = useState(false);
 
   // Comunas dependientes de la región seleccionada
   const comunas = form.region && regionesComunasChile[form.region] ? regionesComunasChile[form.region] : [];
@@ -187,12 +202,11 @@ const ConfiguracionRefugioForm: React.FC<RefugioFormProps> = ({ refugio, onSave 
               <span style={{ fontWeight: 500 }}>Previsualización nuevo logo:</span><br/>
               <img src={logoPreview} alt="Logo preview" style={{ maxWidth: 180, maxHeight: 180, borderRadius: 12, border: '2px solid #eee', background: '#fafafa' }} />
               <br/>
-              <button type="button" style={{ marginTop: 8, color: '#f44336', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500 }} onClick={() => { setLogoPreview(null); setForm(prev => ({ ...prev, logo: null })); setShowFileInput(false); setLogoEliminado(false); }}>Cancelar cambio</button>
+              <button type="button" style={{ marginTop: 8, color: '#f44336', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500 }} onClick={() => { setLogoPreview(null); setForm(prev => ({ ...prev, logo: null })); setLogoEliminado(false); }}>Cancelar cambio</button>
             </div>
           )}
         </div>
-  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 18, width: '100%' }}>
           <label style={{ fontWeight: 500, color: '#1976d2', width: '100%' }}>Sitio web
             <input name="sitio_web" value={form.sitio_web} onChange={handleChange} style={{ width: '100%', minWidth: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #2196f3', marginTop: 4, background: '#fff', boxShadow: '0 2px 8px #2196f322' }} />
           </label>
@@ -225,8 +239,83 @@ const ConfiguracionRefugioForm: React.FC<RefugioFormProps> = ({ refugio, onSave 
             </select>
           </label>
         </div>
+      </fieldset>
+
+      <fieldset style={{ border: '2px solid #1976d2', borderRadius: 8, padding: 16, marginBottom: 24, background: '#e3f2fd' }}>
+        <legend style={{ fontWeight: 700, color: '#1976d2', fontSize: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: 22 }}>💳</span> Datos bancarios para donaciones
+        </legend>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+          <label style={{ fontWeight: 500, color: '#1976d2' }}>Banco
+            <select
+              name="banco"
+              value={form.banco || ''}
+              onChange={e => {
+                handleChange(e);
+                setShowBancoInput(e.target.value === 'Banco Otros');
+                if (e.target.value !== 'Banco Otros') setForm(prev => ({ ...prev, bancoOtro: '' }));
+              }}
+              style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #2196f3', marginTop: 4, background: '#fff', boxShadow: '0 2px 8px #2196f322' }}
+              required
+            >
+              <option value="">Selecciona banco</option>
+              <option value="Banco Estado">Banco Estado</option>
+              <option value="Banco de Chile">Banco de Chile</option>
+              <option value="Banco BCI">Banco BCI</option>
+              <option value="Banco Santander">Banco Santander</option>
+              <option value="Banco Scotiabank">Banco Scotiabank</option>
+              <option value="Banco Itaú">Banco Itaú</option>
+              <option value="Banco Security">Banco Security</option>
+              <option value="Banco Falabella">Banco Falabella</option>
+              <option value="Banco Ripley">Banco Ripley</option>
+              <option value="Banco Consorcio">Banco Consorcio</option>
+              <option value="Banco Internacional">Banco Internacional</option>
+              <option value="Banco BTG Pactual">Banco BTG Pactual</option>
+              <option value="Banco CrediChile">Banco CrediChile</option>
+              <option value="Banco HSBC">Banco HSBC</option>
+              <option value="Banco BBVA">Banco BBVA</option>
+              <option value="Banco Rabobank">Banco Rabobank</option>
+              <option value="Banco CorpBanca">Banco CorpBanca</option>
+              <option value="Banco JP Morgan">Banco JP Morgan</option>
+              <option value="Banco MUFG">Banco MUFG</option>
+              <option value="Banco Otros">Otros</option>
+            </select>
+            {showBancoInput && (
+              <input
+                name="bancoOtro"
+                value={form.bancoOtro || ''}
+                onChange={e => setForm(prev => ({ ...prev, bancoOtro: e.target.value }))}
+                style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #2196f3', marginTop: 8, background: '#fff', boxShadow: '0 2px 8px #2196f322' }}
+                placeholder="Ingresa el nombre del banco"
+                required
+              />
+            )}
+          </label>
+          <label style={{ fontWeight: 500, color: '#1976d2' }}>Tipo de cuenta
+            <select name="tipoCuenta" value={form.tipoCuenta || ''} onChange={handleChange} style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #2196f3', marginTop: 4, background: '#fff', boxShadow: '0 2px 8px #2196f322' }} required>
+              <option value="">Selecciona tipo de cuenta</option>
+              <option value="Cuenta Corriente">Cuenta Corriente</option>
+              <option value="Cuenta Vista">Cuenta Vista</option>
+              <option value="Cuenta Rut">Cuenta Rut</option>
+              <option value="Cuenta de Ahorro">Cuenta de Ahorro</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </label>
+          <label style={{ fontWeight: 500, color: '#1976d2' }}>Número de cuenta
+            <input name="numeroCuenta" value={form.numeroCuenta || ''} onChange={handleChange} style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #2196f3', marginTop: 4, background: '#fff', boxShadow: '0 2px 8px #2196f322' }} placeholder="Ej: 123456789" />
+          </label>
+          <label style={{ fontWeight: 500, color: '#1976d2' }}>RUT titular
+            <input name="rutTitular" value={form.rutTitular || ''} onChange={handleChange} style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #2196f3', marginTop: 4, background: '#fff', boxShadow: '0 2px 8px #2196f322' }} placeholder="Ej: 12.345.678-9" />
+          </label>
+          <label style={{ fontWeight: 500, color: '#1976d2' }}>Nombre titular
+            <input name="titularCuenta" value={form.titularCuenta || ''} onChange={handleChange} style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #2196f3', marginTop: 4, background: '#fff', boxShadow: '0 2px 8px #2196f322' }} placeholder="Ej: Juan Pérez" />
+          </label>
+          <label style={{ fontWeight: 500, color: '#1976d2' }}>Email bancario
+            <input name="emailBancario" value={form.emailBancario || ''} onChange={handleChange} type="email" style={{ width: '100%', padding: 10, borderRadius: 8, border: '1.5px solid #2196f3', marginTop: 4, background: '#fff', boxShadow: '0 2px 8px #2196f322' }} placeholder="Ej: banco@email.com" />
+          </label>
         </div>
       </fieldset>
+
       <fieldset style={{ border: '2px solid #4caf50', borderRadius: 8, padding: 16, marginBottom: 24 }}>
         <legend style={{ fontWeight: 700, color: '#4caf50', fontSize: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ fontSize: 22 }}>👤</span> Usuario Asociado
@@ -240,7 +329,7 @@ const ConfiguracionRefugioForm: React.FC<RefugioFormProps> = ({ refugio, onSave 
               {refugio?.usuario?.username || refugio?.usuario_nombre || '-'}
             </div>
             <div style={{ color: '#388e3c', fontSize: 15 }}>
-              <span style={{ marginRight: 8 }}>📧</span>{refugio?.usuario?.email || refugio?.usuario_email || '-'}
+              <span style={{ marginRight: 8 }}>�</span>{refugio?.usuario?.email || refugio?.usuario_email || '-'}
             </div>
             <div style={{ color: '#388e3c', fontSize: 15 }}>
               <span style={{ marginRight: 8 }}>📞</span>{refugio?.usuario?.telefono || refugio?.usuario_telefono || '-'}
