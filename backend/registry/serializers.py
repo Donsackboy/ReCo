@@ -69,7 +69,6 @@ class RefugioSerializer(serializers.ModelSerializer):
         allow_null=True
     )
 
-    animal = serializers.SerializerMethodField()
     comprobante_donador = serializers.SerializerMethodField()
     comentario_donador = serializers.SerializerMethodField()
     usuario_nombre = serializers.SerializerMethodField()
@@ -82,37 +81,15 @@ class RefugioSerializer(serializers.ModelSerializer):
     # MÉTODOS
     # ------------------------------
 
-    def get_animal(self, obj):
-        animal = obj.id_animal
-        if animal:
-            fotos = getattr(animal, "fotos", None)
-            foto = fotos[0] if fotos and isinstance(fotos, list) and len(fotos) > 0 else None
-            return {
-                "id_animal": getattr(animal, "id_animal", None),
-                "nombre": getattr(animal, "nombre", None),
-                "foto": foto,
-            }
-        return None
 
     def get_usuario_nombre(self, obj):
-        usuario = obj.id_usuario
-        if usuario:
-            # Nombre completo
-            if hasattr(usuario, "get_full_name") and usuario.get_full_name():
-                return usuario.get_full_name()
-            # Nombre simple
-            if getattr(usuario, "first_name", None):
-                return usuario.first_name
-            # Username
-            if hasattr(usuario, "username"):
-                return usuario.username
-            return str(usuario)
+        # El modelo Refugio no tiene relación directa con Usuario
+        # Si necesitas mostrar el nombre de usuario, debes obtenerlo por otra vía
         return None
 
     def get_servicio_nombre(self, obj):
-        servicio = obj.id_servicio
-        if servicio and hasattr(servicio, "nombre"):
-            return servicio.nombre
+        # El modelo Refugio no tiene relación directa con Servicio
+        # Si necesitas mostrar el nombre de servicio, debes obtenerlo por otra vía
         return None
 
     # Si realmente necesitas estos campos personalizados:

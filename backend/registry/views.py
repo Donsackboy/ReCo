@@ -891,7 +891,10 @@ def refugio_me(request):
             debug_info['serializer_data'] = serializer.data
             return Response(serializer.data)
         except Exception as e:
+            import traceback
             debug_info['error'] = str(e)
+            debug_info['traceback'] = traceback.format_exc()
+            debug_info['mensaje'] = 'Error interno en el backend. Por favor revisa el detalle para depurar.'
             return Response(debug_info, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     elif request.method in ['PATCH', 'PUT']:
         partial = request.method == 'PATCH'
