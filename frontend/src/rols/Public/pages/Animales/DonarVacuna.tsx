@@ -16,8 +16,20 @@ const DonarVacuna = () => {
   const [monto, setMonto] = useState('');
   const [enviado, setEnviado] = useState(false);
   const [imagen, setImagen] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [modalImagen, setModalImagen] = useState<string | null>(null);
+  const [comentario, setComentario] = useState('');
   const [errorImg, setErrorImg] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  React.useEffect(() => {
+    if (imagen) {
+      const url = URL.createObjectURL(imagen);
+      setPreview(url);
+      return () => URL.revokeObjectURL(url);
+    } else {
+      setPreview(null);
+    }
+  }, [imagen]);
 
   // Calcular especie y vacunasOpciones después de definir animal
   const especie = animal?.especie ? String(animal.especie).toLowerCase().trim() : '';
@@ -61,6 +73,7 @@ const DonarVacuna = () => {
     formData.append('tipo_vacuna', 'unica'); // O ajustar según selección
     formData.append('fecha_aplicacion', new Date().toISOString().slice(0, 10));
     formData.append('monto', monto || `${precioVacuna}`);
+    formData.append('comentario', comentario);
     // Obtener id_usuario del localStorage
     let userId = '';
     try {
@@ -80,8 +93,8 @@ const DonarVacuna = () => {
         setErrorImg('Error al registrar la donación.');
         return;
       }
-      // Cambiar estado a finalizado tras respuesta exitosa
-      setEnviado('finalizado');
+      // Cambiar estado a pendiente tras respuesta exitosa
+      setEnviado('pendiente');
     } catch (err) {
       setErrorImg('Error de conexión al registrar la donación.');
     }
@@ -106,7 +119,7 @@ const DonarVacuna = () => {
     return (
       <div style={{ maxWidth: '500px', margin: '40px auto', background: '#eaffea', borderRadius: '18px', boxShadow: '0 2px 12px #43ea6b22', padding: '32px', textAlign: 'center' }}>
         <h2 style={{ color: '#228B22' }}>¡Donación registrada!</h2>
-        <p>Tu donación para la vacuna <strong>{vacuna}</strong> está en estado <strong>finalizado</strong>.<br />El refugio <strong>{refugioNombre}</strong> recibirá la notificación en la sección de donaciones de vacunas.</p>
+        <p>Tu donación para la vacuna <strong>{vacuna}</strong> está en estado <strong>pendiente</strong>.<br />El refugio <strong>{refugioNombre}</strong> recibirá la notificación en la sección de donaciones de vacunas.</p>
         <div style={{ marginTop: '18px', background: '#fffde7', borderRadius: '10px', padding: '14px', boxShadow: '0 1px 6px #ffe08288', color: '#b8860b', fontWeight: 500, fontSize: '1.01rem' }}>
           Puedes revisar el estado de tu donación y cualquier respuesta, imagen o comentario del refugio sobre la aplicación de la vacuna en la sección <strong>Mis Donaciones</strong>.
         </div>
@@ -230,7 +243,18 @@ const DonarVacuna = () => {
                 setImagen(e.target.files[0]);
               }
             }} style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1.5px solid #43ea6b', fontSize: '1rem' }} />
+            {preview && (
+              <div style={{ marginTop: 10 }}>
+                <span style={{ fontSize: 13, color: '#228B22' }}>Previsualización:</span><br />
+                <img src={preview} alt="Previsualización" style={{ maxWidth: 180, borderRadius: 8, marginTop: 4, border: '1.5px solid #43ea6b', cursor: 'pointer' }} onClick={() => setModalImagen(preview)} />
+                <div style={{ fontSize: 13, color: '#43ea6b', marginTop: 4 }}>Haz click en la imagen para ver más grande</div>
+              </div>
+            )}
             {errorImg && <div style={{ color: 'red', marginTop: '6px' }}>{errorImg}</div>}
+          </div>
+          <div style={{ marginTop: '8px' }}>
+            <label style={{ fontWeight: 600, color: '#228B22', marginBottom: '2px' }}>Comentario (opcional)</label>
+            <textarea value={comentario} onChange={e => setComentario(e.target.value)} rows={2} style={{ width: '100%', borderRadius: 8, padding: 8, border: '1.5px solid #43ea6b', fontSize: '1rem' }} placeholder="Agrega un comentario sobre la donación o la transferencia" />
           </div>
           <button type="submit"
             disabled={!imagen}
@@ -239,6 +263,21 @@ const DonarVacuna = () => {
           </button>
         </form>
         {/* Eliminado WebpayDonacion, solo transferencia bancaria */}
+        {/* Modal para ver imagen en grande */}
+        {modalImagen && (
+          <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: '#000000bb', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ position: 'relative', background: 'transparent', borderRadius: 12, padding: 0 }}>
+              <button
+                style={{ position: 'absolute', top: 10, right: 10, background: '#fff', color: '#43ea6b', border: 'none', borderRadius: 20, width: 36, height: 36, fontSize: 22, fontWeight: 700, cursor: 'pointer', zIndex: 2, boxShadow: '0 2px 8px #0002' }}
+                aria-label="Cerrar imagen"
+                onClick={() => setModalImagen(null)}
+              >
+                ×
+              </button>
+              <img src={modalImagen} alt="Pantallazo grande" style={{ maxWidth: '80vw', maxHeight: '80vh', borderRadius: 12, boxShadow: '0 4px 24px #43ea6b66', background: '#fff' }} />
+            </div>
+          </div>
+        )}
       </div>
       {/* Modal de registro removido, ya no se muestra aquí */}
     </>

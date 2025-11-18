@@ -1,12 +1,12 @@
 # Imports primero
 from django.contrib import admin
-from .models import PostulacionRefugio, Usuario, Refugio, Animal, HogaresTemporales, Donaciones, Suscripciones, Eventos, InscripcionesEventos, CatalogoServicios, DonacionesEspecificas, ComprobantesServicio, NecesidadesRefugio, PerfilAdoptante, Cirugia, Tratamiento, SolicitudAdopcion, AlergiaCondicion, FichaMedica, Vacuna
+from .models import PostulacionRefugio, Usuario, Refugio, Animal, HogaresTemporales, Suscripciones, Eventos, InscripcionesEventos, CatalogoServicios, DonacionesEspecificas, ComprobantesServicio, NecesidadesRefugio, PerfilAdoptante, Cirugia, Tratamiento, SolicitudAdopcion, AlergiaCondicion, FichaMedica, Vacuna
 from .models_especie import Especie
 
 admin.site.register(Especie)
 # Imports primero
 from django.contrib import admin
-from .models import PostulacionRefugio, Usuario, Refugio, Animal, HogaresTemporales, Donaciones, Suscripciones, Eventos, InscripcionesEventos, CatalogoServicios, DonacionesEspecificas, ComprobantesServicio, NecesidadesRefugio, PerfilAdoptante, Cirugia, Tratamiento, SolicitudAdopcion, AlergiaCondicion, FichaMedica
+from .models import PostulacionRefugio, Usuario, Refugio, Animal, HogaresTemporales, Suscripciones, Eventos, InscripcionesEventos, CatalogoServicios, DonacionesEspecificas, ComprobantesServicio, NecesidadesRefugio, PerfilAdoptante, Cirugia, Tratamiento, SolicitudAdopcion, AlergiaCondicion, FichaMedica
 
 @admin.register(AlergiaCondicion)
 class AlergiaCondicionAdmin(admin.ModelAdmin):
@@ -53,11 +53,6 @@ class HogaresTemporalesAdmin(admin.ModelAdmin):
     list_filter = ("estado", "tipo_vivienda")
     search_fields = ("motivo_postulacion",)
 
-@admin.register(Donaciones)
-class DonacionesAdmin(admin.ModelAdmin):
-    list_display = ("id_donacion", "id_usuario", "id_refugio", "monto", "tipo", "estado", "fecha")
-    list_filter = ("tipo", "estado")
-    search_fields = ("transbank_token",)
 
 @admin.register(Suscripciones)
 class SuscripcionesAdmin(admin.ModelAdmin):
@@ -86,7 +81,7 @@ class CatalogoServiciosAdmin(admin.ModelAdmin):
 
 @admin.register(DonacionesEspecificas)
 class DonacionesEspecificasAdmin(admin.ModelAdmin):
-    list_display = ("id_donacion_especifica", "id_donacion", "id_servicio", "cantidad", "monto_unitario", "estado_uso")
+    list_display = ("id_donacion_especifica", "id_servicio", "cantidad", "monto_unitario", "estado_uso")
     list_filter = ("estado_uso",)
     search_fields = ("notas",)
 

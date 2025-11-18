@@ -4,19 +4,48 @@ from rest_framework import status
 
 class DonacionMedicaRespuestaView(APIView):
     def post(self, request, pk):
-        # Aquí va la lógica para responder la donación médica
-        # Por ahora solo responde OK
-        return Response({'detail': 'Respuesta registrada correctamente.'}, status=status.HTTP_200_OK)
+        try:
+            donacion = DonacionesEspecificas.objects.get(id_donacion_especifica=pk)
+            comprobante1 = request.FILES.get('comprobante_refugio_1')
+            comprobante2 = request.FILES.get('comprobante_refugio_2')
+            comentario = request.data.get('comentario', '')
+            if comprobante1:
+                donacion.comprobante_refugio_1 = comprobante1
+            if comprobante2:
+                donacion.comprobante_refugio_2 = comprobante2
+            if comentario:
+                donacion.notas = comentario
+            donacion.estado_uso = 'respondida'
+            donacion.save()
+            # Devolver URLs absolutas de los comprobantes subidos
+            comprobante1_url = request.build_absolute_uri(donacion.comprobante_refugio_1.url) if donacion.comprobante_refugio_1 else None
+            comprobante2_url = request.build_absolute_uri(donacion.comprobante_refugio_2.url) if donacion.comprobante_refugio_2 else None
+            return Response({
+                'detail': 'Respuesta registrada correctamente.',
+                'comprobante_refugio_1': comprobante1_url,
+                'comprobante_refugio_2': comprobante2_url
+            }, status=status.HTTP_200_OK)
+        except DonacionesEspecificas.DoesNotExist:
+            return Response({'error': 'Donación no encontrada.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def descartar_donacion_medica(request, donacion_id):
     try:
-        donacion = Donaciones.objects.get(id_donacion=donacion_id)
-        donacion.estado = 'descartada'  # O eliminar si prefieres
-        donacion.save()
+        motivo = request.data.get('motivo_descartar', '')
+        donacion_especifica = DonacionesEspecificas.objects.get(id_donacion_especifica=donacion_id)
+        donacion_especifica.estado_uso = 'descartado'
+        if motivo:
+            donacion_especifica.notas = f"Motivo de descarte: {motivo}"
+        else:
+            donacion_especifica.notas = "Donación descartada sin motivo especificado."
+        donacion_especifica.save()
         return Response({"detail": "Donación descartada correctamente."}, status=200)
+    except DonacionesEspecificas.DoesNotExist:
+        return Response({"error": "Donación no encontrada."}, status=404)
     except Exception as e:
         return Response({"error": str(e)}, status=400)
 from .models import ListaVacunasAnimal, ListaVacunasEspecie
@@ -24,11 +53,21 @@ from .serializers import ListaVacunasAnimalSerializer, ListaVacunasEspecieSerial
 from rest_framework import viewsets, permissions
 
 # Donaciones médicas refugio
-from .models import Donaciones, DonacionesEspecificas, ComprobantesServicio, Animal, Refugio
+from .models import DonacionesEspecificas, ComprobantesServicio, Animal, Refugio
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .serializers import DonacionesEspecificasSerializer
+from rest_framework.permissions import IsAuthenticated
+
+# Endpoint para obtener donaciones médicas de un usuario
+class DonacionesMedicasUsuarioView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, id_usuario):
+        donaciones = DonacionesEspecificas.objects.filter(id_usuario_id=id_usuario).order_by('-fecha_creacion')
+        serializer = DonacionesEspecificasSerializer(donaciones, many=True, context={'request': request})
+        return Response(serializer.data)
 
 class DonacionesMedicasRefugioView(APIView):
     permission_classes = [IsAuthenticated]
@@ -36,40 +75,51 @@ class DonacionesMedicasRefugioView(APIView):
     def get(self, request, id_refugio):
         import logging
         logger = logging.getLogger("donaciones_medicas")
-        donaciones = Donaciones.objects.filter(id_refugio=id_refugio, tipo='medica')
-        logger.info(f"Donaciones encontradas: {donaciones}")
+        # Obtener todas las donaciones médicas del refugio, ordenadas por fecha_creacion descendente
+        donaciones_especificas = DonacionesEspecificas.objects.filter(
+            id_refugio=id_refugio
+        ).order_by("-fecha_creacion")
+        logger.info(f"Donaciones específicas encontradas: {donaciones_especificas}")
         resultado = []
-        for donacion in donaciones:
-            animal = None
+        for donacion in donaciones_especificas:
+            animal = donacion.id_animal
+            # Obtener la foto principal del animal (primer elemento de fotos si existe)
+            foto_animal = None
+            if animal and hasattr(animal, 'fotos') and isinstance(animal.fotos, list) and len(animal.fotos) > 0:
+                foto_animal = animal.fotos[0]
+            # Comprobante del donador (comprobante_imagen)
             comprobante_url = None
-            comentario = ""
-            usuario_nombre = None
-            vacuna_nombre = None
-            try:
-                donacion_especifica = DonacionesEspecificas.objects.filter(id_donacion=donacion).first()
-                logger.info(f"Donación específica: {donacion_especifica}")
-                if donacion_especifica:
-                    animal = donacion_especifica.id_animal
-                    logger.info(f"Animal obtenido: {animal}")
-                    comentario = donacion_especifica.notas or ""
-                    vacuna_nombre = donacion_especifica.nombre_vacuna or ""
-                    usuario_nombre = donacion.id_usuario.username if donacion.id_usuario else None
-                    comprobante = ComprobantesServicio.objects.filter(id_donacion_especifica=donacion_especifica).first()
-                    logger.info(f"Comprobante obtenido: {comprobante}")
-                    if comprobante:
-                        comprobante_url = comprobante.url_archivo
-                resultado.append({
-                    "id": donacion.id_donacion,
-                    "monto": float(donacion.monto),
-                    "animal": {"id_animal": getattr(animal, 'id_animal', None), "nombre": getattr(animal, 'nombre', None)} if animal else None,
-                    "comprobante_url": comprobante_url,
+            if donacion.comprobante_imagen:
+                comprobante_url = request.build_absolute_uri(donacion.comprobante_imagen.url)
+            comentario = donacion.notas or ""
+            vacuna_nombre = donacion.nombre_vacuna or ""
+            usuario_nombre = donacion.nombre_donador or None
+            respuesta_refugio = None
+            if donacion.estado_uso == 'respondida':
+                respuesta_refugio = {
+                    "fotos": [
+                        request.build_absolute_uri(donacion.comprobante_refugio_1.url) if donacion.comprobante_refugio_1 else None,
+                        request.build_absolute_uri(donacion.comprobante_refugio_2.url) if donacion.comprobante_refugio_2 else None
+                    ],
                     "comentario": comentario,
-                    "vacuna_nombre": vacuna_nombre,
-                    "usuario_nombre": usuario_nombre,
-                    "respuesta_refugio": None
-                })
-            except Exception as e:
-                logger.error(f"Error procesando donación {donacion.id_donacion}: {e}")
+                    "estado": donacion.estado_uso
+                }
+            resultado.append({
+                "id": donacion.id_donacion_especifica,
+                "monto": float(donacion.monto_unitario),
+                "animal": {
+                    "id_animal": getattr(animal, 'id_animal', None),
+                    "nombre": getattr(animal, 'nombre', None),
+                    "foto": foto_animal
+                } if animal else None,
+                "comprobante_url": comprobante_url,
+                "comentario": comentario,
+                "vacuna_nombre": vacuna_nombre,
+                "donador_nombre": usuario_nombre,
+                "respuesta_refugio": respuesta_refugio,
+                "estado_uso": donacion.estado_uso,
+                "fecha_creacion": donacion.fecha_creacion
+            })
         return Response(resultado)
 
 
@@ -195,7 +245,7 @@ def logout(request):
 from rest_framework.generics import RetrieveUpdateAPIView
 from .models import FichaMedica
 from .serializers import FichaMedicaSerializer
-from .models import Donaciones, DonacionesEspecificas, CatalogoServicios, Animal, Refugio, Vacuna
+from .models import DonacionesEspecificas, CatalogoServicios, Animal, Refugio, Vacuna
 from .serializers import VacunaSerializer
 
 # Endpoint para registrar donación de vacuna
@@ -213,32 +263,33 @@ def registrar_donacion_vacuna(request):
         'monto': float
     }
     """
+    import logging
+    logger = logging.getLogger("donacion_vacuna")
     data = request.data
     try:
-        usuario_id = data.get('id_usuario')
         refugio_id = data.get('id_refugio')
         animal_id = data.get('id_animal')
         nombre_vacuna = data.get('nombre_vacuna')
         tipo_vacuna = data.get('tipo_vacuna', 'unica')
         fecha_aplicacion = data.get('fecha_aplicacion')
         monto = data.get('monto', 0)
-        # Validación: solo la imagen es obligatoria
         imagen = request.FILES.get('imagen')
+        usuario = request.user if request.user.is_authenticated else None
+        logger.info(f"Datos recibidos: usuario={usuario}, refugio_id={refugio_id}, animal_id={animal_id}, nombre_vacuna={nombre_vacuna}, monto={monto}")
+        logger.info(f"Archivos recibidos: {request.FILES}")
         if not imagen:
+            logger.error("No se recibió imagen de comprobante.")
             return Response({'error': 'Debes subir el comprobante de transferencia (imagen).'}, status=400)
-        usuario = request.user if request.user.id == usuario_id else None
-        refugio = Refugio.objects.get(id_refugio=refugio_id)
-        animal = Animal.objects.get(id_animal=animal_id)
-        # Crear donación principal
-        donacion = Donaciones.objects.create(
-            id_usuario_id=usuario_id,
-            id_refugio=refugio,
-            monto=monto,
-            tipo='medica',
-            estado='pendiente',
-            comprobante_imagen=imagen
-        )
-        # Buscar servicio tipo vacuna en catálogo
+        try:
+            refugio = Refugio.objects.get(id_refugio=refugio_id)
+        except Exception as e:
+            logger.error(f"Error obteniendo refugio: {e}")
+            return Response({'error': f'Refugio no encontrado: {e}'}, status=400)
+        try:
+            animal = Animal.objects.get(id_animal=animal_id)
+        except Exception as e:
+            logger.error(f"Error obteniendo animal: {e}")
+            return Response({'error': f'Animal no encontrado: {e}'}, status=400)
         servicio = CatalogoServicios.objects.filter(categoria='vacuna', nombre__icontains=nombre_vacuna).first()
         if not servicio:
             servicio = CatalogoServicios.objects.create(
@@ -251,35 +302,56 @@ def registrar_donacion_vacuna(request):
                 es_obligatorio=False,
                 activo=True
             )
-        # Crear donación específica
-        donacion_especifica = DonacionesEspecificas.objects.create(
-              id_donacion=donacion,
-              id_servicio=servicio,
-              id_animal=animal,
-              id_refugio=refugio,
-              cantidad=1,
-              monto_unitario=monto,
-              estado_uso='pendiente',
-              nombre_vacuna=nombre_vacuna,
-              comentario_donador=data.get('comentario_donador', ''),
-              nombre_donador=data.get('nombre_donador', '')
-        )
-        # Registrar vacuna en el animal
-        vacuna = Vacuna.objects.create(
-            animal=animal,
-            nombre=nombre_vacuna,
-            tipo=tipo_vacuna,
-            fecha_aplicacion=fecha_aplicacion
-        )
+        try:
+            # Si no se envía nombre_donador, usar el nombre del usuario autenticado
+            nombre_donador = data.get('nombre_donador', '')
+            if not nombre_donador and usuario:
+                nombre_donador = str(usuario)
+                if hasattr(usuario, 'get_full_name') and usuario.get_full_name():
+                    nombre_donador = usuario.get_full_name()
+                elif hasattr(usuario, 'first_name') and usuario.first_name:
+                    nombre_donador = usuario.first_name
+                elif hasattr(usuario, 'username'):
+                    nombre_donador = usuario.username
+            donacion_especifica = DonacionesEspecificas.objects.create(
+                id_servicio=servicio,
+                id_animal=animal,
+                id_refugio=refugio,
+                id_usuario=usuario,
+                cantidad=1,
+                monto_unitario=monto,
+                estado_uso='pendiente',
+                nombre_vacuna=nombre_vacuna,
+                comentario_donador=data.get('comentario_donador', ''),
+                nombre_donador=nombre_donador,
+                comprobante_imagen=imagen,
+                comprobante_refugio_1=request.FILES.get('comprobante_refugio_1'),
+                comprobante_refugio_2=request.FILES.get('comprobante_refugio_2')
+            )
+        except Exception as e:
+            logger.error(f"Error creando DonacionesEspecificas: {e}")
+            return Response({'error': f'Error al crear la donación: {e}'}, status=500)
+        try:
+            vacuna = Vacuna.objects.create(
+                animal=animal,
+                nombre=nombre_vacuna,
+                tipo=tipo_vacuna,
+                fecha_aplicacion=fecha_aplicacion
+            )
+        except Exception as e:
+            logger.error(f"Error creando vacuna: {e}")
+            return Response({'error': f'Error al registrar la vacuna: {e}'}, status=500)
         serializer = DonacionesEspecificasSerializer(donacion_especifica)
+        logger.info(f"Donación específica creada: {donacion_especifica.id_donacion_especifica}")
         return Response({
-            'donacion_id': donacion.id_donacion,
+            'id_donacion_especifica': donacion_especifica.id_donacion_especifica,
             'donacion_especifica': serializer.data,
             'vacuna_id': vacuna.id,
             'animal_id': animal.id_animal,
             'refugio_id': refugio.id_refugio
         }, status=201)
     except Exception as e:
+        logger.error(f"Error general en registrar_donacion_vacuna: {e}")
         return Response({'error': str(e)}, status=500)
 from rest_framework import permissions
 

@@ -59,37 +59,76 @@ class PostulacionRefugioSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class RefugioSerializer(serializers.ModelSerializer):
-    region = serializers.ChoiceField(choices=[
-        "Arica y Parinacota", "Tarapacá", "Antofagasta", "Atacama", "Coquimbo", "Valparaíso", "Metropolitana", "O'Higgins", "Maule", "Ñuble", "Biobío", "La Araucanía", "Los Ríos", "Los Lagos", "Aysén", "Magallanes"
-    ], required=False, allow_null=True)
-    logo = serializers.SerializerMethodField()
+    region = serializers.ChoiceField(
+        choices=[
+            "Arica y Parinacota", "Tarapacá", "Antofagasta", "Atacama", "Coquimbo",
+            "Valparaíso", "Metropolitana", "O'Higgins", "Maule", "Ñuble", "Biobío",
+            "La Araucanía", "Los Ríos", "Los Lagos", "Aysén", "Magallanes"
+        ],
+        required=False,
+        allow_null=True
+    )
 
-    def get_logo(self, obj):
-        if obj.logo:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(obj.logo.url)
-            return obj.logo.url
-        return None
-    usuario = serializers.SerializerMethodField()
+    animal = serializers.SerializerMethodField()
+    comprobante_donador = serializers.SerializerMethodField()
+    comentario_donador = serializers.SerializerMethodField()
+    usuario_nombre = serializers.SerializerMethodField()
+    servicio_nombre = serializers.SerializerMethodField()
 
-    def get_usuario(self, obj):
-        # Buscar el usuario asociado al refugio
-        usuario = getattr(obj, 'usuario', None)
-        if usuario:
+    comprobante_refugio_1 = serializers.ImageField(required=False, allow_null=True)
+    comprobante_refugio_2 = serializers.ImageField(required=False, allow_null=True)
+
+    # ------------------------------
+    # MÉTODOS
+    # ------------------------------
+
+    def get_animal(self, obj):
+        animal = obj.id_animal
+        if animal:
+            fotos = getattr(animal, "fotos", None)
+            foto = fotos[0] if fotos and isinstance(fotos, list) and len(fotos) > 0 else None
             return {
-                'id': usuario.id,
-                'username': usuario.username,
-                'email': usuario.email,
-                'telefono': usuario.telefono,
-                'tipo_usuario': usuario.tipo_usuario,
+                "id_animal": getattr(animal, "id_animal", None),
+                "nombre": getattr(animal, "nombre", None),
+                "foto": foto,
             }
         return None
 
+    def get_usuario_nombre(self, obj):
+        usuario = obj.id_usuario
+        if usuario:
+            # Nombre completo
+            if hasattr(usuario, "get_full_name") and usuario.get_full_name():
+                return usuario.get_full_name()
+            # Nombre simple
+            if getattr(usuario, "first_name", None):
+                return usuario.first_name
+            # Username
+            if hasattr(usuario, "username"):
+                return usuario.username
+            return str(usuario)
+        return None
+
+    def get_servicio_nombre(self, obj):
+        servicio = obj.id_servicio
+        if servicio and hasattr(servicio, "nombre"):
+            return servicio.nombre
+        return None
+
+    # Si realmente necesitas estos campos personalizados:
+    def get_comprobante_donador(self, obj):
+        return getattr(obj, "comprobante_donador", None)
+
+    def get_comentario_donador(self, obj):
+        return getattr(obj, "comentario_donador", None)
+
+    # ------------------------------
+    # META
+    # ------------------------------
     class Meta:
         model = Refugio
-        fields = '__all__'
-        extra_fields = ['usuario']
+        fields = "__all__"
+
 
 class UserSerializer(serializers.ModelSerializer):
     refugio = RefugioSerializer(read_only=True, allow_null=True, required=False)
@@ -185,18 +224,62 @@ class NecesidadRefugioSerializer(serializers.ModelSerializer):
 
 # Serializer para Donaciones Especificas
 class DonacionesEspecificasSerializer(serializers.ModelSerializer):
+    donador_nombre = serializers.CharField(source='nombre_donador', default=None)
+    vacuna_nombre = serializers.CharField(source='nombre_vacuna', default=None)
+    animal = serializers.SerializerMethodField()
+    comprobante_donador = serializers.SerializerMethodField()
+    comentario_donador = serializers.SerializerMethodField()
     usuario_nombre = serializers.SerializerMethodField()
-    vacuna_nombre = serializers.SerializerMethodField()
+    servicio_nombre = serializers.SerializerMethodField()
+    comprobante_refugio_1 = serializers.ImageField(required=False, allow_null=True)
+    comprobante_refugio_2 = serializers.ImageField(required=False, allow_null=True)
 
-    def get_usuario_nombre(self, obj):
-        if obj.id_donacion and obj.id_donacion.id_usuario:
-            return obj.id_donacion.id_usuario.username
+    def get_animal(self, obj):
+        animal = obj.id_animal
+        if animal:
+            fotos = getattr(animal, 'fotos', None)
+            foto = fotos[0] if fotos and isinstance(fotos, list) and len(fotos) > 0 else None
+            return {
+                'id_animal': getattr(animal, 'id_animal', None),
+                'nombre': getattr(animal, 'nombre', None),
+                'foto': foto
+            }
         return None
 
-    def get_vacuna_nombre(self, obj):
-        return obj.nombre_vacuna or None
+    def get_usuario_nombre(self, obj):
+        usuario = obj.id_usuario
+        if usuario:
+            if hasattr(usuario, 'get_full_name') and usuario.get_full_name():
+                return usuario.get_full_name()
+            elif hasattr(usuario, 'first_name') and usuario.first_name:
+                return usuario.first_name
+            elif hasattr(usuario, 'username'):
+                return usuario.username
+            return str(usuario)
+        return None
+
+    def get_servicio_nombre(self, obj):
+        servicio = obj.id_servicio
+        if servicio and hasattr(servicio, 'nombre'):
+            return servicio.nombre
+        return None
+
+    def get_comprobante_donador(self, obj):
+        if obj.comprobante_imagen:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.comprobante_imagen.url)
+            return obj.comprobante_imagen.url
+        return None
+
+    def get_comentario_donador(self, obj):
+        return obj.comentario_donador or ""
 
     class Meta:
         model = DonacionesEspecificas
         fields = '__all__'
-        extra_fields = ['usuario_nombre', 'vacuna_nombre']
+        extra_fields = [
+            'donador_nombre', 'vacuna_nombre', 'animal', 'comprobante_donador',
+            'comentario_donador', 'comprobante_refugio_1', 'comprobante_refugio_2',
+            'usuario_nombre', 'servicio_nombre'
+        ]

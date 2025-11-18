@@ -544,34 +544,7 @@ class HogaresTemporales(models.Model):
         db_table = 'hogares_temporales'
         verbose_name_plural = 'Hogares Temporales'
 
-class Donaciones(models.Model):
-    TIPO_OPCIONES = [
-        ('unica', 'Única'),
-        ('recurrente', 'Recurrente'),
-    ]
-    
-    ESTADO_OPCIONES = [
-        ('pendiente', 'Pendiente'),
-        ('completada', 'Completada'),
-        ('fallida', 'Fallida'),
-    ]
 
-    id_donacion = models.AutoField(primary_key=True)
-    id_usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    id_refugio = models.ForeignKey('Refugio', on_delete=models.CASCADE)  # Asumiendo modelo Refugio
-    monto = models.DecimalField(max_digits=10, decimal_places=2)
-    tipo = models.CharField(max_length=15, choices=TIPO_OPCIONES)
-    fecha = models.DateTimeField(auto_now_add=True)
-    estado = models.CharField(max_length=15, choices=ESTADO_OPCIONES, default='pendiente')
-    transbank_token = models.CharField(max_length=255, blank=True, null=True)
-    comprobante_imagen = models.ImageField(upload_to='donaciones_comprobantes/', blank=True, null=True, help_text='Comprobante de transferencia (imagen)')
-
-    def __str__(self):
-        return f"Donación {self.id_donacion} - ${self.monto}"
-
-    class Meta:
-        db_table = 'donaciones'
-        verbose_name_plural = 'Donaciones'
 
 class Suscripciones(models.Model):
     ESTADO_OPCIONES = [
@@ -664,13 +637,20 @@ class DonacionesEspecificas(models.Model):
         ('pendiente', 'Pendiente'),
         ('utilizado', 'Utilizado'),
         ('parcial', 'Parcial'),
+        ('descartado', 'Descartado'),
+        ('aprobado','Aprobado'),
+        ('en proceso','En Proceso'),
     ]
 
     id_donacion_especifica = models.AutoField(primary_key=True)
-    id_donacion = models.ForeignKey('Donaciones', on_delete=models.CASCADE)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    comprobante_imagen = models.ImageField(upload_to='donaciones_comprobantes/', blank=True, null=True, help_text='Comprobante de transferencia (imagen)')
+    comprobante_refugio_1 = models.ImageField(upload_to='donaciones_comprobantes/', blank=True, null=True, help_text='Comprobante de uso enviado por el refugio (1)')
+    comprobante_refugio_2 = models.ImageField(upload_to='donaciones_comprobantes/', blank=True, null=True, help_text='Comprobante de uso enviado por el refugio (2)')
     id_servicio = models.ForeignKey('CatalogoServicios', on_delete=models.CASCADE)
     id_animal = models.ForeignKey('Animal', on_delete=models.CASCADE, blank=True, null=True)
     id_refugio = models.ForeignKey('Refugio', on_delete=models.CASCADE)
+    id_usuario = models.ForeignKey('Usuario', on_delete=models.CASCADE, null=True, blank=True, help_text='Usuario que realizó la donación')
     cantidad = models.IntegerField(default=1)
     monto_unitario = models.DecimalField(max_digits=10, decimal_places=2)
     estado_uso = models.CharField(max_length=15, choices=ESTADO_USO_OPCIONES, default='pendiente')

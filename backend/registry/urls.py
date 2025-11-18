@@ -18,12 +18,14 @@ router.register(r'listas-vacunas-animal', views.ListaVacunasAnimalViewSet, basen
 router.register(r'listas-vacunas-especie', views.ListaVacunasEspecieViewSet, basename='listas-vacunas-especie')
 
 urlpatterns = [
-        path('donaciones-medicas/<int:pk>/respuesta/', views.DonacionMedicaRespuestaView.as_view(), name='donacion_medica_respuesta'),
+    path('donaciones-medicas/<int:pk>/respuesta/', views.DonacionMedicaRespuestaView.as_view(), name='donacion_medica_respuesta'),
+    path('donaciones-medicas/<int:donacion_id>/descartar/', views.descartar_donacion_medica, name='descartar_donacion_medica'),
     path('upload-image/', UploadImageView.as_view(), name='upload-image'),
     path('registrar_donacion_vacuna/', views.registrar_donacion_vacuna, name='registrar_donacion_vacuna'),
     path('fichamedica/<int:animal_id>/', views.FichaMedicaRetrieveUpdateView.as_view(), name='ficha_medica_retrieve_update'),
     path('refugio/historial-solicitudes-adopcion/', views.historial_solicitudes_adopcion_refugio, name='historial_solicitudes_adopcion_refugio'),
         path('refugio/<int:id_refugio>/donaciones-medicas/', views.DonacionesMedicasRefugioView.as_view(), name='donaciones_medicas_refugio'),
+    path('donaciones-medicas-usuario/<int:id_usuario>/', views.DonacionesMedicasUsuarioView.as_view(), name='donaciones_medicas_usuario'),
     path('refugio/solicitud-adopcion/<int:pk>/', views.actualizar_solicitud_adopcion, name='actualizar_solicitud_adopcion'),
     path('auth/login/', views.login, name='login'),
     path('auth/register/', views.register, name='register'),

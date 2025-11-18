@@ -4,6 +4,7 @@ import InscritosEvento from './rols/Refugio/pages/InscritosEvento';
 import Necesidades from './rols/Refugio/pages/Necesidades/NecesidadesRefugio';
 // Enrutador principal para las páginas
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import MisDonaciones from './rols/Usuario/pages/MisDonaciones/misDonaciones';
 import HeaderPublic from './rols/Public/components/Header/HeaderPublic';
 import HeaderUsuario from './rols/Usuario/components/Header/HeaderUsuario';
 import HeaderAdmin from './rols/Admin/components/Header/HeaderAdmin';
@@ -131,6 +132,7 @@ function AppRouterContent() {
           {/* Ruta para Mis Adopciones */}
           <Route path="/mis-adopciones" element={<MisAdopciones />} />
           <Route path="/mis-solicitudes-adopcion" element={<MisSolicitudesAdopcion />} />
+          <Route path="/mis-donaciones" element={<MisDonaciones />} />
 
           {/* --- Rutas Admin --- */}
           <Route
