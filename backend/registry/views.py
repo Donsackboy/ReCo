@@ -217,6 +217,7 @@ class UploadImageView(APIView):
         except Exception as e:
             return Response({'error': f'Error saving image: {str(e)}'}, status=500)
 # ...existing code...
+from .serializers import RefugioSerializer
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -228,6 +229,29 @@ from rest_framework.authtoken.models import Token
 logger = logging.getLogger(__name__)
 
 # ...existing code...
+
+# Endpoint para listar refugios con datos bancarios
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def listar_refugios_bancarios(request):
+    refugios = Refugio.objects.all()
+    resultado = []
+    for refugio in refugios:
+        resultado.append({
+            "id_refugio": refugio.id_refugio,
+            "nombre": refugio.nombre,
+            "region": refugio.region,
+            "banco": refugio.banco,
+            "tipo_cuenta": refugio.tipo_cuenta,
+            "numero_cuenta": refugio.numero_cuenta,
+            "rut_titular": refugio.rut_titular,
+            "titular_cuenta": refugio.titular_cuenta,
+            "email_bancario": refugio.email_bancario,
+        })
+    return Response(resultado)
 
 # Endpoint para logout seguro
 @api_view(["POST"])

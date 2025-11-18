@@ -182,10 +182,16 @@ const HeaderRefugio: React.FC<HeaderRefugioProps> = ({
                 Animales
               </Link>
             </li>
-            <li className="side-menu-item">
+            {/* <li className="side-menu-item">
               <Link to="/hogares-temporales" className="side-menu-link" onClick={closeMenu}>
                 <span className="side-menu-icon"></span>
                 Hogares Temporales
+              </Link>
+            </li> */}
+            <li className="side-menu-item">
+              <Link to="/donaciones" className="side-menu-link" onClick={closeMenu}>
+                <span className="side-menu-icon">💰</span>
+                Donaciones
               </Link>
             </li>
             {/*
