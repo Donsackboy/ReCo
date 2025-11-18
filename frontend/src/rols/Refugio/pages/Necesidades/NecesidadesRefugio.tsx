@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './NecesidadesRefugio.css';
 import { useEffect } from 'react';
-import { getNecesidadesRefugio, createNecesidadRefugio, updateNecesidadRefugio, deleteNecesidadRefugio } from '../../api/apiRefugio';
+import { getNecesidadesRefugio, createNecesidadRefugio, updateNecesidadRefugio, deleteNecesidadRefugio } from '../../api/ApiRefugio';
 
 type TipoNecesidad = 'alimento' | 'medicamento' | 'servicio' | 'articulo' | 'otro';
 type Prioridad = 'baja' | 'media' | 'alta' | 'urgente';
@@ -125,7 +125,7 @@ const NecesidadesRefugio: React.FC = () => {
       data.append('file', imagenFile);
       fetch('/api/upload-image/', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Token ${token}` },
         body: data,
       })
         .then(res => res.json())

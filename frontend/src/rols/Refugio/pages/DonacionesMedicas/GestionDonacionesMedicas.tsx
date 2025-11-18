@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getDonacionesMedicas, registrarDonacionVacuna } from '../../api/apiRefugio';
+import { getDonacionesMedicas, registrarDonacionVacuna } from '../../api/ApiRefugio';
 
 // Simulación de función para enviar respuesta (debes implementar en tu API real)
 async function responderDonacionMedica(donacionId: number, fotos: File[], comentario: string) {

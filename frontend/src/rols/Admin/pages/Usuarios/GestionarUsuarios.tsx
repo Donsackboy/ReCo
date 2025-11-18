@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './GestionarUsuarios.css';
-import { getUsuarios, updateUsuario, deleteUsuario } from '../../api/apiAdmin';
+import { getUsuarios, updateUsuario, deleteUsuario } from '../../api/ApiAdmin';
 import HeaderAdmin from '../../components/Header/HeaderAdmin';
 
 interface Usuario {
