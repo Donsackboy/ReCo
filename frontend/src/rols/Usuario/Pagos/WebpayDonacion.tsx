@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { API_BASE } from '../../../api/apiBase.js';
+import React, { useState } from "react";
+import { API_BASE } from "../../../Api/apiBase.js";
 
 interface WebpayDonacionProps {
   monto: number;
@@ -21,28 +21,30 @@ const WebpayDonacion: React.FC<WebpayDonacionProps> = ({ monto, token }) => {
     setError(null);
     try {
       const response = await fetch(`${API_BASE}/webpay/iniciar/`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${token}`,
+          "Content-Type": "application/json",
+          Authorization: `Token ${token}`,
         },
         body: JSON.stringify({ monto }),
       });
       if (!response.ok) {
         if (response.status === 401) {
-          setError('No autorizado: Verifica tus credenciales o intenta más tarde.');
+          setError(
+            "No autorizado: Verifica tus credenciales o intenta más tarde."
+          );
           return;
         }
-        throw new Error('Error al iniciar la donación');
+        throw new Error("Error al iniciar la donación");
       }
       const data: WebpayResponse = await response.json();
       if (data.url) {
         window.location.href = data.url;
       } else {
-        setError('No se recibió la URL de Webpay');
+        setError("No se recibió la URL de Webpay");
       }
     } catch (err: any) {
-      setError(err.message || 'Error desconocido');
+      setError(err.message || "Error desconocido");
     } finally {
       setLoading(false);
     }
@@ -53,10 +55,10 @@ const WebpayDonacion: React.FC<WebpayDonacionProps> = ({ monto, token }) => {
       <h2>Donar con Webpay Plus</h2>
       <form onSubmit={handleSubmit}>
         <button type="submit" disabled={loading || !monto}>
-          {loading ? 'Procesando...' : 'Ir a Webpay'}
+          {loading ? "Procesando..." : "Ir a Webpay"}
         </button>
       </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 };

@@ -1,12 +1,18 @@
-import { useLocation } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
-import './HistorialMedicoRefugio.css';
+import { useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import "./HistorialMedicoRefugio.css";
 // @ts-ignore
-import { getAnimales, getFichaMedica, getVacunas, getCirugias, getTratamientos } from '../../api/ApiRefugio';
+import {
+  getAnimales,
+  getFichaMedica,
+  getVacunas,
+  getCirugias,
+  getTratamientos,
+} from "../../Api/ApiRefugio";
 // @ts-ignore
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import EstructuraPDF from './EstructuraPDF';
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import EstructuraPDF from "./EstructuraPDF";
 
 // Tipos
 interface HistorialItem {
@@ -27,11 +33,7 @@ interface Animal {
   foto_url?: string;
 }
 
-
-
-
-const getToken = () => localStorage.getItem('token');
-
+const getToken = () => localStorage.getItem("token");
 
 const descargarPDF = (animal: Animal) => {
   const doc = new jsPDF();
@@ -59,25 +61,27 @@ const descargarPDF = (animal: Animal) => {
 const HistorialMedicoRefugio: React.FC = () => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-  const idParam = params.get('id');
-  const previewParam = params.get('preview');
+  const idParam = params.get("id");
+  const previewParam = params.get("preview");
   // Estados principales
   const [modalAnimal, setModalAnimal] = useState<Animal | null>(null);
   const [animales, setAnimales] = useState<Animal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   // Filtros aplicados
-  const [filtroVacuna, setFiltroVacuna] = useState('');
-  const [filtroVacunaSelect, setFiltroVacunaSelect] = useState('');
-  const [filtroNombre, setFiltroNombre] = useState('');
+  const [filtroVacuna, setFiltroVacuna] = useState("");
+  const [filtroVacunaSelect, setFiltroVacunaSelect] = useState("");
+  const [filtroNombre, setFiltroNombre] = useState("");
   const [filtroEsterilizacion, setFiltroEsterilizacion] = useState(false);
   const [filtroDesparasitacion, setFiltroDesparasitacion] = useState(false);
   // Inputs temporales
-  const [filtroVacunaInput, setFiltroVacunaInput] = useState('');
-  const [filtroVacunaSelectInput, setFiltroVacunaSelectInput] = useState('');
-  const [filtroNombreInput, setFiltroNombreInput] = useState('');
-  const [filtroEsterilizacionInput, setFiltroEsterilizacionInput] = useState(false);
-  const [filtroDesparasitacionInput, setFiltroDesparasitacionInput] = useState(false);
+  const [filtroVacunaInput, setFiltroVacunaInput] = useState("");
+  const [filtroVacunaSelectInput, setFiltroVacunaSelectInput] = useState("");
+  const [filtroNombreInput, setFiltroNombreInput] = useState("");
+  const [filtroEsterilizacionInput, setFiltroEsterilizacionInput] =
+    useState(false);
+  const [filtroDesparasitacionInput, setFiltroDesparasitacionInput] =
+    useState(false);
   // Botón aplicar filtros
   const handleAplicarFiltros = () => {
     setFiltroVacuna(filtroVacunaInput);
@@ -89,28 +93,33 @@ const HistorialMedicoRefugio: React.FC = () => {
   // Modal de detalle
   const handleVerDetalles = (animal: Animal) => {
     setModalAnimal(animal);
-  } 
+  };
 
   // Abrir modal automáticamente si hay id y preview=true
   useEffect(() => {
-    if (idParam && previewParam === 'true' && animales.length > 0) {
-      const found = animales.find(a => String(a.id) === String(idParam));
+    if (idParam && previewParam === "true" && animales.length > 0) {
+      const found = animales.find((a) => String(a.id) === String(idParam));
       if (found) setModalAnimal(found);
     }
   }, [idParam, previewParam, animales]);
   // ...estados y lógica principal...
   // Modal de detalle
 
-
   // Vacunas disponibles para select
-  const vacunasDisponibles = Array.from(new Set(
-    animales.flatMap(a => a.historial.filter(h => h.descripcion.startsWith('Vacuna: ')).map(h => h.descripcion.replace('Vacuna: ', '')))
-  ));
+  const vacunasDisponibles = Array.from(
+    new Set(
+      animales.flatMap((a) =>
+        a.historial
+          .filter((h) => h.descripcion.startsWith("Vacuna: "))
+          .map((h) => h.descripcion.replace("Vacuna: ", ""))
+      )
+    )
+  );
 
   // Log de depuración para ver animales cargados
   useEffect(() => {
     if (!loading) {
-      console.log('Animales cargados:', animales);
+      console.log("Animales cargados:", animales);
     }
   }, [animales, loading]);
 
@@ -118,11 +127,14 @@ const HistorialMedicoRefugio: React.FC = () => {
     const fetchAnimalesConHistorial = async () => {
       try {
         const token = getToken();
-        if (!token) throw new Error('No hay token de autenticación');
+        if (!token) throw new Error("No hay token de autenticación");
         const data: any[] = await getAnimales(token);
-        console.log('Respuesta cruda de getAnimales:', data);
+        console.log("Respuesta cruda de getAnimales:", data);
         // Filtrar animales con id_animal válido
-        const animalesValidos = data.filter(animal => typeof animal.id_animal === 'number' && !isNaN(animal.id_animal));
+        const animalesValidos = data.filter(
+          (animal) =>
+            typeof animal.id_animal === "number" && !isNaN(animal.id_animal)
+        );
         const animalesConHistorial: Animal[] = await Promise.all(
           animalesValidos.map(async (animal) => {
             const historial: HistorialItem[] = [];
@@ -130,7 +142,10 @@ const HistorialMedicoRefugio: React.FC = () => {
             try {
               const ficha = await getFichaMedica(token, animal.id_animal);
               if (ficha && ficha.descripcion) {
-                historial.push({ fecha: ficha.fecha || '', descripcion: `Ficha médica: ${ficha.descripcion}` });
+                historial.push({
+                  fecha: ficha.fecha || "",
+                  descripcion: `Ficha médica: ${ficha.descripcion}`,
+                });
               }
             } catch {}
             // Vacunas
@@ -139,8 +154,15 @@ const HistorialMedicoRefugio: React.FC = () => {
               const vacunas = await getVacunas(token, animal.id_animal);
               if (Array.isArray(vacunas)) {
                 vacunas.forEach((v: any) => {
-                  historial.push({ fecha: v.fecha || '', descripcion: `Vacuna: ${v.nombre}` });
-                  if (filtroVacuna && v.nombre && v.nombre.toLowerCase().includes(filtroVacuna.toLowerCase())) {
+                  historial.push({
+                    fecha: v.fecha || "",
+                    descripcion: `Vacuna: ${v.nombre}`,
+                  });
+                  if (
+                    filtroVacuna &&
+                    v.nombre &&
+                    v.nombre.toLowerCase().includes(filtroVacuna.toLowerCase())
+                  ) {
                     tieneVacuna = true;
                   }
                 });
@@ -152,8 +174,14 @@ const HistorialMedicoRefugio: React.FC = () => {
               const cirugias = await getCirugias(token, animal.id_animal);
               if (Array.isArray(cirugias)) {
                 cirugias.forEach((c: any) => {
-                  historial.push({ fecha: c.fecha || '', descripcion: `Cirugía: ${c.descripcion}` });
-                  if (c.descripcion && c.descripcion.toLowerCase().includes('esterilización')) {
+                  historial.push({
+                    fecha: c.fecha || "",
+                    descripcion: `Cirugía: ${c.descripcion}`,
+                  });
+                  if (
+                    c.descripcion &&
+                    c.descripcion.toLowerCase().includes("esterilización")
+                  ) {
                     tieneEsterilizacion = true;
                   }
                 });
@@ -162,11 +190,20 @@ const HistorialMedicoRefugio: React.FC = () => {
             // Tratamientos (desparasitación)
             let tieneDesparasitacion = false;
             try {
-              const tratamientos = await getTratamientos(token, animal.id_animal);
+              const tratamientos = await getTratamientos(
+                token,
+                animal.id_animal
+              );
               if (Array.isArray(tratamientos)) {
                 tratamientos.forEach((t: any) => {
-                  historial.push({ fecha: t.fecha || '', descripcion: `Tratamiento: ${t.descripcion}` });
-                  if (t.descripcion && t.descripcion.toLowerCase().includes('desparasit')) {
+                  historial.push({
+                    fecha: t.fecha || "",
+                    descripcion: `Tratamiento: ${t.descripcion}`,
+                  });
+                  if (
+                    t.descripcion &&
+                    t.descripcion.toLowerCase().includes("desparasit")
+                  ) {
                     tieneDesparasitacion = true;
                   }
                 });
@@ -178,7 +215,11 @@ const HistorialMedicoRefugio: React.FC = () => {
               especie: animal.especie,
               edad: animal.edad,
               estado_salud: animal.estado_salud || animal.estado,
-              foto_url: animal.foto_url || (animal.fotos && animal.fotos.length > 0 ? animal.fotos[0] : undefined),
+              foto_url:
+                animal.foto_url ||
+                (animal.fotos && animal.fotos.length > 0
+                  ? animal.fotos[0]
+                  : undefined),
               historial,
               tieneVacuna,
               tieneEsterilizacion,
@@ -199,19 +240,39 @@ const HistorialMedicoRefugio: React.FC = () => {
 
   // Filtrar animales según los filtros seleccionados
   const filtrosActivos = Boolean(
-    filtroVacuna || filtroVacunaSelect || filtroNombre || filtroEsterilizacion || filtroDesparasitacion
+    filtroVacuna ||
+      filtroVacunaSelect ||
+      filtroNombre ||
+      filtroEsterilizacion ||
+      filtroDesparasitacion
   );
   let animalesFiltrados = animales;
   if (filtrosActivos) {
-    animalesFiltrados = animales.filter(animal => {
+    animalesFiltrados = animales.filter((animal) => {
       // Filtrar por nombre
-      if (filtroNombre && !animal.nombre.toLowerCase().includes(filtroNombre.toLowerCase())) return false;
+      if (
+        filtroNombre &&
+        !animal.nombre.toLowerCase().includes(filtroNombre.toLowerCase())
+      )
+        return false;
       // Filtrar por vacuna escrita: mostrar solo animales que NO tienen esa vacuna
       if (filtroVacuna && animal.tieneVacuna) return false;
       if (filtroVacuna && !animal.tieneVacuna) return true;
       // Filtrar por vacuna seleccionada: mostrar solo animales que NO tienen esa vacuna
-      if (filtroVacunaSelect && animal.historial.some(h => h.descripcion === `Vacuna: ${filtroVacunaSelect}`)) return false;
-      if (filtroVacunaSelect && !animal.historial.some(h => h.descripcion === `Vacuna: ${filtroVacunaSelect}`)) return true;
+      if (
+        filtroVacunaSelect &&
+        animal.historial.some(
+          (h) => h.descripcion === `Vacuna: ${filtroVacunaSelect}`
+        )
+      )
+        return false;
+      if (
+        filtroVacunaSelect &&
+        !animal.historial.some(
+          (h) => h.descripcion === `Vacuna: ${filtroVacunaSelect}`
+        )
+      )
+        return true;
       // Filtrar por esterilización: mostrar solo animales que NO están esterilizados
       if (filtroEsterilizacion && animal.tieneEsterilizacion) return false;
       if (filtroEsterilizacion && !animal.tieneEsterilizacion) return true;
@@ -225,53 +286,90 @@ const HistorialMedicoRefugio: React.FC = () => {
 
   return (
     <div className="historial-container">
-      <h1 className="historial-header">Historial Médico de Animales del Refugio</h1>
+      <h1 className="historial-header">
+        Historial Médico de Animales del Refugio
+      </h1>
       {loading && <p className="loading-message">Cargando animales...</p>}
       {error && <p className="error-message">Error: {error}</p>}
-      <div style={{ marginBottom: '2rem' }}>
+      <div style={{ marginBottom: "2rem" }}>
         <h2>Filtrar animales que NO tienen:</h2>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+        <div
+          style={{
+            display: "flex",
+            gap: "1rem",
+            flexWrap: "wrap",
+            marginBottom: "1rem",
+          }}
+        >
           <input
             type="text"
             placeholder="Vacuna (ej: antirrábica)"
             value={filtroVacunaInput}
-            onChange={e => setFiltroVacunaInput(e.target.value)}
-            style={{ padding: '0.5rem', borderRadius: '5px', border: '1px solid #b2d7ef' }}
+            onChange={(e) => setFiltroVacunaInput(e.target.value)}
+            style={{
+              padding: "0.5rem",
+              borderRadius: "5px",
+              border: "1px solid #b2d7ef",
+            }}
           />
           <select
             value={filtroVacunaSelectInput}
-            onChange={e => setFiltroVacunaSelectInput(e.target.value)}
-            style={{ padding: '0.5rem', borderRadius: '5px', border: '1px solid #b2d7ef' }}
+            onChange={(e) => setFiltroVacunaSelectInput(e.target.value)}
+            style={{
+              padding: "0.5rem",
+              borderRadius: "5px",
+              border: "1px solid #b2d7ef",
+            }}
           >
             <option value="">Seleccionar vacuna</option>
-            {vacunasDisponibles.map(vacuna => (
-              <option key={vacuna} value={vacuna}>{vacuna}</option>
+            {vacunasDisponibles.map((vacuna) => (
+              <option key={vacuna} value={vacuna}>
+                {vacuna}
+              </option>
             ))}
           </select>
           <input
             type="text"
             placeholder="Filtrar por nombre de animal"
             value={filtroNombreInput}
-            onChange={e => setFiltroNombreInput(e.target.value)}
-            style={{ padding: '0.5rem', borderRadius: '5px', border: '1px solid #b2d7ef' }}
+            onChange={(e) => setFiltroNombreInput(e.target.value)}
+            style={{
+              padding: "0.5rem",
+              borderRadius: "5px",
+              border: "1px solid #b2d7ef",
+            }}
           />
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <label
+            style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+          >
             <input
               type="checkbox"
               checked={filtroEsterilizacionInput}
-              onChange={e => setFiltroEsterilizacionInput(e.target.checked)}
+              onChange={(e) => setFiltroEsterilizacionInput(e.target.checked)}
             />
             Esterilización
           </label>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <label
+            style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+          >
             <input
               type="checkbox"
               checked={filtroDesparasitacionInput}
-              onChange={e => setFiltroDesparasitacionInput(e.target.checked)}
+              onChange={(e) => setFiltroDesparasitacionInput(e.target.checked)}
             />
             Desparasitaciones
           </label>
-          <button onClick={handleAplicarFiltros} style={{ padding: '0.5rem 1rem', borderRadius: '5px', background: '#4caf50', color: 'white', border: 'none', fontWeight: 'bold' }}>
+          <button
+            onClick={handleAplicarFiltros}
+            style={{
+              padding: "0.5rem 1rem",
+              borderRadius: "5px",
+              background: "#4caf50",
+              color: "white",
+              border: "none",
+              fontWeight: "bold",
+            }}
+          >
             Aplicar filtros
           </button>
         </div>
@@ -282,19 +380,66 @@ const HistorialMedicoRefugio: React.FC = () => {
         ) : (
           animalesFiltrados.map((animal: Animal, idx: number) => {
             return (
-              <div key={animal.id ?? idx} className="ficha-tarjeta" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div
+                key={animal.id ?? idx}
+                className="ficha-tarjeta"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
                 <div style={{ flex: 1 }}>
                   <h3>{animal.nombre}</h3>
-                  <p><strong>Edad:</strong> {animal.edad || 'No disponible'}</p>
-                  <p><strong>Estado de Salud:</strong> {animal.estado_salud || 'No disponible'}</p>
+                  <p>
+                    <strong>Edad:</strong> {animal.edad || "No disponible"}
+                  </p>
+                  <p>
+                    <strong>Estado de Salud:</strong>{" "}
+                    {animal.estado_salud || "No disponible"}
+                  </p>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '1rem' }}>
-                  <img src={animal.foto_url || '/default-animal.png'} alt={animal.nombre} style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: 10, marginBottom: '1rem' }} />
-                  <button style={{ alignSelf: 'flex-end' }} onClick={() => handleVerDetalles(animal)}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-end",
+                    gap: "1rem",
+                  }}
+                >
+                  <img
+                    src={animal.foto_url || "/default-animal.png"}
+                    alt={animal.nombre}
+                    style={{
+                      width: 100,
+                      height: 100,
+                      objectFit: "cover",
+                      borderRadius: 10,
+                      marginBottom: "1rem",
+                    }}
+                  />
+                  <button
+                    style={{ alignSelf: "flex-end" }}
+                    onClick={() => handleVerDetalles(animal)}
+                  >
                     Ver detalles
                   </button>
-                  <button style={{ alignSelf: 'flex-end', marginTop: '0.5rem', background: '#1976d2', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 18px', fontWeight: 600, fontSize: '1em', boxShadow: '0 1px 4px #90caf9', cursor: 'pointer' }}
-                    onClick={() => descargarPDF(animal)}>
+                  <button
+                    style={{
+                      alignSelf: "flex-end",
+                      marginTop: "0.5rem",
+                      background: "#1976d2",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: 8,
+                      padding: "8px 18px",
+                      fontWeight: 600,
+                      fontSize: "1em",
+                      boxShadow: "0 1px 4px #90caf9",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => descargarPDF(animal)}
+                  >
                     Descargar PDF
                   </button>
                 </div>
@@ -306,7 +451,10 @@ const HistorialMedicoRefugio: React.FC = () => {
 
       {/* Modal de previsualización PDF editable */}
       {modalAnimal && (
-        <EstructuraPDF animal={modalAnimal} onClose={() => setModalAnimal(null)} />
+        <EstructuraPDF
+          animal={modalAnimal}
+          onClose={() => setModalAnimal(null)}
+        />
       )}
     </div>
   );
