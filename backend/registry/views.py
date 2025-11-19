@@ -156,7 +156,6 @@ class ListaVacunasEspecieViewSet(viewsets.ModelViewSet):
     serializer_class = ListaVacunasEspecieSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-
 # Endpoint para iniciar donación Webpay Plus
 @api_view(['POST'])
 @permission_classes([AllowAny])
