@@ -106,12 +106,31 @@ class RefugioSerializer(serializers.ModelSerializer):
         model = Refugio
         fields = "__all__"
 
-
 class UserSerializer(serializers.ModelSerializer):
     refugio = RefugioSerializer(read_only=True, allow_null=True, required=False)
+    tipo_usuario = serializers.SerializerMethodField()  # <-- nuevo
+
+    def get_tipo_usuario(self, obj):
+        # Prioriza flags de Django (superuser/staff) sobre el campo db
+        if getattr(obj, "is_superuser", False) or getattr(obj, "is_staff", False):
+            return "admin"
+        return obj.tipo_usuario
+
     class Meta:
         model = Usuario
-        fields = ('id', 'username', 'email', 'tipo_usuario', 'first_name', 'last_name', 'telefono', 'refugio')
+        fields = (
+            'id',
+            'username',
+            'email',
+            'tipo_usuario',
+            'first_name',
+            'last_name',
+            'telefono',
+            'refugio',
+            'is_superuser',
+            'is_staff',
+            'is_active',
+        )
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
