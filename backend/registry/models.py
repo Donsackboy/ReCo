@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from .models_especie import Especie
 
-
 # --- Lista de Vacunas por Animal ---
 class ListaVacunasEspecie(models.Model):
     especie = models.ForeignKey('Especie', on_delete=models.CASCADE, related_name='listas_vacunas')
@@ -445,9 +444,6 @@ class PostulacionRefugio(models.Model):
 
     def __str__(self):
         return f"{self.nombre} ({self.comuna}, {self.region})"
-from django.db import models
-from django.conf import settings
-from django.contrib.auth.models import AbstractUser
 
 class Usuario(AbstractUser):
     # Hacer que email sea el campo de identificación

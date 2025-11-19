@@ -1,6 +1,41 @@
-from rest_framework.views import APIView
+from django.conf import settings
+from django.core.files.storage import default_storage
+from django.db.models import F
+import logging
+import os
+import random
+import uuid
+
+from rest_framework import (
+    generics, permissions, status, viewsets
+)
+from rest_framework.authtoken.models import Token
+from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.views import APIView
+
+from transbank.webpay.webpay_plus.transaction import Transaction
+
+from .models import (
+    AlergiaCondicion, Animal, CatalogoServicios, Cirugia, ComprobantesServicio,
+    DonacionesEspecificas, FichaMedica, HogaresTemporales, ListaVacunasAnimal,
+    ListaVacunasEspecie, NecesidadRefugio, PostulacionRefugio, Refugio,
+    SolicitudAdopcion, Tratamiento, Usuario, Vacuna
+)
+from .permissions import IsAdmin, IsRefugio, IsRefugioOrAdmin
+from .serializers import (
+    AlergiaCondicionSerializer, AnimalSerializer, CirugiaSerializer,
+    DonacionesEspecificasSerializer, FichaMedicaSerializer,
+    HogarTemporalSerializer, ListaVacunasAnimalSerializer,
+    ListaVacunasEspecieSerializer, LoginSerializer, NecesidadRefugioSerializer,
+    PostulacionRefugioSerializer, RefugioSerializer, SolicitudAdopcionSerializer,
+    TratamientoSerializer, UserSerializer, VacunaSerializer
+)
+
+logger = logging.getLogger(__name__)
 
 class DonacionMedicaRespuestaView(APIView):
     def post(self, request, pk):
@@ -28,9 +63,8 @@ class DonacionMedicaRespuestaView(APIView):
         except DonacionesEspecificas.DoesNotExist:
             return Response({'error': 'Donación no encontrada.'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)       
+
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def descartar_donacion_medica(request, donacion_id):
@@ -48,17 +82,7 @@ def descartar_donacion_medica(request, donacion_id):
         return Response({"error": "Donación no encontrada."}, status=404)
     except Exception as e:
         return Response({"error": str(e)}, status=400)
-from .models import ListaVacunasAnimal, ListaVacunasEspecie
-from .serializers import ListaVacunasAnimalSerializer, ListaVacunasEspecieSerializer
-from rest_framework import viewsets, permissions
 
-# Donaciones médicas refugio
-from .models import DonacionesEspecificas, ComprobantesServicio, Animal, Refugio
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from .serializers import DonacionesEspecificasSerializer
-from rest_framework.permissions import IsAuthenticated
 
 # Endpoint para obtener donaciones médicas de un usuario
 class DonacionesMedicasUsuarioView(APIView):
@@ -131,20 +155,7 @@ class ListaVacunasEspecieViewSet(viewsets.ModelViewSet):
     queryset = ListaVacunasEspecie.objects.all()
     serializer_class = ListaVacunasEspecieSerializer
     permission_classes = [permissions.IsAuthenticated]
-from transbank.webpay.webpay_plus.transaction import Transaction
-from django.conf import settings
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework import status
-import uuid
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.parsers import MultiPartParser, FormParser
-from django.core.files.storage import default_storage
-from django.conf import settings
-import os
-import logging
+
 
 # Endpoint para iniciar donación Webpay Plus
 @api_view(['POST'])
@@ -217,22 +228,7 @@ class UploadImageView(APIView):
         except Exception as e:
             return Response({'error': f'Error saving image: {str(e)}'}, status=500)
 # ...existing code...
-from .serializers import RefugioSerializer
 
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework import status
-import logging
-from rest_framework.authtoken.models import Token
-
-logger = logging.getLogger(__name__)
-
-# ...existing code...
-
-# Endpoint para listar refugios con datos bancarios
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
@@ -265,15 +261,7 @@ def logout(request):
         logger.error(f"Error en logout: {e}")
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# Endpoint para obtener y actualizar la ficha médica de un animal por animal_id
-from rest_framework.generics import RetrieveUpdateAPIView
-from .models import FichaMedica
-from .serializers import FichaMedicaSerializer
-from .models import DonacionesEspecificas, CatalogoServicios, Animal, Refugio, Vacuna
-from .serializers import VacunaSerializer
 
-# Endpoint para registrar donación de vacuna
-from rest_framework.decorators import api_view
 @api_view(["POST"])
 def registrar_donacion_vacuna(request):
     """
@@ -377,7 +365,7 @@ def registrar_donacion_vacuna(request):
     except Exception as e:
         logger.error(f"Error general en registrar_donacion_vacuna: {e}")
         return Response({'error': str(e)}, status=500)
-from rest_framework import permissions
+
 
 class FichaMedicaRetrieveUpdateView(RetrieveUpdateAPIView):
     def update(self, request, *args, **kwargs):
@@ -397,11 +385,7 @@ class FichaMedicaRetrieveUpdateView(RetrieveUpdateAPIView):
     def get_object(self):
         animal_id = self.kwargs.get('animal_id')
         return FichaMedica.objects.get(animal_id=animal_id)
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework import status
-import logging
+
 
 logger = logging.getLogger(__name__)
 
@@ -437,8 +421,8 @@ def actualizar_solicitud_adopcion(request, pk):
     solicitud.save()
     from .serializers import SolicitudAdopcionSerializer
     return Response(SolicitudAdopcionSerializer(solicitud).data)
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+
+
 # Endpoint para obtener las solicitudes de adopción pendientes asociadas al refugio logeado
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -453,9 +437,7 @@ def solicitudes_adopcion_pendientes_refugio(request):
     solicitudes = SolicitudAdopcion.objects.filter(animal__in=animales_refugio, estado='pendiente')
     serializer = SolicitudAdopcionSerializer(solicitudes, many=True)
     return Response(serializer.data)
-# Importar decoradores y permisos al inicio del archivo
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+
 # Endpoint para cantidad de adopciones pendientes de un refugio
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -468,9 +450,8 @@ def adopciones_pendientes_refugio(request):
     animales_refugio = Animal.objects.filter(refugio=refugio)
     count = SolicitudAdopcion.objects.filter(animal__in=animales_refugio, estado='pendiente').count()
     return Response({'count': count})
-from rest_framework import generics, permissions, status
-from .serializers import SolicitudAdopcionSerializer
-from .models import SolicitudAdopcion
+
+
 # --- Solicitud de Adopción ---
 class SolicitudAdopcionListCreateView(generics.ListCreateAPIView):
     serializer_class = SolicitudAdopcionSerializer
@@ -488,24 +469,9 @@ class SolicitudAdopcionListCreateView(generics.ListCreateAPIView):
         if not user or not user.is_authenticated:
             raise Exception("Usuario no autenticado")
         serializer.save(usuario=user)
-from django.db.models import F
-import random
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
-from rest_framework.views import APIView
-from .permissions import IsRefugioOrAdmin, IsAdmin, IsRefugio
-from .serializers import (
-    AnimalSerializer, PostulacionRefugioSerializer, UserSerializer, LoginSerializer,
-    HogarTemporalSerializer, RefugioSerializer,
-    CirugiaSerializer, TratamientoSerializer, AlergiaCondicionSerializer, FichaMedicaSerializer
-)
-from .models import (
-    Animal, PostulacionRefugio, Usuario, HogaresTemporales, Refugio,
-    Cirugia, Tratamiento, AlergiaCondicion, FichaMedica
-)
+
+
 # Endpoint para listar y crear fichas médicas
-from rest_framework import generics, permissions
 class FichaMedicaListCreateView(generics.ListCreateAPIView):
     serializer_class = FichaMedicaSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -518,7 +484,6 @@ class FichaMedicaListCreateView(generics.ListCreateAPIView):
         return queryset
 
 # Endpoint para listar y crear alergias/condiciones crónicas de un animal
-from rest_framework import generics, permissions
 class AlergiaCondicionListCreateView(generics.ListCreateAPIView):
     serializer_class = AlergiaCondicionSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -575,7 +540,6 @@ class AnimalDetailView(generics.RetrieveUpdateDestroyAPIView):
             instance = self.get_object()
             logger.warning(f'Animal a eliminar: {instance.id_animal} - {instance.nombre}')
             # Rechazar automáticamente solicitudes de adopción pendientes
-            from .models import SolicitudAdopcion
             solicitudes = SolicitudAdopcion.objects.filter(animal=instance, estado='pendiente')
             logger.warning(f'Solicitudes pendientes encontradas: {solicitudes.count()}')
             for solicitud in solicitudes:
@@ -587,8 +551,6 @@ class AnimalDetailView(generics.RetrieveUpdateDestroyAPIView):
             return super().destroy(request, *args, **kwargs)
         except Exception as e:
             logger.error(f'Error al eliminar animal: {e}', exc_info=True)
-            from rest_framework.response import Response
-            from rest_framework import status
             return Response({'error': f'Error interno al eliminar animal: {e}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class RefugioPublicListView(generics.ListAPIView):
@@ -659,7 +621,7 @@ class PostulacionRefugioUpdateView(generics.RetrieveUpdateAPIView):
                 region=instance.region
             )
             # Crear usuario tipo refugio asociado
-            from .models import Usuario
+            
             password = 'refugio2025'
             username = instance.nombre.replace(' ', '').lower()[:20]
             usuario_refugio = Usuario.objects.create_user(
@@ -675,7 +637,7 @@ class PostulacionRefugioUpdateView(generics.RetrieveUpdateAPIView):
         instance.save()
         data = PostulacionRefugioSerializer(instance).data
         if refugio and usuario_refugio:
-            from .serializers import RefugioSerializer, UserSerializer
+            
             data['refugio'] = RefugioSerializer(refugio).data
             data['usuario_refugio'] = UserSerializer(usuario_refugio).data
         return Response(data)
@@ -743,7 +705,7 @@ class AnimalListCreateView(generics.ListCreateAPIView):
         else:
             animal = serializer.save()
         # Crear ficha médica asociada automáticamente si no existe
-        from .models import FichaMedica
+        
         if not hasattr(animal, 'ficha_medica'):
             FichaMedica.objects.create(animal=animal)
 
@@ -813,10 +775,6 @@ def register(request):
             'user': UserSerializer(user).data
         })
     return Response(serializer.errors, status=400)
-
-from rest_framework import status
-from .models import Usuario
-from .serializers import UserSerializer
 
 @api_view(['GET', 'PATCH'])
 @permission_classes([IsAuthenticated])
@@ -947,10 +905,6 @@ def refugio_me(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # --- Vacunas ---
-from rest_framework import viewsets
-from .models import Vacuna
-from .serializers import VacunaSerializer
-
 class VacunaViewSet(viewsets.ModelViewSet):
     serializer_class = VacunaSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -961,9 +915,6 @@ class VacunaViewSet(viewsets.ModelViewSet):
         if animal_id:
             queryset = queryset.filter(animal_id=animal_id)
         return queryset
-
-    from rest_framework.decorators import action
-    from rest_framework.response import Response
 
     @action(detail=False, methods=['get'], url_path='por-especie', permission_classes=[permissions.IsAuthenticated])
     def por_especie(self, request):
@@ -976,9 +927,7 @@ class VacunaViewSet(viewsets.ModelViewSet):
             resultado[especie].append(self.get_serializer(vacuna).data)
         return Response(resultado)
 
-from .models import NecesidadRefugio
-from .serializers import NecesidadRefugioSerializer
-from rest_framework import generics, permissions
+
 
 class NecesidadRefugioListCreateView(generics.ListCreateAPIView):
     serializer_class = NecesidadRefugioSerializer
